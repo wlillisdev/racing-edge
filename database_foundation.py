@@ -66,7 +66,8 @@ def _load_statements(schema_path: Path) -> list[str]:
             continue
         lower = stmt.lower()
         # Only execute CREATE TABLE statements (skip SET, comments, etc.)
-        if lower.startswith("create table"):
+        # Use 'in' not 'startswith' — comment blocks precede each CREATE TABLE
+        if "create table" in lower:
             statements.append(stmt)
 
     return statements
