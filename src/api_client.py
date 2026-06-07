@@ -190,8 +190,15 @@ class RacingAPIClient:
         Raises:
             RacingAPIError: On API fault.
         """
+        from datetime import date, timedelta
+        if day == "today":
+            date_str = date.today().isoformat()
+        elif day == "tomorrow":
+            date_str = (date.today() + timedelta(days=1)).isoformat()
+        else:
+            date_str = day
         regions = [r.strip() for r in region_codes.split(",")]
-        params = [("day", day)] + [("region_codes", r) for r in regions]
+        params = [("date", date_str)] + [("region_codes", r) for r in regions]
         result = self._get("/racecards/pro", params=params, allow_404=False)
         if result is None:
             return {"races": []}
