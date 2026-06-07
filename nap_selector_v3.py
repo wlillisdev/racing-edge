@@ -47,6 +47,8 @@ CLUSTER_MIN_SCORE: float = 55.0
 NAP_EXCLUDED_RACE_TYPES: frozenset[str] = frozenset({"chase"})
 NAP_MIN_ODDS: float = 1.5
 JUMP_ALTERNATIVE_MIN_SCORE: float = 55.0
+JUMP_MAX_RUNNERS: int = 12
+JUMP_EXCLUDED_GOING: frozenset[str] = frozenset({"Firm", "Good to Firm"})
 
 _GOING_ADJACENCY: list[list[str]] = [
     ["Firm", "Good to Firm", "Good", "Good to Soft", "Soft", "Heavy"],
@@ -122,18 +124,32 @@ def _rpr_rank_score(runner: dict, all_runners: list[dict]) -> tuple[float, list[
     return 1.0, [f"Below-average RPR ({my_rpr} vs field avg {avg_rpr:.0f})"]
 
 
-def _position_points(chars: list[str]) -> tuple[float, list[str]]:
+def _position_points(chars: list[str], is_jump: bool = False) -> tuple[float, list[str]]:
     _SLOT_TABLES: list[dict[str, float]] = [
         {"1": 12.0, "2": 7.0, "3": 5.0, "4": 3.0},
         {"1": 5.0, "2": 3.0, "3": 2.0, "4": 1.0},
         {"1": 3.0, "2": 2.0, "3": 1.0},
     ]
     _SLOT_LABELS = ["last time out", "2 runs ago", "3 runs ago"]
+    # Jump-specific fall/PU penalties: bigger the more recent
+    _JUMP_PENALTIES: dict[str, list[float]] = {
+        "F": [-5.0, -2.0],   # Fell
+        "U": [-4.0, -2.0],   # Unseated
+        "P": [-3.0, -1.0],   # Pulled up
+    }
+    _JUMP_LABELS = {"F": "Fell", "U": "Unseated", "P": "Pulled up"}
     pts = 0.0; reasons: list[str] = []
     for slot, ch in enumerate(chars[:3]):
         table = _SLOT_TABLES[slot]
         upper = ch.upper()
-        if upper in ("F", "U", "P", "R", "B"): continue
+        if upper in ("F", "U", "P"):
+            if is_jump and slot < 2 and upper in _JUMP_PENALTIES:
+                penalty = _JUMP_PENALTIES[upper][slot]
+                pts += penalty
+                reasons.append(f"⚠ {_JUMP_LABELS[upper]} {_SLOT_LABELS[slot]}")
+            continue
+        if upper in ("R", "B"):
+            continue
         try: pos = int(upper)
         except ValueError: continue
         slot_pts = table.get(str(pos), 1.0 if slot == 0 and pos >= 5 else 0.0)
@@ -167,6 +183,8 @@ def _freshness_pts(last_run_days: Optional[int]) -> tuple[float, list[str]]:
 def compute_form_score(runner: dict, all_runners: list[dict]) -> tuple[float, list[str]]:
     form: str = runner.get("form") or ""
     last_run: Optional[int] = runner.get("last_run")
+    race_type_raw = (runner.get("_race_type") or "").lower()
+    is_jump = "chase" in race_type_raw or "hurdle" in race_type_raw
     reasons: list[str] = []
     rpr_pts, rpr_reasons = _rpr_rank_score(runner, all_runners)
     reasons += rpr_reasons
@@ -176,7 +194,7 @@ def compute_form_score(runner: dict, all_runners: list[dict]) -> tuple[float, li
     chars = _parse_form_chars(form)
     if not chars:
         return round(max(0.0, min(40.0, rpr_pts)), 2), reasons
-    pos_pts, pos_reasons = _position_points(chars)
+    pos_pts, pos_reasons = _position_points(chars, is_jump=is_jump)
     trend_pts, trend_reasons = _trend_pts(chars)
     fresh_pts, fresh_reasons = _freshness_pts(last_run)
     reasons += pos_reasons + trend_reasons + fresh_reasons
@@ -263,8 +281,15 @@ def compute_context_score(race: dict, all_runners: list[dict]) -> tuple[float, l
     else:
         score += 2.0; reasons.append("Race class unknown — conservative bonus")
     going_norm = going_normalise(race.get("going") or "")
-    if going_norm == "Good":
-        score -= 2.0; reasons.append("Good going — historically below-par ROI")
+    race_type_raw = str(race.get("type") or "").lower()
+    is_jump_race = "chase" in race_type_raw or "hurdle" in race_type_raw
+    if is_jump_race:
+        if going_norm in JUMP_EXCLUDED_GOING:
+            score -= 5.0; reasons.append(f"Firm/Good-Firm in jump race — unsuitable ground")
+        elif going_norm == "Good":
+            score -= 2.0; reasons.append("Good going for jump race — historically below par")
+        if field_size > JUMP_MAX_RUNNERS:
+            score -= 4.0; reasons.append(f"Crowded jump field ({field_size} runners) — chaotic")
     return round(max(0.0, min(15.0, score)), 2), reasons
 
 
