@@ -38,7 +38,7 @@ from src.helpers import data_path, going_normalise, log, report_path
 from src.api_client import get_client, RacingAPIError
 from nap_selector_v3 import (
     score_runner, NAP_MIN_SCORE, GRADE_A_THRESHOLD,
-    NAP_EXCLUDED_RACE_TYPES, NAP_MIN_ODDS,
+    NAP_EXCLUDED_RACE_TYPES, NAP_MIN_ODDS, FLAT_MAX_DIST_F,
 )
 
 # ---------------------------------------------------------------------------
@@ -367,6 +367,9 @@ def main() -> int:
     parser.add_argument("--include-jumps", action="store_true", default=False,
                         dest="include_jumps",
                         help="Include excluded race types (chases etc) in daily NAP pool")
+    parser.add_argument("--max-flat-dist", type=float, default=FLAT_MAX_DIST_F,
+                        dest="max_flat_dist",
+                        help="Max distance in furlongs for flat NAP selection (default 14f)")
     args = parser.parse_args()
 
     # Date range
@@ -392,7 +395,7 @@ def main() -> int:
     end_str   = end_date.isoformat()
 
     print(f"Backtesting {len(date_range)} days: {start_str} → {end_str}")
-    print(f"Min score threshold: {args.min_score}  |  Include jumps: {args.include_jumps}  |  (cached days skip API call)")
+    print(f"Min score threshold: {args.min_score}  |  Include jumps: {args.include_jumps}  |  Max flat dist: {args.max_flat_dist}f  |  (cached days skip API call)")
 
     try:
         cfg    = get_config()
@@ -521,7 +524,9 @@ def main() -> int:
                 top.get("morning_price") is not None
                 and top["morning_price"] < NAP_MIN_ODDS
             )
-            if composite >= args.min_score and composite > best_day_score and not _excluded and not _too_short:
+            _is_flat = not any(x in (race_type or "").lower() for x in ("chase", "hurdle", "bumper"))
+            _dist_filtered = _is_flat and dist_f >= args.max_flat_dist
+            if composite >= args.min_score and composite > best_day_score and not _excluded and not _too_short and not _dist_filtered:
                 best_day_score  = composite
                 best_day_record = record
 

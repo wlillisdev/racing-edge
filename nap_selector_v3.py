@@ -49,6 +49,7 @@ NAP_MIN_ODDS: float = 1.5
 JUMP_ALTERNATIVE_MIN_SCORE: float = 55.0
 JUMP_MAX_RUNNERS: int = 12
 JUMP_EXCLUDED_GOING: frozenset[str] = frozenset({"Firm", "Good to Firm"})
+FLAT_MAX_DIST_F: float = 14.0   # exclude flat stayers (14f+) — -21% ROI in backtest
 
 _GOING_ADJACENCY: list[list[str]] = [
     ["Firm", "Good to Firm", "Good", "Good to Soft", "Soft", "Heavy"],
@@ -396,6 +397,7 @@ def score_runner(
         "rpr": runner.get("rpr"), "ofr": runner.get("ofr"), "status": None,
         "race_type": str(race.get("type") or ""),
         "going": str(race.get("going") or ""),
+        "distance_f": float(race.get("distance_f") or 0.0),
     }
 
 
@@ -534,6 +536,10 @@ def main() -> int:
             no_bet_races.append(race_id); continue
         # Minimum odds gate — no value at very short prices
         if top.get("morning_price") is not None and top["morning_price"] < NAP_MIN_ODDS:
+            no_bet_races.append(race_id); continue
+        # Flat distance filter — stayers (14f+) consistently lose in backtest
+        _is_flat = not any(x in (top.get("race_type") or "").lower() for x in ("chase", "hurdle", "bumper"))
+        if _is_flat and (top.get("distance_f") or 0.0) >= FLAT_MAX_DIST_F:
             no_bet_races.append(race_id); continue
         if race_id in cluster_races: no_bet_races.append(race_id); continue
         if top["score"] < NAP_MIN_SCORE: no_bet_races.append(race_id); continue
