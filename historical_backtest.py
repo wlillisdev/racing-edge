@@ -364,6 +364,9 @@ def main() -> int:
     parser.add_argument("--end",       type=str,   default=None)
     parser.add_argument("--min-score", type=float, default=NAP_MIN_SCORE,
                         dest="min_score")
+    parser.add_argument("--include-jumps", action="store_true", default=False,
+                        dest="include_jumps",
+                        help="Include excluded race types (chases etc) in daily NAP pool")
     args = parser.parse_args()
 
     # Date range
@@ -389,7 +392,7 @@ def main() -> int:
     end_str   = end_date.isoformat()
 
     print(f"Backtesting {len(date_range)} days: {start_str} → {end_str}")
-    print(f"Min score threshold: {args.min_score}  |  (cached days skip API call)")
+    print(f"Min score threshold: {args.min_score}  |  Include jumps: {args.include_jumps}  |  (cached days skip API call)")
 
     try:
         cfg    = get_config()
@@ -510,7 +513,10 @@ def main() -> int:
             all_records.append(record)
 
             # Track best qualifying pick for the day — apply same filters as live model
-            _excluded = any(x in (race_type or "").lower() for x in NAP_EXCLUDED_RACE_TYPES)
+            _excluded = (
+                not args.include_jumps
+                and any(x in (race_type or "").lower() for x in NAP_EXCLUDED_RACE_TYPES)
+            )
             _too_short = (
                 top.get("morning_price") is not None
                 and top["morning_price"] < NAP_MIN_ODDS

@@ -46,6 +46,7 @@ CLUSTER_MIN_SCORE: float = 55.0
 
 NAP_EXCLUDED_RACE_TYPES: frozenset[str] = frozenset({"chase"})
 NAP_MIN_ODDS: float = 1.5
+JUMP_ALTERNATIVE_MIN_SCORE: float = 55.0
 
 _GOING_ADJACENCY: list[list[str]] = [
     ["Firm", "Good to Firm", "Good", "Good to Soft", "Soft", "Heavy"],
@@ -412,6 +413,22 @@ def _format_text_report(date_str: str, generated_hm: str, result: dict) -> str:
     else:
         lines.append("  None identified.")
     lines.append("")
+    lines.append("■ JUMP ALTERNATIVE (best chase/hurdle — secondary option)")
+    jump_nap = result.get("jump_nap")
+    if jump_nap:
+        price = jump_nap.get("morning_price")
+        price_s = f"{format_odds(price)} ({price:.1f})" if price else "Not priced yet"
+        lines += [
+            f"  {jump_nap['horse'].upper()} — {jump_nap['course']}, {jump_nap['off_time']}",
+            f"  Grade: {jump_nap['grade']}  |  Score: {jump_nap['score']:.1f}/100  |  Type: {jump_nap.get('race_type', '?')}",
+            f"  Morning price: {price_s}",
+            f"  Scores: Form={jump_nap['form_score']} Suit={jump_nap['suitability_score']} Context={jump_nap['context_score']} Trainer={jump_nap['trainer_score']} Market={jump_nap['market_score']}",
+        ]
+        for r in jump_nap["reasons"][:4]:
+            lines.append(f"    • {r}")
+    else:
+        lines.append("  None qualifying today (no chase/hurdle scored 55+).")
+    lines.append("")
     lines.append("■ WATCHLIST")
     if watchlist:
         for h in watchlist:
@@ -538,9 +555,26 @@ def main() -> int:
         elif grade == "B": r["status"] = "WATCHLIST"; watchlist.append(r)
         elif grade == "C": r["status"] = "SHADOW"; shadow.append(r)
 
+    # Jump alternative: best excluded-type pick (chase/hurdle) as secondary option.
+    # Shown in reports for days when punter wants a jump selection.
+    jump_nap: Optional[dict] = None
+    for race_id, scored in race_scores.items():
+        if not scored: continue
+        top = scored[0]
+        race_type_raw = (top.get("race_type") or "").lower()
+        if not any(x in race_type_raw for x in NAP_EXCLUDED_RACE_TYPES):
+            continue
+        if top["score"] < JUMP_ALTERNATIVE_MIN_SCORE:
+            continue
+        if "dangerous_drift" in (top.get("warnings") or []):
+            continue
+        if jump_nap is None or top["score"] > jump_nap["score"]:
+            jump_nap = dict(top)
+            jump_nap["status"] = "JUMP_ALTERNATIVE"
+
     output: dict = {
         "date": date_str, "generated_at": generated_at_iso, "model_version": MODEL_VERSION,
-        "nap": nap, "best_of_card": best_of_card,
+        "nap": nap, "jump_nap": jump_nap, "best_of_card": best_of_card,
         "watchlist": watchlist[:10], "shadow": shadow[:10],
         "cluster_races": cluster_races, "no_bet_races": no_bet_races, "day_verdict": day_verdict,
     }
@@ -564,6 +598,10 @@ def main() -> int:
         print(f"nap_selector_v3: NAP SELECTED — {nap['horse']} ({nap['course']} {nap['off_time']}) Score={nap['score']:.1f} Grade={nap['grade']} Price={price_s}")
     else:
         print(f"nap_selector_v3: {day_verdict} — no NAP for {date_str}")
+    if jump_nap:
+        jp = jump_nap.get("morning_price")
+        jp_s = format_odds(jp) if jp else "no price"
+        print(f"nap_selector_v3: JUMP ALT — {jump_nap['horse']} ({jump_nap['course']} {jump_nap['off_time']}) Score={jump_nap['score']:.1f} Type={jump_nap.get('race_type','?')} Price={jp_s}")
     print(f"nap_selector_v3: model={MODEL_VERSION} clusters={len(cluster_races)} candidates={len(nap_candidates)} watchlist={len(watchlist)} shadow={len(shadow)}")
     return 0
 
