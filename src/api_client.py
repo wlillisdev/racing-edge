@@ -190,11 +190,9 @@ class RacingAPIClient:
         Raises:
             RacingAPIError: On API fault.
         """
-        result = self._get(
-            "/racecards/standard",
-            params={"day": day, "region_codes": region_codes},
-            allow_404=False,
-        )
+        regions = [r.strip() for r in region_codes.split(",")]
+        params = [("day", day)] + [("region_codes", r) for r in regions]
+        result = self._get("/racecards/standard", params=params, allow_404=False)
         if result is None:
             return {"races": []}
         return result
