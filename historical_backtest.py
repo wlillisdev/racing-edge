@@ -36,7 +36,10 @@ from typing import Optional
 from src.config import get_config
 from src.helpers import data_path, going_normalise, log, report_path
 from src.api_client import get_client, RacingAPIError
-from nap_selector_v3 import score_runner, NAP_MIN_SCORE, GRADE_A_THRESHOLD
+from nap_selector_v3 import (
+    score_runner, NAP_MIN_SCORE, GRADE_A_THRESHOLD,
+    NAP_EXCLUDED_RACE_TYPES, NAP_MIN_ODDS,
+)
 
 # ---------------------------------------------------------------------------
 # Constants
@@ -241,8 +244,23 @@ def _type_group(race_type: str) -> str:
 
 
 def _class_group(race_class) -> str:
+    if race_class is None:
+        return "Unknown"
+    s = str(race_class).strip().lower()
+    if not s or s == "none":
+        return "Unknown"
+    if s.startswith("class"):
+        s = s[5:].strip()
+    if "grade 1" in s or "listed" in s:
+        return "Grade 1/Listed"
+    if "grade 2" in s:
+        return "Grade 2"
+    if "grade 3" in s:
+        return "Grade 3"
+    if "grade" in s:
+        return "Graded"
     try:
-        c = int(str(race_class).strip())
+        c = int(s)
         if c <= 2:  return "Class 1-2"
         if c == 3:  return "Class 3"
         if c == 4:  return "Class 4"
@@ -491,8 +509,13 @@ def main() -> int:
             }
             all_records.append(record)
 
-            # Track best qualifying pick for the day
-            if composite >= args.min_score and composite > best_day_score:
+            # Track best qualifying pick for the day — apply same filters as live model
+            _excluded = any(x in (race_type or "").lower() for x in NAP_EXCLUDED_RACE_TYPES)
+            _too_short = (
+                top.get("morning_price") is not None
+                and top["morning_price"] < NAP_MIN_ODDS
+            )
+            if composite >= args.min_score and composite > best_day_score and not _excluded and not _too_short:
                 best_day_score  = composite
                 best_day_record = record
 

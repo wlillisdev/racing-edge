@@ -44,6 +44,9 @@ NAP_MIN_SCORE: float = 60.0
 CLUSTER_SPREAD: float = 8.0
 CLUSTER_MIN_SCORE: float = 55.0
 
+NAP_EXCLUDED_RACE_TYPES: frozenset[str] = frozenset({"chase"})
+NAP_MIN_ODDS: float = 1.5
+
 _GOING_ADJACENCY: list[list[str]] = [
     ["Firm", "Good to Firm", "Good", "Good to Soft", "Soft", "Heavy"],
     ["Standard", "Slow"],
@@ -246,7 +249,10 @@ def compute_context_score(race: dict, all_runners: list[dict]) -> tuple[float, l
         elif field_size <= 9: score += 5.0; reasons.append(f"Medium-small field ({field_size} runners)")
         elif field_size <= 13: score += 3.0; reasons.append(f"Medium field ({field_size} runners)")
         else: reasons.append(f"Large field ({field_size} runners)")
-    try: race_class = int(str(race.get("class") or race.get("race_class") or "").strip())
+    _cls_raw = str(race.get("class") or race.get("race_class") or "").strip().lower()
+    if _cls_raw.startswith("class"):
+        _cls_raw = _cls_raw[5:].strip()
+    try: race_class = int(_cls_raw)
     except (TypeError, ValueError): race_class = None
     if race_class is not None:
         if race_class >= 6: score += 5.0; reasons.append(f"Class {race_class} — lower grade")
@@ -255,6 +261,9 @@ def compute_context_score(race: dict, all_runners: list[dict]) -> tuple[float, l
         else: reasons.append(f"Class {race_class} — high class")
     else:
         score += 2.0; reasons.append("Race class unknown — conservative bonus")
+    going_norm = going_normalise(race.get("going") or "")
+    if going_norm == "Good":
+        score -= 2.0; reasons.append("Good going — historically below-par ROI")
     return round(max(0.0, min(15.0, score)), 2), reasons
 
 
@@ -295,11 +304,18 @@ def compute_market_score(
     if morning_price is not None and "hurdle" in race_type and 2.0 <= morning_price <= 3.0:
         reasons.append(f"CAUTION: hurdle Evens–2/1 band — proven loss zone")
     if morning_price is not None:
-        if morning_price < 3.0: score += 5.0; reasons.append(f"Short price ({format_odds(morning_price)})")
-        elif morning_price <= 6.0: score += 3.0; reasons.append(f"Reasonable price ({format_odds(morning_price)})")
-        elif morning_price <= 10.0: pass
-        elif morning_price <= 20.0: score -= 3.0; reasons.append(f"Bigger price ({format_odds(morning_price)})")
-        else: score -= 7.0; reasons.append(f"Outsider ({format_odds(morning_price)})")
+        if morning_price < 2.0:
+            score += 1.0; reasons.append(f"Very short price ({format_odds(morning_price)}) — value risk")
+        elif morning_price < 3.0:
+            score += 3.0; reasons.append(f"Short price ({format_odds(morning_price)})")
+        elif morning_price <= 6.0:
+            score += 5.0; reasons.append(f"Value price ({format_odds(morning_price)})")
+        elif morning_price <= 12.0:
+            score += 2.0; reasons.append(f"Each-way territory ({format_odds(morning_price)})")
+        elif morning_price <= 20.0:
+            score -= 2.0; reasons.append(f"Bigger price ({format_odds(morning_price)})")
+        else:
+            score -= 6.0; reasons.append(f"Outsider ({format_odds(morning_price)})")
     if market_movers and isinstance(market_movers, dict):
         for mover in (market_movers.get("movers") or []):
             if str(mover.get("horse_id") or "") != horse_id: continue
@@ -352,6 +368,8 @@ def score_runner(
         "trainer": str(runner.get("trainer") or ""),
         "jockey": str(runner.get("jockey") or ""),
         "rpr": runner.get("rpr"), "ofr": runner.get("ofr"), "status": None,
+        "race_type": str(race.get("type") or ""),
+        "going": str(race.get("going") or ""),
     }
 
 
@@ -469,6 +487,12 @@ def main() -> int:
     for race_id, scored in race_scores.items():
         if not scored: continue
         top = scored[0]
+        # Exclude configured race types (e.g. chase — poor ROI historically)
+        if any(x in (top.get("race_type") or "").lower() for x in NAP_EXCLUDED_RACE_TYPES):
+            no_bet_races.append(race_id); continue
+        # Minimum odds gate — no value at very short prices
+        if top.get("morning_price") is not None and top["morning_price"] < NAP_MIN_ODDS:
+            no_bet_races.append(race_id); continue
         if race_id in cluster_races: no_bet_races.append(race_id); continue
         if top["score"] < NAP_MIN_SCORE: no_bet_races.append(race_id); continue
         if "dangerous_drift" in (top.get("warnings") or []):
