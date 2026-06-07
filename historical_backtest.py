@@ -176,32 +176,56 @@ def _fetch_racecard(date_str: str, client, cfg) -> list[dict]:
         return []
 
 
-def _fetch_results(date_str: str, client, cfg) -> dict[str, dict]:
-    cached = _load_cache("results", date_str)
-    if cached is not None:
-        return cached.get("lookup", {})
+def _fetch_results_per_race(races: list[dict], client) -> dict[str, dict]:
+    """Fetch results for each race via /results/{race_id} and cache per-race.
 
-    try:
-        raw = client.get_results_by_date(date_str, region_codes=cfg.regions)
-        time.sleep(API_DELAY_S)
-        races_raw = raw.get("results") or raw.get("racecards") or []
-        lookup: dict[str, dict] = {}
-        for race in races_raw:
-            for runner in race.get("runners", []):
-                hid = str(runner.get("horse_id") or "")
-                if not hid:
-                    continue
-                pos = str(runner.get("position") or runner.get("finish_position") or "")
-                sp = _safe_float(
-                    runner.get("sp_dec") or runner.get("bsp") or runner.get("sp")
-                )
-                lookup[hid] = {"position": pos, "sp_dec": sp}
-        _save_cache("results", date_str, {"lookup": lookup})
-        return lookup
-    except RacingAPIError as exc:
-        log(f"backtest: results API error {date_str} — {exc}", "WARNING")
-        _save_cache("results", date_str, {"lookup": {}})
-        return {}
+    Uses the same endpoint as results_auditor.py — known to work.  Each race
+    result is cached in data/backtest_cache/race_results/<race_id>.json so
+    subsequent backtest runs skip all API calls.
+    """
+    lookup: dict[str, dict] = {}
+    for race in races:
+        race_id = race.get("race_id", "")
+        if not race_id:
+            continue
+
+        cached = _load_cache("race_results", race_id)
+        if cached is not None:
+            lookup.update(cached.get("runners", {}))
+            continue
+
+        try:
+            result = client.get_race_results(race_id)
+            time.sleep(API_DELAY_S)
+        except RacingAPIError as exc:
+            log(f"backtest: race result error {race_id} — {exc}", "WARNING")
+            _save_cache("race_results", race_id, {"runners": {}})
+            continue
+
+        if not result:
+            _save_cache("race_results", race_id, {"runners": {}})
+            continue
+
+        runners_raw = result.get("runners") or result.get("results") or []
+        race_lookup: dict[str, dict] = {}
+        for runner in runners_raw:
+            hid = str(runner.get("horse_id") or "")
+            if not hid:
+                continue
+            pos = str(
+                runner.get("position")
+                or runner.get("finish_position")
+                or ""
+            )
+            sp = _safe_float(
+                runner.get("sp_dec") or runner.get("bsp") or runner.get("sp")
+            )
+            race_lookup[hid] = {"position": pos, "sp_dec": sp}
+
+        _save_cache("race_results", race_id, {"runners": race_lookup})
+        lookup.update(race_lookup)
+
+    return lookup
 
 # ---------------------------------------------------------------------------
 # Category helpers
@@ -373,8 +397,7 @@ def main() -> int:
 
         days_data += 1
 
-        # For historical dates the racecard already embeds position + sp_dec per runner.
-        # Build the lookup directly — no extra API call needed.
+        # Try 1: racecard embeds position for some API configurations.
         results_lookup: dict[str, dict] = {}
         for _race in races:
             for _runner in (_race.get("runners") or []):
@@ -384,10 +407,10 @@ def main() -> int:
                 if _hid and _pos:
                     results_lookup[_hid] = {"position": _pos, "sp_dec": _sp}
 
-        # Fallback: if racecard cache was built before the position field was added,
-        # positions will be empty — try the results API endpoint.
+        # Try 2: per-race results endpoint — reliable, uses /results/{race_id}.
+        # Results are cached per race_id so subsequent runs skip all API calls.
         if not results_lookup:
-            results_lookup = _fetch_results(date_str, client, cfg)
+            results_lookup = _fetch_results_per_race(races, client)
 
         best_day_score  = -1.0
         best_day_record: Optional[dict] = None
