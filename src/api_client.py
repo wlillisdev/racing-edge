@@ -55,10 +55,11 @@ class RacingAPIClient:
     _MAX_RETRIES = 3       # connection-level retries
     _RETRY_BACKOFF = 2.0   # seconds between retries (doubles each attempt)
 
-    def __init__(self, api_key: str, base_url: str) -> None:
+    def __init__(self, api_key: str, base_url: str, api_password: str = "") -> None:
         if not api_key:
             raise ValueError("RacingAPIClient: api_key must not be empty")
         self._api_key = api_key.strip()
+        self._api_password = api_password.strip()
         self._base_url = base_url.rstrip("/")
         self._session = self._build_session()
 
@@ -69,13 +70,20 @@ class RacingAPIClient:
     def _build_session(self) -> requests.Session:
         """Build a requests Session with a retry-capable HTTP adapter."""
         session = requests.Session()
-        session.headers.update(
-            {
-                "Authorization": f"Bearer {self._api_key}",
-                "Accept": "application/json",
-                "User-Agent": "racing-edge/1.0",
-            }
-        )
+        # Use Basic Auth (username=api_key, password=api_password) when a
+        # password is supplied — The Racing API Pro uses this scheme.
+        # Fall back to Bearer token if no password is configured.
+        if self._api_password:
+            session.auth = (self._api_key, self._api_password)
+            session.headers.update({"Accept": "application/json", "User-Agent": "racing-edge/1.0"})
+        else:
+            session.headers.update(
+                {
+                    "Authorization": f"Bearer {self._api_key}",
+                    "Accept": "application/json",
+                    "User-Agent": "racing-edge/1.0",
+                }
+            )
         # Retry only on connection-level failures and 429/503 (transient).
         # We do NOT retry on 4xx/5xx in general — those are handled by
         # _get() which raises RacingAPIError.
@@ -285,4 +293,5 @@ def get_client() -> RacingAPIClient:
     return RacingAPIClient(
         api_key=cfg.racing_api_key,
         base_url=cfg.racing_api_base,
+        api_password=cfg.racing_api_password,
     )
