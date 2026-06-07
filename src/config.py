@@ -26,8 +26,8 @@ load_dotenv(_env_path)
 
 @dataclass
 class Config:
-    # Racing API Pro
-    racing_api_key: str
+    # Racing API Pro (Basic Auth: username + password)
+    racing_api_username: str
     racing_api_password: str
     racing_api_base: str
 
@@ -64,9 +64,9 @@ def get_config() -> Config:
     Optional variables fall back to documented defaults.
     """
     return Config(
-        # API — mandatory
-        racing_api_key=os.environ["RACING_API_KEY"],
-        racing_api_password=os.environ.get("RACING_API_PASSWORD", ""),
+        # API — mandatory (Basic Auth)
+        racing_api_username=os.environ["RACING_API_USERNAME"],
+        racing_api_password=os.environ["RACING_API_PASSWORD"],
         racing_api_base=os.environ.get(
             "RACING_API_BASE", "https://api.theracingapi.com/v1"
         ),
