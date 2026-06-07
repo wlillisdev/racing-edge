@@ -177,6 +177,13 @@ def _format_text_report(date_str: str, movements: list[dict]) -> str:
         "MARKET MOVERS REPORT",
         f"Date: {date_str} | Snapshot: Morning vs Late",
         "",
+        "SUMMARY",
+        "-" * 40,
+        f"Runners compared:        {len(movements)}",
+        f"Steamers / with support: {len(steamers)}",
+        f"Drifters:                {len(drifters)}",
+        f"Stable:                  {len(stable)}",
+        "",
     ]
 
     # Steamers

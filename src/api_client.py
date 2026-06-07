@@ -277,6 +277,24 @@ class RacingAPIClient:
 
         return self._get(f"/odds/live/{race_id}", allow_404=True)
 
+    def get_results_by_date(
+        self,
+        date_str: str,
+        region_codes: str = "gb,ire",
+    ) -> dict:
+        """Fetch all race results for a specific date.
+
+        Endpoint: GET /results/pro
+
+        Returns:
+            Results response dict (may contain 'results' list), or {} if
+            no data is available for that date.
+        """
+        regions = [r.strip() for r in region_codes.split(",")]
+        params = [("date", date_str)] + [("region_codes", r) for r in regions]
+        result = self._get("/results/pro", params=params, allow_404=True)
+        return result if result is not None else {}
+
 
 # ---------------------------------------------------------------------------
 # Factory
