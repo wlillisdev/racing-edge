@@ -1,0 +1,97 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+parts/
+var/
+sdist/
+develop-eggs/
+.installed.cfg
+lib/
+lib64/
+*.manifest
+*.spec
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+.env.bak
+.env.local
+
+# Environment — keep example, never commit live secrets
+.env
+
+# Distribution / packaging
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+
+# Jupyter
+.ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# mypy / type checkers
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pyre/
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project-specific data (keep directory structure via .gitkeep)
+data/*.json
+data/market_snapshots/*.json
+
+# Reports (generated output — not source)
+reports/*.txt
+reports/*.csv
+
+# Performance logs
+performance_log.csv
+
+# Archives
+archive/system_snapshots/*
+archive/database_backups/*
+archive/external_exports/*.tar.gz
+*.tar.gz
+
+# Keep .gitkeep sentinels
+!data/.gitkeep
+!data/market_snapshots/.gitkeep
+!reports/.gitkeep
+!archive/system_snapshots/.gitkeep
+!archive/database_backups/.gitkeep
+!archive/external_exports/.gitkeep
+.claude/
+
+# Claude Code worktrees
+.claude/
