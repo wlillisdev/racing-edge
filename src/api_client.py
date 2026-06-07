@@ -175,9 +175,9 @@ class RacingAPIClient:
         day: str = "today",
         region_codes: str = "gb,ire",
     ) -> dict:
-        """Fetch standard racecards for a given day and region(s).
+        """Fetch pro racecards for a given day and region(s).
 
-        Endpoint: GET /racecards/standard
+        Endpoint: GET /racecards/pro
 
         Args:
             day: "today", "tomorrow", or a date string YYYY-MM-DD.
@@ -192,7 +192,7 @@ class RacingAPIClient:
         """
         regions = [r.strip() for r in region_codes.split(",")]
         params = [("day", day)] + [("region_codes", r) for r in regions]
-        result = self._get("/racecards/standard", params=params, allow_404=False)
+        result = self._get("/racecards/pro", params=params, allow_404=False)
         if result is None:
             return {"races": []}
         return result
