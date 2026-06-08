@@ -276,12 +276,21 @@ def compute_context_score(race: dict, all_runners: list[dict]) -> tuple[float, l
     try: race_class = int(_cls_raw)
     except (TypeError, ValueError): race_class = None
     if race_class is not None:
-        if race_class >= 6: score += 5.0; reasons.append(f"Class {race_class} — lower grade")
-        elif race_class == 5: score += 3.0; reasons.append(f"Class {race_class}")
+        if race_class <= 2: score += 5.0; reasons.append(f"Class {race_class} — high quality, reliable form")
+        elif race_class == 3: score += 3.0; reasons.append(f"Class {race_class} — good quality field")
         elif race_class == 4: score += 1.0; reasons.append(f"Class {race_class}")
-        else: reasons.append(f"Class {race_class} — high class")
+        elif race_class == 5: score -= 2.0; reasons.append(f"Class {race_class} — lower quality field")
+        else: score -= 4.0; reasons.append(f"Class {race_class} — low grade, noisy form")
+    elif "grade 1" in _cls_raw or _cls_raw == "g1":
+        score += 5.0; reasons.append("Grade 1 — top NH quality, most reliable form")
+    elif "grade 2" in _cls_raw or _cls_raw == "g2":
+        score += 4.0; reasons.append("Grade 2 — high NH quality")
+    elif "grade 3" in _cls_raw or _cls_raw == "g3":
+        score += 2.0; reasons.append("Grade 3 — good NH quality")
+    elif "listed" in _cls_raw:
+        score += 1.0; reasons.append("Listed race — decent quality")
     else:
-        score += 2.0; reasons.append("Race class unknown — conservative bonus")
+        reasons.append("Race class unknown")
     going_norm = going_normalise(race.get("going") or "")
     race_type_raw = str(race.get("type") or "").lower()
     is_jump_race = "chase" in race_type_raw or "hurdle" in race_type_raw
