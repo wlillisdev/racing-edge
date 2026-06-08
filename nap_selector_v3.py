@@ -233,7 +233,9 @@ def compute_suitability_score(
             horse_history = full_form[horse_id]
 
     if horse_history:
-        dist_win = dist_placed = going_win = going_similar = course_win = False
+        dist_win = dist_placed = False
+        going_win = going_placed = going_similar = False
+        course_win = course_placed = False
         for result in horse_history:
             pos = str(result.get("position") or result.get("finish_position") or "")
             win = pos == "1"
@@ -246,16 +248,22 @@ def compute_suitability_score(
             if today_dist_f > 0 and r_dist_f > 0 and abs(today_dist_f - r_dist_f) <= 0.5:
                 if win: dist_win = True
                 if placed: dist_placed = True
-            if today_going and r_going and win:
-                if today_going == r_going: going_win = True
-                elif _going_adjacent(today_going, r_going): going_similar = True
-            if today_course and r_course and today_course == r_course and win:
-                course_win = True
+            if today_going and r_going:
+                if today_going == r_going:
+                    if win: going_win = True
+                    elif placed: going_placed = True
+                elif _going_adjacent(today_going, r_going) and win:
+                    going_similar = True
+            if today_course and r_course and today_course == r_course:
+                if win: course_win = True
+                elif placed: course_placed = True
         if dist_win: score += 10.0; reasons.append("Distance proven — won at today's trip")
         elif dist_placed: score += 6.0; reasons.append("Distance placed at today's trip")
         if going_win: score += 8.0; reasons.append("Going proven — won on today's ground")
-        elif going_similar: score += 4.0; reasons.append("Going similar to previous win ground")
+        elif going_placed: score += 5.0; reasons.append("Going suited — placed on today's ground")
+        elif going_similar: score += 2.0; reasons.append("Going similar to previous win ground")
         if course_win: score += 5.0; reasons.append("Course winner")
+        elif course_placed: score += 3.0; reasons.append("Course placed — proven here")
     else:
         form: str = runner.get("form") or ""
         chars = _parse_form_chars(form)
