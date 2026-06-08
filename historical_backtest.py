@@ -37,7 +37,7 @@ from src.config import get_config
 from src.helpers import data_path, going_normalise, log, report_path
 from src.api_client import get_client, RacingAPIError
 from nap_selector_v3 import (
-    score_runner, NAP_MIN_SCORE, GRADE_A_THRESHOLD,
+    score_runner, NAP_MIN_SCORE, NAP_MAX_SCORE, GRADE_A_THRESHOLD,
     NAP_EXCLUDED_RACE_TYPES, NAP_MIN_ODDS, FLAT_MAX_DIST_F,
     FLAT_EXCLUDED_GOING, CLUSTER_SPREAD, CLUSTER_MIN_SCORE,
     detect_race_cluster,
@@ -501,6 +501,7 @@ def main() -> int:
                 "form_score":     top["form_score"],
                 "suit_score":     top["suitability_score"],
                 "ctx_score":      top["context_score"],
+                "draw_score":     top.get("draw_score", 0.0),
                 "train_score":    top["trainer_score"],
                 "mkt_score":      top["market_score"],
                 "position":       position,
@@ -531,7 +532,8 @@ def main() -> int:
             _going_filtered = _is_flat and going_normalise(top.get("going") or "") in FLAT_EXCLUDED_GOING
             _clustered = detect_race_cluster(scored)
             _dangerous = "dangerous_drift" in (top.get("warnings") or [])
-            if (composite >= args.min_score and composite > best_day_score
+            if (composite >= args.min_score and composite <= NAP_MAX_SCORE
+                    and composite > best_day_score
                     and not _excluded and not _too_short and not _dist_filtered
                     and not _going_filtered and not _clustered and not _dangerous):
                 best_day_score  = composite
