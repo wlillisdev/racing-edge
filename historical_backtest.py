@@ -36,7 +36,12 @@ from typing import Optional
 from src.config import get_config
 from src.helpers import data_path, going_normalise, log, report_path
 from src.api_client import get_client, RacingAPIError
-from nap_selector_v3 import score_runner, NAP_MIN_SCORE, GRADE_A_THRESHOLD
+from nap_selector_v3 import (
+    score_runner, NAP_MIN_SCORE, GRADE_A_THRESHOLD,
+    NAP_EXCLUDED_RACE_TYPES, NAP_MIN_ODDS, FLAT_MAX_DIST_F,
+    FLAT_EXCLUDED_GOING, CLUSTER_SPREAD, CLUSTER_MIN_SCORE,
+    detect_race_cluster,
+)
 
 # ---------------------------------------------------------------------------
 # Constants
@@ -141,7 +146,7 @@ def _normalise_racecard(raw: dict) -> dict:
         "course":      _safe_str(raw.get("course")),
         "off_time":    _safe_str(raw.get("off_time") or raw.get("off")),
         "race_name":   _safe_str(raw.get("race_name") or raw.get("race")),
-        "class":       raw.get("class"),
+        "class":       raw.get("class") if raw.get("class") is not None else raw.get("race_class"),
         "distance_f":  _safe_float(raw.get("distance_f") or raw.get("dist_f")),
         "going":       _safe_str(raw.get("going")),
         "surface":     _safe_str(raw.get("surface")),
@@ -241,8 +246,23 @@ def _type_group(race_type: str) -> str:
 
 
 def _class_group(race_class) -> str:
+    if race_class is None:
+        return "Unknown"
+    s = str(race_class).strip().lower()
+    if not s or s == "none":
+        return "Unknown"
+    if s.startswith("class"):
+        s = s[5:].strip()
+    if "grade 1" in s or "listed" in s:
+        return "Grade 1/Listed"
+    if "grade 2" in s:
+        return "Grade 2"
+    if "grade 3" in s:
+        return "Grade 3"
+    if "grade" in s:
+        return "Graded"
     try:
-        c = int(str(race_class).strip())
+        c = int(s)
         if c <= 2:  return "Class 1-2"
         if c == 3:  return "Class 3"
         if c == 4:  return "Class 4"
@@ -346,6 +366,12 @@ def main() -> int:
     parser.add_argument("--end",       type=str,   default=None)
     parser.add_argument("--min-score", type=float, default=NAP_MIN_SCORE,
                         dest="min_score")
+    parser.add_argument("--include-jumps", action="store_true", default=False,
+                        dest="include_jumps",
+                        help="Include excluded race types (chases etc) in daily NAP pool")
+    parser.add_argument("--max-flat-dist", type=float, default=FLAT_MAX_DIST_F,
+                        dest="max_flat_dist",
+                        help="Max distance in furlongs for flat NAP selection (default 14f)")
     args = parser.parse_args()
 
     # Date range
@@ -371,7 +397,7 @@ def main() -> int:
     end_str   = end_date.isoformat()
 
     print(f"Backtesting {len(date_range)} days: {start_str} → {end_str}")
-    print(f"Min score threshold: {args.min_score}  |  (cached days skip API call)")
+    print(f"Min score threshold: {args.min_score}  |  Include jumps: {args.include_jumps}  |  Max flat dist: {args.max_flat_dist}f  |  (cached days skip API call)")
 
     try:
         cfg    = get_config()
@@ -491,8 +517,23 @@ def main() -> int:
             }
             all_records.append(record)
 
-            # Track best qualifying pick for the day
-            if composite >= args.min_score and composite > best_day_score:
+            # Track best qualifying pick for the day — apply same filters as live model
+            _excluded = (
+                not args.include_jumps
+                and any(x in (race_type or "").lower() for x in NAP_EXCLUDED_RACE_TYPES)
+            )
+            _too_short = (
+                top.get("morning_price") is not None
+                and top["morning_price"] < NAP_MIN_ODDS
+            )
+            _is_flat = not any(x in (race_type or "").lower() for x in ("chase", "hurdle", "bumper"))
+            _dist_filtered = _is_flat and dist_f >= args.max_flat_dist
+            _going_filtered = _is_flat and going_normalise(top.get("going") or "") in FLAT_EXCLUDED_GOING
+            _clustered = detect_race_cluster(scored)
+            _dangerous = "dangerous_drift" in (top.get("warnings") or [])
+            if (composite >= args.min_score and composite > best_day_score
+                    and not _excluded and not _too_short and not _dist_filtered
+                    and not _going_filtered and not _clustered and not _dangerous):
                 best_day_score  = composite
                 best_day_record = record
 

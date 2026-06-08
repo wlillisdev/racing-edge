@@ -44,6 +44,14 @@ NAP_MIN_SCORE: float = 60.0
 CLUSTER_SPREAD: float = 8.0
 CLUSTER_MIN_SCORE: float = 55.0
 
+NAP_EXCLUDED_RACE_TYPES: frozenset[str] = frozenset({"chase"})
+NAP_MIN_ODDS: float = 1.5
+JUMP_ALTERNATIVE_MIN_SCORE: float = 55.0
+JUMP_MAX_RUNNERS: int = 12
+JUMP_EXCLUDED_GOING: frozenset[str] = frozenset({"Firm", "Good to Firm"})
+FLAT_MAX_DIST_F: float = 14.0   # exclude flat stayers (14f+) — -21% ROI in backtest
+FLAT_EXCLUDED_GOING: frozenset[str] = frozenset({"Good", "Good to Firm", "Firm", "Good to Soft", "Soft"})
+
 _GOING_ADJACENCY: list[list[str]] = [
     ["Firm", "Good to Firm", "Good", "Good to Soft", "Soft", "Heavy"],
     ["Standard", "Slow"],
@@ -115,21 +123,41 @@ def _rpr_rank_score(runner: dict, all_runners: list[dict]) -> tuple[float, list[
     avg_rpr = sum(field_rprs) / n
     if my_rpr >= avg_rpr:
         return 4.0, [f"Above-average RPR ({my_rpr} vs field avg {avg_rpr:.0f})"]
-    return 1.0, [f"Below-average RPR ({my_rpr} vs field avg {avg_rpr:.0f})"]
+    return 0.0, []
 
 
-def _position_points(chars: list[str]) -> tuple[float, list[str]]:
+def _position_points(chars: list[str], is_jump: bool = False) -> tuple[float, list[str]]:
     _SLOT_TABLES: list[dict[str, float]] = [
         {"1": 12.0, "2": 7.0, "3": 5.0, "4": 3.0},
         {"1": 5.0, "2": 3.0, "3": 2.0, "4": 1.0},
         {"1": 3.0, "2": 2.0, "3": 1.0},
     ]
     _SLOT_LABELS = ["last time out", "2 runs ago", "3 runs ago"]
+    _JUMP_PENALTIES: dict[str, list[float]] = {
+        "F": [-5.0, -2.0],
+        "U": [-4.0, -2.0],
+        "P": [-3.0, -1.0],
+    }
+    # Flat PU is rare and almost always means a physical problem
+    _FLAT_PENALTIES: dict[str, list[float]] = {
+        "P": [-5.0, -2.0],
+        "F": [-4.0, -2.0],
+    }
+    _PENALTY_LABELS = {"F": "Fell", "U": "Unseated", "P": "Pulled up"}
     pts = 0.0; reasons: list[str] = []
     for slot, ch in enumerate(chars[:3]):
         table = _SLOT_TABLES[slot]
         upper = ch.upper()
-        if upper in ("F", "U", "P", "R", "B"): continue
+        if upper in ("F", "U", "P"):
+            if is_jump and slot < 2 and upper in _JUMP_PENALTIES:
+                pts += _JUMP_PENALTIES[upper][slot]
+                reasons.append(f"⚠ {_PENALTY_LABELS[upper]} {_SLOT_LABELS[slot]}")
+            elif not is_jump and slot < 2 and upper in _FLAT_PENALTIES:
+                pts += _FLAT_PENALTIES[upper][slot]
+                reasons.append(f"⚠ {_PENALTY_LABELS[upper]} {_SLOT_LABELS[slot]} (flat)")
+            continue
+        if upper in ("R", "B"):
+            continue
         try: pos = int(upper)
         except ValueError: continue
         slot_pts = table.get(str(pos), 1.0 if slot == 0 and pos >= 5 else 0.0)
@@ -163,6 +191,8 @@ def _freshness_pts(last_run_days: Optional[int]) -> tuple[float, list[str]]:
 def compute_form_score(runner: dict, all_runners: list[dict]) -> tuple[float, list[str]]:
     form: str = runner.get("form") or ""
     last_run: Optional[int] = runner.get("last_run")
+    race_type_raw = (runner.get("_race_type") or "").lower()
+    is_jump = "chase" in race_type_raw or "hurdle" in race_type_raw
     reasons: list[str] = []
     rpr_pts, rpr_reasons = _rpr_rank_score(runner, all_runners)
     reasons += rpr_reasons
@@ -172,7 +202,7 @@ def compute_form_score(runner: dict, all_runners: list[dict]) -> tuple[float, li
     chars = _parse_form_chars(form)
     if not chars:
         return round(max(0.0, min(40.0, rpr_pts)), 2), reasons
-    pos_pts, pos_reasons = _position_points(chars)
+    pos_pts, pos_reasons = _position_points(chars, is_jump=is_jump)
     trend_pts, trend_reasons = _trend_pts(chars)
     fresh_pts, fresh_reasons = _freshness_pts(last_run)
     reasons += pos_reasons + trend_reasons + fresh_reasons
@@ -246,15 +276,37 @@ def compute_context_score(race: dict, all_runners: list[dict]) -> tuple[float, l
         elif field_size <= 9: score += 5.0; reasons.append(f"Medium-small field ({field_size} runners)")
         elif field_size <= 13: score += 3.0; reasons.append(f"Medium field ({field_size} runners)")
         else: reasons.append(f"Large field ({field_size} runners)")
-    try: race_class = int(str(race.get("class") or race.get("race_class") or "").strip())
+    _cls_raw = str(race.get("class") or race.get("race_class") or "").strip().lower()
+    if _cls_raw.startswith("class"):
+        _cls_raw = _cls_raw[5:].strip()
+    try: race_class = int(_cls_raw)
     except (TypeError, ValueError): race_class = None
     if race_class is not None:
-        if race_class >= 6: score += 5.0; reasons.append(f"Class {race_class} — lower grade")
-        elif race_class == 5: score += 3.0; reasons.append(f"Class {race_class}")
+        if race_class <= 2: score += 5.0; reasons.append(f"Class {race_class} — high quality, reliable form")
+        elif race_class == 3: score += 3.0; reasons.append(f"Class {race_class} — good quality field")
         elif race_class == 4: score += 1.0; reasons.append(f"Class {race_class}")
-        else: reasons.append(f"Class {race_class} — high class")
+        elif race_class == 5: score -= 2.0; reasons.append(f"Class {race_class} — lower quality field")
+        else: score -= 4.0; reasons.append(f"Class {race_class} — low grade, noisy form")
+    elif "grade 1" in _cls_raw or _cls_raw == "g1":
+        score += 5.0; reasons.append("Grade 1 — top NH quality, most reliable form")
+    elif "grade 2" in _cls_raw or _cls_raw == "g2":
+        score += 4.0; reasons.append("Grade 2 — high NH quality")
+    elif "grade 3" in _cls_raw or _cls_raw == "g3":
+        score += 2.0; reasons.append("Grade 3 — good NH quality")
+    elif "listed" in _cls_raw:
+        score += 1.0; reasons.append("Listed race — decent quality")
     else:
-        score += 2.0; reasons.append("Race class unknown — conservative bonus")
+        reasons.append("Race class unknown")
+    going_norm = going_normalise(race.get("going") or "")
+    race_type_raw = str(race.get("type") or "").lower()
+    is_jump_race = "chase" in race_type_raw or "hurdle" in race_type_raw
+    if is_jump_race:
+        if going_norm in JUMP_EXCLUDED_GOING:
+            score -= 5.0; reasons.append(f"Firm/Good-Firm in jump race — unsuitable ground")
+        elif going_norm == "Good":
+            score -= 2.0; reasons.append("Good going for jump race — historically below par")
+        if field_size > JUMP_MAX_RUNNERS:
+            score -= 4.0; reasons.append(f"Crowded jump field ({field_size} runners) — chaotic")
     return round(max(0.0, min(15.0, score)), 2), reasons
 
 
@@ -281,7 +333,7 @@ def compute_trainer_score(runner: dict) -> tuple[float, list[str]]:
     if (runner.get("stable_tour") or "").strip() or (runner.get("quotes") or "").strip():
         score += 2.0; reasons.append("Stable/trainer commentary present")
     if runner.get("prev_trainers") or []:
-        score += 2.0; reasons.append("Recent trainer change")
+        reasons.append("Recent trainer change — monitor")
     return round(max(0.0, min(15.0, score)), 2), reasons
 
 
@@ -295,17 +347,24 @@ def compute_market_score(
     if morning_price is not None and "hurdle" in race_type and 2.0 <= morning_price <= 3.0:
         reasons.append(f"CAUTION: hurdle Evens–2/1 band — proven loss zone")
     if morning_price is not None:
-        if morning_price < 3.0: score += 5.0; reasons.append(f"Short price ({format_odds(morning_price)})")
-        elif morning_price <= 6.0: score += 3.0; reasons.append(f"Reasonable price ({format_odds(morning_price)})")
-        elif morning_price <= 10.0: pass
-        elif morning_price <= 20.0: score -= 3.0; reasons.append(f"Bigger price ({format_odds(morning_price)})")
-        else: score -= 7.0; reasons.append(f"Outsider ({format_odds(morning_price)})")
+        if morning_price < 2.0:
+            score += 1.0; reasons.append(f"Very short price ({format_odds(morning_price)}) — value risk")
+        elif morning_price < 3.0:
+            score += 3.0; reasons.append(f"Short price ({format_odds(morning_price)})")
+        elif morning_price <= 6.0:
+            score += 5.0; reasons.append(f"Value price ({format_odds(morning_price)})")
+        elif morning_price <= 12.0:
+            score += 2.0; reasons.append(f"Each-way territory ({format_odds(morning_price)})")
+        elif morning_price <= 20.0:
+            score -= 2.0; reasons.append(f"Bigger price ({format_odds(morning_price)})")
+        else:
+            score -= 6.0; reasons.append(f"Outsider ({format_odds(morning_price)})")
     if market_movers and isinstance(market_movers, dict):
-        for mover in (market_movers.get("movers") or []):
+        for mover in (market_movers.get("movements") or []):
             if str(mover.get("horse_id") or "") != horse_id: continue
-            movement = (mover.get("movement") or "").lower().strip()
-            if movement == "strong_steamer": score = min(score + 5.0, 5.0); reasons.append("Strong steamer")
-            elif movement == "steamer": score = min(score + 3.0, 5.0); reasons.append("Market steamer")
+            movement = (mover.get("move_type") or "").lower().strip()
+            if movement == "strong_steamer": score += 5.0; reasons.append("Strong steamer")
+            elif movement == "steamer": score += 3.0; reasons.append("Market steamer")
             elif movement == "weak_drift": score -= 3.0; reasons.append("Market drifting")
             elif movement == "dangerous_drift":
                 score -= 10.0; fatal_flags.append("dangerous_drift")
@@ -352,6 +411,9 @@ def score_runner(
         "trainer": str(runner.get("trainer") or ""),
         "jockey": str(runner.get("jockey") or ""),
         "rpr": runner.get("rpr"), "ofr": runner.get("ofr"), "status": None,
+        "race_type": str(race.get("type") or ""),
+        "going": str(race.get("going") or ""),
+        "distance_f": float(race.get("distance_f") or 0.0),
     }
 
 
@@ -393,6 +455,22 @@ def _format_text_report(date_str: str, generated_hm: str, result: dict) -> str:
                   f"  Grade: {best['grade']}  |  Score: {best['score']:.1f}/100  |  Price: {price_s}"]
     else:
         lines.append("  None identified.")
+    lines.append("")
+    lines.append("■ JUMP ALTERNATIVE (best chase/hurdle — secondary option)")
+    jump_nap = result.get("jump_nap")
+    if jump_nap:
+        price = jump_nap.get("morning_price")
+        price_s = f"{format_odds(price)} ({price:.1f})" if price else "Not priced yet"
+        lines += [
+            f"  {jump_nap['horse'].upper()} — {jump_nap['course']}, {jump_nap['off_time']}",
+            f"  Grade: {jump_nap['grade']}  |  Score: {jump_nap['score']:.1f}/100  |  Type: {jump_nap.get('race_type', '?')}",
+            f"  Morning price: {price_s}",
+            f"  Scores: Form={jump_nap['form_score']} Suit={jump_nap['suitability_score']} Context={jump_nap['context_score']} Trainer={jump_nap['trainer_score']} Market={jump_nap['market_score']}",
+        ]
+        for r in jump_nap["reasons"][:4]:
+            lines.append(f"    • {r}")
+    else:
+        lines.append("  None qualifying today (no chase/hurdle scored 55+).")
     lines.append("")
     lines.append("■ WATCHLIST")
     if watchlist:
@@ -469,6 +547,19 @@ def main() -> int:
     for race_id, scored in race_scores.items():
         if not scored: continue
         top = scored[0]
+        # Exclude configured race types (e.g. chase — poor ROI historically)
+        if any(x in (top.get("race_type") or "").lower() for x in NAP_EXCLUDED_RACE_TYPES):
+            no_bet_races.append(race_id); continue
+        # Minimum odds gate — no value at very short prices
+        if top.get("morning_price") is not None and top["morning_price"] < NAP_MIN_ODDS:
+            no_bet_races.append(race_id); continue
+        # Flat distance filter — stayers (14f+) consistently lose in backtest
+        _is_flat = not any(x in (top.get("race_type") or "").lower() for x in ("chase", "hurdle", "bumper"))
+        if _is_flat and (top.get("distance_f") or 0.0) >= FLAT_MAX_DIST_F:
+            no_bet_races.append(race_id); continue
+        # Flat going filter — turf ground with poor ROI (-30% to -100% in backtest)
+        if _is_flat and going_normalise(top.get("going") or "") in FLAT_EXCLUDED_GOING:
+            no_bet_races.append(race_id); continue
         if race_id in cluster_races: no_bet_races.append(race_id); continue
         if top["score"] < NAP_MIN_SCORE: no_bet_races.append(race_id); continue
         if "dangerous_drift" in (top.get("warnings") or []):
@@ -514,9 +605,26 @@ def main() -> int:
         elif grade == "B": r["status"] = "WATCHLIST"; watchlist.append(r)
         elif grade == "C": r["status"] = "SHADOW"; shadow.append(r)
 
+    # Jump alternative: best excluded-type pick (chase/hurdle) as secondary option.
+    # Shown in reports for days when punter wants a jump selection.
+    jump_nap: Optional[dict] = None
+    for race_id, scored in race_scores.items():
+        if not scored: continue
+        top = scored[0]
+        race_type_raw = (top.get("race_type") or "").lower()
+        if not any(x in race_type_raw for x in NAP_EXCLUDED_RACE_TYPES):
+            continue
+        if top["score"] < JUMP_ALTERNATIVE_MIN_SCORE:
+            continue
+        if "dangerous_drift" in (top.get("warnings") or []):
+            continue
+        if jump_nap is None or top["score"] > jump_nap["score"]:
+            jump_nap = dict(top)
+            jump_nap["status"] = "JUMP_ALTERNATIVE"
+
     output: dict = {
         "date": date_str, "generated_at": generated_at_iso, "model_version": MODEL_VERSION,
-        "nap": nap, "best_of_card": best_of_card,
+        "nap": nap, "jump_nap": jump_nap, "best_of_card": best_of_card,
         "watchlist": watchlist[:10], "shadow": shadow[:10],
         "cluster_races": cluster_races, "no_bet_races": no_bet_races, "day_verdict": day_verdict,
     }
@@ -540,6 +648,10 @@ def main() -> int:
         print(f"nap_selector_v3: NAP SELECTED — {nap['horse']} ({nap['course']} {nap['off_time']}) Score={nap['score']:.1f} Grade={nap['grade']} Price={price_s}")
     else:
         print(f"nap_selector_v3: {day_verdict} — no NAP for {date_str}")
+    if jump_nap:
+        jp = jump_nap.get("morning_price")
+        jp_s = format_odds(jp) if jp else "no price"
+        print(f"nap_selector_v3: JUMP ALT — {jump_nap['horse']} ({jump_nap['course']} {jump_nap['off_time']}) Score={jump_nap['score']:.1f} Type={jump_nap.get('race_type','?')} Price={jp_s}")
     print(f"nap_selector_v3: model={MODEL_VERSION} clusters={len(cluster_races)} candidates={len(nap_candidates)} watchlist={len(watchlist)} shadow={len(shadow)}")
     return 0
 

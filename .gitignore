@@ -91,7 +91,6 @@ archive/external_exports/*.tar.gz
 !archive/system_snapshots/.gitkeep
 !archive/database_backups/.gitkeep
 !archive/external_exports/.gitkeep
-.claude/
-
-# Claude Code worktrees
-.claude/
+# Claude Code — commit project settings, ignore local overrides and worktrees
+.claude/settings.local.json
+.claude/worktrees/
