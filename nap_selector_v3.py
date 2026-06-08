@@ -123,7 +123,7 @@ def _rpr_rank_score(runner: dict, all_runners: list[dict]) -> tuple[float, list[
     avg_rpr = sum(field_rprs) / n
     if my_rpr >= avg_rpr:
         return 4.0, [f"Above-average RPR ({my_rpr} vs field avg {avg_rpr:.0f})"]
-    return 1.0, [f"Below-average RPR ({my_rpr} vs field avg {avg_rpr:.0f})"]
+    return 0.0, []
 
 
 def _position_points(chars: list[str], is_jump: bool = False) -> tuple[float, list[str]]:
@@ -133,22 +133,28 @@ def _position_points(chars: list[str], is_jump: bool = False) -> tuple[float, li
         {"1": 3.0, "2": 2.0, "3": 1.0},
     ]
     _SLOT_LABELS = ["last time out", "2 runs ago", "3 runs ago"]
-    # Jump-specific fall/PU penalties: bigger the more recent
     _JUMP_PENALTIES: dict[str, list[float]] = {
-        "F": [-5.0, -2.0],   # Fell
-        "U": [-4.0, -2.0],   # Unseated
-        "P": [-3.0, -1.0],   # Pulled up
+        "F": [-5.0, -2.0],
+        "U": [-4.0, -2.0],
+        "P": [-3.0, -1.0],
     }
-    _JUMP_LABELS = {"F": "Fell", "U": "Unseated", "P": "Pulled up"}
+    # Flat PU is rare and almost always means a physical problem
+    _FLAT_PENALTIES: dict[str, list[float]] = {
+        "P": [-5.0, -2.0],
+        "F": [-4.0, -2.0],
+    }
+    _PENALTY_LABELS = {"F": "Fell", "U": "Unseated", "P": "Pulled up"}
     pts = 0.0; reasons: list[str] = []
     for slot, ch in enumerate(chars[:3]):
         table = _SLOT_TABLES[slot]
         upper = ch.upper()
         if upper in ("F", "U", "P"):
             if is_jump and slot < 2 and upper in _JUMP_PENALTIES:
-                penalty = _JUMP_PENALTIES[upper][slot]
-                pts += penalty
-                reasons.append(f"⚠ {_JUMP_LABELS[upper]} {_SLOT_LABELS[slot]}")
+                pts += _JUMP_PENALTIES[upper][slot]
+                reasons.append(f"⚠ {_PENALTY_LABELS[upper]} {_SLOT_LABELS[slot]}")
+            elif not is_jump and slot < 2 and upper in _FLAT_PENALTIES:
+                pts += _FLAT_PENALTIES[upper][slot]
+                reasons.append(f"⚠ {_PENALTY_LABELS[upper]} {_SLOT_LABELS[slot]} (flat)")
             continue
         if upper in ("R", "B"):
             continue
@@ -327,7 +333,7 @@ def compute_trainer_score(runner: dict) -> tuple[float, list[str]]:
     if (runner.get("stable_tour") or "").strip() or (runner.get("quotes") or "").strip():
         score += 2.0; reasons.append("Stable/trainer commentary present")
     if runner.get("prev_trainers") or []:
-        score += 2.0; reasons.append("Recent trainer change")
+        reasons.append("Recent trainer change — monitor")
     return round(max(0.0, min(15.0, score)), 2), reasons
 
 
@@ -354,11 +360,11 @@ def compute_market_score(
         else:
             score -= 6.0; reasons.append(f"Outsider ({format_odds(morning_price)})")
     if market_movers and isinstance(market_movers, dict):
-        for mover in (market_movers.get("movers") or []):
+        for mover in (market_movers.get("movements") or []):
             if str(mover.get("horse_id") or "") != horse_id: continue
-            movement = (mover.get("movement") or "").lower().strip()
-            if movement == "strong_steamer": score = min(score + 5.0, 5.0); reasons.append("Strong steamer")
-            elif movement == "steamer": score = min(score + 3.0, 5.0); reasons.append("Market steamer")
+            movement = (mover.get("move_type") or "").lower().strip()
+            if movement == "strong_steamer": score += 5.0; reasons.append("Strong steamer")
+            elif movement == "steamer": score += 3.0; reasons.append("Market steamer")
             elif movement == "weak_drift": score -= 3.0; reasons.append("Market drifting")
             elif movement == "dangerous_drift":
                 score -= 10.0; fatal_flags.append("dangerous_drift")
