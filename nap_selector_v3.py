@@ -400,7 +400,22 @@ def compute_context_score(race: dict, all_runners: list[dict]) -> tuple[float, l
     return round(max(0.0, min(15.0, score)), 2), reasons
 
 
-def compute_trainer_score(runner: dict) -> tuple[float, list[str]]:
+def _ae_score(ae: float | None, runners: int, thresholds: tuple[float, float, float]) -> float:
+    """Convert an A/E ratio to a score delta. Returns 0 if sample is too small."""
+    if ae is None or runners < 5:
+        return 0.0
+    high, mid, low = thresholds
+    if ae >= 1.5:   return high
+    if ae >= 1.2:   return mid
+    if ae < 0.6:    return low
+    return 0.0
+
+
+def compute_trainer_score(
+    runner: dict,
+    race: Optional[dict] = None,
+    trainer_profiles: Optional[dict] = None,
+) -> tuple[float, list[str]]:
     reasons: list[str] = []; score = 0.0
     t14 = runner.get("trainer_14_days") or {}
     try: pct = float(str(t14.get("percent") or "").strip().rstrip("%"))
@@ -414,6 +429,42 @@ def compute_trainer_score(runner: dict) -> tuple[float, list[str]]:
         elif pct >= 25: score += 5.0; reasons.append(f"In-form trainer — {wins}/{runs} ({pct:.0f}%)")
         elif pct >= 12: score += 2.0; reasons.append(f"Trainer ticking over ({pct:.0f}%)")
         else: reasons.append(f"Cold trainer ({pct:.0f}%)")
+
+    # Course-specific trainer & jockey analysis (requires trainer_profiles data)
+    if trainer_profiles and race:
+        trainer_id   = str(runner.get("trainer_id") or "").strip()
+        jockey_id    = str(runner.get("jockey_id") or "").strip()
+        today_course = str(race.get("course") or "").strip().lower()
+
+        _trainers = trainer_profiles.get("trainers") or {}
+        _jockeys  = trainer_profiles.get("jockeys") or {}
+        t_data = _trainers.get(trainer_id) or {}
+
+        # Trainer win record at today's course
+        if today_course and t_data.get("courses"):
+            t_course = t_data["courses"].get(today_course) or {}
+            ae = t_course.get("ae"); n = t_course.get("runners", 0); w = t_course.get("wins", 0)
+            delta = _ae_score(ae, n, (3.0, 2.0, -2.0))
+            if delta > 0:   score += delta; reasons.append(f"Trainer excels at {race.get('course','?')}: {w}/{n} A/E={ae:.2f}")
+            elif delta < 0: score += delta; reasons.append(f"Trainer poor at {race.get('course','?')}: {w}/{n} A/E={ae:.2f}")
+
+        # Trainer×jockey combination record
+        if jockey_id and t_data.get("jockeys"):
+            combo = t_data["jockeys"].get(jockey_id) or {}
+            ae = combo.get("ae"); n = combo.get("runners", 0); w = combo.get("wins", 0)
+            jname = combo.get("jockey", jockey_id)
+            delta = _ae_score(ae, n, (2.0, 1.0, -1.0))
+            if delta > 0:   score += delta; reasons.append(f"Strong trainer/jockey combo ({jname}): {w}/{n} A/E={ae:.2f}")
+            elif delta < 0: score += delta; reasons.append(f"Weak trainer/jockey combo ({jname}): {w}/{n} A/E={ae:.2f}")
+
+        # Jockey win record at today's course
+        if jockey_id and today_course:
+            j_course = (_jockeys.get(jockey_id) or {}).get("courses", {}).get(today_course) or {}
+            ae = j_course.get("ae"); n = j_course.get("runners", 0); w = j_course.get("wins", 0)
+            delta = _ae_score(ae, n, (2.0, 1.0, -1.0))
+            if delta > 0:   score += delta; reasons.append(f"Jockey excels at {race.get('course','?')}: {w}/{n} A/E={ae:.2f}")
+            elif delta < 0: score += delta; reasons.append(f"Jockey poor at {race.get('course','?')}: {w}/{n} A/E={ae:.2f}")
+
     headgear_run = str(runner.get("headgear_run") or "").strip()
     headgear = (runner.get("headgear") or "").strip()
     if headgear_run == "1" and headgear:
@@ -489,6 +540,7 @@ def assign_grade(total_score: float) -> str:
 def score_runner(
     runner: dict, race: dict, all_runners: list[dict],
     full_form: Optional[dict], market_movers: Optional[dict],
+    trainer_profiles: Optional[dict] = None,
 ) -> dict:
     runner = dict(runner)
     runner["_race_type"] = str(race.get("type") or "")
@@ -496,7 +548,7 @@ def score_runner(
     suit_score, suit_reasons = compute_suitability_score(runner, race, full_form)
     ctx_score, ctx_reasons   = compute_context_score(race, all_runners)
     draw_score, draw_reasons = compute_draw_score(runner, race)
-    trnr_score, trnr_reasons = compute_trainer_score(runner)
+    trnr_score, trnr_reasons = compute_trainer_score(runner, race, trainer_profiles)
     mkt_score, mkt_reasons, fatal_flags = compute_market_score(runner, market_movers)
     total = max(0.0, min(100.0, form_score + suit_score + ctx_score + draw_score + trnr_score + mkt_score))
     grade = assign_grade(total)
@@ -632,12 +684,16 @@ def main() -> int:
     if market_movers is None:
         log("nap_selector_v3: market_movers not available — morning price only", "INFO")
 
+    trainer_profiles: Optional[dict] = safe_load_json(data_path(f"trainer_profiles_{date_str}.json"))
+    if trainer_profiles is None:
+        log("nap_selector_v3: trainer_profiles not available — course/combo signals skipped", "INFO")
+
     race_scores: dict[str, list[dict]] = {}
     for race in racecards:
         race_id = str(race.get("race_id") or "")
         runners: list[dict] = race.get("runners") or []
         if not runners: continue
-        scored = [score_runner(r, race, runners, full_form, market_movers) for r in runners]
+        scored = [score_runner(r, race, runners, full_form, market_movers, trainer_profiles) for r in runners]
         scored.sort(key=lambda r: r["score"], reverse=True)
         race_scores[race_id] = scored
 

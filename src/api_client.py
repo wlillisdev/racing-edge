@@ -235,6 +235,59 @@ class RacingAPIClient:
             return result
         return []
 
+    def get_trainer_analysis_courses(self, trainer_id: str) -> list[dict]:
+        """Fetch per-course win statistics for a trainer.
+
+        Endpoint: GET /trainers/{trainer_id}/analysis/courses
+
+        Returns list of course stat dicts (course, runners, 1st, a/e, win_%, etc.)
+        or [] if not available.
+        """
+        if not trainer_id:
+            return []
+        result = self._get(f"/trainers/{trainer_id}/analysis/courses", allow_404=True)
+        return self._extract_list(result)
+
+    def get_trainer_analysis_jockeys(self, trainer_id: str) -> list[dict]:
+        """Fetch per-jockey combination win statistics for a trainer.
+
+        Endpoint: GET /trainers/{trainer_id}/analysis/jockeys
+
+        Returns list of jockey stat dicts (jockey_id, jockey, runners, 1st, a/e, win_%, etc.)
+        or [] if not available.
+        """
+        if not trainer_id:
+            return []
+        result = self._get(f"/trainers/{trainer_id}/analysis/jockeys", allow_404=True)
+        return self._extract_list(result)
+
+    def get_jockey_analysis_courses(self, jockey_id: str) -> list[dict]:
+        """Fetch per-course win statistics for a jockey.
+
+        Endpoint: GET /jockeys/{jockey_id}/analysis/courses
+
+        Returns list of course stat dicts (course, rides, 1st, a/e, win_%, etc.)
+        or [] if not available.
+        """
+        if not jockey_id:
+            return []
+        result = self._get(f"/jockeys/{jockey_id}/analysis/courses", allow_404=True)
+        return self._extract_list(result)
+
+    @staticmethod
+    def _extract_list(result: object) -> list[dict]:
+        """Unpack a list from various API response shapes."""
+        if result is None:
+            return []
+        if isinstance(result, list):
+            return result
+        if isinstance(result, dict):
+            for key in ("analysis", "courses", "jockeys", "trainers", "data", "results"):
+                v = result.get(key)
+                if isinstance(v, list):
+                    return v
+        return []
+
     def get_race_results(self, race_id: str) -> Optional[dict]:
         """Fetch post-race result for a completed race.
 
