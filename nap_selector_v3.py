@@ -40,7 +40,7 @@ GRADE_B_PLUS_THRESHOLD: float = 60.0
 GRADE_B_THRESHOLD: float = 50.0
 GRADE_C_THRESHOLD: float = 40.0
 
-NAP_MIN_SCORE: float = 60.0
+NAP_MIN_SCORE: float = 63.0
 CLUSTER_SPREAD: float = 8.0
 CLUSTER_MIN_SCORE: float = 55.0
 
@@ -328,16 +328,16 @@ def compute_trainer_score(runner: dict) -> tuple[float, list[str]]:
     if pct is not None:
         wins = t14.get("wins", "?"); runs = t14.get("runs", "?")
         if quick_return: reasons.append(f"Hot trainer ({pct:.0f}%) but quick return — edge cancelled")
-        elif pct >= 30: score += 8.0; reasons.append(f"Hot trainer — {wins}/{runs} ({pct:.0f}%)")
-        elif pct >= 20: score += 5.0; reasons.append(f"In-form trainer — {wins}/{runs} ({pct:.0f}%)")
-        elif pct >= 10: score += 2.0; reasons.append(f"Trainer ticking over ({pct:.0f}%)")
+        elif pct >= 35: score += 8.0; reasons.append(f"Hot trainer — {wins}/{runs} ({pct:.0f}%)")
+        elif pct >= 25: score += 5.0; reasons.append(f"In-form trainer — {wins}/{runs} ({pct:.0f}%)")
+        elif pct >= 12: score += 2.0; reasons.append(f"Trainer ticking over ({pct:.0f}%)")
         else: reasons.append(f"Cold trainer ({pct:.0f}%)")
     headgear_run = str(runner.get("headgear_run") or "").strip()
     headgear = (runner.get("headgear") or "").strip()
     if headgear_run == "1" and headgear:
-        reasons.append(f"First-time {headgear} (note: not a positive signal per data)")
+        score -= 2.0; reasons.append(f"First-time {headgear} — negative signal (-2pts)")
     wind_run = str(runner.get("wind_surgery_run") or "").strip()
-    if wind_run == "1": score += 3.0; reasons.append("First run after wind surgery")
+    if wind_run == "1": score += 2.0; reasons.append("First run after wind surgery")
     if (runner.get("stable_tour") or "").strip() or (runner.get("quotes") or "").strip():
         score += 2.0; reasons.append("Stable/trainer commentary present")
     if runner.get("prev_trainers") or []:
@@ -358,9 +358,9 @@ def compute_market_score(
         if morning_price < 2.0:
             score += 1.0; reasons.append(f"Very short price ({format_odds(morning_price)}) — value risk")
         elif morning_price < 3.0:
-            score += 3.0; reasons.append(f"Short price ({format_odds(morning_price)})")
+            score += 4.0; reasons.append(f"Short price ({format_odds(morning_price)})")
         elif morning_price <= 6.0:
-            score += 5.0; reasons.append(f"Value price ({format_odds(morning_price)})")
+            score += 4.0; reasons.append(f"Value price ({format_odds(morning_price)})")
         elif morning_price <= 12.0:
             score += 2.0; reasons.append(f"Each-way territory ({format_odds(morning_price)})")
         elif morning_price <= 20.0:
