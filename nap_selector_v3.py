@@ -390,6 +390,13 @@ def compute_trainer_score(runner: dict) -> tuple[float, list[str]]:
         elif pct >= 25: score += 5.0; reasons.append(f"In-form trainer — {wins}/{runs} ({pct:.0f}%)")
         elif pct >= 12: score += 2.0; reasons.append(f"Trainer ticking over ({pct:.0f}%)")
         else: reasons.append(f"Cold trainer ({pct:.0f}%)")
+    j14 = runner.get("jockey_14_days") or {}
+    try: jpct = float(str(j14.get("percent") or "").strip().rstrip("%"))
+    except (ValueError, TypeError): jpct = None
+    if jpct is not None:
+        jwins = j14.get("wins", "?"); jruns = j14.get("runs", "?")
+        if jpct >= 35: score += 2.0; reasons.append(f"Jockey flying — {jwins}/{jruns} ({jpct:.0f}%)")
+        elif jpct >= 25: score += 1.0; reasons.append(f"Jockey in form — {jwins}/{jruns} ({jpct:.0f}%)")
     headgear_run = str(runner.get("headgear_run") or "").strip()
     headgear = (runner.get("headgear") or "").strip()
     if headgear_run == "1" and headgear:

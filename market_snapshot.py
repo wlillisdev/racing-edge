@@ -23,6 +23,7 @@ from pathlib import Path
 
 from src.config import get_config
 from src.helpers import data_path, log, safe_write_json, today_str
+from src.api_client import get_client, RacingAPIError
 from racecard_loader import get_all_runners
 
 # ---------------------------------------------------------------------------
@@ -54,14 +55,14 @@ def _system_snapshots_dir() -> str:
 
 
 def _best_decimal_odds(runner: dict) -> float | None:
-    """Return the tightest (lowest decimal) bookmaker price, falling back to sp_dec."""
+    """Return the best available (longest decimal) bookmaker price, falling back to sp_dec."""
     odds_list = runner.get("odds") or []
     best: float | None = None
     for entry in odds_list:
         try:
             dec = float(entry.get("decimal") or 0)
             if dec > 1.0:
-                if best is None or dec < best:
+                if best is None or dec > best:  # take longest price = best value
                     best = dec
         except (TypeError, ValueError):
             continue
@@ -76,6 +77,41 @@ def _best_decimal_odds(runner: dict) -> float | None:
         except (TypeError, ValueError):
             pass
     return None
+
+
+def _flatten_racecard_runners(racecards: list[dict]) -> list[dict]:
+    """Flatten runners from a raw racecard API response into the format get_all_runners returns."""
+    runners: list[dict] = []
+    for race in racecards:
+        race_id  = str(race.get("race_id") or "")
+        course   = str(race.get("course") or "")
+        off_time = str(race.get("off_time") or "")
+        for r in (race.get("runners") or []):
+            flat = dict(r)
+            flat["race_id"]  = race_id
+            flat["course"]   = course
+            flat["off_time"] = off_time
+            runners.append(flat)
+    return runners
+
+
+def _fetch_late_runners() -> list[dict] | None:
+    """Re-fetch racecard from API to capture updated late market prices."""
+    try:
+        cfg = get_config()
+        client = get_client()
+        raw = client.get_racecards(day="today", region_codes=cfg.regions)
+        racecards = raw.get("racecards") or []
+        if not racecards:
+            log("market_snapshot: API returned no races for late snapshot", "ERROR")
+            return None
+        return _flatten_racecard_runners(racecards)
+    except RacingAPIError as exc:
+        log(f"market_snapshot: API error fetching late prices — {exc}", "ERROR")
+        return None
+    except Exception as exc:
+        log(f"market_snapshot: unexpected error — {exc}", "ERROR")
+        return None
 
 
 def _build_snapshot(snapshot_type: str, date_str: str, runners: list[dict]) -> dict:
@@ -136,7 +172,16 @@ def main() -> int:
     date_str = today_str()
     log(f"market_snapshot: taking '{snapshot_type}' snapshot for {date_str}")
 
-    runners = get_all_runners(date_str)
+    if snapshot_type == "late":
+        # Re-fetch racecard from API to capture updated prices at race time
+        log("market_snapshot: fetching fresh odds from API for late snapshot")
+        runners = _fetch_late_runners()
+        if not runners:
+            log("market_snapshot: late fetch failed — falling back to cached racecard", "WARNING")
+            runners = get_all_runners(date_str)
+    else:
+        runners = get_all_runners(date_str)
+
     if not runners:
         log(
             f"market_snapshot: no runner data available for {date_str} — "
