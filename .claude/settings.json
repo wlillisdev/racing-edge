@@ -1,0 +1,50 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "timeout": 10,
+            "statusMessage": "Checking Python syntax...",
+            "command": "jq -r '.tool_input.file_path // empty' | { read -r f; if [[ \"$f\" == *.py ]]; then python -m py_compile \"$f\" 2>/dev/null && echo \"{\\\"hookSpecificOutput\\\":{\\\"hookEventName\\\":\\\"PostToolUse\\\",\\\"additionalContext\\\":\\\"✓ Syntax OK: $f\\\"}}\" || echo \"{\\\"hookSpecificOutput\\\":{\\\"hookEventName\\\":\\\"PostToolUse\\\",\\\"additionalContext\\\":\\\"✗ SYNTAX ERROR in $f — fix before committing\\\"}}\"; fi; } || true"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "timeout": 15,
+            "statusMessage": "Checking for corrupted Python files...",
+            "command": "jq -r '.tool_input.command // empty' | grep -q 'git push' && { bad=$(find . -maxdepth 2 -name '*.py' -not -path './.git/*' -not -name '__init__.py' | while read -r f; do [ \"$(wc -l < \"$f\")\" -eq 0 ] && [ \"$(wc -c < \"$f\")\" -gt 10 ] && echo \"$f\"; done | head -5 | tr '\\n' ' '); if [ -n \"$bad\" ]; then printf '{\"continue\":false,\"stopReason\":\"BLOCKED: Corrupted .py files (single-line with embedded \\\\n): %s — fix with Write tool before pushing\"}' \"$bad\"; else true; fi; } || true"
+          }
+        ]
+      },
+      {
+        "matcher": "mcp__github__create_or_update_file",
+        "hooks": [
+          {
+            "type": "command",
+            "timeout": 5,
+            "command": "jq -r '.tool_input.path // empty' | grep -q '\\.py$' && echo '{\"continue\":false,\"stopReason\":\"BLOCKED: mcp__github__create_or_update_file corrupts Python files by flattening newlines. Use: Edit/Write → git add → git commit → git push\"}' || true"
+          }
+        ]
+      },
+      {
+        "matcher": "mcp__github__push_files",
+        "hooks": [
+          {
+            "type": "command",
+            "timeout": 5,
+            "command": "jq -r '[.tool_input.files // [] | .[].path] | .[] // empty' 2>/dev/null | grep -q '\\.py$' && echo '{\"continue\":false,\"stopReason\":\"BLOCKED: mcp__github__push_files corrupts Python files by flattening newlines. Use: Edit/Write → git add → git commit → git push\"}' || true"
+          }
+        ]
+      }
+    ]
+  }
+}
