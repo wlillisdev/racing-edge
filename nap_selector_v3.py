@@ -53,7 +53,7 @@ JUMP_ALTERNATIVE_MIN_SCORE: float = 55.0
 JUMP_MAX_RUNNERS: int = 12
 JUMP_EXCLUDED_GOING: frozenset[str] = frozenset({"Firm", "Good to Firm"})
 FLAT_MAX_DIST_F: float = 14.0   # exclude flat stayers (14f+) — -21% ROI in backtest
-FLAT_EXCLUDED_GOING: frozenset[str] = frozenset({"Firm"})  # only hard ground excluded; going suitability handled by form scoring
+FLAT_EXCLUDED_GOING: frozenset[str] = frozenset({"Firm", "Heavy"})  # hard + waterlogged ground — backtest shows -40.5% ROI on heavy flat
 
 _GOING_ADJACENCY: list[list[str]] = [
     ["Firm", "Good to Firm", "Good", "Good to Soft", "Soft", "Heavy"],
@@ -373,6 +373,14 @@ def compute_context_score(race: dict, all_runners: list[dict]) -> tuple[float, l
             score -= 2.0; reasons.append("Good going for jump race — historically below par")
         if field_size > JUMP_MAX_RUNNERS:
             score -= 4.0; reasons.append(f"Crowded jump field ({field_size} runners) — chaotic")
+    else:
+        # Flat/AW distance bonus: mile (7-10.5f) = best ROI (+43%), sprint = worst (-27%)
+        try: dist_f = float(str(race.get("distance_f") or runner.get("distance_f") or "0"))
+        except (TypeError, ValueError): dist_f = 0.0
+        if 7.0 <= dist_f <= 10.5:
+            score += 2.0; reasons.append(f"Mile distance — optimal ROI zone (+43% backtest)")
+        elif dist_f < 7.0 and dist_f > 0:
+            score -= 1.0; reasons.append(f"Sprint distance — below-average ROI zone")
     return round(max(0.0, min(15.0, score)), 2), reasons
 
 
