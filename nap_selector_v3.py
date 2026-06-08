@@ -4,11 +4,13 @@ nap_selector_v3.py — Core NAP selection engine (model v4).
 Scoring (100 pts total):
   Form Quality      0–40
   Suitability       0–25
-  Race Context      0–15
-  Trainer Intent    0–15
+  Race Context      0–15  (incl. draw bias for Chester/Catterick/Lingfield/Windsor sprints)
+  Trainer Intent    0–15  (incl. NLP keyword scoring on stable commentary)
   Market Overlay  –10/+5
 
-NAP grade gate: score >= 60 AND no fatal flags.
+NAP grade gate: score 70–82 AND no fatal flags.
+  Sweet spot 73-82 (83-85 band = 0% WR — calibration inversion).
+  Class 3/5 golden zone (ROI +195-213% in backtest).
 Fatal flags: dangerous_drift only.
 NO BET is a valid correct outcome.
 
@@ -40,7 +42,8 @@ GRADE_B_PLUS_THRESHOLD: float = 60.0
 GRADE_B_THRESHOLD: float = 50.0
 GRADE_C_THRESHOLD: float = 40.0
 
-NAP_MIN_SCORE: float = 63.0
+NAP_MIN_SCORE: float = 70.0
+NAP_MAX_SCORE: float = 82.0   # 83-85 band = 0% WR in backtest — calibration inversion
 CLUSTER_SPREAD: float = 8.0
 CLUSTER_MIN_SCORE: float = 55.0
 
@@ -56,6 +59,24 @@ _GOING_ADJACENCY: list[list[str]] = [
     ["Firm", "Good to Firm", "Good", "Good to Soft", "Soft", "Heavy"],
     ["Standard", "Slow"],
 ]
+
+# Draw bias: (direction, threshold_fraction_of_field)
+# "low" = low stall numbers favoured; "high" = high stall numbers favoured
+_DRAW_BIAS: dict[str, tuple[str, float]] = {
+    "chester": ("low", 0.30),    # very tight turns, inner rail dominates
+    "catterick": ("low", 0.35),  # right-hand, low draw slight edge in sprints
+    "lingfield": ("low", 0.30),  # AW inner rail advantage
+    "windsor": ("high", 0.35),   # figure-8, far-side rail advantage in sprints
+}
+
+_STRONG_POSITIVE_NLP: frozenset[str] = frozenset({
+    "improves", "improve", "big run", "progressive", "exciting",
+    "should win", "will win", "could be anything", "ready to win",
+    "well ahead", "well handicapped", "ease to win",
+})
+_NEGATIVE_NLP: frozenset[str] = frozenset({
+    "disappointing", "struggling", "poor run", "below par", "tailed off", "well beaten",
+})
 
 
 def _parse_form_chars(form: str) -> list[str]:
@@ -275,6 +296,42 @@ def compute_suitability_score(
     return round(max(0.0, min(25.0, score)), 2), reasons
 
 
+def compute_draw_score(runner: dict, race: dict) -> tuple[float, list[str]]:
+    race_type = str(race.get("type") or "").lower()
+    if any(x in race_type for x in ("chase", "hurdle", "bumper")):
+        return 0.0, []
+    try: dist_f = float(str(runner.get("distance_f") or race.get("distance_f") or "0"))
+    except (TypeError, ValueError): dist_f = 0.0
+    if dist_f <= 0 or dist_f > 7.5:
+        return 0.0, []
+    course = (race.get("course") or "").lower().strip()
+    bias = _DRAW_BIAS.get(course)
+    if not bias:
+        return 0.0, []
+    try: draw = int(str(runner.get("draw") or "0"))
+    except (TypeError, ValueError): draw = 0
+    if draw <= 0:
+        return 0.0, []
+    try: field_size = int(race.get("field_size") or len(race.get("runners") or []))
+    except (TypeError, ValueError): field_size = 0
+    if field_size < 4:
+        return 0.0, []
+    direction, frac = bias
+    threshold = max(1, round(field_size * frac))
+    score = 0.0; reasons: list[str] = []
+    if direction == "low":
+        if draw <= threshold:
+            score += 3.0; reasons.append(f"Favourable draw (stall {draw} at {course.title()} sprint)")
+        elif draw >= field_size - threshold + 1:
+            score -= 2.0; reasons.append(f"Wide draw disadvantage (stall {draw} at {course.title()})")
+    else:
+        if draw >= field_size - threshold + 1:
+            score += 3.0; reasons.append(f"Favourable draw (stall {draw} at {course.title()} sprint)")
+        elif draw <= threshold:
+            score -= 2.0; reasons.append(f"Inside draw disadvantage (stall {draw} at {course.title()})")
+    return score, reasons
+
+
 def compute_context_score(race: dict, all_runners: list[dict]) -> tuple[float, list[str]]:
     reasons: list[str] = []; score = 0.0
     try: field_size = int(race.get("field_size") or len(all_runners))
@@ -290,13 +347,14 @@ def compute_context_score(race: dict, all_runners: list[dict]) -> tuple[float, l
     try: race_class = int(_cls_raw)
     except (TypeError, ValueError): race_class = None
     if race_class is not None:
-        if race_class <= 2: score += 5.0; reasons.append(f"Class {race_class} — high quality, reliable form")
-        elif race_class == 3: score += 3.0; reasons.append(f"Class {race_class} — good quality field")
-        elif race_class == 4: score += 1.0; reasons.append(f"Class {race_class}")
-        elif race_class == 5: score -= 2.0; reasons.append(f"Class {race_class} — lower quality field")
-        else: score -= 4.0; reasons.append(f"Class {race_class} — low grade, noisy form")
+        # Class 3/5 = ROI +195-213% in backtest. Class 1-2-4 = negative ROI (too competitive/noisy).
+        if race_class <= 2: score += 0.0; reasons.append(f"Class {race_class} — top level, competitive field")
+        elif race_class == 3: score += 5.0; reasons.append(f"Class {race_class} — sweet spot, form reliable")
+        elif race_class == 4: score -= 1.0; reasons.append(f"Class {race_class} — negative ROI zone")
+        elif race_class == 5: score += 3.0; reasons.append(f"Class {race_class} — predictable pattern zone")
+        else: score -= 3.0; reasons.append(f"Class {race_class} — low grade, noisy form")
     elif "grade 1" in _cls_raw or _cls_raw == "g1":
-        score += 5.0; reasons.append("Grade 1 — top NH quality, most reliable form")
+        score += 3.0; reasons.append("Grade 1 — top NH, competitive (use form lines carefully)")
     elif "grade 2" in _cls_raw or _cls_raw == "g2":
         score += 4.0; reasons.append("Grade 2 — high NH quality")
     elif "grade 3" in _cls_raw or _cls_raw == "g3":
@@ -338,8 +396,16 @@ def compute_trainer_score(runner: dict) -> tuple[float, list[str]]:
         score -= 2.0; reasons.append(f"First-time {headgear} — negative signal (-2pts)")
     wind_run = str(runner.get("wind_surgery_run") or "").strip()
     if wind_run == "1": score += 2.0; reasons.append("First run after wind surgery")
-    if (runner.get("stable_tour") or "").strip() or (runner.get("quotes") or "").strip():
-        score += 2.0; reasons.append("Stable/trainer commentary present")
+    _commentary = (
+        (runner.get("stable_tour") or "") + " " + (runner.get("quotes") or "")
+    ).lower().strip()
+    if _commentary:
+        if any(kw in _commentary for kw in _STRONG_POSITIVE_NLP):
+            score += 3.0; reasons.append("Strong positive commentary — win signal")
+        elif any(kw in _commentary for kw in _NEGATIVE_NLP):
+            score -= 1.0; reasons.append("Negative commentary — caution")
+        else:
+            score += 2.0; reasons.append("Stable/trainer commentary present")
     if runner.get("prev_trainers") or []:
         reasons.append("Recent trainer change — monitor")
     return round(max(0.0, min(15.0, score)), 2), reasons
@@ -398,9 +464,10 @@ def score_runner(
     form_score, form_reasons = compute_form_score(runner, all_runners)
     suit_score, suit_reasons = compute_suitability_score(runner, race, full_form)
     ctx_score, ctx_reasons   = compute_context_score(race, all_runners)
+    draw_score, draw_reasons = compute_draw_score(runner, race)
     trnr_score, trnr_reasons = compute_trainer_score(runner)
     mkt_score, mkt_reasons, fatal_flags = compute_market_score(runner, market_movers)
-    total = max(0.0, min(100.0, form_score + suit_score + ctx_score + trnr_score + mkt_score))
+    total = max(0.0, min(100.0, form_score + suit_score + ctx_score + draw_score + trnr_score + mkt_score))
     grade = assign_grade(total)
     morning_price = _best_morning_price(runner)
     return {
@@ -412,7 +479,7 @@ def score_runner(
         "score": round(total, 2), "grade": grade,
         "form_score": form_score, "suitability_score": suit_score,
         "context_score": ctx_score, "trainer_score": trnr_score, "market_score": mkt_score,
-        "reasons": form_reasons + suit_reasons + ctx_reasons + trnr_reasons + mkt_reasons,
+        "reasons": form_reasons + suit_reasons + ctx_reasons + draw_reasons + trnr_reasons + mkt_reasons,
         "warnings": list(fatal_flags),
         "morning_price": morning_price,
         "form": runner.get("form") or "",
@@ -570,6 +637,7 @@ def main() -> int:
             no_bet_races.append(race_id); continue
         if race_id in cluster_races: no_bet_races.append(race_id); continue
         if top["score"] < NAP_MIN_SCORE: no_bet_races.append(race_id); continue
+        if top["score"] > NAP_MAX_SCORE: no_bet_races.append(race_id); continue  # 83-85 band = 0% WR
         if "dangerous_drift" in (top.get("warnings") or []):
             no_bet_races.append(race_id); continue
         nap_candidates.append(top)
