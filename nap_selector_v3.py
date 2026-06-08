@@ -50,6 +50,8 @@ JUMP_ALTERNATIVE_MIN_SCORE: float = 55.0
 JUMP_MAX_RUNNERS: int = 12
 JUMP_EXCLUDED_GOING: frozenset[str] = frozenset({"Firm", "Good to Firm"})
 FLAT_MAX_DIST_F: float = 14.0   # exclude flat stayers (14f+) — -21% ROI in backtest
+FLAT_AW_BONUS: float = 6.0          # AW going bonus for flat races
+FLAT_EXCLUDED_GOING: frozenset[str] = frozenset({"Good", "Good to Firm", "Firm", "Good to Soft", "Soft"})
 
 _GOING_ADJACENCY: list[list[str]] = [
     ["Firm", "Good to Firm", "Good", "Good to Soft", "Soft", "Heavy"],
@@ -291,6 +293,17 @@ def compute_context_score(race: dict, all_runners: list[dict]) -> tuple[float, l
             score -= 2.0; reasons.append("Good going for jump race — historically below par")
         if field_size > JUMP_MAX_RUNNERS:
             score -= 4.0; reasons.append(f"Crowded jump field ({field_size} runners) — chaotic")
+    else:
+        _going_raw_lower = (race.get("going") or "").lower()
+        _is_aw = (
+            going_norm in ("Standard", "Slow")
+            or "all weather" in _going_raw_lower
+            or "polytrack" in _going_raw_lower
+            or "tapeta" in _going_raw_lower
+            or _going_raw_lower in ("aw",)
+        )
+        if _is_aw:
+            score += FLAT_AW_BONUS; reasons.append("All-Weather surface — model's best flat ROI")
     return round(max(0.0, min(15.0, score)), 2), reasons
 
 
@@ -540,6 +553,9 @@ def main() -> int:
         # Flat distance filter — stayers (14f+) consistently lose in backtest
         _is_flat = not any(x in (top.get("race_type") or "").lower() for x in ("chase", "hurdle", "bumper"))
         if _is_flat and (top.get("distance_f") or 0.0) >= FLAT_MAX_DIST_F:
+            no_bet_races.append(race_id); continue
+        # Flat going filter — turf ground with poor ROI (-30% to -100% in backtest)
+        if _is_flat and going_normalise(top.get("going") or "") in FLAT_EXCLUDED_GOING:
             no_bet_races.append(race_id); continue
         if race_id in cluster_races: no_bet_races.append(race_id); continue
         if top["score"] < NAP_MIN_SCORE: no_bet_races.append(race_id); continue

@@ -144,7 +144,7 @@ def _normalise_racecard(raw: dict) -> dict:
         "course":      _safe_str(raw.get("course")),
         "off_time":    _safe_str(raw.get("off_time") or raw.get("off")),
         "race_name":   _safe_str(raw.get("race_name") or raw.get("race")),
-        "class":       raw.get("class"),
+        "class":       raw.get("class") if raw.get("class") is not None else raw.get("race_class"),
         "distance_f":  _safe_float(raw.get("distance_f") or raw.get("dist_f")),
         "going":       _safe_str(raw.get("going")),
         "surface":     _safe_str(raw.get("surface")),
