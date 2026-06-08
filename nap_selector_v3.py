@@ -8,8 +8,8 @@ Scoring (100 pts total):
   Trainer Intent    0–15  (incl. NLP keyword scoring on stable commentary)
   Market Overlay  –10/+5
 
-NAP grade gate: score 70–82 AND no fatal flags.
-  Sweet spot 73-82 (83-85 band = 0% WR — calibration inversion).
+NAP grade gate: score 62–78 AND no fatal flags.
+  Sweet spot 62-78 after class scoring overhaul (distribution shifted down ~5-8pts).
   Class 3/5 golden zone (ROI +195-213% in backtest).
 Fatal flags: dangerous_drift only.
 NO BET is a valid correct outcome.
@@ -42,8 +42,8 @@ GRADE_B_PLUS_THRESHOLD: float = 60.0
 GRADE_B_THRESHOLD: float = 50.0
 GRADE_C_THRESHOLD: float = 40.0
 
-NAP_MIN_SCORE: float = 70.0
-NAP_MAX_SCORE: float = 82.0   # 83-85 band = 0% WR in backtest — calibration inversion
+NAP_MIN_SCORE: float = 62.0   # class scoring overhaul shifted distribution down ~5-8pts; 60-69 = 50% WR
+NAP_MAX_SCORE: float = 78.0   # cap keeps us in the sweet spot (scores >78 likely over-inflated)
 CLUSTER_SPREAD: float = 8.0
 CLUSTER_MIN_SCORE: float = 55.0
 
