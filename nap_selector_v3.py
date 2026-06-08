@@ -42,8 +42,8 @@ GRADE_B_PLUS_THRESHOLD: float = 60.0
 GRADE_B_THRESHOLD: float = 50.0
 GRADE_C_THRESHOLD: float = 40.0
 
-NAP_MIN_SCORE: float = 62.0   # class scoring overhaul shifted distribution down ~5-8pts; 60-69 = 50% WR
-NAP_MAX_SCORE: float = 78.0   # cap keeps us in the sweet spot (scores >78 likely over-inflated)
+NAP_MIN_SCORE: float = 60.0   # 60-69 band = 50% WR / +1.9% ROI in backtest (sweet spot)
+NAP_MAX_SCORE: float = 76.0   # cap: above this band reliability drops off
 CLUSTER_SPREAD: float = 8.0
 CLUSTER_MIN_SCORE: float = 55.0
 
