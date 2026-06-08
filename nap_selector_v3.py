@@ -8,8 +8,8 @@ Scoring (100 pts total):
   Trainer Intent    0–15  (incl. NLP keyword scoring on stable commentary)
   Market Overlay  –10/+5
 
-NAP grade gate: score 62–78 AND no fatal flags.
-  Sweet spot 62-78 after class scoring overhaul (distribution shifted down ~5-8pts).
+NAP grade gate: score 60–82 AND no fatal flags.
+  Sweet spot 60-69 band = 50% WR / +1.9% ROI; 75-82 band = 33-50% WR / +113-233% ROI.
   Class 3/5 golden zone (ROI +195-213% in backtest).
 Fatal flags: dangerous_drift only.
 NO BET is a valid correct outcome.
@@ -236,7 +236,10 @@ def compute_suitability_score(
 ) -> tuple[float, list[str]]:
     reasons: list[str] = []
     score = 0.0
-    today_going = going_normalise(race.get("going") or "")
+    # Prefer going_detailed (e.g. "Good to Firm (Good in places)") — strip parenthetical for normalisation
+    _going_raw = race.get("going_detailed") or race.get("going") or ""
+    _going_raw = _going_raw.split("(")[0].strip()  # "Good to Firm (Good in places)" → "Good to Firm"
+    today_going = going_normalise(_going_raw)
     today_dist_raw = str(race.get("distance_f") or race.get("distance") or "")
     today_course = (race.get("course") or "").strip().lower()
     horse_id = str(runner.get("horse_id") or "")
@@ -316,9 +319,25 @@ def compute_draw_score(runner: dict, race: dict) -> tuple[float, list[str]]:
     except (TypeError, ValueError): field_size = 0
     if field_size < 4:
         return 0.0, []
+
+    # Read rail and stall position from pro racecard — these override static bias
+    rail = (race.get("rail_movements") or "").lower()
+    stalls = (race.get("stalls") or "").lower()
+    rail_uncertainty = any(kw in rail for kw in ("moved", "movement", "far side", "near side", "centre"))
+
     direction, frac = bias
+    # If stalls are positioned on the opposite side to expected, reverse the bias
+    if direction == "low" and any(kw in stalls for kw in ("far side", "stands side")):
+        direction = "high"
+        reasons_prefix = [f"Stalls: {race.get('stalls')} — draw bias reversed vs static model"]
+    elif direction == "high" and any(kw in stalls for kw in ("near side", "inside")):
+        direction = "low"
+        reasons_prefix = [f"Stalls: {race.get('stalls')} — draw bias reversed vs static model"]
+    else:
+        reasons_prefix = []
+
     threshold = max(1, round(field_size * frac))
-    score = 0.0; reasons: list[str] = []
+    score = 0.0; reasons: list[str] = list(reasons_prefix)
     if direction == "low":
         if draw <= threshold:
             score += 3.0; reasons.append(f"Favourable draw (stall {draw} at {course.title()} sprint)")
@@ -329,6 +348,11 @@ def compute_draw_score(runner: dict, race: dict) -> tuple[float, list[str]]:
             score += 3.0; reasons.append(f"Favourable draw (stall {draw} at {course.title()} sprint)")
         elif draw <= threshold:
             score -= 2.0; reasons.append(f"Inside draw disadvantage (stall {draw} at {course.title()})")
+
+    # Rail has moved — reduce bias confidence by half
+    if rail_uncertainty and score != 0.0:
+        score *= 0.5
+        reasons.append(f"Rail movements today — draw advantage reduced ({race.get('rail_movements')})")
     return score, reasons
 
 
@@ -390,19 +414,15 @@ def compute_trainer_score(runner: dict) -> tuple[float, list[str]]:
         elif pct >= 25: score += 5.0; reasons.append(f"In-form trainer — {wins}/{runs} ({pct:.0f}%)")
         elif pct >= 12: score += 2.0; reasons.append(f"Trainer ticking over ({pct:.0f}%)")
         else: reasons.append(f"Cold trainer ({pct:.0f}%)")
-    j14 = runner.get("jockey_14_days") or {}
-    try: jpct = float(str(j14.get("percent") or "").strip().rstrip("%"))
-    except (ValueError, TypeError): jpct = None
-    if jpct is not None:
-        jwins = j14.get("wins", "?"); jruns = j14.get("runs", "?")
-        if jpct >= 35: score += 2.0; reasons.append(f"Jockey flying — {jwins}/{jruns} ({jpct:.0f}%)")
-        elif jpct >= 25: score += 1.0; reasons.append(f"Jockey in form — {jwins}/{jruns} ({jpct:.0f}%)")
     headgear_run = str(runner.get("headgear_run") or "").strip()
     headgear = (runner.get("headgear") or "").strip()
     if headgear_run == "1" and headgear:
         score -= 2.0; reasons.append(f"First-time {headgear} — negative signal (-2pts)")
     wind_run = str(runner.get("wind_surgery_run") or "").strip()
-    if wind_run == "1": score += 2.0; reasons.append("First run after wind surgery")
+    wind_type = (runner.get("wind_surgery") or "").strip()
+    if wind_run == "1":
+        label = f" ({wind_type})" if wind_type else ""
+        score += 2.0; reasons.append(f"First run after wind surgery{label}")
     _commentary = (
         (runner.get("stable_tour") or "") + " " + (runner.get("quotes") or "")
     ).lower().strip()
@@ -411,8 +431,12 @@ def compute_trainer_score(runner: dict) -> tuple[float, list[str]]:
             score += 3.0; reasons.append("Strong positive commentary — win signal")
         elif any(kw in _commentary for kw in _NEGATIVE_NLP):
             score -= 1.0; reasons.append("Negative commentary — caution")
-    if runner.get("prev_trainers") or []:
+    if runner.get("prev_trainers"):
         reasons.append("Recent trainer change — monitor")
+    medical = runner.get("medical") or []
+    if medical:
+        types = ", ".join(str(m.get("type") or "?") for m in medical[:2])
+        score -= 1.0; reasons.append(f"Medical record on file: {types} — monitor")
     return round(max(0.0, min(15.0, score)), 2), reasons
 
 

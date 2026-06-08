@@ -72,13 +72,17 @@ def _normalise_runner(raw: dict) -> dict:
         "headgear":         _safe_str(raw.get("headgear")),
         "headgear_run":     _safe_str(raw.get("headgear_run")),
         "wind_surgery_run": _safe_str(raw.get("wind_surgery_run")),
+        "wind_surgery":     _safe_str(raw.get("wind_surgery")),
         "trainer_14_days":  raw.get("trainer_14_days") if isinstance(raw.get("trainer_14_days"), dict) else {},
+        "trainer_rtf":      _safe_str(raw.get("trainer_rtf")),
         "spotlight":        _safe_str(raw.get("spotlight")),
         "comment":          _safe_str(raw.get("comment")),
         "quotes":           _safe_str(raw.get("quotes")),
         "stable_tour":      _safe_str(raw.get("stable_tour")),
-        "prev_trainers":    raw.get("prev_trainers") or [],
-        "jockey_14_days":   raw.get("jockey_14_days") if isinstance(raw.get("jockey_14_days"), dict) else {},
+        "prev_trainers":      raw.get("prev_trainers") or [],
+        "past_results_flags": raw.get("past_results_flags") or [],
+        "medical":            raw.get("medical") or [],
+        # Note: jockey_14_days does NOT exist in the Racing API Pro racecard schema
     }
 
 
@@ -86,18 +90,28 @@ def _normalise_racecard(raw: dict) -> dict:
     runners_raw: list[dict] = raw.get("runners") or []
     runners = [_normalise_runner(r) for r in runners_raw]
     return {
-        "race_id":    _safe_str(raw.get("race_id")),
-        "course":     _safe_str(raw.get("course")),
-        "off_time":   _safe_str(raw.get("off_time")),
-        "race_name":  _safe_str(raw.get("title") or raw.get("race_name")),
-        "class":      _safe_str(raw.get("class") or raw.get("race_class")),
-        "distance_f": _safe_float(raw.get("distance_f") or raw.get("dist_f")),
-        "going":      _safe_str(raw.get("going")),
-        "surface":    _safe_str(raw.get("surface")),
-        "type":       _safe_str(raw.get("type")),
-        "region":     _safe_str(raw.get("region")),
-        "field_size": _safe_int(raw.get("field_size") or len(runners)),
-        "runners":    runners,
+        "race_id":          _safe_str(raw.get("race_id")),
+        "course":           _safe_str(raw.get("course")),
+        "off_time":         _safe_str(raw.get("off_time")),
+        "race_name":        _safe_str(raw.get("title") or raw.get("race_name")),
+        "class":            _safe_str(raw.get("class") or raw.get("race_class")),
+        "distance_f":       _safe_float(raw.get("distance_f") or raw.get("dist_f")),
+        "going":            _safe_str(raw.get("going")),
+        "going_detailed":   _safe_str(raw.get("going_detailed")),
+        "surface":          _safe_str(raw.get("surface")),
+        "type":             _safe_str(raw.get("type")),
+        "region":           _safe_str(raw.get("region")),
+        "field_size":       _safe_int(raw.get("field_size") or len(runners)),
+        "rail_movements":   _safe_str(raw.get("rail_movements")),
+        "stalls":           _safe_str(raw.get("stalls")),
+        "weather":          _safe_str(raw.get("weather")),
+        "age_band":         _safe_str(raw.get("age_band")),
+        "rating_band":      _safe_str(raw.get("rating_band")),
+        "pattern":          _safe_str(raw.get("pattern")),
+        "sex_restriction":  _safe_str(raw.get("sex_restriction")),
+        "verdict":          _safe_str(raw.get("verdict")),
+        "betting_forecast": _safe_str(raw.get("betting_forecast")),
+        "runners":          runners,
     }
 
 
