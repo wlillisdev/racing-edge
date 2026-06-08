@@ -53,7 +53,7 @@ JUMP_ALTERNATIVE_MIN_SCORE: float = 55.0
 JUMP_MAX_RUNNERS: int = 12
 JUMP_EXCLUDED_GOING: frozenset[str] = frozenset({"Firm", "Good to Firm"})
 FLAT_MAX_DIST_F: float = 14.0   # exclude flat stayers (14f+) — -21% ROI in backtest
-FLAT_EXCLUDED_GOING: frozenset[str] = frozenset({"Good", "Good to Firm", "Firm", "Good to Soft", "Soft"})
+FLAT_EXCLUDED_GOING: frozenset[str] = frozenset({"Firm"})  # only hard ground excluded; going suitability handled by form scoring
 
 _GOING_ADJACENCY: list[list[str]] = [
     ["Firm", "Good to Firm", "Good", "Good to Soft", "Soft", "Heavy"],
