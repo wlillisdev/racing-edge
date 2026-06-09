@@ -47,11 +47,14 @@ RESULTS_RETRY_WAIT_S: int = 15 * 60  # 15 minutes
 
 # Pipeline definition: (display_name, script_path, extra_args)
 PIPELINE_STEPS: list[tuple[str, str, list[str]]] = [
-    ("results_auditor",    "results_auditor.py",    []),
-    ("performance_tracker","performance_tracker.py", []),
-    ("loser_autopsy_ai",   "loser_autopsy_ai.py",    []),
-    ("profit_report",      "profit_report.py",       []),
-    ("email_audit",        "email_audit.py",         []),
+    ("results_auditor",       "results_auditor.py",       []),
+    ("daily_outcome_join",    "daily_outcome_join.py",    []),
+    ("performance_tracker",   "performance_tracker.py",   []),
+    ("loser_autopsy_ai",      "loser_autopsy_ai.py",      []),
+    ("daily_learning_analysis","daily_learning_analysis.py",[]),
+    ("model_param_tuner",     "model_param_tuner.py",     []),
+    ("profit_report",         "profit_report.py",         []),
+    ("email_audit",           "email_audit.py",           []),
 ]
 
 
