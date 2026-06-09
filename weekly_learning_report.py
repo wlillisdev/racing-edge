@@ -253,6 +253,60 @@ def _loser_diagnostic_notes(monday: date, sunday: date) -> list[str]:
 
 
 # ---------------------------------------------------------------------------
+# AI loser-autopsy learning summary
+# ---------------------------------------------------------------------------
+
+def _autopsy_learning_summary(monday: date, sunday: date) -> list[str]:
+    """Summarise this week's AI loser autopsies into model-tweak signals.
+
+    Reads data/loser_autopsy_log.json (written by loser_autopsy_ai.py), filters
+    to this week, and groups by failure `category` and by the proposed tweak
+    `target` so recurring failure modes — and the model adjustments they imply —
+    surface for review. A no-op (single info line) when the log is empty.
+    """
+    doc = safe_load_json(data_path("loser_autopsy_log.json"))
+    autopsies = (doc or {}).get("autopsies") if isinstance(doc, dict) else None
+    if not autopsies:
+        return ["  No AI autopsies logged yet (runs on losing NAP days)."]
+
+    start_str, end_str = monday.isoformat(), sunday.isoformat()
+    week = [
+        a for a in autopsies
+        if isinstance(a, dict) and start_str <= str(a.get("date") or "") <= end_str
+    ]
+    if not week:
+        return ["  No losing-NAP autopsies this week."]
+
+    by_category: dict[str, int] = defaultdict(int)
+    by_target: dict[str, list[str]] = defaultdict(list)
+    for a in week:
+        by_category[str(a.get("category") or "unknown")] += 1
+        tweak = a.get("proposed_tweak") or {}
+        target = str(tweak.get("target") or "").strip()
+        change = str(tweak.get("change") or "").strip()
+        if target:
+            by_target[target].append(change)
+
+    lines: list[str] = [f"  {len(week)} losing-NAP autopsy(ies) this week."]
+
+    lines.append("  Failure modes (most frequent first):")
+    for cat, count in sorted(by_category.items(), key=lambda kv: kv[1], reverse=True)[:5]:
+        lines.append(f"    • {cat.upper()} ×{count}")
+
+    if by_target:
+        lines.append("  Recurring model-tweak signals:")
+        for target, changes in sorted(by_target.items(), key=lambda kv: len(kv[1]), reverse=True)[:5]:
+            sample = changes[0] if changes else ""
+            extra = f" (e.g. {sample})" if sample else ""
+            lines.append(f"    • {target} ×{len(changes)}{extra}")
+        lines.append(
+            "  → Targets flagged 2+ times are candidates for a validated "
+            "recalibration once real backtest data confirms the direction."
+        )
+    return lines
+
+
+# ---------------------------------------------------------------------------
 # Horses to watch next week
 # ---------------------------------------------------------------------------
 
@@ -298,6 +352,7 @@ def _build_report(
     all_time: dict,
     new_flags: list[dict],
     loser_notes: list[str],
+    autopsy_notes: list[str],
     next_week_notes: list[str],
 ) -> str:
     week_range = f"{monday.isoformat()} to {date_str}"
@@ -362,6 +417,9 @@ def _build_report(
         "",
         "Loser diagnostic patterns:",
         *loser_notes,
+        "",
+        "AI loser-autopsy — model tweak signals:",
+        *autopsy_notes,
         "",
         _SEP,
         "RUNNING TOTALS (All-time)",
@@ -434,6 +492,11 @@ def main() -> int:
     loser_notes = _loser_diagnostic_notes(monday, sunday)
 
     # ------------------------------------------------------------------
+    # 4b. AI loser-autopsy learning signals
+    # ------------------------------------------------------------------
+    autopsy_notes = _autopsy_learning_summary(monday, sunday)
+
+    # ------------------------------------------------------------------
     # 5. Next week watch horses
     # ------------------------------------------------------------------
     next_week_notes = _next_week_watch_horses()
@@ -450,6 +513,7 @@ def main() -> int:
         all_time,
         new_flags,
         loser_notes,
+        autopsy_notes,
         next_week_notes,
     )
 
