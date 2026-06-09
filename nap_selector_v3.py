@@ -44,10 +44,10 @@ GRADE_B_PLUS_THRESHOLD: float = 60.0
 GRADE_B_THRESHOLD: float = 50.0
 GRADE_C_THRESHOLD: float = 40.0
 
-NAP_MIN_SCORE: float = 60.0   # 60-69 band = 50% WR / +1.9% ROI in backtest (sweet spot)
-NAP_MAX_SCORE: float = 82.0   # 83-85 band = 0% WR; 75-82 band = 33-50% WR / +113-233% ROI
+NAP_MIN_SCORE: float = 50.0   # floor — model must always output the best horse; confidence via label
+NAP_MAX_SCORE: float = 100.0  # no upper cap — a high score is a strong signal, not a block
 CLUSTER_SPREAD: float = 8.0
-CLUSTER_MIN_SCORE: float = 55.0
+CLUSTER_MIN_SCORE: float = 50.0
 
 NAP_EXCLUDED_RACE_TYPES: frozenset[str] = frozenset({"chase"})
 NAP_MIN_ODDS: float = 2.0   # Evens minimum — need >50% WR to break even
@@ -729,6 +729,22 @@ def compute_market_score(
     return round(max(-10.0, min(5.0, score)), 2), reasons, fatal_flags
 
 
+def assign_confidence(score: float, clustered: bool = False) -> tuple[str, str]:
+    """Return (confidence_label, stake_recommendation) based on score.
+    Used in email output to guide stake sizing without hard blocks."""
+    if clustered:
+        return "LOW", "SMALL STAKE or PASS — tight field, no clear standout"
+    if score >= 70:
+        return "HIGH", "FULL STAKE"
+    if score >= 60:
+        return "MEDIUM-HIGH", "FULL STAKE"
+    if score >= 55:
+        return "MEDIUM", "HALF STAKE or EACH WAY"
+    if score >= 50:
+        return "LOW-MEDIUM", "SMALL STAKE / EACH WAY only"
+    return "LOW", "SPECULATIVE — minimal stake or PASS"
+
+
 def assign_grade(total_score: float) -> str:
     if total_score >= GRADE_A_THRESHOLD: return "A"
     if total_score >= GRADE_B_PLUS_THRESHOLD: return "B+"
@@ -910,28 +926,28 @@ def main() -> int:
     for race_id, scored in race_scores.items():
         if not scored: continue
         top = scored[0]
-        # Exclude configured race types (e.g. chase — poor ROI historically)
+        # Hard exclusions — these are structural, not score-based
         if any(x in (top.get("race_type") or "").lower() for x in NAP_EXCLUDED_RACE_TYPES):
             no_bet_races.append(race_id); continue
-        # Odds gates — no value at short prices; 8/1+ is -39.4% ROI over 524 selections
+        # dangerous_drift = only fatal market signal
+        if "dangerous_drift" in (top.get("warnings") or []):
+            no_bet_races.append(race_id); continue
+        # Odds gates — no value at short prices; 8/1+ is -39.4% ROI
         if top.get("morning_price") is not None and top["morning_price"] < NAP_MIN_ODDS:
             no_bet_races.append(race_id); continue
         if top.get("morning_price") is not None and top["morning_price"] > NAP_MAX_ODDS:
             no_bet_races.append(race_id); continue
-        # Flat filters — data-driven exclusions from backtest analysis
+        # Flat going filter — Firm/Heavy excluded; G-F monitored but not excluded
         _is_flat = not any(x in (top.get("race_type") or "").lower() for x in ("chase", "hurdle", "bumper"))
-        if _is_flat and (top.get("distance_f") or 0.0) >= FLAT_MAX_DIST_F:
-            no_bet_races.append(race_id); continue  # staying trips
-        if _is_flat and 0.0 < (top.get("distance_f") or 0.0) < FLAT_MIN_DIST_F:
-            no_bet_races.append(race_id); continue  # sprint filter (currently disabled — FLAT_MIN_DIST_F=0.0)
-        # Flat going filter — Firm/G-F: 0% WR; Heavy: value-less at short odds
         if _is_flat and going_normalise(top.get("going") or "") in FLAT_EXCLUDED_GOING:
             no_bet_races.append(race_id); continue
-        if race_id in cluster_races: no_bet_races.append(race_id); continue
-        if top["score"] < NAP_MIN_SCORE: no_bet_races.append(race_id); continue
-        if top["score"] > NAP_MAX_SCORE: no_bet_races.append(race_id); continue  # 83-85 band = 0% WR
-        if "dangerous_drift" in (top.get("warnings") or []):
+        # Minimum score floor — still output a pick but label confidence accordingly
+        if top["score"] < NAP_MIN_SCORE:
             no_bet_races.append(race_id); continue
+        # Cluster races get a warning flag on the pick, not a hard block
+        if race_id in cluster_races:
+            top = dict(top)
+            top["warnings"] = list(top.get("warnings") or []) + ["cluster_warning"]
         nap_candidates.append(top)
 
     nap_candidates.sort(key=lambda r: r["score"], reverse=True)
@@ -939,20 +955,17 @@ def main() -> int:
     nap: Optional[dict] = None
     day_verdict: str
     if nap_candidates:
+        nap_candidates.sort(key=lambda r: r["score"], reverse=True)
         best_candidate = nap_candidates[0]
         best_candidate["status"] = "NAP"
+        is_clustered = "cluster_warning" in (best_candidate.get("warnings") or [])
+        confidence, stake_rec = assign_confidence(best_candidate["score"], is_clustered)
+        best_candidate["confidence"] = confidence
+        best_candidate["stake_recommendation"] = stake_rec
         nap = best_candidate
-        day_verdict = "NAP_SELECTED"
-        if len(nap_candidates) >= 2:
-            second = nap_candidates[1]
-            if (best_candidate["score"] - second["score"]) <= best_candidate["score"] * 0.10:
-                nap["warnings"] = list(nap.get("warnings") or [])
-                if "field_cluster_warning" not in nap["warnings"]:
-                    nap["warnings"].append("field_cluster_warning")
-    elif cluster_races:
-        day_verdict = "NO_BET_CLUSTERED"
+        day_verdict = f"NAP_SELECTED ({confidence} CONFIDENCE)"
     else:
-        day_verdict = "NO_BET_NO_STANDOUT"
+        day_verdict = "NO_BET — dangerous drift or excluded going/type on all qualifying races"
 
     nap_horse_id = nap["horse_id"] if nap else None
     seen_ids: dict[str, dict] = {}

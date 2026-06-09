@@ -58,6 +58,8 @@ def _build_briefing(date_str: str, data: dict) -> str:
     if nap:
         price = nap.get("morning_price")
         warnings = nap.get("warnings") or []
+        confidence = nap.get("confidence", "")
+        stake_rec = nap.get("stake_recommendation", "")
         try:
             score_str = f"{float(nap.get('score', 0)):.1f}"
         except (TypeError, ValueError):
@@ -68,13 +70,18 @@ def _build_briefing(date_str: str, data: dict) -> str:
             f"  Score: {score_str}  |  Grade: {nap.get('grade', '?')}  |  Price: {_fmt_odds(price)}",
             f"  Form: {nap.get('form', '—')}  |  RPR: {nap.get('rpr', '—')}  |  OR: {nap.get('ofr', '—')}",
             f"  Race type: {nap.get('race_type', '?')}  |  Going: {nap.get('going', '?')}",
-            "",
-            "  Key reasons:",
         ]
+        if confidence:
+            lines.append(f"  Confidence: {confidence}  |  Stake: {stake_rec}")
+        lines += ["", "  Key reasons:"]
         for r in (nap.get("reasons") or [])[:6]:
             lines.append(f"    • {r}")
         if warnings:
-            lines.append(f"\n  ⚠ Warnings: {', '.join(warnings)}")
+            clean_warnings = [w for w in warnings if w != "cluster_warning"]
+            if "cluster_warning" in warnings:
+                clean_warnings = ["CLUSTERED RACE — tight margins, reduce stake"] + clean_warnings
+            if clean_warnings:
+                lines.append(f"\n  ⚠ Warnings: {', '.join(clean_warnings)}")
     else:
         day_verdict = data.get("day_verdict", "NO BET")
         lines.append(f"  No NAP selected today — {day_verdict}")
@@ -102,9 +109,9 @@ def _build_briefing(date_str: str, data: dict) -> str:
 
     lines.append("")
 
-    # --- Watchlist ---
+    # --- Watchlist / Alternative bets ---
     watchlist = data.get("watchlist") or []
-    lines.append("■ WATCHLIST")
+    lines.append("■ OTHER OPTIONS — ALTERNATIVE BETS")
     if watchlist:
         for h in watchlist[:5]:
             price = h.get("morning_price")
@@ -112,12 +119,14 @@ def _build_briefing(date_str: str, data: dict) -> str:
                 w_score_str = f"{float(h.get('score', 0)):.1f}"
             except (TypeError, ValueError):
                 w_score_str = "?"
+            w_conf = h.get("confidence", "")
+            conf_tag = f" [{w_conf}]" if w_conf else ""
             lines.append(
                 f"  {h.get('horse', '?')} | {h.get('course','?')} {h.get('off_time','?')} "
-                f"| Score: {w_score_str} | {_fmt_odds(price)}"
+                f"| Score: {w_score_str}{conf_tag} | {_fmt_odds(price)}"
             )
     else:
-        lines.append("  Empty.")
+        lines.append("  None qualifying today.")
 
     lines.append("")
 
