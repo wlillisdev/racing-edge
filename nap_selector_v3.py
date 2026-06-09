@@ -37,6 +37,14 @@ from src.helpers import (
 )
 from racecard_loader import load_racecard
 
+# Professional form-reading overlay (-15..+25). Self-contained, degrades to
+# 0.0 if the module is unavailable so the core model never breaks.
+try:
+    from racing_wisdom import score_racing_wisdom
+    _WISDOM_AVAILABLE = True
+except Exception:  # pragma: no cover - defensive: never let an overlay break scoring
+    _WISDOM_AVAILABLE = False
+
 MODEL_VERSION: str = "v4"
 
 GRADE_A_THRESHOLD: float = 70.0
@@ -766,7 +774,20 @@ def score_runner(
     draw_score, draw_reasons = compute_draw_score(runner, race)
     trnr_score, trnr_reasons = compute_trainer_score(runner, race, trainer_profiles)
     mkt_score, mkt_reasons, fatal_flags = compute_market_score(runner, market_movers)
-    total = max(0.0, min(100.0, form_score + suit_score + ctx_score + draw_score + trnr_score + mkt_score))
+    # Professional form-reading overlay (-15..+25): class drops, pace shape,
+    # proven course+distance, freshness, narrative. Lifts genuinely strong
+    # horses out of the score-compression zone so the card yields real picks.
+    wisdom_score: float = 0.0
+    wisdom_reasons: list[str] = []
+    if _WISDOM_AVAILABLE:
+        try:
+            wisdom_score, wisdom_reasons = score_racing_wisdom(
+                runner, race, all_runners, full_form
+            )
+        except Exception:  # pragma: no cover - never let the overlay break scoring
+            wisdom_score, wisdom_reasons = 0.0, []
+    base = form_score + suit_score + ctx_score + draw_score + trnr_score + mkt_score
+    total = max(0.0, min(100.0, base + wisdom_score))
     grade = assign_grade(total)
     morning_price = _best_morning_price(runner)
     return {
@@ -779,7 +800,8 @@ def score_runner(
         "form_score": form_score, "suitability_score": suit_score,
         "context_score": ctx_score, "draw_score": round(draw_score, 2),
         "trainer_score": trnr_score, "market_score": mkt_score,
-        "reasons": form_reasons + suit_reasons + ctx_reasons + draw_reasons + trnr_reasons + mkt_reasons,
+        "wisdom_score": round(wisdom_score, 2),
+        "reasons": form_reasons + suit_reasons + ctx_reasons + draw_reasons + trnr_reasons + mkt_reasons + wisdom_reasons,
         "warnings": list(fatal_flags),
         "morning_price": morning_price,
         "form": runner.get("form") or "",
@@ -922,11 +944,13 @@ def main() -> int:
             cluster_races.append(race_id)
 
     nap_candidates: list[dict] = []
+    fallback_pool: list[dict] = []   # passed every STRUCTURAL gate but below the score floor
     no_bet_races: list[str] = []
     for race_id, scored in race_scores.items():
         if not scored: continue
         top = scored[0]
-        # Hard exclusions — these are structural, not score-based
+        # Hard exclusions — these are structural, not score-based. A horse failing
+        # any of these can NEVER be the pick (not even as a thin-card fallback).
         if any(x in (top.get("race_type") or "").lower() for x in NAP_EXCLUDED_RACE_TYPES):
             no_bet_races.append(race_id); continue
         # dangerous_drift = only fatal market signal
@@ -941,21 +965,23 @@ def main() -> int:
         _is_flat = not any(x in (top.get("race_type") or "").lower() for x in ("chase", "hurdle", "bumper"))
         if _is_flat and going_normalise(top.get("going") or "") in FLAT_EXCLUDED_GOING:
             no_bet_races.append(race_id); continue
-        # Minimum score floor — still output a pick but label confidence accordingly
-        if top["score"] < NAP_MIN_SCORE:
-            no_bet_races.append(race_id); continue
-        # Cluster races get a warning flag on the pick, not a hard block
+        # Cluster races get a warning flag on the pick, not a hard block.
         if race_id in cluster_races:
             top = dict(top)
             top["warnings"] = list(top.get("warnings") or []) + ["cluster_warning"]
-        nap_candidates.append(top)
+        # Above the floor → a full-confidence candidate. Below the floor → kept in the
+        # fallback pool so a structurally-sound card ALWAYS yields a best-available pick.
+        if top["score"] >= NAP_MIN_SCORE:
+            nap_candidates.append(top)
+        else:
+            fallback_pool.append(top)
 
     nap_candidates.sort(key=lambda r: r["score"], reverse=True)
+    fallback_pool.sort(key=lambda r: r["score"], reverse=True)
 
     nap: Optional[dict] = None
     day_verdict: str
     if nap_candidates:
-        nap_candidates.sort(key=lambda r: r["score"], reverse=True)
         best_candidate = nap_candidates[0]
         best_candidate["status"] = "NAP"
         is_clustered = "cluster_warning" in (best_candidate.get("warnings") or [])
@@ -964,8 +990,24 @@ def main() -> int:
         best_candidate["stake_recommendation"] = stake_rec
         nap = best_candidate
         day_verdict = f"NAP_SELECTED ({confidence} CONFIDENCE)"
+    elif fallback_pool:
+        # No horse cleared the score floor, but racing exists and structurally-sound
+        # options remain. Surface the single best one as the pick with honest LOW
+        # confidence — the system always gives an option, never a blank day.
+        best_candidate = fallback_pool[0]
+        best_candidate["status"] = "NAP"
+        best_candidate["confidence"] = "LOW"
+        best_candidate["stake_recommendation"] = (
+            "SPECULATIVE — best available on a thin card; minimal stake or watch only"
+        )
+        best_candidate["warnings"] = list(best_candidate.get("warnings") or []) + ["below_score_floor"]
+        nap = best_candidate
+        day_verdict = (
+            f"BEST_AVAILABLE (LOW CONFIDENCE — top score {best_candidate['score']:.1f} "
+            f"below floor {NAP_MIN_SCORE:.0f})"
+        )
     else:
-        day_verdict = "NO_BET — dangerous drift or excluded going/type on all qualifying races"
+        day_verdict = "NO_BET — every card top was a chase, dangerous drift, or excluded going/odds"
 
     nap_horse_id = nap["horse_id"] if nap else None
     seen_ids: dict[str, dict] = {}
