@@ -166,8 +166,12 @@ def _format_text_report(date_str: str, generated_at: str, shortlist: dict) -> st
             if r.get("first_time_wind_op"):
                 flags.append("WIND OP")
             t14 = r.get("trainer_14_days", {})
-            if t14.get("percent") and int(t14.get("percent") or 0) >= 30:
-                flags.append(f"HOT TRAINER {t14['wins']}-{t14['runs']} {t14['percent']}%")
+            try:
+                _t14_pct = float(str(t14.get("percent") or "0").strip().rstrip("%"))
+            except (ValueError, TypeError):
+                _t14_pct = 0.0
+            if _t14_pct >= 30:
+                flags.append(f"HOT TRAINER {t14.get('wins','?')}-{t14.get('runs','?')} {_t14_pct:.0f}%")
             flag_s = f"  [{', '.join(flags)}]" if flags else ""
             lines.append(
                 f"  • {horse} | {trainer}/{jockey} | Form: {form} | {price_s}{flag_s}"
