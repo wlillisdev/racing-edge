@@ -38,7 +38,7 @@ from src.helpers import data_path, going_normalise, log, report_path
 from src.api_client import get_client, RacingAPIError
 from nap_selector_v3 import (
     score_runner, NAP_MIN_SCORE, NAP_MAX_SCORE, GRADE_A_THRESHOLD,
-    NAP_EXCLUDED_RACE_TYPES, NAP_MIN_ODDS, FLAT_MAX_DIST_F, FLAT_MIN_DIST_F,
+    NAP_EXCLUDED_RACE_TYPES, NAP_MIN_ODDS, NAP_MAX_ODDS, FLAT_MAX_DIST_F, FLAT_MIN_DIST_F,
     FLAT_EXCLUDED_GOING, CLUSTER_SPREAD, CLUSTER_MIN_SCORE,
     detect_race_cluster,
 )
@@ -521,6 +521,10 @@ def main() -> int:
                 top.get("morning_price") is not None
                 and top["morning_price"] < NAP_MIN_ODDS
             )
+            _too_big = (
+                top.get("morning_price") is not None
+                and top["morning_price"] > NAP_MAX_ODDS
+            )
             _is_flat = not any(x in (race_type or "").lower() for x in ("chase", "hurdle", "bumper"))
             _dist_filtered = _is_flat and dist_f >= args.max_flat_dist
             _sprint_filtered = _is_flat and 0.0 < dist_f < FLAT_MIN_DIST_F
@@ -529,7 +533,7 @@ def main() -> int:
             _dangerous = "dangerous_drift" in (top.get("warnings") or [])
             if (composite >= args.min_score and composite <= NAP_MAX_SCORE
                     and composite > best_day_score
-                    and not _excluded and not _too_short and not _dist_filtered
+                    and not _excluded and not _too_short and not _too_big and not _dist_filtered
                     and not _sprint_filtered and not _going_filtered
                     and not _clustered and not _dangerous):
                 best_day_score  = composite

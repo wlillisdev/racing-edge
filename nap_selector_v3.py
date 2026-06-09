@@ -8,9 +8,11 @@ Scoring (100 pts total):
   Trainer Intent    0–15  (incl. NLP keyword scoring on stable commentary)
   Market Overlay  –10/+5
 
-NAP grade gate: score 60–82 AND no fatal flags.
-  Sweet spot 60-69 band = 50% WR / +1.9% ROI; 75-82 band = 33-50% WR / +113-233% ROI.
-  Class 3/5 golden zone (ROI +195-213% in backtest).
+NAP gate: score 60–82, odds 2.0–7.0 (Evens to 6/1), no fatal flags.
+  6-month backtest (178 days, 63 NAPs): 36.5% WR, +5.5% ROI, 77.8% place rate.
+  Best going: AW (+23.8%), Heavy (-11.9%); excluded: Firm, Good-to-Firm.
+  Sprints: +45.7% NAP ROI; Chases: -33.3% (excluded); Hurdles: -15.7%.
+  8/1+ zone: -39.4% ROI (excluded by NAP_MAX_ODDS cap).
 Fatal flags: dangerous_drift only.
 NO BET is a valid correct outcome.
 
@@ -48,15 +50,17 @@ CLUSTER_SPREAD: float = 8.0
 CLUSTER_MIN_SCORE: float = 55.0
 
 NAP_EXCLUDED_RACE_TYPES: frozenset[str] = frozenset({"chase"})
-NAP_MIN_ODDS: float = 2.0  # raised from 1.5 — at Evens minimum you need >50% WR to break even
+NAP_MIN_ODDS: float = 2.0   # Evens minimum — need >50% WR to break even
+NAP_MAX_ODDS: float = 7.0   # 6/1 cap — 8/1+ zone is -39.4% ROI over 524 selections (6-month backtest)
 JUMP_ALTERNATIVE_MIN_SCORE: float = 55.0
 JUMP_MAX_RUNNERS: int = 12
 JUMP_EXCLUDED_GOING: frozenset[str] = frozenset({"Firm", "Good to Firm"})
-FLAT_MAX_DIST_F: float = 16.0   # exclude flat staying trips (16f+) — 1m6f is not a staying trip
-FLAT_MIN_DIST_F: float = 7.0    # exclude sprints <7f — backtest: 22.2% SR / -32.9% ROI (no edge, pace/draw dominated)
+FLAT_MAX_DIST_F: float = 16.0   # exclude flat staying trips (16f+)
+FLAT_MIN_DIST_F: float = 0.0    # no sprint exclusion — 6-month backtest: sprints +45.7% NAP ROI (979 selections)
 FLAT_EXCLUDED_GOING: frozenset[str] = frozenset({
-    "Firm", "Heavy",       # hard + waterlogged turf — poor ROI
-    "Standard", "Slow",    # All-Weather surfaces — backtest: 25.9% SR / -40.3% ROI (no model edge)
+    "Firm",         # concrete-hard turf — 0% WR, -100% ROI in 6-month NAP data
+    "Good to Firm", # fast ground — 0% WR in NAP, -25.7% ROI forensic; removed AW (Chelmsford +23.8% NAP ROI)
+    "Heavy",        # waterlogged — 42.9% WR but avg SP below evens, no value
 })
 
 _GOING_ADJACENCY: list[list[str]] = [
@@ -85,6 +89,25 @@ _DRAW_BIAS: dict[str, tuple[str, float]] = {
     "carlisle":   ("high", 0.35),  # high draw advantaged — stall 4 best, stall 2 worst in studies
     "hamilton":   ("high", 0.35),  # counterintuitive: HIGH draw advantage, esp on soft (impact factor 1.30 high vs 0.79 low)
     "salisbury":  ("low",  0.35),  # near-side (low) rail advantage in soft/testing ground
+}
+
+# Course ROI adjustments — 6-month forensic backtest (n >= 25 only; modest signal)
+# Positive = model reads form well here; Negative = model consistently loses here
+_COURSE_SCORE_ADJ: dict[str, float] = {
+    # Good courses (n >= 50, ROI > +12%)
+    "leopardstown": +2.0,   # n=89, +24.7% ROI
+    "navan":        +2.0,   # n=61, +24.5% ROI
+    "cork":         +2.0,   # n=62, +23.5% ROI
+    "bath":         +2.0,   # n=70, +16.8% ROI
+    "chelmsford":   +2.0,   # n=100, +15.9% ROI (AW — excluded from going filter; model reads it well)
+    "hereford":     +1.0,   # n=83, +13.0% ROI
+    "tramore":      +2.0,   # n=33, +26.9% ROI
+    "kilbeggan":    +2.0,   # n=20, +50.5% ROI (small sample but strong)
+    # Trap courses (ROI < -40%)
+    "fairyhouse":   -3.0,   # n=81, -46.9% ROI — Irish track model struggles
+    "newcastle":    -3.0,   # n=51, -46.4% ROI
+    "yarmouth":     -3.0,   # n=46, -54.5% ROI — form often misleading here
+    "chester":      -3.0,   # n=26, -47.2% ROI — extreme draw bias overrides form
 }
 
 _STRONG_POSITIVE_NLP: frozenset[str] = frozenset({
@@ -521,6 +544,13 @@ def compute_context_score(race: dict, all_runners: list[dict]) -> tuple[float, l
             score -= 2.0; reasons.append("Good going for jump race — historically below par")
         if field_size > JUMP_MAX_RUNNERS:
             score -= 4.0; reasons.append(f"Crowded jump field ({field_size} runners) — chaotic")
+    # Course edge/trap adjustment — 6-month backtest signal (n>=25, modest adjustment capped ±3)
+    _course_key = str(race.get("course") or "").strip().lower()
+    _course_adj = _COURSE_SCORE_ADJ.get(_course_key, 0.0)
+    if _course_adj > 0:
+        score += _course_adj; reasons.append(f"Course edge: {race.get('course','?')} (+{_course_adj:.0f}pts, model reads form well here)")
+    elif _course_adj < 0:
+        score += _course_adj; reasons.append(f"Course trap: {race.get('course','?')} ({_course_adj:.0f}pts, model historically loses here)")
     return round(max(0.0, min(15.0, score)), 2), reasons
 
 
@@ -882,18 +912,20 @@ def main() -> int:
         # Exclude configured race types (e.g. chase — poor ROI historically)
         if any(x in (top.get("race_type") or "").lower() for x in NAP_EXCLUDED_RACE_TYPES):
             no_bet_races.append(race_id); continue
-        # Minimum odds gate — no value at very short prices
+        # Odds gates — no value at short prices; 8/1+ is -39.4% ROI over 524 selections
         if top.get("morning_price") is not None and top["morning_price"] < NAP_MIN_ODDS:
+            no_bet_races.append(race_id); continue
+        if top.get("morning_price") is not None and top["morning_price"] > NAP_MAX_ODDS:
             no_bet_races.append(race_id); continue
         # Flat filters — data-driven exclusions from backtest analysis
         _is_flat = not any(x in (top.get("race_type") or "").lower() for x in ("chase", "hurdle", "bumper"))
         if _is_flat and (top.get("distance_f") or 0.0) >= FLAT_MAX_DIST_F:
             no_bet_races.append(race_id); continue  # staying trips
         if _is_flat and 0.0 < (top.get("distance_f") or 0.0) < FLAT_MIN_DIST_F:
-            no_bet_races.append(race_id); continue  # sprints <7f: 22.2% SR / -32.9% ROI
-        # Flat going filter — going types with negative ROI in backtest
+            no_bet_races.append(race_id); continue  # sprint filter (currently disabled — FLAT_MIN_DIST_F=0.0)
+        # Flat going filter — Firm/G-F: 0% WR; Heavy: value-less at short odds
         if _is_flat and going_normalise(top.get("going") or "") in FLAT_EXCLUDED_GOING:
-            no_bet_races.append(race_id); continue  # AW: -40.3% ROI; Firm/Heavy: losses
+            no_bet_races.append(race_id); continue
         if race_id in cluster_races: no_bet_races.append(race_id); continue
         if top["score"] < NAP_MIN_SCORE: no_bet_races.append(race_id); continue
         if top["score"] > NAP_MAX_SCORE: no_bet_races.append(race_id); continue  # 83-85 band = 0% WR
