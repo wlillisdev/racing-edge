@@ -65,23 +65,22 @@ _GOING_ADJACENCY: list[list[str]] = [
 # "high" = high stall numbers favoured (far side/stands rail on right-to-left courses)
 # Only applied for flat races ≤9f. Overridden by live stalls/rail data from pro racecard.
 _DRAW_BIAS: dict[str, tuple[str, float]] = {
-    # Established
-    "chester":    ("low",  0.30),  # extreme — tight turns, inner rail dominates all trips
+    # Confirmed strong biases (research-verified)
+    "chester":    ("low",  0.25),  # extreme — stalls 1-2 win ~50%+ of sprint races; stall 10+ = 0 wins in studies
+    "pontefract": ("low",  0.20),  # stall 1 wins 24% of 5f races; +91p/£1 long-run profit blind-backing stall 1
+    "beverley":   ("low",  0.30),  # low-draw edge persists (weakened from historic levels but still significant)
+    "lingfield":  ("low",  0.30),  # AW: stalls 1-2 win ~1/3 of 5f fields of 10+; one of clearest AW biases
+    # Confirmed medium biases
+    "haydock":    ("high", 0.35),  # stands-side (high) rail advantage in 5f-6f sprints; amplified on soft ground
+    "ascot":      ("high", 0.35),  # stands-side (high) favoured straight 5f-6f in large fields
+    "epsom":      ("high", 0.35),  # HIGH draw (far rail) has best camber downhill in sprints; note: 1m4f reversed
+    "goodwood":   ("low",  0.30),  # far-rail (LOW draw = far side at Goodwood) advantage on straight 5f-6f
+    "york":       ("low",  0.35),  # low draw clear advantage at 1m; slight low edge in 5f-6f on soft
     "catterick":  ("low",  0.35),  # right-hand, low draw slight edge in sprints
-    "lingfield":  ("low",  0.30),  # AW inner rail advantage
     "windsor":    ("high", 0.35),  # figure-8, far-side rail advantage in sprints
-    # High-confidence additions
-    "beverley":   ("low",  0.25),  # arguably strongest low-draw bias in UK — sharp right turn at start
-    "carlisle":   ("low",  0.35),  # right-hand, near-side (low) rail advantage in sprints
-    "pontefract": ("low",  0.35),  # very tight turns, low draw dominates sprint/mile
-    "hamilton":   ("low",  0.35),  # right-hand tight track, inside position advantaged
-    "haydock":    ("high", 0.35),  # stands-side (far side of draw) advantages sprint course
-    "ascot":      ("high", 0.35),  # far-side dominates straight 5f-1m in big fields
-    "epsom":      ("low",  0.35),  # camber sweeps left, stands-side (low) rail in sprints
-    "goodwood":   ("high", 0.30),  # stands-side (high draw) advantage on straight sprint courses
-    "newbury":    ("low",  0.35),  # stands-side (low draw) favoured on straight course
-    "salisbury":  ("low",  0.35),  # near-side (low) rail advantage
-    "york":       ("high", 0.35),  # far-side (high) advantage on straight 5f-6f in big fields
+    "carlisle":   ("high", 0.35),  # high draw advantaged — stall 4 best, stall 2 worst in studies
+    "hamilton":   ("high", 0.35),  # counterintuitive: HIGH draw advantage, esp on soft (impact factor 1.30 high vs 0.79 low)
+    "salisbury":  ("low",  0.35),  # near-side (low) rail advantage in soft/testing ground
 }
 
 _STRONG_POSITIVE_NLP: frozenset[str] = frozenset({
