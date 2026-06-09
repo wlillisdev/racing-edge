@@ -119,6 +119,7 @@ score_runner. It only nudges and never overrides the quantitative model.
 from __future__ import annotations
 
 import sys
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
 
 from src.helpers import (
@@ -138,6 +139,10 @@ MAX_RUNNERS_PER_RACE: int = 20
 
 # Output token cap per race (one whole-field projection per call).
 MAX_TOKENS: int = 1500
+
+# Concurrency for the per-race API calls. One call per race fanned out across a
+# small pool keeps the stage well under the pipeline's 600s per-step timeout.
+MAX_WORKERS: int = 6
 
 # Frozen persona/instructions — the volatile per-race field goes in the payload.
 SYSTEM_PROMPT: str = (
@@ -316,44 +321,60 @@ def main() -> int:
         return _write_result(date_str, {})
 
     races: list[dict] = shortlist.get("races") or []
-    results: dict[str, dict] = {}
-    call_count = 0
-    skipped_small = 0
 
+    # Build the de-duplicated task list first (one projection per unique race),
+    # so we can report total work up front and fan the calls out concurrently.
+    tasks: list[tuple[str, dict, dict]] = []  # (race_id, race, payload)
+    seen: set[str] = set()
+    skipped_small = 0
     for race in races:
         race_id = str(race.get("race_id") or "")
         runners = race.get("runners") or []
-        if not race_id or race_id in results:
+        if not race_id or race_id in seen:
             continue
         if _field_size(race, runners) < MIN_FIELD_SIZE:
             skipped_small += 1
             continue
+        seen.add(race_id)
+        tasks.append((race_id, race, _build_payload(race, runners[:MAX_RUNNERS_PER_RACE])))
 
-        payload = _build_payload(race, runners[:MAX_RUNNERS_PER_RACE])
+    total = len(tasks)
+    log(f"race_shape_ai: projecting {total} races ({MAX_WORKERS} workers, "
+        f"{skipped_small} skipped for small field)")
+
+    results: dict[str, dict] = {}
+    call_count = 0
+
+    def _project(task: tuple[str, dict, dict]) -> tuple[str, dict, dict | None]:
+        race_id, race, payload = task
         projection = client.call_structured(
-            SYSTEM_PROMPT,
-            payload,
-            RACE_SHAPE_SCHEMA,
-            max_tokens=MAX_TOKENS,
+            SYSTEM_PROMPT, payload, RACE_SHAPE_SCHEMA, max_tokens=MAX_TOKENS
         )
-        call_count += 1
-        if projection is None:
-            log(
-                f"race_shape_ai: no projection for race {race_id} "
-                f"({race.get('course')} {race.get('off_time')}) — skipping",
-                "INFO",
-            )
-            continue
+        return race_id, race, projection
 
-        per_runner = projection.get("per_runner") or []
-        results[race_id] = {
-            "pace_scenario": projection.get("pace_scenario"),
-            "pace_summary": projection.get("pace_summary"),
-            "advantaged_styles": projection.get("advantaged_styles") or [],
-            "per_runner": per_runner,
-            "horses": _to_horse_map(per_runner),
-            "model": client.default_model,
-        }
+    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as pool:
+        futures = {pool.submit(_project, t): t for t in tasks}
+        for fut in as_completed(futures):
+            race_id, race, projection = fut.result()
+            call_count += 1
+            if call_count % 10 == 0 or call_count == total:
+                log(f"race_shape_ai: progress {call_count}/{total}")
+            if projection is None:
+                log(
+                    f"race_shape_ai: no projection for race {race_id} "
+                    f"({race.get('course')} {race.get('off_time')}) — skipping",
+                    "INFO",
+                )
+                continue
+            per_runner = projection.get("per_runner") or []
+            results[race_id] = {
+                "pace_scenario": projection.get("pace_scenario"),
+                "pace_summary": projection.get("pace_summary"),
+                "advantaged_styles": projection.get("advantaged_styles") or [],
+                "per_runner": per_runner,
+                "horses": _to_horse_map(per_runner),
+                "model": client.default_model,
+            }
 
     generated_at = datetime.now(timezone.utc).isoformat()
     log(

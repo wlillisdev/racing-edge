@@ -126,7 +126,7 @@ def _run_step(
             cmd,
             cwd=project_dir,
             capture_output=False,   # let stdout/stderr flow to the task log
-            timeout=600,            # 10-minute hard cap per step
+            timeout=900,            # 15-minute hard cap per step
         )
         returncode = result.returncode
     except subprocess.TimeoutExpired:

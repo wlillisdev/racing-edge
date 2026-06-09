@@ -79,6 +79,7 @@ so the integration is safe even when the form reader degraded to {}.
 from __future__ import annotations
 
 import sys
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
 
 from src.helpers import (
@@ -92,6 +93,11 @@ from src.form_reader_client import get_form_reader
 
 # How many runners per race to send to the AI form reader (cost/latency guard).
 MAX_READS_PER_RACE: int = 3
+
+# Concurrency for the per-runner API calls. The Anthropic client is thread-safe
+# and Haiku's rate limits comfortably absorb this; parallelism keeps the whole
+# stage well under the pipeline's 600s per-step timeout on a big card.
+MAX_WORKERS: int = 6
 
 
 def _career_summary_for(horse_id: str, full_form: dict) -> dict:
@@ -231,25 +237,40 @@ def main() -> int:
     full_form = safe_load_json(data_path(f"full_form_{date_str}.json")) or {}
 
     races: list[dict] = shortlist.get("races") or []
+
+    # Build the de-duplicated task list first (one read per unique horse_id),
+    # so we can report total work up front and fan the calls out concurrently.
+    tasks: list[tuple[str, str, dict]] = []  # (horse_id, horse_name, payload)
+    seen: set[str] = set()
+    for race in races:
+        candidates = _select_candidates(race.get("runners") or [])
+        for runner in candidates:
+            horse_id = str(runner.get("horse_id") or "")
+            if not horse_id or horse_id in seen:
+                continue
+            seen.add(horse_id)
+            tasks.append((horse_id, runner.get("horse"), _build_payload(runner, race, full_form)))
+
+    total = len(tasks)
+    log(f"form_reader_ai: reading {total} runners across {len(races)} races "
+        f"({MAX_WORKERS} workers)")
+
     results: dict[str, dict] = {}
     read_count = 0
 
-    for race in races:
-        runners = race.get("runners") or []
-        candidates = _select_candidates(runners)
-        for runner in candidates:
-            horse_id = str(runner.get("horse_id") or "")
-            if not horse_id or horse_id in results:
-                continue
-            payload = _build_payload(runner, race, full_form)
-            verdict = reader.read_form(payload)
+    def _read(task: tuple[str, str, dict]) -> tuple[str, str, dict | None]:
+        horse_id, horse_name, payload = task
+        return horse_id, horse_name, reader.read_form(payload)
+
+    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as pool:
+        futures = {pool.submit(_read, t): t for t in tasks}
+        for fut in as_completed(futures):
+            horse_id, horse_name, verdict = fut.result()
             read_count += 1
+            if read_count % 10 == 0 or read_count == total:
+                log(f"form_reader_ai: progress {read_count}/{total}")
             if verdict is None:
-                log(
-                    f"form_reader_ai: no verdict for {runner.get('horse')} "
-                    f"({horse_id}) — skipping",
-                    "INFO",
-                )
+                log(f"form_reader_ai: no verdict for {horse_name} ({horse_id}) — skipping", "INFO")
                 continue
             verdict["model"] = reader.model
             results[horse_id] = verdict
