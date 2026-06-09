@@ -16,10 +16,11 @@ Pipeline order:
     4. race_shortlist.py
     5. race_reader.py
     6. full_form_reader.py
-    7. nap_selector_v3.py
-    8. cluster_review.py
-    9. morning_briefing_report.py
-    10. email_report.py
+    7. trainer_profile_reader.py
+    8. nap_selector_v3.py
+    9. cluster_review.py
+    10. morning_briefing_report.py
+    11. email_report.py
 
 Exit codes:
     0  — all steps passed (or non-fatal failures were logged)
@@ -54,6 +55,7 @@ PIPELINE_STEPS: list[tuple[str, str, list[str]]] = [
     ("race_shortlist",         "race_shortlist.py",        []),
     ("race_reader",            "race_reader.py",           []),
     ("full_form_reader",       "full_form_reader.py",      []),
+    ("trainer_profile_reader", "trainer_profile_reader.py",[]),
     ("nap_selector_v3",        "nap_selector_v3.py",       []),
     ("cluster_review",         "cluster_review.py",        []),
     ("morning_briefing_report","morning_briefing_report.py",[]),

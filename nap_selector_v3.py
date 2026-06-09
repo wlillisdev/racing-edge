@@ -4,11 +4,13 @@ nap_selector_v3.py — Core NAP selection engine (model v4).
 Scoring (100 pts total):
   Form Quality      0–40
   Suitability       0–25
-  Race Context      0–15
-  Trainer Intent    0–15
+  Race Context      0–15  (incl. draw bias for Chester/Catterick/Lingfield/Windsor sprints)
+  Trainer Intent    0–15  (incl. NLP keyword scoring on stable commentary)
   Market Overlay  –10/+5
 
-NAP grade gate: score >= 60 AND no fatal flags.
+NAP grade gate: score 60–82 AND no fatal flags.
+  Sweet spot 60-69 band = 50% WR / +1.9% ROI; 75-82 band = 33-50% WR / +113-233% ROI.
+  Class 3/5 golden zone (ROI +195-213% in backtest).
 Fatal flags: dangerous_drift only.
 NO BET is a valid correct outcome.
 
@@ -40,7 +42,8 @@ GRADE_B_PLUS_THRESHOLD: float = 60.0
 GRADE_B_THRESHOLD: float = 50.0
 GRADE_C_THRESHOLD: float = 40.0
 
-NAP_MIN_SCORE: float = 60.0
+NAP_MIN_SCORE: float = 60.0   # 60-69 band = 50% WR / +1.9% ROI in backtest (sweet spot)
+NAP_MAX_SCORE: float = 82.0   # 83-85 band = 0% WR; 75-82 band = 33-50% WR / +113-233% ROI
 CLUSTER_SPREAD: float = 8.0
 CLUSTER_MIN_SCORE: float = 55.0
 
@@ -49,13 +52,31 @@ NAP_MIN_ODDS: float = 1.5
 JUMP_ALTERNATIVE_MIN_SCORE: float = 55.0
 JUMP_MAX_RUNNERS: int = 12
 JUMP_EXCLUDED_GOING: frozenset[str] = frozenset({"Firm", "Good to Firm"})
-FLAT_MAX_DIST_F: float = 14.0   # exclude flat stayers (14f+) — -21% ROI in backtest
-FLAT_EXCLUDED_GOING: frozenset[str] = frozenset({"Good", "Good to Firm", "Firm", "Good to Soft", "Soft"})
+FLAT_MAX_DIST_F: float = 16.0   # exclude flat staying trips (16f+) — 1m6f is not a staying trip
+FLAT_EXCLUDED_GOING: frozenset[str] = frozenset({"Firm", "Heavy"})  # hard + waterlogged ground — backtest shows -40.5% ROI on heavy flat
 
 _GOING_ADJACENCY: list[list[str]] = [
     ["Firm", "Good to Firm", "Good", "Good to Soft", "Soft", "Heavy"],
     ["Standard", "Slow"],
 ]
+
+# Draw bias: (direction, threshold_fraction_of_field)
+# "low" = low stall numbers favoured; "high" = high stall numbers favoured
+_DRAW_BIAS: dict[str, tuple[str, float]] = {
+    "chester": ("low", 0.30),    # very tight turns, inner rail dominates
+    "catterick": ("low", 0.35),  # right-hand, low draw slight edge in sprints
+    "lingfield": ("low", 0.30),  # AW inner rail advantage
+    "windsor": ("high", 0.35),   # figure-8, far-side rail advantage in sprints
+}
+
+_STRONG_POSITIVE_NLP: frozenset[str] = frozenset({
+    "improves", "improve", "big run", "progressive", "exciting",
+    "should win", "will win", "could be anything", "ready to win",
+    "well ahead", "well handicapped", "ease to win",
+})
+_NEGATIVE_NLP: frozenset[str] = frozenset({
+    "disappointing", "struggling", "poor run", "below par", "tailed off", "well beaten",
+})
 
 
 def _parse_form_chars(form: str) -> list[str]:
@@ -88,7 +109,7 @@ def _best_morning_price(runner: dict) -> Optional[float]:
         try:
             dec = float(entry.get("decimal") or 0)
             if dec > 1.0:
-                if best is None or dec < best:
+                if best is None or dec > best:
                     best = dec
         except (TypeError, ValueError):
             continue
@@ -215,7 +236,10 @@ def compute_suitability_score(
 ) -> tuple[float, list[str]]:
     reasons: list[str] = []
     score = 0.0
-    today_going = going_normalise(race.get("going") or "")
+    # Prefer going_detailed (e.g. "Good to Firm (Good in places)") — strip parenthetical for normalisation
+    _going_raw = race.get("going_detailed") or race.get("going") or ""
+    _going_raw = _going_raw.split("(")[0].strip()  # "Good to Firm (Good in places)" → "Good to Firm"
+    today_going = going_normalise(_going_raw)
     today_dist_raw = str(race.get("distance_f") or race.get("distance") or "")
     today_course = (race.get("course") or "").strip().lower()
     horse_id = str(runner.get("horse_id") or "")
@@ -233,7 +257,9 @@ def compute_suitability_score(
             horse_history = full_form[horse_id]
 
     if horse_history:
-        dist_win = dist_placed = going_win = going_similar = course_win = False
+        dist_win = dist_placed = False
+        going_win = going_placed = going_similar = False
+        course_win = course_placed = False
         for result in horse_history:
             pos = str(result.get("position") or result.get("finish_position") or "")
             win = pos == "1"
@@ -246,25 +272,88 @@ def compute_suitability_score(
             if today_dist_f > 0 and r_dist_f > 0 and abs(today_dist_f - r_dist_f) <= 0.5:
                 if win: dist_win = True
                 if placed: dist_placed = True
-            if today_going and r_going and win:
-                if today_going == r_going: going_win = True
-                elif _going_adjacent(today_going, r_going): going_similar = True
-            if today_course and r_course and today_course == r_course and win:
-                course_win = True
+            if today_going and r_going:
+                if today_going == r_going:
+                    if win: going_win = True
+                    elif placed: going_placed = True
+                elif _going_adjacent(today_going, r_going) and win:
+                    going_similar = True
+            if today_course and r_course and today_course == r_course:
+                if win: course_win = True
+                elif placed: course_placed = True
         if dist_win: score += 10.0; reasons.append("Distance proven — won at today's trip")
         elif dist_placed: score += 6.0; reasons.append("Distance placed at today's trip")
         if going_win: score += 8.0; reasons.append("Going proven — won on today's ground")
-        elif going_similar: score += 4.0; reasons.append("Going similar to previous win ground")
+        elif going_placed: score += 5.0; reasons.append("Going suited — placed on today's ground")
+        elif going_similar: score += 2.0; reasons.append("Going similar to previous win ground")
         if course_win: score += 5.0; reasons.append("Course winner")
+        elif course_placed: score += 3.0; reasons.append("Course placed — proven here")
     else:
         form: str = runner.get("form") or ""
         chars = _parse_form_chars(form)
         wins = chars.count("1")
-        places = sum(1 for c in chars if c in ("1", "2", "3"))
+        places = sum(1 for c in chars if c in ("2", "3"))  # placed but not won
         if wins >= 1: score += 6.0; reasons.append("Has won — trip/ground compatibility assumed")
-        if places >= 2: score += 4.0; reasons.append("Consistent placed form")
+        elif places >= 2: score += 4.0; reasons.append("Consistent placed form")
 
     return round(max(0.0, min(25.0, score)), 2), reasons
+
+
+def compute_draw_score(runner: dict, race: dict) -> tuple[float, list[str]]:
+    race_type = str(race.get("type") or "").lower()
+    if any(x in race_type for x in ("chase", "hurdle", "bumper")):
+        return 0.0, []
+    try: dist_f = float(str(runner.get("distance_f") or race.get("distance_f") or "0"))
+    except (TypeError, ValueError): dist_f = 0.0
+    if dist_f <= 0 or dist_f > 7.5:
+        return 0.0, []
+    course = (race.get("course") or "").lower().strip()
+    bias = _DRAW_BIAS.get(course)
+    if not bias:
+        return 0.0, []
+    try: draw = int(str(runner.get("draw") or "0"))
+    except (TypeError, ValueError): draw = 0
+    if draw <= 0:
+        return 0.0, []
+    try: field_size = int(race.get("field_size") or len(race.get("runners") or []))
+    except (TypeError, ValueError): field_size = 0
+    if field_size < 4:
+        return 0.0, []
+
+    # Read rail and stall position from pro racecard — these override static bias
+    rail = (race.get("rail_movements") or "").lower()
+    stalls = (race.get("stalls") or "").lower()
+    rail_uncertainty = any(kw in rail for kw in ("moved", "movement", "far side", "near side", "centre"))
+
+    direction, frac = bias
+    # If stalls are positioned on the opposite side to expected, reverse the bias
+    if direction == "low" and any(kw in stalls for kw in ("far side", "stands side")):
+        direction = "high"
+        reasons_prefix = [f"Stalls: {race.get('stalls')} — draw bias reversed vs static model"]
+    elif direction == "high" and any(kw in stalls for kw in ("near side", "inside")):
+        direction = "low"
+        reasons_prefix = [f"Stalls: {race.get('stalls')} — draw bias reversed vs static model"]
+    else:
+        reasons_prefix = []
+
+    threshold = max(1, round(field_size * frac))
+    score = 0.0; reasons: list[str] = list(reasons_prefix)
+    if direction == "low":
+        if draw <= threshold:
+            score += 3.0; reasons.append(f"Favourable draw (stall {draw} at {course.title()} sprint)")
+        elif draw >= field_size - threshold + 1:
+            score -= 2.0; reasons.append(f"Wide draw disadvantage (stall {draw} at {course.title()})")
+    else:
+        if draw >= field_size - threshold + 1:
+            score += 3.0; reasons.append(f"Favourable draw (stall {draw} at {course.title()} sprint)")
+        elif draw <= threshold:
+            score -= 2.0; reasons.append(f"Inside draw disadvantage (stall {draw} at {course.title()})")
+
+    # Rail has moved — reduce bias confidence by half
+    if rail_uncertainty and score != 0.0:
+        score *= 0.5
+        reasons.append(f"Rail movements today — draw advantage reduced ({race.get('rail_movements')})")
+    return score, reasons
 
 
 def compute_context_score(race: dict, all_runners: list[dict]) -> tuple[float, list[str]]:
@@ -282,13 +371,14 @@ def compute_context_score(race: dict, all_runners: list[dict]) -> tuple[float, l
     try: race_class = int(_cls_raw)
     except (TypeError, ValueError): race_class = None
     if race_class is not None:
-        if race_class <= 2: score += 5.0; reasons.append(f"Class {race_class} — high quality, reliable form")
-        elif race_class == 3: score += 3.0; reasons.append(f"Class {race_class} — good quality field")
-        elif race_class == 4: score += 1.0; reasons.append(f"Class {race_class}")
-        elif race_class == 5: score -= 2.0; reasons.append(f"Class {race_class} — lower quality field")
-        else: score -= 4.0; reasons.append(f"Class {race_class} — low grade, noisy form")
+        # Class 3/5 = ROI +195-213% in backtest. Class 1-2 = -49.7% ROI, Class 4 = -57.5% ROI.
+        if race_class <= 2: score -= 2.0; reasons.append(f"Class {race_class} — top level, -49.7% ROI in backtest")
+        elif race_class == 3: score += 5.0; reasons.append(f"Class {race_class} — sweet spot, form reliable")
+        elif race_class == 4: score -= 3.0; reasons.append(f"Class {race_class} — negative ROI zone (-57.5%)")
+        elif race_class == 5: score += 3.0; reasons.append(f"Class {race_class} — predictable pattern zone")
+        elif race_class >= 6: score -= 3.0; reasons.append(f"Class {race_class} — low grade, noisy form")
     elif "grade 1" in _cls_raw or _cls_raw == "g1":
-        score += 5.0; reasons.append("Grade 1 — top NH quality, most reliable form")
+        score += 3.0; reasons.append("Grade 1 — top NH, competitive (use form lines carefully)")
     elif "grade 2" in _cls_raw or _cls_raw == "g2":
         score += 4.0; reasons.append("Grade 2 — high NH quality")
     elif "grade 3" in _cls_raw or _cls_raw == "g3":
@@ -310,7 +400,22 @@ def compute_context_score(race: dict, all_runners: list[dict]) -> tuple[float, l
     return round(max(0.0, min(15.0, score)), 2), reasons
 
 
-def compute_trainer_score(runner: dict) -> tuple[float, list[str]]:
+def _ae_score(ae: float | None, runners: int, thresholds: tuple[float, float, float]) -> float:
+    """Convert an A/E ratio to a score delta. Returns 0 if sample is too small."""
+    if ae is None or runners < 5:
+        return 0.0
+    high, mid, low = thresholds
+    if ae >= 1.5:   return high
+    if ae >= 1.2:   return mid
+    if ae < 0.6:    return low
+    return 0.0
+
+
+def compute_trainer_score(
+    runner: dict,
+    race: Optional[dict] = None,
+    trainer_profiles: Optional[dict] = None,
+) -> tuple[float, list[str]]:
     reasons: list[str] = []; score = 0.0
     t14 = runner.get("trainer_14_days") or {}
     try: pct = float(str(t14.get("percent") or "").strip().rstrip("%"))
@@ -320,20 +425,77 @@ def compute_trainer_score(runner: dict) -> tuple[float, list[str]]:
     if pct is not None:
         wins = t14.get("wins", "?"); runs = t14.get("runs", "?")
         if quick_return: reasons.append(f"Hot trainer ({pct:.0f}%) but quick return — edge cancelled")
-        elif pct >= 30: score += 8.0; reasons.append(f"Hot trainer — {wins}/{runs} ({pct:.0f}%)")
-        elif pct >= 20: score += 5.0; reasons.append(f"In-form trainer — {wins}/{runs} ({pct:.0f}%)")
-        elif pct >= 10: score += 2.0; reasons.append(f"Trainer ticking over ({pct:.0f}%)")
+        elif pct >= 35: score += 8.0; reasons.append(f"Hot trainer — {wins}/{runs} ({pct:.0f}%)")
+        elif pct >= 25: score += 5.0; reasons.append(f"In-form trainer — {wins}/{runs} ({pct:.0f}%)")
+        elif pct >= 12: score += 2.0; reasons.append(f"Trainer ticking over ({pct:.0f}%)")
         else: reasons.append(f"Cold trainer ({pct:.0f}%)")
+
+    # Course-specific trainer & jockey analysis (requires trainer_profiles data)
+    if trainer_profiles and race:
+        trainer_id   = str(runner.get("trainer_id") or "").strip()
+        jockey_id    = str(runner.get("jockey_id") or "").strip()
+        today_course = str(race.get("course") or "").strip().lower()
+
+        _trainers = trainer_profiles.get("trainers") or {}
+        _jockeys  = trainer_profiles.get("jockeys") or {}
+        t_data = _trainers.get(trainer_id) or {}
+
+        # Trainer win record at today's course
+        if today_course and t_data.get("courses"):
+            t_course = t_data["courses"].get(today_course) or {}
+            ae = t_course.get("ae"); n = t_course.get("runners", 0); w = t_course.get("wins", 0)
+            delta = _ae_score(ae, n, (3.0, 2.0, -2.0))
+            if delta > 0:   score += delta; reasons.append(f"Trainer excels at {race.get('course','?')}: {w}/{n} A/E={ae:.2f}")
+            elif delta < 0: score += delta; reasons.append(f"Trainer poor at {race.get('course','?')}: {w}/{n} A/E={ae:.2f}")
+
+        # Trainer×jockey combination record
+        if jockey_id and t_data.get("jockeys"):
+            combo = t_data["jockeys"].get(jockey_id) or {}
+            ae = combo.get("ae"); n = combo.get("runners", 0); w = combo.get("wins", 0)
+            jname = combo.get("jockey", jockey_id)
+            delta = _ae_score(ae, n, (2.0, 1.0, -1.0))
+            if delta > 0:   score += delta; reasons.append(f"Strong trainer/jockey combo ({jname}): {w}/{n} A/E={ae:.2f}")
+            elif delta < 0: score += delta; reasons.append(f"Weak trainer/jockey combo ({jname}): {w}/{n} A/E={ae:.2f}")
+
+        # Jockey win record at today's course
+        if jockey_id and today_course:
+            j_course = (_jockeys.get(jockey_id) or {}).get("courses", {}).get(today_course) or {}
+            ae = j_course.get("ae"); n = j_course.get("runners", 0); w = j_course.get("wins", 0)
+            delta = _ae_score(ae, n, (2.0, 1.0, -1.0))
+            if delta > 0:   score += delta; reasons.append(f"Jockey excels at {race.get('course','?')}: {w}/{n} A/E={ae:.2f}")
+            elif delta < 0: score += delta; reasons.append(f"Jockey poor at {race.get('course','?')}: {w}/{n} A/E={ae:.2f}")
+
+    # trainer_rtf — "Runs To Form" %, how reliably this trainer's horses perform to rating
+    try:
+        rtf = float(str(runner.get("trainer_rtf") or "").strip().rstrip("%"))
+        if rtf >= 80:   score += 2.0; reasons.append(f"High run-to-form rate: {rtf:.0f}% — reliable trainer")
+        elif rtf < 50:  score -= 1.0; reasons.append(f"Low run-to-form rate: {rtf:.0f}% — inconsistent")
+    except (ValueError, TypeError):
+        pass
+
     headgear_run = str(runner.get("headgear_run") or "").strip()
     headgear = (runner.get("headgear") or "").strip()
     if headgear_run == "1" and headgear:
-        reasons.append(f"First-time {headgear} (note: not a positive signal per data)")
+        score -= 2.0; reasons.append(f"First-time {headgear} — negative signal (-2pts)")
     wind_run = str(runner.get("wind_surgery_run") or "").strip()
-    if wind_run == "1": score += 3.0; reasons.append("First run after wind surgery")
-    if (runner.get("stable_tour") or "").strip() or (runner.get("quotes") or "").strip():
-        score += 2.0; reasons.append("Stable/trainer commentary present")
-    if runner.get("prev_trainers") or []:
+    wind_type = (runner.get("wind_surgery") or "").strip()
+    if wind_run == "1":
+        label = f" ({wind_type})" if wind_type else ""
+        score += 2.0; reasons.append(f"First run after wind surgery{label}")
+    _commentary = (
+        (runner.get("stable_tour") or "") + " " + (runner.get("quotes") or "")
+    ).lower().strip()
+    if _commentary:
+        if any(kw in _commentary for kw in _STRONG_POSITIVE_NLP):
+            score += 3.0; reasons.append("Strong positive commentary — win signal")
+        elif any(kw in _commentary for kw in _NEGATIVE_NLP):
+            score -= 1.0; reasons.append("Negative commentary — caution")
+    if runner.get("prev_trainers"):
         reasons.append("Recent trainer change — monitor")
+    medical = runner.get("medical") or []
+    if medical:
+        types = ", ".join(str(m.get("type") or "?") for m in medical[:2])
+        score -= 1.0; reasons.append(f"Medical record on file: {types} — monitor")
     return round(max(0.0, min(15.0, score)), 2), reasons
 
 
@@ -344,15 +506,18 @@ def compute_market_score(
     horse_id = str(runner.get("horse_id") or "")
     morning_price = _best_morning_price(runner)
     race_type = str(runner.get("_race_type") or "").lower()
-    if morning_price is not None and "hurdle" in race_type and 2.0 <= morning_price <= 3.0:
-        reasons.append(f"CAUTION: hurdle Evens–2/1 band — proven loss zone")
     if morning_price is not None:
+        is_hurdle = "hurdle" in race_type
         if morning_price < 2.0:
             score += 1.0; reasons.append(f"Very short price ({format_odds(morning_price)}) — value risk")
         elif morning_price < 3.0:
-            score += 3.0; reasons.append(f"Short price ({format_odds(morning_price)})")
+            # Hurdle Evens-2/1 band: no scoring bonus (proven neutral/loss zone in NH)
+            if not is_hurdle:
+                score += 3.0; reasons.append(f"Short price ({format_odds(morning_price)})")
+            else:
+                reasons.append(f"Hurdle Evens–2/1 ({format_odds(morning_price)}) — no bonus applied")
         elif morning_price <= 6.0:
-            score += 5.0; reasons.append(f"Value price ({format_odds(morning_price)})")
+            score += 4.0; reasons.append(f"Value price ({format_odds(morning_price)})")
         elif morning_price <= 12.0:
             score += 2.0; reasons.append(f"Each-way territory ({format_odds(morning_price)})")
         elif morning_price <= 20.0:
@@ -363,9 +528,8 @@ def compute_market_score(
         for mover in (market_movers.get("movements") or []):
             if str(mover.get("horse_id") or "") != horse_id: continue
             movement = (mover.get("move_type") or "").lower().strip()
-            if movement == "strong_steamer": score += 5.0; reasons.append("Strong steamer")
-            elif movement == "steamer": score += 3.0; reasons.append("Market steamer")
-            elif movement == "weak_drift": score -= 3.0; reasons.append("Market drifting")
+            # Steamer bonuses removed: r=-0.12 negative correlation in backtest
+            if movement == "weak_drift": score -= 3.0; reasons.append("Market drifting")
             elif movement == "dangerous_drift":
                 score -= 10.0; fatal_flags.append("dangerous_drift")
                 reasons.append("DANGEROUS DRIFT — NAP blocked")
@@ -384,15 +548,17 @@ def assign_grade(total_score: float) -> str:
 def score_runner(
     runner: dict, race: dict, all_runners: list[dict],
     full_form: Optional[dict], market_movers: Optional[dict],
+    trainer_profiles: Optional[dict] = None,
 ) -> dict:
     runner = dict(runner)
     runner["_race_type"] = str(race.get("type") or "")
     form_score, form_reasons = compute_form_score(runner, all_runners)
     suit_score, suit_reasons = compute_suitability_score(runner, race, full_form)
     ctx_score, ctx_reasons   = compute_context_score(race, all_runners)
-    trnr_score, trnr_reasons = compute_trainer_score(runner)
+    draw_score, draw_reasons = compute_draw_score(runner, race)
+    trnr_score, trnr_reasons = compute_trainer_score(runner, race, trainer_profiles)
     mkt_score, mkt_reasons, fatal_flags = compute_market_score(runner, market_movers)
-    total = max(0.0, min(100.0, form_score + suit_score + ctx_score + trnr_score + mkt_score))
+    total = max(0.0, min(100.0, form_score + suit_score + ctx_score + draw_score + trnr_score + mkt_score))
     grade = assign_grade(total)
     morning_price = _best_morning_price(runner)
     return {
@@ -403,8 +569,9 @@ def score_runner(
         "off_time": str(race.get("off_time") or ""),
         "score": round(total, 2), "grade": grade,
         "form_score": form_score, "suitability_score": suit_score,
-        "context_score": ctx_score, "trainer_score": trnr_score, "market_score": mkt_score,
-        "reasons": form_reasons + suit_reasons + ctx_reasons + trnr_reasons + mkt_reasons,
+        "context_score": ctx_score, "draw_score": round(draw_score, 2),
+        "trainer_score": trnr_score, "market_score": mkt_score,
+        "reasons": form_reasons + suit_reasons + ctx_reasons + draw_reasons + trnr_reasons + mkt_reasons,
         "warnings": list(fatal_flags),
         "morning_price": morning_price,
         "form": runner.get("form") or "",
@@ -525,12 +692,16 @@ def main() -> int:
     if market_movers is None:
         log("nap_selector_v3: market_movers not available — morning price only", "INFO")
 
+    trainer_profiles: Optional[dict] = safe_load_json(data_path(f"trainer_profiles_{date_str}.json"))
+    if trainer_profiles is None:
+        log("nap_selector_v3: trainer_profiles not available — course/combo signals skipped", "INFO")
+
     race_scores: dict[str, list[dict]] = {}
     for race in racecards:
         race_id = str(race.get("race_id") or "")
         runners: list[dict] = race.get("runners") or []
         if not runners: continue
-        scored = [score_runner(r, race, runners, full_form, market_movers) for r in runners]
+        scored = [score_runner(r, race, runners, full_form, market_movers, trainer_profiles) for r in runners]
         scored.sort(key=lambda r: r["score"], reverse=True)
         race_scores[race_id] = scored
 
@@ -562,6 +733,7 @@ def main() -> int:
             no_bet_races.append(race_id); continue
         if race_id in cluster_races: no_bet_races.append(race_id); continue
         if top["score"] < NAP_MIN_SCORE: no_bet_races.append(race_id); continue
+        if top["score"] > NAP_MAX_SCORE: no_bet_races.append(race_id); continue  # 83-85 band = 0% WR
         if "dangerous_drift" in (top.get("warnings") or []):
             no_bet_races.append(race_id); continue
         nap_candidates.append(top)
@@ -601,8 +773,8 @@ def main() -> int:
     shadow: list[dict] = []
     for r in non_nap:
         grade = r["grade"]
-        if best_of_card is None and grade in ("A", "B+"): r["status"] = "BEST_OF_CARD"; best_of_card = r
-        elif grade == "B": r["status"] = "WATCHLIST"; watchlist.append(r)
+        if best_of_card is None and grade == "A": r["status"] = "BEST_OF_CARD"; best_of_card = r
+        elif grade in ("B+", "B"): r["status"] = "WATCHLIST"; watchlist.append(r)
         elif grade == "C": r["status"] = "SHADOW"; shadow.append(r)
 
     # Jump alternative: best excluded-type pick (chase/hurdle) as secondary option.
@@ -622,11 +794,15 @@ def main() -> int:
             jump_nap = dict(top)
             jump_nap["status"] = "JUMP_ALTERNATIVE"
 
+    _field_cluster = bool(
+        nap and "field_cluster_warning" in (nap.get("warnings") or [])
+    )
     output: dict = {
         "date": date_str, "generated_at": generated_at_iso, "model_version": MODEL_VERSION,
         "nap": nap, "jump_nap": jump_nap, "best_of_card": best_of_card,
         "watchlist": watchlist[:10], "shadow": shadow[:10],
         "cluster_races": cluster_races, "no_bet_races": no_bet_races, "day_verdict": day_verdict,
+        "field_cluster_warning": _field_cluster,
     }
 
     json_dest = data_path(f"nap_candidates_{date_str}.json")

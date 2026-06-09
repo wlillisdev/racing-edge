@@ -35,7 +35,7 @@ from src.api_client import get_client
 from racecard_loader import get_race
 
 API_DELAY_SECONDS: float = 0.5
-RESULT_LIMIT:      int   = 8
+RESULT_LIMIT:      int   = 15  # 12 months history for an active horse
 
 _CLASS_NUMERIC_MAP: dict[str, int] = {
     "1": 1, "2": 2, "3": 3, "4": 4, "5": 5, "6": 6, "7": 7,

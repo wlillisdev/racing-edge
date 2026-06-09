@@ -272,6 +272,7 @@ def _assess_form_relevance_full(
 
     dist_win = False
     going_win = False
+    going_placed = False
     dist_placed = False
     going_similar = False
 
@@ -285,6 +286,9 @@ def _assess_form_relevance_full(
         if pos_int is None:
             continue
 
+        win = pos_int == 1
+        placed = pos_int <= 3
+
         # Distance check.
         raw_dist = str(run.get("distance_f") or run.get("distance") or "")
         try:
@@ -294,24 +298,25 @@ def _assess_form_relevance_full(
 
         if today_dist_f > 0 and run_dist > 0:
             if abs(today_dist_f - run_dist) <= DISTANCE_TOLERANCE_F:
-                if pos_int == 1:
+                if win:
                     dist_win = True
-                elif pos_int <= 3:
+                elif placed:
                     dist_placed = True
 
-        # Going check.
+        # Going check — credit placed runs on same going, not just wins.
         run_going = going_normalise(run.get("going") or "")
         if today_going and run_going:
-            if today_going == run_going and pos_int == 1:
-                going_win = True
-            elif _going_adjacent(today_going, run_going) and pos_int == 1:
+            if today_going == run_going:
+                if win: going_win = True
+                elif placed: going_placed = True
+            elif _going_adjacent(today_going, run_going) and win:
                 going_similar = True
 
     if dist_win and going_win:
         return "high", "Won at today's trip and going — very strong relevance"
     if dist_win or (dist_placed and going_win):
         return "high", "Proven at today's trip and/or going"
-    if dist_placed or going_win or going_similar:
+    if dist_placed or going_win or going_placed or going_similar:
         return "medium", "Some relevant form at today's conditions"
     return "low", "No obvious distance/going match in recent form"
 
