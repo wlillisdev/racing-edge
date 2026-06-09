@@ -32,16 +32,23 @@ def _load_briefing(path: str) -> tuple[str, bool]:
     p = Path(path)
     if p.exists():
         try:
-            return p.read_text(encoding="utf-8"), False
+            content = p.read_text(encoding="utf-8")
+            if content.strip():
+                return content, False
+            log("email_report: briefing file exists but is empty — using fallback", "WARNING")
         except OSError as exc:
             log(f"email_report: could not read briefing file — {exc}", "WARNING")
 
     fallback = (
-        "Morning briefing not available. "
-        "System may have encountered an issue. "
-        "Please check logs."
+        "MORNING BRIEFING NOT GENERATED\n\n"
+        "The pipeline ran but the morning briefing was not produced.\n\n"
+        "Likely causes:\n"
+        "  1. No racecard data fetched (run_daily.py failed or no racing today)\n"
+        "  2. nap_selector_v3.py returned BLOCKED\n"
+        "  3. morning_briefing_report.py crashed (check PythonAnywhere logs)\n\n"
+        "Check: reports/ and data/ directories for today's date."
     )
-    log("email_report: using fallback body — briefing file not found", "WARNING")
+    log("email_report: using fallback body — briefing file missing or empty", "WARNING")
     return fallback, True
 
 

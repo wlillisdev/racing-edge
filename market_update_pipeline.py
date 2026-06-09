@@ -179,11 +179,25 @@ def main() -> int:
 
     log(f"market_update_pipeline: project_dir={project_dir}, date={date_str}")
 
+    CRITICAL_GATE_STEPS: frozenset[str] = frozenset({"run_daily"})
+    ALWAYS_RUN_STEPS: frozenset[str] = frozenset({"email_market_update"})
+
     # --- Run pipeline -----------------------------------------------------------
     pipeline_start = datetime.now(timezone.utc)
     results: list[dict] = []
+    gate_failed = False
 
     for step_name, script, args in PIPELINE_STEPS:
+        if gate_failed and step_name not in ALWAYS_RUN_STEPS:
+            log(f"market_update_pipeline: [{step_name}] SKIPPED — upstream gate failed")
+            results.append({
+                "step": step_name, "script": script, "args": args,
+                "started_at": datetime.now(timezone.utc).isoformat(),
+                "finished_at": datetime.now(timezone.utc).isoformat(),
+                "duration_s": 0.0, "returncode": 0, "status": "SKIPPED",
+            })
+            continue
+
         result = _run_step(step_name, script, args, project_dir)
         results.append(result)
 
@@ -193,6 +207,13 @@ def main() -> int:
                 f"{result['returncode']} — continuing pipeline",
                 "ERROR",
             )
+            if step_name in CRITICAL_GATE_STEPS:
+                log(
+                    f"market_update_pipeline: [{step_name}] is critical gate — "
+                    "skipping to email step",
+                    "ERROR",
+                )
+                gate_failed = True
 
     pipeline_end = datetime.now(timezone.utc)
     total_s = round((pipeline_end - pipeline_start).total_seconds(), 2)
