@@ -52,6 +52,26 @@ def _load_briefing(path: str) -> tuple[str, bool]:
     return fallback, True
 
 
+def _load_ai_briefing(date_str: str) -> str:
+    """Return the AI natural-language briefing if present and non-empty, else ''.
+
+    A no-op when briefing_writer_ai degraded (no key / stub) — the templated
+    briefing remains the source of truth and is unaffected.
+    """
+    p = Path(report_path(f"ai_briefing_{date_str}.txt"))
+    if not p.exists():
+        return ""
+    try:
+        content = p.read_text(encoding="utf-8").strip()
+    except OSError as exc:
+        log(f"email_report: could not read AI briefing — {exc}", "WARNING")
+        return ""
+    # Skip degraded stubs so we never prepend a placeholder above the real brief.
+    if not content or "STUB" in content[:200].upper() or "unavailable" in content[:200].lower():
+        return ""
+    return content
+
+
 def _build_subject(date_str: str, is_fallback: bool) -> str:
     try:
         dt = datetime.strptime(date_str, "%Y-%m-%d")
@@ -102,6 +122,13 @@ def main() -> int:
     # --- Load briefing ----------------------------------------------------------
     briefing_path = report_path(f"morning_briefing_{date_str}.txt")
     body_text, is_fallback = _load_briefing(briefing_path)
+
+    # Prepend the AI natural-language briefing when available (no-op if absent).
+    ai_brief = _load_ai_briefing(date_str)
+    if ai_brief:
+        sep = "─" * 60
+        body_text = f"{ai_brief}\n\n{sep}\n\n{body_text}"
+        log("email_report: prepended AI natural-language briefing")
 
     subject = _build_subject(date_str, is_fallback)
     body = _build_body(body_text)

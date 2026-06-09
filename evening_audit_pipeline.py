@@ -49,6 +49,7 @@ RESULTS_RETRY_WAIT_S: int = 15 * 60  # 15 minutes
 PIPELINE_STEPS: list[tuple[str, str, list[str]]] = [
     ("results_auditor",    "results_auditor.py",    []),
     ("performance_tracker","performance_tracker.py", []),
+    ("loser_autopsy_ai",   "loser_autopsy_ai.py",    []),
     ("profit_report",      "profit_report.py",       []),
     ("email_audit",        "email_audit.py",         []),
 ]

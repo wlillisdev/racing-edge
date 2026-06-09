@@ -766,6 +766,7 @@ def score_runner(
     full_form: Optional[dict], market_movers: Optional[dict],
     trainer_profiles: Optional[dict] = None,
     form_read: Optional[dict] = None,
+    race_shape: Optional[dict] = None,
 ) -> dict:
     runner = dict(runner)
     runner["_race_type"] = str(race.get("type") or "")
@@ -810,6 +811,27 @@ def score_runner(
                     f"AI form read: {ai_verdict or '—'} (rating {ai_rating}) — {ai_read} [{delta:+.1f}]"
                 )
 
+    # AI Pace overlay (bounded ±2): does this horse's running style suit the
+    # projected race shape? Pace is the model's biggest structural blind spot.
+    # Capped tighter than the form read (±2 < ±3) so it only refines ordering.
+    pace_style: str = ""
+    pace_fit: Optional[int] = None
+    pace_reasons: list[str] = []
+    if race_shape:
+        _rs = race_shape.get(str(race.get("race_id") or ""))
+        if isinstance(_rs, dict):
+            _ph = (_rs.get("horses") or {}).get(str(runner.get("horse_id") or ""))
+            if isinstance(_ph, dict) and isinstance(_ph.get("pace_fit"), (int, float)):
+                pace_fit = int(_ph["pace_fit"])
+                pace_style = str(_ph.get("running_style") or "")
+                p_delta = max(-2.0, min(2.0, (pace_fit - 50) / 50.0 * 2.0))
+                total = max(0.0, min(100.0, total + p_delta))
+                _note = str(_ph.get("note") or "").strip()
+                if _note:
+                    pace_reasons.append(
+                        f"AI pace ({pace_style or '?'}, fit {pace_fit}): {_note} [{p_delta:+.1f}]"
+                    )
+
     grade = assign_grade(total)
     morning_price = _best_morning_price(runner)
     return {
@@ -824,7 +846,8 @@ def score_runner(
         "trainer_score": trnr_score, "market_score": mkt_score,
         "wisdom_score": round(wisdom_score, 2),
         "ai_verdict": ai_verdict, "ai_rating": ai_rating, "ai_read": ai_read,
-        "reasons": form_reasons + suit_reasons + ctx_reasons + draw_reasons + trnr_reasons + mkt_reasons + wisdom_reasons + ai_reasons,
+        "pace_style": pace_style, "pace_fit": pace_fit,
+        "reasons": form_reasons + suit_reasons + ctx_reasons + draw_reasons + trnr_reasons + mkt_reasons + wisdom_reasons + ai_reasons + pace_reasons,
         "warnings": list(fatal_flags),
         "morning_price": morning_price,
         "form": runner.get("form") or "",
@@ -956,12 +979,19 @@ def main() -> int:
     else:
         log("nap_selector_v3: no AI form reads — numeric model only", "INFO")
 
+    # AI Pace projection (keyed by race_id, each with a per-horse 'horses' map).
+    race_shape: Optional[dict] = safe_load_json(data_path(f"race_shape_{date_str}.json"))
+    if race_shape:
+        log(f"nap_selector_v3: AI pace projections loaded for {len(race_shape)} races — applying bounded overlay")
+    else:
+        log("nap_selector_v3: no AI pace projections — numeric model only", "INFO")
+
     race_scores: dict[str, list[dict]] = {}
     for race in racecards:
         race_id = str(race.get("race_id") or "")
         runners: list[dict] = race.get("runners") or []
         if not runners: continue
-        scored = [score_runner(r, race, runners, full_form, market_movers, trainer_profiles, form_read) for r in runners]
+        scored = [score_runner(r, race, runners, full_form, market_movers, trainer_profiles, form_read, race_shape) for r in runners]
         scored.sort(key=lambda r: r["score"], reverse=True)
         race_scores[race_id] = scored
 

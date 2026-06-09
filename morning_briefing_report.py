@@ -88,6 +88,25 @@ def _build_briefing(date_str: str, data: dict) -> str:
 
     lines.append("")
 
+    # --- AI second opinion (independent arbiter) ---
+    arb = safe_load_json(data_path(f"arbiter_{date_str}.json")) or {}
+    res = arb.get("result") or {}
+    if res:
+        lines.append("■ AI SECOND OPINION")
+        agree = str(res.get("agreement") or "UNKNOWN").upper()
+        flag = "   ⚠⚠ DISAGREES WITH MODEL ⚠⚠" if agree == "DISAGREE" else ""
+        ai = res.get("ai_nap") or {}
+        lines += [
+            f"  AI NAP: {str(ai.get('horse', '?')).upper()} — {ai.get('course', '?')}  {ai.get('off_time', '?')}",
+            f"  Agreement: {agree}{flag}  (confidence {res.get('confidence', '?')}/100)",
+        ]
+        note = str(res.get("agreement_note") or "").strip()
+        if note:
+            lines.append(f"  {note}")
+        if ai.get("reason"):
+            lines.append(f"  Why: {ai.get('reason')}")
+        lines.append("")
+
     # --- Jump alternative ---
     jump_nap = data.get("jump_nap")
     lines.append("■ JUMP ALTERNATIVE")

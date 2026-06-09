@@ -57,9 +57,12 @@ PIPELINE_STEPS: list[tuple[str, str, list[str]]] = [
     ("full_form_reader",       "full_form_reader.py",      []),
     ("trainer_profile_reader", "trainer_profile_reader.py",[]),
     ("form_reader_ai",         "form_reader_ai.py",        []),
+    ("race_shape_ai",          "race_shape_ai.py",         []),
     ("nap_selector_v3",        "nap_selector_v3.py",       []),
+    ("nap_arbiter_ai",         "nap_arbiter_ai.py",        []),
     ("cluster_review",         "cluster_review.py",        []),
     ("morning_briefing_report","morning_briefing_report.py",[]),
+    ("briefing_writer_ai",     "briefing_writer_ai.py",    []),
     ("email_report",           "email_report.py",          []),
 ]
 
