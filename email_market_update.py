@@ -166,9 +166,23 @@ def main() -> int:
 
     if missing_files:
         log(
-            f"email_market_update: missing reports — {', '.join(missing_files)} — "
-            "email will still be sent with available content",
-            "WARNING",
+            f"email_market_update: missing reports — {', '.join(missing_files)}",
+            "WARNING" if nap_text else "ERROR",
+        )
+
+    # If ALL reports are missing there is nothing useful to send — send a clear
+    # PIPELINE FAILURE alert rather than an email full of placeholder text.
+    if nap_text is None and movers_text is None and nr_text is None:
+        log("email_market_update: ALL reports missing — sending PIPELINE FAILURE alert", "ERROR")
+        nap_text = (
+            "PIPELINE FAILURE — NO REPORTS GENERATED\n\n"
+            "None of the expected market update reports were found.\n\n"
+            f"Expected files:\n"
+            f"  • final_nap_decision_{date_str}.txt\n"
+            f"  • market_movers_{date_str}.txt\n"
+            f"  • non_runners_{date_str}.txt\n\n"
+            "The market update pipeline ran but upstream steps all failed.\n"
+            "Check PythonAnywhere task logs for errors.\n"
         )
 
     # --- Compose email ----------------------------------------------------------

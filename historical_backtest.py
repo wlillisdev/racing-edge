@@ -38,7 +38,7 @@ from src.helpers import data_path, going_normalise, log, report_path
 from src.api_client import get_client, RacingAPIError
 from nap_selector_v3 import (
     score_runner, NAP_MIN_SCORE, NAP_MAX_SCORE, GRADE_A_THRESHOLD,
-    NAP_EXCLUDED_RACE_TYPES, NAP_MIN_ODDS, FLAT_MAX_DIST_F,
+    NAP_EXCLUDED_RACE_TYPES, NAP_MIN_ODDS, NAP_MAX_ODDS, FLAT_MAX_DIST_F, FLAT_MIN_DIST_F,
     FLAT_EXCLUDED_GOING, CLUSTER_SPREAD, CLUSTER_MIN_SCORE,
     detect_race_cluster,
 )
@@ -48,7 +48,7 @@ from nap_selector_v3 import (
 # ---------------------------------------------------------------------------
 
 API_DELAY_S = 0.6
-MAX_DAYS = 400
+MAX_DAYS = 900  # ~30 months; cached days are free on subsequent runs
 
 # ---------------------------------------------------------------------------
 # Cache helpers
@@ -132,9 +132,13 @@ def _normalise_runner(raw: dict) -> dict:
         "wind_surgery_run":  _safe_int(raw.get("wind_surgery_run"), default=-1),
         "trainer_14_days":   raw.get("trainer_14_days") if isinstance(raw.get("trainer_14_days"), dict) else {},
         "spotlight":         _safe_str(raw.get("spotlight")),
+        "comment":           _safe_str(raw.get("comment")),
         "quotes":            _safe_str(raw.get("quotes")),
         "stable_tour":       _safe_str(raw.get("stable_tour")),
         "prev_trainers":     raw.get("prev_trainers") if isinstance(raw.get("prev_trainers"), list) else [],
+        "trainer_rtf":       _safe_str(raw.get("trainer_rtf")),
+        "wind_surgery":      _safe_str(raw.get("wind_surgery")),
+        "medical":           raw.get("medical") if isinstance(raw.get("medical"), list) else [],
     }
 
 
@@ -146,7 +150,7 @@ def _normalise_racecard(raw: dict) -> dict:
         "course":      _safe_str(raw.get("course")),
         "off_time":    _safe_str(raw.get("off_time") or raw.get("off")),
         "race_name":   _safe_str(raw.get("race_name") or raw.get("race")),
-        "class":       raw.get("class") if raw.get("class") is not None else raw.get("race_class"),
+        "class":       next((raw.get(k) for k in ("class", "race_class", "pattern", "race_group") if raw.get(k) is not None), None),
         "distance_f":  _safe_float(raw.get("distance_f") or raw.get("dist_f")),
         "going":       _safe_str(raw.get("going")),
         "surface":     _safe_str(raw.get("surface")),
@@ -371,7 +375,7 @@ def main() -> int:
                         help="Include excluded race types (chases etc) in daily NAP pool")
     parser.add_argument("--max-flat-dist", type=float, default=FLAT_MAX_DIST_F,
                         dest="max_flat_dist",
-                        help="Max distance in furlongs for flat NAP selection (default 14f)")
+                        help="Max distance in furlongs for flat NAP selection (default 16f)")
     args = parser.parse_args()
 
     # Date range
@@ -423,20 +427,10 @@ def main() -> int:
 
         days_data += 1
 
-        # Try 1: racecard embeds position for some API configurations.
-        results_lookup: dict[str, dict] = {}
-        for _race in races:
-            for _runner in (_race.get("runners") or []):
-                _hid = _runner.get("horse_id", "")
-                _pos = _runner.get("position", "")
-                _sp  = _runner.get("sp_dec", 0.0)
-                if _hid and _pos:
-                    results_lookup[_hid] = {"position": _pos, "sp_dec": _sp}
-
-        # Try 2: per-race results endpoint — reliable, uses /results/{race_id}.
-        # Results are cached per race_id so subsequent runs skip all API calls.
-        if not results_lookup:
-            results_lookup = _fetch_results_per_race(races, client)
+        # Always fetch results via /results/{race_id} — the only reliable source.
+        # Do NOT attempt to read "position" from racecard runners: that field is the
+        # draw/stall number, not the finishing position, so it corrupts W/P/L figures.
+        results_lookup = _fetch_results_per_race(races, client)
 
         best_day_score  = -1.0
         best_day_record: Optional[dict] = None
@@ -527,15 +521,21 @@ def main() -> int:
                 top.get("morning_price") is not None
                 and top["morning_price"] < NAP_MIN_ODDS
             )
+            _too_big = (
+                top.get("morning_price") is not None
+                and top["morning_price"] > NAP_MAX_ODDS
+            )
             _is_flat = not any(x in (race_type or "").lower() for x in ("chase", "hurdle", "bumper"))
             _dist_filtered = _is_flat and dist_f >= args.max_flat_dist
+            _sprint_filtered = _is_flat and 0.0 < dist_f < FLAT_MIN_DIST_F
             _going_filtered = _is_flat and going_normalise(top.get("going") or "") in FLAT_EXCLUDED_GOING
             _clustered = detect_race_cluster(scored)
             _dangerous = "dangerous_drift" in (top.get("warnings") or [])
             if (composite >= args.min_score and composite <= NAP_MAX_SCORE
                     and composite > best_day_score
-                    and not _excluded and not _too_short and not _dist_filtered
-                    and not _going_filtered and not _clustered and not _dangerous):
+                    and not _excluded and not _too_short and not _too_big and not _dist_filtered
+                    and not _sprint_filtered and not _going_filtered
+                    and not _clustered and not _dangerous):
                 best_day_score  = composite
                 best_day_record = record
 

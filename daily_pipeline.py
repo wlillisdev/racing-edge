@@ -239,9 +239,17 @@ def main() -> int:
         )
         skip_run_daily = True
 
+    # Steps that gate all downstream work. If these fail, skip data-processing
+    # steps (no racecard = no point scoring runners), but always run the email.
+    CRITICAL_GATE_STEPS: frozenset[str] = frozenset({"run_daily"})
+    # Steps that always run regardless (email must always fire so the operator
+    # is notified of failures even when the pipeline partially breaks).
+    ALWAYS_RUN_STEPS: frozenset[str] = frozenset({"email_report"})
+
     # --- Run pipeline -----------------------------------------------------------
     pipeline_start = datetime.now(timezone.utc)
     results: list[dict] = []
+    gate_failed = False  # Set True when a critical gate step fails
 
     for step_name, script, args in PIPELINE_STEPS:
         # Apply freshness skip only to run_daily.
@@ -259,16 +267,34 @@ def main() -> int:
             })
             continue
 
+        # Skip data-processing steps when the racecard gate failed.
+        # email_report always runs so the operator is notified.
+        if gate_failed and step_name not in ALWAYS_RUN_STEPS:
+            log(f"daily_pipeline: [{step_name}] SKIPPED — upstream gate failed (no racecard data)")
+            results.append({
+                "step": step_name, "script": script, "args": args,
+                "started_at": datetime.now(timezone.utc).isoformat(),
+                "finished_at": datetime.now(timezone.utc).isoformat(),
+                "duration_s": 0.0, "returncode": 0, "status": "SKIPPED",
+            })
+            continue
+
         result = _run_step(step_name, script, args, project_dir)
         results.append(result)
 
-        # Non-zero exit: log ERROR but continue — never silently abort.
         if result["status"] == "FAIL":
             log(
                 f"daily_pipeline: [{step_name}] returned non-zero exit code "
                 f"{result['returncode']} — continuing pipeline",
                 "ERROR",
             )
+            if step_name in CRITICAL_GATE_STEPS:
+                log(
+                    f"daily_pipeline: [{step_name}] is a critical gate — "
+                    "skipping data-processing steps (email will still fire)",
+                    "ERROR",
+                )
+                gate_failed = True
 
     pipeline_end = datetime.now(timezone.utc)
     total_s = round((pipeline_end - pipeline_start).total_seconds(), 2)

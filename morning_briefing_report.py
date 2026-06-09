@@ -58,10 +58,14 @@ def _build_briefing(date_str: str, data: dict) -> str:
     if nap:
         price = nap.get("morning_price")
         warnings = nap.get("warnings") or []
+        try:
+            score_str = f"{float(nap.get('score', 0)):.1f}"
+        except (TypeError, ValueError):
+            score_str = "?"
         lines += [
-            f"  {nap['horse'].upper()}",
+            f"  {str(nap.get('horse', '?')).upper()}",
             f"  {nap.get('course', '?')}  {nap.get('off_time', '?')}",
-            f"  Score: {nap['score']:.1f}  |  Grade: {nap.get('grade', '?')}  |  Price: {_fmt_odds(price)}",
+            f"  Score: {score_str}  |  Grade: {nap.get('grade', '?')}  |  Price: {_fmt_odds(price)}",
             f"  Form: {nap.get('form', '—')}  |  RPR: {nap.get('rpr', '—')}  |  OR: {nap.get('ofr', '—')}",
             f"  Race type: {nap.get('race_type', '?')}  |  Going: {nap.get('going', '?')}",
             "",
@@ -82,10 +86,14 @@ def _build_briefing(date_str: str, data: dict) -> str:
     lines.append("■ JUMP ALTERNATIVE")
     if jump_nap:
         price = jump_nap.get("morning_price")
+        try:
+            j_score_str = f"{float(jump_nap.get('score', 0)):.1f}"
+        except (TypeError, ValueError):
+            j_score_str = "?"
         lines += [
-            f"  {jump_nap['horse'].upper()}",
+            f"  {str(jump_nap.get('horse', '?')).upper()}",
             f"  {jump_nap.get('course', '?')}  {jump_nap.get('off_time', '?')}",
-            f"  Score: {jump_nap['score']:.1f}  |  Type: {jump_nap.get('race_type', '?')}  |  Price: {_fmt_odds(price)}",
+            f"  Score: {j_score_str}  |  Type: {jump_nap.get('race_type', '?')}  |  Price: {_fmt_odds(price)}",
         ]
         for r in (jump_nap.get("reasons") or [])[:3]:
             lines.append(f"    • {r}")
@@ -100,9 +108,13 @@ def _build_briefing(date_str: str, data: dict) -> str:
     if watchlist:
         for h in watchlist[:5]:
             price = h.get("morning_price")
+            try:
+                w_score_str = f"{float(h.get('score', 0)):.1f}"
+            except (TypeError, ValueError):
+                w_score_str = "?"
             lines.append(
-                f"  {h['horse']} | {h.get('course','?')} {h.get('off_time','?')} "
-                f"| Score: {h['score']:.1f} | {_fmt_odds(price)}"
+                f"  {h.get('horse', '?')} | {h.get('course','?')} {h.get('off_time','?')} "
+                f"| Score: {w_score_str} | {_fmt_odds(price)}"
             )
     else:
         lines.append("  Empty.")
@@ -135,9 +147,20 @@ def main() -> int:
     data = safe_load_json(candidates_path)
     if not data:
         log(f"morning_briefing_report: no candidates file at {candidates_path}", "ERROR")
-        return 1
+        # Write a minimal briefing so email_report still sends something useful
+        data = {"day_verdict": "PIPELINE FAILURE — candidates file missing", "nap": None}
 
-    briefing = _build_briefing(date_str, data)
+    try:
+        briefing = _build_briefing(date_str, data)
+    except Exception as exc:
+        log(f"morning_briefing_report: _build_briefing failed — {exc}", "ERROR")
+        briefing = (
+            f"MORNING BRIEFING — BUILD FAILURE\n\n"
+            f"Date: {date_str}\n"
+            f"Error: {exc}\n\n"
+            f"Pipeline ran but briefing could not be assembled.\n"
+            f"Check: data/nap_candidates_{date_str}.json\n"
+        )
 
     dest = report_path(f"morning_briefing_{date_str}.txt")
     try:

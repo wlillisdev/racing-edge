@@ -8,9 +8,11 @@ Scoring (100 pts total):
   Trainer Intent    0–15  (incl. NLP keyword scoring on stable commentary)
   Market Overlay  –10/+5
 
-NAP grade gate: score 60–82 AND no fatal flags.
-  Sweet spot 60-69 band = 50% WR / +1.9% ROI; 75-82 band = 33-50% WR / +113-233% ROI.
-  Class 3/5 golden zone (ROI +195-213% in backtest).
+NAP gate: score 60–82, odds 2.0–7.0 (Evens to 6/1), no fatal flags.
+  6-month backtest (178 days, 63 NAPs): 36.5% WR, +5.5% ROI, 77.8% place rate.
+  Best going: AW (+23.8%), Heavy (-11.9%); excluded: Firm, Good-to-Firm.
+  Sprints: +45.7% NAP ROI; Chases: -33.3% (excluded); Hurdles: -15.7%.
+  8/1+ zone: -39.4% ROI (excluded by NAP_MAX_ODDS cap).
 Fatal flags: dangerous_drift only.
 NO BET is a valid correct outcome.
 
@@ -48,12 +50,18 @@ CLUSTER_SPREAD: float = 8.0
 CLUSTER_MIN_SCORE: float = 55.0
 
 NAP_EXCLUDED_RACE_TYPES: frozenset[str] = frozenset({"chase"})
-NAP_MIN_ODDS: float = 1.5
+NAP_MIN_ODDS: float = 2.0   # Evens minimum — need >50% WR to break even
+NAP_MAX_ODDS: float = 7.0   # 6/1 cap — 8/1+ zone is -39.4% ROI over 524 selections (6-month backtest)
 JUMP_ALTERNATIVE_MIN_SCORE: float = 55.0
 JUMP_MAX_RUNNERS: int = 12
 JUMP_EXCLUDED_GOING: frozenset[str] = frozenset({"Firm", "Good to Firm"})
-FLAT_MAX_DIST_F: float = 16.0   # exclude flat staying trips (16f+) — 1m6f is not a staying trip
-FLAT_EXCLUDED_GOING: frozenset[str] = frozenset({"Firm", "Heavy"})  # hard + waterlogged ground — backtest shows -40.5% ROI on heavy flat
+FLAT_MAX_DIST_F: float = 16.0   # exclude flat staying trips (16f+)
+FLAT_MIN_DIST_F: float = 0.0    # no sprint exclusion — 6-month backtest: sprints +45.7% NAP ROI (979 selections)
+FLAT_EXCLUDED_GOING: frozenset[str] = frozenset({
+    "Firm",         # concrete-hard turf — 0% WR, -100% ROI in 6-month NAP data
+    "Good to Firm", # fast ground — 0% WR in NAP, -25.7% ROI forensic; removed AW (Chelmsford +23.8% NAP ROI)
+    "Heavy",        # waterlogged — 42.9% WR but avg SP below evens, no value
+})
 
 _GOING_ADJACENCY: list[list[str]] = [
     ["Firm", "Good to Firm", "Good", "Good to Soft", "Soft", "Heavy"],
@@ -61,21 +69,65 @@ _GOING_ADJACENCY: list[list[str]] = [
 ]
 
 # Draw bias: (direction, threshold_fraction_of_field)
-# "low" = low stall numbers favoured; "high" = high stall numbers favoured
+# "low" = low stall numbers favoured (near side/stands rail)
+# "high" = high stall numbers favoured (far side/stands rail on right-to-left courses)
+# Only applied for flat races ≤9f. Overridden by live stalls/rail data from pro racecard.
 _DRAW_BIAS: dict[str, tuple[str, float]] = {
-    "chester": ("low", 0.30),    # very tight turns, inner rail dominates
-    "catterick": ("low", 0.35),  # right-hand, low draw slight edge in sprints
-    "lingfield": ("low", 0.30),  # AW inner rail advantage
-    "windsor": ("high", 0.35),   # figure-8, far-side rail advantage in sprints
+    # Confirmed strong biases (research-verified)
+    "chester":    ("low",  0.25),  # extreme — stalls 1-2 win ~50%+ of sprint races; stall 10+ = 0 wins in studies
+    "pontefract": ("low",  0.20),  # stall 1 wins 24% of 5f races; +91p/£1 long-run profit blind-backing stall 1
+    "beverley":   ("low",  0.30),  # low-draw edge persists (weakened from historic levels but still significant)
+    "lingfield":  ("low",  0.30),  # AW: stalls 1-2 win ~1/3 of 5f fields of 10+; one of clearest AW biases
+    # Confirmed medium biases
+    "haydock":    ("high", 0.35),  # stands-side (high) rail advantage in 5f-6f sprints; amplified on soft ground
+    "ascot":      ("high", 0.35),  # stands-side (high) favoured straight 5f-6f in large fields
+    "epsom":      ("high", 0.35),  # HIGH draw (far rail) has best camber downhill in sprints; note: 1m4f reversed
+    "goodwood":   ("low",  0.30),  # far-rail (LOW draw = far side at Goodwood) advantage on straight 5f-6f
+    "york":       ("low",  0.35),  # low draw clear advantage at 1m; slight low edge in 5f-6f on soft
+    "catterick":  ("low",  0.35),  # right-hand, low draw slight edge in sprints
+    "windsor":    ("high", 0.35),  # figure-8, far-side rail advantage in sprints
+    "carlisle":   ("high", 0.35),  # high draw advantaged — stall 4 best, stall 2 worst in studies
+    "hamilton":   ("high", 0.35),  # counterintuitive: HIGH draw advantage, esp on soft (impact factor 1.30 high vs 0.79 low)
+    "salisbury":  ("low",  0.35),  # near-side (low) rail advantage in soft/testing ground
+}
+
+# Course ROI adjustments — 6-month forensic backtest (n >= 25 only; modest signal)
+# Positive = model reads form well here; Negative = model consistently loses here
+_COURSE_SCORE_ADJ: dict[str, float] = {
+    # Good courses (n >= 50, ROI > +12%)
+    "leopardstown": +2.0,   # n=89, +24.7% ROI
+    "navan":        +2.0,   # n=61, +24.5% ROI
+    "cork":         +2.0,   # n=62, +23.5% ROI
+    "bath":         +2.0,   # n=70, +16.8% ROI
+    "chelmsford":   +2.0,   # n=100, +15.9% ROI (AW — excluded from going filter; model reads it well)
+    "hereford":     +1.0,   # n=83, +13.0% ROI
+    "tramore":      +2.0,   # n=33, +26.9% ROI
+    "kilbeggan":    +2.0,   # n=20, +50.5% ROI (small sample but strong)
+    # Trap courses (ROI < -40%)
+    "fairyhouse":   -3.0,   # n=81, -46.9% ROI — Irish track model struggles
+    "newcastle":    -3.0,   # n=51, -46.4% ROI
+    "yarmouth":     -3.0,   # n=46, -54.5% ROI — form often misleading here
+    "chester":      -3.0,   # n=26, -47.2% ROI — extreme draw bias overrides form
 }
 
 _STRONG_POSITIVE_NLP: frozenset[str] = frozenset({
     "improves", "improve", "big run", "progressive", "exciting",
     "should win", "will win", "could be anything", "ready to win",
-    "well ahead", "well handicapped", "ease to win",
+    "well ahead", "well handicapped", "ease to win", "unlucky",
+    "unfortunate", "hampered", "denied", "failed to get a clear run",
+    "bumped", "stumbled", "missed the break", "slowly away",
+})
+_BEATEN_FAV_NLP: frozenset[str] = frozenset({
+    "beaten favourite", "odds-on", "short-priced", "strongly fancied",
+    "well fancied", "evens", "favourite", "hot favourite",
+})
+_CLOSE_LOSER_NLP: frozenset[str] = frozenset({
+    "short head", "neck", "head", "nose", "half a length",
+    "just failed", "narrowly beaten", "touched off", "photo",
 })
 _NEGATIVE_NLP: frozenset[str] = frozenset({
     "disappointing", "struggling", "poor run", "below par", "tailed off", "well beaten",
+    "never competitive", "never involved", "never dangerous",
 })
 
 
@@ -114,6 +166,35 @@ def _best_morning_price(runner: dict) -> Optional[float]:
         except (TypeError, ValueError):
             continue
     return best
+
+
+def _ts_rank_score(runner: dict, all_runners: list[dict]) -> tuple[float, list[str]]:
+    """Topspeed (pace-adjusted time figure) rank within the field.
+    Complementary to RPR: TS measures actual race speed, RPR measures assessor quality estimate."""
+    try:
+        my_ts = int(str(runner.get("ts") or "").strip())
+        if my_ts <= 0: raise ValueError
+    except (ValueError, TypeError):
+        return 0.0, []
+    field_ts: list[int] = []
+    for r in all_runners:
+        try:
+            v = int(str(r.get("ts") or "").strip())
+            if v > 0: field_ts.append(v)
+        except (ValueError, TypeError):
+            pass
+    if len(field_ts) < 3: return 0.0, []  # need at least 3 data points
+    field_ts_sorted = sorted(field_ts, reverse=True)
+    n = len(field_ts_sorted)
+    top_ts = field_ts_sorted[0]
+    if my_ts >= top_ts:
+        gap = top_ts - (field_ts_sorted[1] if n >= 2 else top_ts)
+        if gap >= 5: return 5.0, [f"Top Topspeed in field (TS={my_ts}), {gap} clear"]
+        return 3.0, [f"Joint-top Topspeed (TS={my_ts})"]
+    top_third = max(1, n // 3)
+    if my_ts in field_ts_sorted[:top_third]:
+        return 2.0, [f"Top-third Topspeed (TS={my_ts})"]
+    return 0.0, []
 
 
 def _rpr_rank_score(runner: dict, all_runners: list[dict]) -> tuple[float, list[str]]:
@@ -209,6 +290,29 @@ def _freshness_pts(last_run_days: Optional[int]) -> tuple[float, list[str]]:
     return -4.0, [f"Long absence ({last_run_days} days)"]
 
 
+def _well_handicapped_pts(runner: dict, race_type_raw: str) -> tuple[float, list[str]]:
+    """Well-handicapped: RPR significantly above Official Rating = lbs in hand.
+    Applies in handicap races only. Classic pro punter angle — horse ahead of handicapper."""
+    _is_handicap = "handicap" in race_type_raw or "hcap" in race_type_raw
+    if not _is_handicap:
+        return 0.0, []
+    try:
+        rpr_v = int(str(runner.get("rpr") or "").strip())
+        ofr_v = int(str(runner.get("ofr") or "").strip())
+        if rpr_v <= 0 or ofr_v <= 0:
+            return 0.0, []
+        gap = rpr_v - ofr_v
+        if gap >= 10:
+            return 5.0, [f"Strongly well handicapped: RPR {rpr_v} vs OR {ofr_v} (+{gap}lbs in hand)"]
+        if gap >= 7:
+            return 3.0, [f"Well handicapped: RPR {rpr_v} vs OR {ofr_v} (+{gap}lbs)"]
+        if gap >= 5:
+            return 1.0, [f"Slight RPR/OR edge: +{gap}lbs above OR"]
+    except (ValueError, TypeError):
+        pass
+    return 0.0, []
+
+
 def compute_form_score(runner: dict, all_runners: list[dict]) -> tuple[float, list[str]]:
     form: str = runner.get("form") or ""
     last_run: Optional[int] = runner.get("last_run")
@@ -216,18 +320,20 @@ def compute_form_score(runner: dict, all_runners: list[dict]) -> tuple[float, li
     is_jump = "chase" in race_type_raw or "hurdle" in race_type_raw
     reasons: list[str] = []
     rpr_pts, rpr_reasons = _rpr_rank_score(runner, all_runners)
-    reasons += rpr_reasons
+    ts_pts, ts_reasons   = _ts_rank_score(runner, all_runners)
+    wh_pts, wh_reasons   = _well_handicapped_pts(runner, race_type_raw)
+    reasons += rpr_reasons + ts_reasons + wh_reasons
     if not form or form.strip() in ("-", ""):
         reasons.append("No form data (debutant or missing)")
-        return round(max(0.0, min(40.0, rpr_pts)), 2), reasons
+        return round(max(0.0, min(40.0, rpr_pts + ts_pts + wh_pts)), 2), reasons
     chars = _parse_form_chars(form)
     if not chars:
-        return round(max(0.0, min(40.0, rpr_pts)), 2), reasons
+        return round(max(0.0, min(40.0, rpr_pts + ts_pts + wh_pts)), 2), reasons
     pos_pts, pos_reasons = _position_points(chars, is_jump=is_jump)
     trend_pts, trend_reasons = _trend_pts(chars)
     fresh_pts, fresh_reasons = _freshness_pts(last_run)
     reasons += pos_reasons + trend_reasons + fresh_reasons
-    score = rpr_pts + pos_pts + trend_pts + fresh_pts
+    score = rpr_pts + ts_pts + wh_pts + pos_pts + trend_pts + fresh_pts
     return round(max(0.0, min(40.0, score)), 2), reasons
 
 
@@ -288,6 +394,34 @@ def compute_suitability_score(
         elif going_similar: score += 2.0; reasons.append("Going similar to previous win ground")
         if course_win: score += 5.0; reasons.append("Course winner")
         elif course_placed: score += 3.0; reasons.append("Course placed — proven here")
+
+        # Class drop signal: horse dropping from a consistently higher class level
+        # Extract class from full_form results (if available)
+        prev_classes: list[int] = []
+        for result in horse_history[:5]:
+            _rc = str(result.get("class") or result.get("race_class") or "").strip().lstrip("cC")
+            try:
+                _rc_int = int(_rc)
+                prev_classes.append(_rc_int)
+            except (ValueError, TypeError):
+                pass
+        today_class_raw = str(race.get("class") or race.get("race_class") or "").strip().lower()
+        if today_class_raw.startswith("class"):
+            today_class_raw = today_class_raw[5:].strip()
+        try:
+            today_class_int = int(today_class_raw)
+            if prev_classes and len(prev_classes) >= 2:
+                avg_prev_class = sum(prev_classes) / len(prev_classes)
+                if today_class_int >= avg_prev_class + 2:
+                    score += 4.0; reasons.append(
+                        f"Class drop: previously Cls {avg_prev_class:.0f} avg, now Cls {today_class_int} — h'capper relenting"
+                    )
+                elif today_class_int >= avg_prev_class + 1:
+                    score += 2.0; reasons.append(
+                        f"Marginal class drop: Cls {avg_prev_class:.0f} → Cls {today_class_int}"
+                    )
+        except (ValueError, TypeError):
+            pass
     else:
         form: str = runner.get("form") or ""
         chars = _parse_form_chars(form)
@@ -305,7 +439,7 @@ def compute_draw_score(runner: dict, race: dict) -> tuple[float, list[str]]:
         return 0.0, []
     try: dist_f = float(str(runner.get("distance_f") or race.get("distance_f") or "0"))
     except (TypeError, ValueError): dist_f = 0.0
-    if dist_f <= 0 or dist_f > 7.5:
+    if dist_f <= 0 or dist_f > 9.0:  # draw significant up to 9f on straight courses
         return 0.0, []
     course = (race.get("course") or "").lower().strip()
     bias = _DRAW_BIAS.get(course)
@@ -358,6 +492,19 @@ def compute_draw_score(runner: dict, race: dict) -> tuple[float, list[str]]:
 
 def compute_context_score(race: dict, all_runners: list[dict]) -> tuple[float, list[str]]:
     reasons: list[str] = []; score = 0.0
+
+    # --- Race type reliability flags ---
+    _rtype = str(race.get("type") or "").lower()
+    _rname = str(race.get("race_name") or "").lower()
+    if any(x in _rtype for x in ("sell", "claim")):
+        score -= 5.0; reasons.append("Selling/Claiming race — form unreliable, horses may be deteriorating")
+    elif "bumper" in _rtype or "nhf" in _rtype or "national hunt flat" in _rtype:
+        score -= 4.0; reasons.append("Bumper (NH Flat) — form-based model has no edge here")
+    elif "maiden" in _rtype or "maiden" in _rname:
+        score -= 2.0; reasons.append("Maiden race — unproven form, high variance")
+    elif "novice" in _rtype or "novice" in _rname:
+        score -= 2.0; reasons.append("Novice race — horses still learning, form unreliable")
+
     try: field_size = int(race.get("field_size") or len(all_runners))
     except (TypeError, ValueError): field_size = 0
     if field_size > 0:
@@ -397,6 +544,13 @@ def compute_context_score(race: dict, all_runners: list[dict]) -> tuple[float, l
             score -= 2.0; reasons.append("Good going for jump race — historically below par")
         if field_size > JUMP_MAX_RUNNERS:
             score -= 4.0; reasons.append(f"Crowded jump field ({field_size} runners) — chaotic")
+    # Course edge/trap adjustment — 6-month backtest signal (n>=25, modest adjustment capped ±3)
+    _course_key = str(race.get("course") or "").strip().lower()
+    _course_adj = _COURSE_SCORE_ADJ.get(_course_key, 0.0)
+    if _course_adj > 0:
+        score += _course_adj; reasons.append(f"Course edge: {race.get('course','?')} (+{_course_adj:.0f}pts, model reads form well here)")
+    elif _course_adj < 0:
+        score += _course_adj; reasons.append(f"Course trap: {race.get('course','?')} ({_course_adj:.0f}pts, model historically loses here)")
     return round(max(0.0, min(15.0, score)), 2), reasons
 
 
@@ -424,11 +578,26 @@ def compute_trainer_score(
     quick_return = last_run is not None and last_run < 7
     if pct is not None:
         wins = t14.get("wins", "?"); runs = t14.get("runs", "?")
-        if quick_return: reasons.append(f"Hot trainer ({pct:.0f}%) but quick return — edge cancelled")
-        elif pct >= 35: score += 8.0; reasons.append(f"Hot trainer — {wins}/{runs} ({pct:.0f}%)")
-        elif pct >= 25: score += 5.0; reasons.append(f"In-form trainer — {wins}/{runs} ({pct:.0f}%)")
-        elif pct >= 12: score += 2.0; reasons.append(f"Trainer ticking over ({pct:.0f}%)")
-        else: reasons.append(f"Cold trainer ({pct:.0f}%)")
+        try: run_count = int(str(runs))
+        except (ValueError, TypeError): run_count = 0
+        # Weight score by sample size — 50% from 2 runs is noise; 50% from 20 runs is signal
+        sample_factor = 1.0 if run_count >= 5 else (0.5 if run_count >= 2 else 0.0)
+        _sample_tag = " [small sample]" if sample_factor < 1.0 else ""
+        if quick_return:
+            reasons.append(f"Trainer {pct:.0f}% 14-day but quick return — edge cancelled")
+        elif sample_factor == 0.0:
+            reasons.append(f"Trainer 14-day: {pct:.0f}% from 1 run — too small to score")
+        elif pct >= 35:
+            score += round(8.0 * sample_factor, 1)
+            reasons.append(f"Hot trainer — {wins}/{runs} ({pct:.0f}%){_sample_tag}")
+        elif pct >= 25:
+            score += round(5.0 * sample_factor, 1)
+            reasons.append(f"In-form trainer — {wins}/{runs} ({pct:.0f}%){_sample_tag}")
+        elif pct >= 12:
+            score += round(2.0 * sample_factor, 1)
+            reasons.append(f"Trainer ticking over ({pct:.0f}%)")
+        else:
+            reasons.append(f"Cold trainer ({pct:.0f}%)")
 
     # Course-specific trainer & jockey analysis (requires trainer_profiles data)
     if trainer_profiles and race:
@@ -473,6 +642,28 @@ def compute_trainer_score(
     except (ValueError, TypeError):
         pass
 
+    # NH novice/beginner chase — specialist trainer bonus
+    # Henderson 24.2%, Lavelle 27.1%, Skelton 23.0% first-time chaser strike rates
+    if race:
+        _rtl = str(race.get("type") or "").lower()
+        _rname_l = str(race.get("race_name") or "").lower()
+        _is_novice_chase = ("chase" in _rtl) and any(
+            kw in _rname_l for kw in ("novice", "beginner", "maiden chase", "newcomers")
+        )
+        if _is_novice_chase:
+            _tname = str(runner.get("trainer") or "").lower()
+            _ftc_map = {
+                "henderson": ("N Henderson", 24.2),
+                "lavelle":   ("E Lavelle",   27.1),
+                "skelton":   ("D Skelton",   23.0),
+                "mullins":   ("W Mullins",   21.5),
+            }
+            for key, (label, sr) in _ftc_map.items():
+                if key in _tname:
+                    score += 3.0
+                    reasons.append(f"FTC specialist trainer: {label} {sr:.1f}% novice chase SR")
+                    break
+
     headgear_run = str(runner.get("headgear_run") or "").strip()
     headgear = (runner.get("headgear") or "").strip()
     if headgear_run == "1" and headgear:
@@ -483,12 +674,17 @@ def compute_trainer_score(
         label = f" ({wind_type})" if wind_type else ""
         score += 2.0; reasons.append(f"First run after wind surgery{label}")
     _commentary = (
-        (runner.get("stable_tour") or "") + " " + (runner.get("quotes") or "")
+        (runner.get("stable_tour") or "") + " " + (runner.get("quotes") or "") +
+        " " + (runner.get("spotlight") or "") + " " + (runner.get("comment") or "")
     ).lower().strip()
     if _commentary:
-        if any(kw in _commentary for kw in _STRONG_POSITIVE_NLP):
+        _beaten_fav = any(kw in _commentary for kw in _BEATEN_FAV_NLP)
+        _close_loss  = any(kw in _commentary for kw in _CLOSE_LOSER_NLP)
+        if _beaten_fav and _close_loss:
+            score += 4.0; reasons.append("Beaten favourite — close loser last time, likely value next run")
+        elif any(kw in _commentary for kw in _STRONG_POSITIVE_NLP):
             score += 3.0; reasons.append("Strong positive commentary — win signal")
-        elif any(kw in _commentary for kw in _NEGATIVE_NLP):
+        if any(kw in _commentary for kw in _NEGATIVE_NLP):
             score -= 1.0; reasons.append("Negative commentary — caution")
     if runner.get("prev_trainers"):
         reasons.append("Recent trainer change — monitor")
@@ -502,34 +698,29 @@ def compute_trainer_score(
 def compute_market_score(
     runner: dict, market_movers: Optional[dict],
 ) -> tuple[float, list[str], list[str]]:
+    """Market score — penalties only. No positive scoring.
+    This is a form-based model. Rewarding short prices picks likely winners at poor
+    value, not genuine edge. Mkt score r=-0.12 with wins when positive scoring applied.
+    We only act when the market clearly disagrees (big price) or actively moves against."""
     reasons: list[str] = []; fatal_flags: list[str] = []; score = 0.0
     horse_id = str(runner.get("horse_id") or "")
     morning_price = _best_morning_price(runner)
-    race_type = str(runner.get("_race_type") or "").lower()
+
     if morning_price is not None:
-        is_hurdle = "hurdle" in race_type
-        if morning_price < 2.0:
-            score += 1.0; reasons.append(f"Very short price ({format_odds(morning_price)}) — value risk")
-        elif morning_price < 3.0:
-            # Hurdle Evens-2/1 band: no scoring bonus (proven neutral/loss zone in NH)
-            if not is_hurdle:
-                score += 3.0; reasons.append(f"Short price ({format_odds(morning_price)})")
-            else:
-                reasons.append(f"Hurdle Evens–2/1 ({format_odds(morning_price)}) — no bonus applied")
-        elif morning_price <= 6.0:
-            score += 4.0; reasons.append(f"Value price ({format_odds(morning_price)})")
-        elif morning_price <= 12.0:
-            score += 2.0; reasons.append(f"Each-way territory ({format_odds(morning_price)})")
-        elif morning_price <= 20.0:
-            score -= 2.0; reasons.append(f"Bigger price ({format_odds(morning_price)})")
-        else:
-            score -= 6.0; reasons.append(f"Outsider ({format_odds(morning_price)})")
+        reasons.append(f"Morning price: {format_odds(morning_price)}")
+        # No positive scoring for any price band.
+        # Penalty only when market significantly disagrees with our form assessment.
+        if morning_price > 20.0:
+            score -= 3.0; reasons.append("Outsider — market significantly disagrees with form assessment")
+        elif morning_price > 12.0:
+            score -= 1.0; reasons.append("Double-figure price — market lukewarm on this runner")
+
     if market_movers and isinstance(market_movers, dict):
         for mover in (market_movers.get("movements") or []):
             if str(mover.get("horse_id") or "") != horse_id: continue
             movement = (mover.get("move_type") or "").lower().strip()
-            # Steamer bonuses removed: r=-0.12 negative correlation in backtest
-            if movement == "weak_drift": score -= 3.0; reasons.append("Market drifting")
+            if movement == "weak_drift":
+                score -= 3.0; reasons.append("Market drifting — punters backing rivals")
             elif movement == "dangerous_drift":
                 score -= 10.0; fatal_flags.append("dangerous_drift")
                 reasons.append("DANGEROUS DRIFT — NAP blocked")
@@ -721,14 +912,18 @@ def main() -> int:
         # Exclude configured race types (e.g. chase — poor ROI historically)
         if any(x in (top.get("race_type") or "").lower() for x in NAP_EXCLUDED_RACE_TYPES):
             no_bet_races.append(race_id); continue
-        # Minimum odds gate — no value at very short prices
+        # Odds gates — no value at short prices; 8/1+ is -39.4% ROI over 524 selections
         if top.get("morning_price") is not None and top["morning_price"] < NAP_MIN_ODDS:
             no_bet_races.append(race_id); continue
-        # Flat distance filter — stayers (14f+) consistently lose in backtest
+        if top.get("morning_price") is not None and top["morning_price"] > NAP_MAX_ODDS:
+            no_bet_races.append(race_id); continue
+        # Flat filters — data-driven exclusions from backtest analysis
         _is_flat = not any(x in (top.get("race_type") or "").lower() for x in ("chase", "hurdle", "bumper"))
         if _is_flat and (top.get("distance_f") or 0.0) >= FLAT_MAX_DIST_F:
-            no_bet_races.append(race_id); continue
-        # Flat going filter — turf ground with poor ROI (-30% to -100% in backtest)
+            no_bet_races.append(race_id); continue  # staying trips
+        if _is_flat and 0.0 < (top.get("distance_f") or 0.0) < FLAT_MIN_DIST_F:
+            no_bet_races.append(race_id); continue  # sprint filter (currently disabled — FLAT_MIN_DIST_F=0.0)
+        # Flat going filter — Firm/G-F: 0% WR; Heavy: value-less at short odds
         if _is_flat and going_normalise(top.get("going") or "") in FLAT_EXCLUDED_GOING:
             no_bet_races.append(race_id); continue
         if race_id in cluster_races: no_bet_races.append(race_id); continue
