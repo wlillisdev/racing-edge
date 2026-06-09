@@ -53,7 +53,11 @@ JUMP_ALTERNATIVE_MIN_SCORE: float = 55.0
 JUMP_MAX_RUNNERS: int = 12
 JUMP_EXCLUDED_GOING: frozenset[str] = frozenset({"Firm", "Good to Firm"})
 FLAT_MAX_DIST_F: float = 16.0   # exclude flat staying trips (16f+) — 1m6f is not a staying trip
-FLAT_EXCLUDED_GOING: frozenset[str] = frozenset({"Firm", "Heavy"})  # hard + waterlogged ground — backtest shows -40.5% ROI on heavy flat
+FLAT_MIN_DIST_F: float = 7.0    # exclude sprints <7f — backtest: 22.2% SR / -32.9% ROI (no edge, pace/draw dominated)
+FLAT_EXCLUDED_GOING: frozenset[str] = frozenset({
+    "Firm", "Heavy",       # hard + waterlogged turf — poor ROI
+    "Standard", "Slow",    # All-Weather surfaces — backtest: 25.9% SR / -40.3% ROI (no model edge)
+})
 
 _GOING_ADJACENCY: list[list[str]] = [
     ["Firm", "Good to Firm", "Good", "Good to Soft", "Soft", "Heavy"],
@@ -881,13 +885,15 @@ def main() -> int:
         # Minimum odds gate — no value at very short prices
         if top.get("morning_price") is not None and top["morning_price"] < NAP_MIN_ODDS:
             no_bet_races.append(race_id); continue
-        # Flat distance filter — stayers (14f+) consistently lose in backtest
+        # Flat filters — data-driven exclusions from backtest analysis
         _is_flat = not any(x in (top.get("race_type") or "").lower() for x in ("chase", "hurdle", "bumper"))
         if _is_flat and (top.get("distance_f") or 0.0) >= FLAT_MAX_DIST_F:
-            no_bet_races.append(race_id); continue
-        # Flat going filter — turf ground with poor ROI (-30% to -100% in backtest)
+            no_bet_races.append(race_id); continue  # staying trips
+        if _is_flat and 0.0 < (top.get("distance_f") or 0.0) < FLAT_MIN_DIST_F:
+            no_bet_races.append(race_id); continue  # sprints <7f: 22.2% SR / -32.9% ROI
+        # Flat going filter — going types with negative ROI in backtest
         if _is_flat and going_normalise(top.get("going") or "") in FLAT_EXCLUDED_GOING:
-            no_bet_races.append(race_id); continue
+            no_bet_races.append(race_id); continue  # AW: -40.3% ROI; Firm/Heavy: losses
         if race_id in cluster_races: no_bet_races.append(race_id); continue
         if top["score"] < NAP_MIN_SCORE: no_bet_races.append(race_id); continue
         if top["score"] > NAP_MAX_SCORE: no_bet_races.append(race_id); continue  # 83-85 band = 0% WR

@@ -38,7 +38,7 @@ from src.helpers import data_path, going_normalise, log, report_path
 from src.api_client import get_client, RacingAPIError
 from nap_selector_v3 import (
     score_runner, NAP_MIN_SCORE, NAP_MAX_SCORE, GRADE_A_THRESHOLD,
-    NAP_EXCLUDED_RACE_TYPES, NAP_MIN_ODDS, FLAT_MAX_DIST_F,
+    NAP_EXCLUDED_RACE_TYPES, NAP_MIN_ODDS, FLAT_MAX_DIST_F, FLAT_MIN_DIST_F,
     FLAT_EXCLUDED_GOING, CLUSTER_SPREAD, CLUSTER_MIN_SCORE,
     detect_race_cluster,
 )
@@ -48,7 +48,7 @@ from nap_selector_v3 import (
 # ---------------------------------------------------------------------------
 
 API_DELAY_S = 0.6
-MAX_DAYS = 400
+MAX_DAYS = 900  # ~30 months; cached days are free on subsequent runs
 
 # ---------------------------------------------------------------------------
 # Cache helpers
@@ -146,7 +146,7 @@ def _normalise_racecard(raw: dict) -> dict:
         "course":      _safe_str(raw.get("course")),
         "off_time":    _safe_str(raw.get("off_time") or raw.get("off")),
         "race_name":   _safe_str(raw.get("race_name") or raw.get("race")),
-        "class":       raw.get("class") if raw.get("class") is not None else raw.get("race_class"),
+        "class":       raw.get("class") or raw.get("race_class") or raw.get("pattern") or raw.get("race_group"),
         "distance_f":  _safe_float(raw.get("distance_f") or raw.get("dist_f")),
         "going":       _safe_str(raw.get("going")),
         "surface":     _safe_str(raw.get("surface")),
@@ -529,13 +529,15 @@ def main() -> int:
             )
             _is_flat = not any(x in (race_type or "").lower() for x in ("chase", "hurdle", "bumper"))
             _dist_filtered = _is_flat and dist_f >= args.max_flat_dist
+            _sprint_filtered = _is_flat and 0.0 < dist_f < FLAT_MIN_DIST_F
             _going_filtered = _is_flat and going_normalise(top.get("going") or "") in FLAT_EXCLUDED_GOING
             _clustered = detect_race_cluster(scored)
             _dangerous = "dangerous_drift" in (top.get("warnings") or [])
             if (composite >= args.min_score and composite <= NAP_MAX_SCORE
                     and composite > best_day_score
                     and not _excluded and not _too_short and not _dist_filtered
-                    and not _going_filtered and not _clustered and not _dangerous):
+                    and not _sprint_filtered and not _going_filtered
+                    and not _clustered and not _dangerous):
                 best_day_score  = composite
                 best_day_record = record
 
