@@ -765,6 +765,7 @@ def score_runner(
     runner: dict, race: dict, all_runners: list[dict],
     full_form: Optional[dict], market_movers: Optional[dict],
     trainer_profiles: Optional[dict] = None,
+    form_read: Optional[dict] = None,
 ) -> dict:
     runner = dict(runner)
     runner["_race_type"] = str(race.get("type") or "")
@@ -788,6 +789,27 @@ def score_runner(
             wisdom_score, wisdom_reasons = 0.0, []
     base = form_score + suit_score + ctx_score + draw_score + trnr_score + mkt_score
     total = max(0.0, min(100.0, base + wisdom_score))
+
+    # AI Form Reader overlay (bounded ±3): a professional-tipster read of the
+    # narrative (spotlight/quotes/stable tour) the numeric model can't see. It
+    # refines ordering and breaks ties but can NEVER override the quant model.
+    ai_verdict: str = ""
+    ai_rating: Optional[int] = None
+    ai_read: str = ""
+    ai_reasons: list[str] = []
+    if form_read:
+        _fr = form_read.get(str(runner.get("horse_id") or ""))
+        if isinstance(_fr, dict) and isinstance(_fr.get("rating"), (int, float)):
+            ai_rating = int(_fr["rating"])
+            ai_verdict = str(_fr.get("verdict") or "")
+            ai_read = str(_fr.get("one_line_read") or "").strip()
+            delta = max(-3.0, min(3.0, (ai_rating - 50) / 50.0 * 3.0))
+            total = max(0.0, min(100.0, total + delta))
+            if ai_read:
+                ai_reasons.append(
+                    f"AI form read: {ai_verdict or '—'} (rating {ai_rating}) — {ai_read} [{delta:+.1f}]"
+                )
+
     grade = assign_grade(total)
     morning_price = _best_morning_price(runner)
     return {
@@ -801,7 +823,8 @@ def score_runner(
         "context_score": ctx_score, "draw_score": round(draw_score, 2),
         "trainer_score": trnr_score, "market_score": mkt_score,
         "wisdom_score": round(wisdom_score, 2),
-        "reasons": form_reasons + suit_reasons + ctx_reasons + draw_reasons + trnr_reasons + mkt_reasons + wisdom_reasons,
+        "ai_verdict": ai_verdict, "ai_rating": ai_rating, "ai_read": ai_read,
+        "reasons": form_reasons + suit_reasons + ctx_reasons + draw_reasons + trnr_reasons + mkt_reasons + wisdom_reasons + ai_reasons,
         "warnings": list(fatal_flags),
         "morning_price": morning_price,
         "form": runner.get("form") or "",
@@ -926,12 +949,19 @@ def main() -> int:
     if trainer_profiles is None:
         log("nap_selector_v3: trainer_profiles not available — course/combo signals skipped", "INFO")
 
+    # AI Form Reader verdicts (keyed by horse_id). Absent/empty => no overlay.
+    form_read: Optional[dict] = safe_load_json(data_path(f"form_read_{date_str}.json"))
+    if form_read:
+        log(f"nap_selector_v3: AI form reads loaded for {len(form_read)} horses — applying bounded overlay")
+    else:
+        log("nap_selector_v3: no AI form reads — numeric model only", "INFO")
+
     race_scores: dict[str, list[dict]] = {}
     for race in racecards:
         race_id = str(race.get("race_id") or "")
         runners: list[dict] = race.get("runners") or []
         if not runners: continue
-        scored = [score_runner(r, race, runners, full_form, market_movers, trainer_profiles) for r in runners]
+        scored = [score_runner(r, race, runners, full_form, market_movers, trainer_profiles, form_read) for r in runners]
         scored.sort(key=lambda r: r["score"], reverse=True)
         race_scores[race_id] = scored
 
