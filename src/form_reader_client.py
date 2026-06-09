@@ -12,7 +12,7 @@ Design principles (mirrors src/api_client.py)
 - The system prompt is FROZEN (a module constant) — it defines the persona of
   a professional UK form analyst and never varies per request, which keeps
   behaviour deterministic and prompt-cache friendly.
-- Structured JSON output is requested via output_config.format (json_schema)
+- Structured JSON output is requested via the tool-use pattern (input_schema)
   so the response is guaranteed to parse against the verdict schema.
 - No temperature/top_p/top_k parameters are sent — Opus 4.x and the current
   Haiku/Sonnet generation reject them.
@@ -141,29 +141,28 @@ class FormReaderClient:
                 model=self._model,
                 max_tokens=self._MAX_TOKENS,
                 system=_SYSTEM_PROMPT,
-                output_config={
-                    "format": {
-                        "type": "json_schema",
-                        "schema": _VERDICT_SCHEMA,
-                    }
-                },
+                tools=[{
+                    "name": "structured_output",
+                    "description": "Return a structured verdict matching the required JSON schema.",
+                    "input_schema": _VERDICT_SCHEMA,
+                }],
+                tool_choice={"type": "tool", "name": "structured_output"},
                 messages=[{"role": "user", "content": user_content}],
             )
         except Exception as exc:  # never raise into the pipeline
             log(f"form_reader_client: API call failed — {exc}", "WARNING")
             return None
 
-        # output_config.format guarantees the first text block is valid JSON.
         try:
-            text = next(
-                (b.text for b in response.content if getattr(b, "type", "") == "text"),
-                "",
+            tool_use = next(
+                (b for b in response.content if getattr(b, "type", "") == "tool_use"),
+                None,
             )
-            if not text:
-                log("form_reader_client: empty response content", "WARNING")
+            if tool_use is None:
+                log("form_reader_client: no tool_use block in response", "WARNING")
                 return None
-            return json.loads(text)
-        except (ValueError, AttributeError) as exc:
+            return tool_use.input  # already a dict, no json.loads needed
+        except (AttributeError, ValueError) as exc:
             log(f"form_reader_client: could not parse verdict — {exc}", "WARNING")
             return None
 

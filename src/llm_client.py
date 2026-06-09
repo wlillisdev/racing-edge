@@ -99,12 +99,12 @@ class LLMClient:
                 model=model or self._default_model,
                 max_tokens=max_tokens or self._DEFAULT_MAX_TOKENS,
                 system=system_prompt,
-                output_config={
-                    "format": {
-                        "type": "json_schema",
-                        "schema": schema,
-                    }
-                },
+                tools=[{
+                    "name": "structured_output",
+                    "description": "Return a structured JSON response matching the required schema.",
+                    "input_schema": schema,
+                }],
+                tool_choice={"type": "tool", "name": "structured_output"},
                 messages=[{"role": "user", "content": user_content}],
             )
         except Exception as exc:  # never raise into the pipeline
@@ -112,15 +112,15 @@ class LLMClient:
             return None
 
         try:
-            text = next(
-                (b.text for b in response.content if getattr(b, "type", "") == "text"),
-                "",
+            tool_use = next(
+                (b for b in response.content if getattr(b, "type", "") == "tool_use"),
+                None,
             )
-            if not text:
-                log("llm_client: empty response content", "WARNING")
+            if tool_use is None:
+                log("llm_client: no tool_use block in response", "WARNING")
                 return None
-            return json.loads(text)
-        except (ValueError, AttributeError) as exc:
+            return tool_use.input  # already a dict, no json.loads needed
+        except (AttributeError, ValueError) as exc:
             log(f"llm_client: could not parse response — {exc}", "WARNING")
             return None
 
