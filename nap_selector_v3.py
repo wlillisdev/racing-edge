@@ -58,9 +58,10 @@ JUMP_EXCLUDED_GOING: frozenset[str] = frozenset({"Firm", "Good to Firm"})
 FLAT_MAX_DIST_F: float = 16.0   # exclude flat staying trips (16f+)
 FLAT_MIN_DIST_F: float = 0.0    # no sprint exclusion — 6-month backtest: sprints +45.7% NAP ROI (979 selections)
 FLAT_EXCLUDED_GOING: frozenset[str] = frozenset({
-    "Firm",         # concrete-hard turf — 0% WR, -100% ROI in 6-month NAP data
-    "Good to Firm", # fast ground — 0% WR in NAP, -25.7% ROI forensic; removed AW (Chelmsford +23.8% NAP ROI)
-    "Heavy",        # waterlogged — 42.9% WR but avg SP below evens, no value
+    "Firm",   # concrete-hard turf — 0% WR in NAP data; no model edge on extremes
+    "Heavy",  # waterlogged — high win% but odds below value threshold consistently
+    # "Good to Firm" removed: only 5 NAP selections — too small to exclude an entire
+    # summer going type. Monitor over next 50+ picks before re-adding.
 })
 
 _GOING_ADJACENCY: list[list[str]] = [
