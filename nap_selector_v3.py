@@ -465,6 +465,14 @@ def compute_trainer_score(
             if delta > 0:   score += delta; reasons.append(f"Jockey excels at {race.get('course','?')}: {w}/{n} A/E={ae:.2f}")
             elif delta < 0: score += delta; reasons.append(f"Jockey poor at {race.get('course','?')}: {w}/{n} A/E={ae:.2f}")
 
+    # trainer_rtf — "Runs To Form" %, how reliably this trainer's horses perform to rating
+    try:
+        rtf = float(str(runner.get("trainer_rtf") or "").strip().rstrip("%"))
+        if rtf >= 80:   score += 2.0; reasons.append(f"High run-to-form rate: {rtf:.0f}% — reliable trainer")
+        elif rtf < 50:  score -= 1.0; reasons.append(f"Low run-to-form rate: {rtf:.0f}% — inconsistent")
+    except (ValueError, TypeError):
+        pass
+
     headgear_run = str(runner.get("headgear_run") or "").strip()
     headgear = (runner.get("headgear") or "").strip()
     if headgear_run == "1" and headgear:
