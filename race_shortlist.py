@@ -51,7 +51,7 @@ def _best_morning_price(runner: dict) -> float | None:
         try:
             dec = float(entry.get("decimal") or 0)
             if dec > 1.0:
-                if best is None or dec < best:
+                if best is None or dec > best:  # best available = longest decimal
                     best = dec
         except (TypeError, ValueError):
             continue
