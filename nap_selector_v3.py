@@ -36,6 +36,7 @@ from src.helpers import (
     today_str, format_odds, going_normalise, distance_to_furlongs,
 )
 from racecard_loader import load_racecard
+from src.model_params import get_params
 
 # Professional form-reading overlay (-15..+25). Self-contained, degrades to
 # 0.0 if the module is unavailable so the core model never breaks.
@@ -739,25 +740,27 @@ def compute_market_score(
 
 def assign_confidence(score: float, clustered: bool = False) -> tuple[str, str]:
     """Return (confidence_label, stake_recommendation) based on score.
-    Used in email output to guide stake sizing without hard blocks."""
+    Bands are tunable via data/model_params.json (learning loop)."""
     if clustered:
         return "LOW", "SMALL STAKE or PASS — tight field, no clear standout"
-    if score >= 70:
+    cb = get_params()["confidence_bands"]
+    if score >= cb["high"]:
         return "HIGH", "FULL STAKE"
-    if score >= 60:
+    if score >= cb["medium_high"]:
         return "MEDIUM-HIGH", "FULL STAKE"
-    if score >= 55:
+    if score >= cb["medium"]:
         return "MEDIUM", "HALF STAKE or EACH WAY"
-    if score >= 50:
+    if score >= cb["low_medium"]:
         return "LOW-MEDIUM", "SMALL STAKE / EACH WAY only"
     return "LOW", "SPECULATIVE — minimal stake or PASS"
 
 
 def assign_grade(total_score: float) -> str:
-    if total_score >= GRADE_A_THRESHOLD: return "A"
-    if total_score >= GRADE_B_PLUS_THRESHOLD: return "B+"
-    if total_score >= GRADE_B_THRESHOLD: return "B"
-    if total_score >= GRADE_C_THRESHOLD: return "C"
+    gt = get_params()["grade_thresholds"]
+    if total_score >= gt["A"]: return "A"
+    if total_score >= gt["B+"]: return "B+"
+    if total_score >= gt["B"]: return "B"
+    if total_score >= gt["C"]: return "C"
     return "D"
 
 
@@ -804,7 +807,8 @@ def score_runner(
             ai_rating = int(_fr["rating"])
             ai_verdict = str(_fr.get("verdict") or "")
             ai_read = str(_fr.get("one_line_read") or "").strip()
-            delta = max(-3.0, min(3.0, (ai_rating - 50) / 50.0 * 3.0))
+            _fr_cap = float(get_params()["form_read_overlay_cap"])
+            delta = max(-_fr_cap, min(_fr_cap, (ai_rating - 50) / 50.0 * _fr_cap))
             total = max(0.0, min(100.0, total + delta))
             if ai_read:
                 ai_reasons.append(
@@ -824,7 +828,8 @@ def score_runner(
             if isinstance(_ph, dict) and isinstance(_ph.get("pace_fit"), (int, float)):
                 pace_fit = int(_ph["pace_fit"])
                 pace_style = str(_ph.get("running_style") or "")
-                p_delta = max(-2.0, min(2.0, (pace_fit - 50) / 50.0 * 2.0))
+                _pace_cap = float(get_params()["pace_overlay_cap"])
+                p_delta = max(-_pace_cap, min(_pace_cap, (pace_fit - 50) / 50.0 * _pace_cap))
                 total = max(0.0, min(100.0, total + p_delta))
                 _note = str(_ph.get("note") or "").strip()
                 if _note:
@@ -1003,6 +1008,12 @@ def main() -> int:
         if detect_race_cluster(scored):
             cluster_races.append(race_id)
 
+    # Tunable gate thresholds (learning loop) — default to the original constants.
+    _p = get_params()
+    _min_odds = float(_p["nap_min_odds"])
+    _max_odds = float(_p["nap_max_odds"])
+    _min_score = float(_p["nap_min_score"])
+
     nap_candidates: list[dict] = []
     fallback_pool: list[dict] = []   # passed every STRUCTURAL gate but below the score floor
     no_bet_races: list[str] = []
@@ -1017,9 +1028,9 @@ def main() -> int:
         if "dangerous_drift" in (top.get("warnings") or []):
             no_bet_races.append(race_id); continue
         # Odds gates — no value at short prices; 8/1+ is -39.4% ROI
-        if top.get("morning_price") is not None and top["morning_price"] < NAP_MIN_ODDS:
+        if top.get("morning_price") is not None and top["morning_price"] < _min_odds:
             no_bet_races.append(race_id); continue
-        if top.get("morning_price") is not None and top["morning_price"] > NAP_MAX_ODDS:
+        if top.get("morning_price") is not None and top["morning_price"] > _max_odds:
             no_bet_races.append(race_id); continue
         # Flat going filter — Firm/Heavy excluded; G-F monitored but not excluded
         _is_flat = not any(x in (top.get("race_type") or "").lower() for x in ("chase", "hurdle", "bumper"))
@@ -1031,7 +1042,7 @@ def main() -> int:
             top["warnings"] = list(top.get("warnings") or []) + ["cluster_warning"]
         # Above the floor → a full-confidence candidate. Below the floor → kept in the
         # fallback pool so a structurally-sound card ALWAYS yields a best-available pick.
-        if top["score"] >= NAP_MIN_SCORE:
+        if top["score"] >= _min_score:
             nap_candidates.append(top)
         else:
             fallback_pool.append(top)
@@ -1064,7 +1075,7 @@ def main() -> int:
         nap = best_candidate
         day_verdict = (
             f"BEST_AVAILABLE (LOW CONFIDENCE — top score {best_candidate['score']:.1f} "
-            f"below floor {NAP_MIN_SCORE:.0f})"
+            f"below floor {_min_score:.0f})"
         )
     else:
         day_verdict = "NO_BET — every card top was a chase, dangerous drift, or excluded going/odds"
@@ -1120,6 +1131,38 @@ def main() -> int:
     if not safe_write_json(json_dest, output):
         log(f"nap_selector_v3: failed to write JSON — {json_dest}", "ERROR"); return 1
     log(f"nap_selector_v3: JSON saved → {json_dest}")
+
+    # --- Full-card capture (daily learning dataset, Stage 1) --------------------
+    # Persist EVERY scored runner across EVERY race so the evening outcome-join
+    # can label the whole card (not just the NAP). This is the raw material for
+    # the daily closed-loop learning machine — hundreds of labelled-in-waiting
+    # rows per day instead of a single NAP.
+    predictions: list[dict] = []
+    for _rid, _scored in race_scores.items():
+        for _rank, _r in enumerate(_scored, start=1):
+            predictions.append({
+                "race_id": _r.get("race_id"), "course": _r.get("course"),
+                "off_time": _r.get("off_time"), "race_type": _r.get("race_type"),
+                "going": _r.get("going"), "distance_f": _r.get("distance_f"),
+                "horse_id": _r.get("horse_id"), "horse": _r.get("horse"),
+                "rank_in_race": _rank, "score": _r.get("score"), "grade": _r.get("grade"),
+                "form_score": _r.get("form_score"), "suitability_score": _r.get("suitability_score"),
+                "context_score": _r.get("context_score"), "draw_score": _r.get("draw_score"),
+                "trainer_score": _r.get("trainer_score"), "market_score": _r.get("market_score"),
+                "wisdom_score": _r.get("wisdom_score"), "ai_rating": _r.get("ai_rating"),
+                "pace_fit": _r.get("pace_fit"), "morning_price": _r.get("morning_price"),
+                "is_nap": _r.get("horse_id") == nap_horse_id,
+            })
+    predictions_doc = {
+        "date": date_str, "generated_at": generated_at_iso, "model_version": MODEL_VERSION,
+        "race_count": len(race_scores), "runner_count": len(predictions),
+        "predictions": predictions,
+    }
+    pred_dest = data_path(f"predictions_{date_str}.json")
+    if safe_write_json(pred_dest, predictions_doc):
+        log(f"nap_selector_v3: full-card predictions saved → {pred_dest} ({len(predictions)} runners)")
+    else:
+        log(f"nap_selector_v3: failed to write predictions — {pred_dest}", "WARNING")
 
     report_text = _format_text_report(date_str, generated_hm, output)
     report_dest = report_path(f"nap_candidates_{date_str}.txt")
