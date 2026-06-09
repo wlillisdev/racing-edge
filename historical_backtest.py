@@ -132,9 +132,13 @@ def _normalise_runner(raw: dict) -> dict:
         "wind_surgery_run":  _safe_int(raw.get("wind_surgery_run"), default=-1),
         "trainer_14_days":   raw.get("trainer_14_days") if isinstance(raw.get("trainer_14_days"), dict) else {},
         "spotlight":         _safe_str(raw.get("spotlight")),
+        "comment":           _safe_str(raw.get("comment")),
         "quotes":            _safe_str(raw.get("quotes")),
         "stable_tour":       _safe_str(raw.get("stable_tour")),
         "prev_trainers":     raw.get("prev_trainers") if isinstance(raw.get("prev_trainers"), list) else [],
+        "trainer_rtf":       _safe_str(raw.get("trainer_rtf")),
+        "wind_surgery":      _safe_str(raw.get("wind_surgery")),
+        "medical":           raw.get("medical") if isinstance(raw.get("medical"), list) else [],
     }
 
 
@@ -146,7 +150,7 @@ def _normalise_racecard(raw: dict) -> dict:
         "course":      _safe_str(raw.get("course")),
         "off_time":    _safe_str(raw.get("off_time") or raw.get("off")),
         "race_name":   _safe_str(raw.get("race_name") or raw.get("race")),
-        "class":       raw.get("class") or raw.get("race_class") or raw.get("pattern") or raw.get("race_group"),
+        "class":       next((raw.get(k) for k in ("class", "race_class", "pattern", "race_group") if raw.get(k) is not None), None),
         "distance_f":  _safe_float(raw.get("distance_f") or raw.get("dist_f")),
         "going":       _safe_str(raw.get("going")),
         "surface":     _safe_str(raw.get("surface")),
@@ -371,7 +375,7 @@ def main() -> int:
                         help="Include excluded race types (chases etc) in daily NAP pool")
     parser.add_argument("--max-flat-dist", type=float, default=FLAT_MAX_DIST_F,
                         dest="max_flat_dist",
-                        help="Max distance in furlongs for flat NAP selection (default 14f)")
+                        help="Max distance in furlongs for flat NAP selection (default 16f)")
     args = parser.parse_args()
 
     # Date range
@@ -423,20 +427,10 @@ def main() -> int:
 
         days_data += 1
 
-        # Try 1: racecard embeds position for some API configurations.
-        results_lookup: dict[str, dict] = {}
-        for _race in races:
-            for _runner in (_race.get("runners") or []):
-                _hid = _runner.get("horse_id", "")
-                _pos = _runner.get("position", "")
-                _sp  = _runner.get("sp_dec", 0.0)
-                if _hid and _pos:
-                    results_lookup[_hid] = {"position": _pos, "sp_dec": _sp}
-
-        # Try 2: per-race results endpoint — reliable, uses /results/{race_id}.
-        # Results are cached per race_id so subsequent runs skip all API calls.
-        if not results_lookup:
-            results_lookup = _fetch_results_per_race(races, client)
+        # Always fetch results via /results/{race_id} — the only reliable source.
+        # Do NOT attempt to read "position" from racecard runners: that field is the
+        # draw/stall number, not the finishing position, so it corrupts W/P/L figures.
+        results_lookup = _fetch_results_per_race(races, client)
 
         best_day_score  = -1.0
         best_day_record: Optional[dict] = None
