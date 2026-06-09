@@ -140,9 +140,10 @@ MAX_RUNNERS_PER_RACE: int = 20
 # Output token cap per race (one whole-field projection per call).
 MAX_TOKENS: int = 1500
 
-# Concurrency for the per-race API calls. One call per race fanned out across a
-# small pool keeps the stage well under the pipeline's 600s per-step timeout.
-MAX_WORKERS: int = 6
+# Concurrency for the per-race API calls. Kept low so we don't thrash low API
+# tiers' rate limits (50 RPM / 10k OTPM on tier 1); the client's max_retries
+# paces each call. Raise once the org is on a higher usage tier.
+MAX_WORKERS: int = 3
 
 # Frozen persona/instructions — the volatile per-race field goes in the payload.
 SYSTEM_PROMPT: str = (

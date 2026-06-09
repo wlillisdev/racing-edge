@@ -49,6 +49,7 @@ class LLMClient:
 
     _DEFAULT_TIMEOUT = 45        # seconds per request (whole-card reads are larger)
     _DEFAULT_MAX_TOKENS = 2048   # generous: pace/autopsy outputs are richer than a verdict
+    _MAX_RETRIES = 8             # auto-retry 429/5xx with backoff (honours retry-after)
 
     def __init__(self, api_key: str, default_model: str) -> None:
         if not api_key:
@@ -56,9 +57,11 @@ class LLMClient:
         if not _SDK_AVAILABLE or Anthropic is None:
             raise RuntimeError("LLMClient: anthropic SDK unavailable")
         self._default_model = default_model
-        self._client = Anthropic(api_key=api_key).with_options(
-            timeout=float(self._DEFAULT_TIMEOUT)
-        )
+        # max_retries lets the SDK ride out rate-limit (429) bursts by backing
+        # off and honouring the retry-after header instead of dropping the call.
+        self._client = Anthropic(
+            api_key=api_key, max_retries=self._MAX_RETRIES
+        ).with_options(timeout=float(self._DEFAULT_TIMEOUT))
 
     @property
     def default_model(self) -> str:

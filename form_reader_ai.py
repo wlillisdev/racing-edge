@@ -94,10 +94,11 @@ from src.form_reader_client import get_form_reader
 # How many runners per race to send to the AI form reader (cost/latency guard).
 MAX_READS_PER_RACE: int = 3
 
-# Concurrency for the per-runner API calls. The Anthropic client is thread-safe
-# and Haiku's rate limits comfortably absorb this; parallelism keeps the whole
-# stage well under the pipeline's 600s per-step timeout on a big card.
-MAX_WORKERS: int = 6
+# Concurrency for the per-runner API calls. The Anthropic client is thread-safe.
+# Kept low so we don't thrash low API tiers' rate limits (50 RPM / 10k OTPM on
+# tier 1); the client's max_retries paces each call against the limit. Raise
+# this once the org is on a higher usage tier for faster whole-card reads.
+MAX_WORKERS: int = 3
 
 
 def _career_summary_for(horse_id: str, full_form: dict) -> dict:

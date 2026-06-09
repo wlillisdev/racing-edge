@@ -103,6 +103,7 @@ class FormReaderClient:
 
     _TIMEOUT = 30          # seconds per request
     _MAX_TOKENS = 1024     # the verdict is small; cap output tightly
+    _MAX_RETRIES = 8       # auto-retry 429/5xx with backoff (honours retry-after)
 
     def __init__(self, api_key: str, model: str) -> None:
         if not api_key:
@@ -110,10 +111,12 @@ class FormReaderClient:
         if not _SDK_AVAILABLE or Anthropic is None:
             raise RuntimeError("FormReaderClient: anthropic SDK unavailable")
         self._model = model
-        # with_options gives a hard per-request timeout without mutating later.
-        self._client = Anthropic(api_key=api_key).with_options(
-            timeout=float(self._TIMEOUT)
-        )
+        # max_retries lets the SDK ride out rate-limit (429) bursts by backing
+        # off and honouring the retry-after header instead of dropping the call.
+        # with_options gives a hard per-attempt timeout without mutating later.
+        self._client = Anthropic(
+            api_key=api_key, max_retries=self._MAX_RETRIES
+        ).with_options(timeout=float(self._TIMEOUT))
 
     @property
     def model(self) -> str:
