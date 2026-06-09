@@ -190,3 +190,51 @@ def revert_to_version(version: int) -> bool:
         change_note=f"REVERT to v{version}",
         evidence={"reverted_from": current_version(), "reverted_to": version},
     )
+
+
+def history() -> list[dict]:
+    """Return the full params change history (oldest → newest), or []."""
+    doc = safe_load_json(data_path(PARAMS_FILENAME)) or {}
+    h = doc.get("history") if isinstance(doc, dict) else None
+    return h if isinstance(h, list) else []
+
+
+def diff_from_defaults() -> list[dict]:
+    """Return tunables whose live value differs from DEFAULTS.
+
+    Each item: {param (dotted), default, live}.
+    """
+    live = get_params(refresh=True)
+    out: list[dict] = []
+    for dotted in PARAM_BOUNDS:
+        dv = _get_dotted(DEFAULTS, dotted)
+        lv = _get_dotted(live, dotted)
+        if isinstance(dv, (int, float)) and isinstance(lv, (int, float)) and abs(dv - lv) > 1e-9:
+            out.append({"param": dotted, "default": dv, "live": lv})
+    return out
+
+
+# ---------------------------------------------------------------------------
+# Auto-tune kill-switch (runtime, no code edit needed)
+# ---------------------------------------------------------------------------
+CONTROL_FILENAME = "learning_control.json"
+
+
+def is_auto_tune_enabled() -> bool:
+    """Runtime kill-switch. Defaults to True when no control file exists."""
+    doc = safe_load_json(data_path(CONTROL_FILENAME))
+    if not isinstance(doc, dict):
+        return True
+    return bool(doc.get("auto_tune_enabled", True))
+
+
+def set_auto_tune_enabled(enabled: bool) -> bool:
+    """Flip the runtime auto-tune kill-switch. Returns True on success."""
+    doc = {
+        "auto_tune_enabled": bool(enabled),
+        "updated_at": datetime.now(timezone.utc).isoformat(),
+    }
+    ok = safe_write_json(data_path(CONTROL_FILENAME), doc)
+    if ok:
+        log(f"model_params: auto-tune {'ENABLED' if enabled else 'DISABLED'} via control file")
+    return ok

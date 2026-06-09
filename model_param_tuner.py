@@ -48,7 +48,7 @@ from datetime import datetime, timezone
 
 from src.helpers import data_path, log, report_path, safe_load_json, today_str
 from src.model_params import (
-    get_params, write_params, current_version,
+    get_params, write_params, current_version, is_auto_tune_enabled,
     PARAM_BOUNDS, PARAM_MAX_STEP,
 )
 
@@ -208,10 +208,14 @@ def main() -> int:
     applied: list[dict] = []
     new_version = current_version()
 
-    if not AUTO_APPLY_ENABLED:
+    # Effective auto-apply = hard code switch AND the runtime kill-switch.
+    auto_on = AUTO_APPLY_ENABLED and is_auto_tune_enabled()
+    if not auto_on:
+        _why = ("AUTO_APPLY disabled in code" if not AUTO_APPLY_ENABLED
+                else "auto-tune frozen via control file (learning_control.json)")
         for v in to_apply:
             v["decision"] = "DEFER"
-            v["reason"] = "AUTO_APPLY disabled — review-only mode"
+            v["reason"] = f"{_why} — review-only"
     elif to_apply:
         new_params = copy.deepcopy(live)
         for v in to_apply:
