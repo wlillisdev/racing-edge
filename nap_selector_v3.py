@@ -86,10 +86,21 @@ _DRAW_BIAS: dict[str, tuple[str, float]] = {
 _STRONG_POSITIVE_NLP: frozenset[str] = frozenset({
     "improves", "improve", "big run", "progressive", "exciting",
     "should win", "will win", "could be anything", "ready to win",
-    "well ahead", "well handicapped", "ease to win",
+    "well ahead", "well handicapped", "ease to win", "unlucky",
+    "unfortunate", "hampered", "denied", "failed to get a clear run",
+    "bumped", "stumbled", "missed the break", "slowly away",
+})
+_BEATEN_FAV_NLP: frozenset[str] = frozenset({
+    "beaten favourite", "odds-on", "short-priced", "strongly fancied",
+    "well fancied", "evens", "favourite", "hot favourite",
+})
+_CLOSE_LOSER_NLP: frozenset[str] = frozenset({
+    "short head", "neck", "head", "nose", "half a length",
+    "just failed", "narrowly beaten", "touched off", "photo",
 })
 _NEGATIVE_NLP: frozenset[str] = frozenset({
     "disappointing", "struggling", "poor run", "below par", "tailed off", "well beaten",
+    "never competitive", "never involved", "never dangerous",
 })
 
 
@@ -252,6 +263,29 @@ def _freshness_pts(last_run_days: Optional[int]) -> tuple[float, list[str]]:
     return -4.0, [f"Long absence ({last_run_days} days)"]
 
 
+def _well_handicapped_pts(runner: dict, race_type_raw: str) -> tuple[float, list[str]]:
+    """Well-handicapped: RPR significantly above Official Rating = lbs in hand.
+    Applies in handicap races only. Classic pro punter angle — horse ahead of handicapper."""
+    _is_handicap = "handicap" in race_type_raw or "hcap" in race_type_raw
+    if not _is_handicap:
+        return 0.0, []
+    try:
+        rpr_v = int(str(runner.get("rpr") or "").strip())
+        ofr_v = int(str(runner.get("ofr") or "").strip())
+        if rpr_v <= 0 or ofr_v <= 0:
+            return 0.0, []
+        gap = rpr_v - ofr_v
+        if gap >= 10:
+            return 5.0, [f"Strongly well handicapped: RPR {rpr_v} vs OR {ofr_v} (+{gap}lbs in hand)"]
+        if gap >= 7:
+            return 3.0, [f"Well handicapped: RPR {rpr_v} vs OR {ofr_v} (+{gap}lbs)"]
+        if gap >= 5:
+            return 1.0, [f"Slight RPR/OR edge: +{gap}lbs above OR"]
+    except (ValueError, TypeError):
+        pass
+    return 0.0, []
+
+
 def compute_form_score(runner: dict, all_runners: list[dict]) -> tuple[float, list[str]]:
     form: str = runner.get("form") or ""
     last_run: Optional[int] = runner.get("last_run")
@@ -260,18 +294,19 @@ def compute_form_score(runner: dict, all_runners: list[dict]) -> tuple[float, li
     reasons: list[str] = []
     rpr_pts, rpr_reasons = _rpr_rank_score(runner, all_runners)
     ts_pts, ts_reasons   = _ts_rank_score(runner, all_runners)
-    reasons += rpr_reasons + ts_reasons
+    wh_pts, wh_reasons   = _well_handicapped_pts(runner, race_type_raw)
+    reasons += rpr_reasons + ts_reasons + wh_reasons
     if not form or form.strip() in ("-", ""):
         reasons.append("No form data (debutant or missing)")
-        return round(max(0.0, min(40.0, rpr_pts + ts_pts)), 2), reasons
+        return round(max(0.0, min(40.0, rpr_pts + ts_pts + wh_pts)), 2), reasons
     chars = _parse_form_chars(form)
     if not chars:
-        return round(max(0.0, min(40.0, rpr_pts + ts_pts)), 2), reasons
+        return round(max(0.0, min(40.0, rpr_pts + ts_pts + wh_pts)), 2), reasons
     pos_pts, pos_reasons = _position_points(chars, is_jump=is_jump)
     trend_pts, trend_reasons = _trend_pts(chars)
     fresh_pts, fresh_reasons = _freshness_pts(last_run)
     reasons += pos_reasons + trend_reasons + fresh_reasons
-    score = rpr_pts + ts_pts + pos_pts + trend_pts + fresh_pts
+    score = rpr_pts + ts_pts + wh_pts + pos_pts + trend_pts + fresh_pts
     return round(max(0.0, min(40.0, score)), 2), reasons
 
 
@@ -332,6 +367,34 @@ def compute_suitability_score(
         elif going_similar: score += 2.0; reasons.append("Going similar to previous win ground")
         if course_win: score += 5.0; reasons.append("Course winner")
         elif course_placed: score += 3.0; reasons.append("Course placed — proven here")
+
+        # Class drop signal: horse dropping from a consistently higher class level
+        # Extract class from full_form results (if available)
+        prev_classes: list[int] = []
+        for result in horse_history[:5]:
+            _rc = str(result.get("class") or result.get("race_class") or "").strip().lstrip("cC")
+            try:
+                _rc_int = int(_rc)
+                prev_classes.append(_rc_int)
+            except (ValueError, TypeError):
+                pass
+        today_class_raw = str(race.get("class") or race.get("race_class") or "").strip().lower()
+        if today_class_raw.startswith("class"):
+            today_class_raw = today_class_raw[5:].strip()
+        try:
+            today_class_int = int(today_class_raw)
+            if prev_classes and len(prev_classes) >= 2:
+                avg_prev_class = sum(prev_classes) / len(prev_classes)
+                if today_class_int >= avg_prev_class + 2:
+                    score += 4.0; reasons.append(
+                        f"Class drop: previously Cls {avg_prev_class:.0f} avg, now Cls {today_class_int} — h'capper relenting"
+                    )
+                elif today_class_int >= avg_prev_class + 1:
+                    score += 2.0; reasons.append(
+                        f"Marginal class drop: Cls {avg_prev_class:.0f} → Cls {today_class_int}"
+                    )
+        except (ValueError, TypeError):
+            pass
     else:
         form: str = runner.get("form") or ""
         chars = _parse_form_chars(form)
@@ -545,6 +608,28 @@ def compute_trainer_score(
     except (ValueError, TypeError):
         pass
 
+    # NH novice/beginner chase — specialist trainer bonus
+    # Henderson 24.2%, Lavelle 27.1%, Skelton 23.0% first-time chaser strike rates
+    if race:
+        _rtl = str(race.get("type") or "").lower()
+        _rname_l = str(race.get("race_name") or "").lower()
+        _is_novice_chase = ("chase" in _rtl) and any(
+            kw in _rname_l for kw in ("novice", "beginner", "maiden chase", "newcomers")
+        )
+        if _is_novice_chase:
+            _tname = str(runner.get("trainer") or "").lower()
+            _ftc_map = {
+                "henderson": ("N Henderson", 24.2),
+                "lavelle":   ("E Lavelle",   27.1),
+                "skelton":   ("D Skelton",   23.0),
+                "mullins":   ("W Mullins",   21.5),
+            }
+            for key, (label, sr) in _ftc_map.items():
+                if key in _tname:
+                    score += 3.0
+                    reasons.append(f"FTC specialist trainer: {label} {sr:.1f}% novice chase SR")
+                    break
+
     headgear_run = str(runner.get("headgear_run") or "").strip()
     headgear = (runner.get("headgear") or "").strip()
     if headgear_run == "1" and headgear:
@@ -555,12 +640,17 @@ def compute_trainer_score(
         label = f" ({wind_type})" if wind_type else ""
         score += 2.0; reasons.append(f"First run after wind surgery{label}")
     _commentary = (
-        (runner.get("stable_tour") or "") + " " + (runner.get("quotes") or "")
+        (runner.get("stable_tour") or "") + " " + (runner.get("quotes") or "") +
+        " " + (runner.get("spotlight") or "") + " " + (runner.get("comment") or "")
     ).lower().strip()
     if _commentary:
-        if any(kw in _commentary for kw in _STRONG_POSITIVE_NLP):
+        _beaten_fav = any(kw in _commentary for kw in _BEATEN_FAV_NLP)
+        _close_loss  = any(kw in _commentary for kw in _CLOSE_LOSER_NLP)
+        if _beaten_fav and _close_loss:
+            score += 4.0; reasons.append("Beaten favourite — close loser last time, likely value next run")
+        elif any(kw in _commentary for kw in _STRONG_POSITIVE_NLP):
             score += 3.0; reasons.append("Strong positive commentary — win signal")
-        elif any(kw in _commentary for kw in _NEGATIVE_NLP):
+        if any(kw in _commentary for kw in _NEGATIVE_NLP):
             score -= 1.0; reasons.append("Negative commentary — caution")
     if runner.get("prev_trainers"):
         reasons.append("Recent trainer change — monitor")
