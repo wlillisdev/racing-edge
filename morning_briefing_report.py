@@ -93,12 +93,22 @@ def _build_briefing(date_str: str, data: dict) -> str:
     res = arb.get("result") or {}
     if res:
         lines.append("■ AI SECOND OPINION")
-        agree = str(res.get("agreement") or "UNKNOWN").upper()
-        flag = "   ⚠⚠ DISAGREES WITH MODEL ⚠⚠" if agree == "DISAGREE" else ""
         ai = res.get("ai_nap") or {}
+        # If the model truncated before writing agreement, derive it from horse names.
+        agree = str(res.get("agreement") or "").upper()
+        if not agree:
+            model_horse = str((nap or {}).get("horse") or "").strip().lower()
+            ai_horse = str(ai.get("horse") or "").strip().lower()
+            if model_horse and ai_horse:
+                agree = "AGREE" if model_horse == ai_horse else "DISAGREE"
+            else:
+                agree = "UNKNOWN"
+        flag = "   ⚠⚠ DISAGREES WITH MODEL ⚠⚠" if agree == "DISAGREE" else ""
+        conf = res.get("confidence")
+        conf_str = f"{conf}/100" if isinstance(conf, int) else "—"
         lines += [
             f"  AI NAP: {str(ai.get('horse', '?')).upper()} — {ai.get('course', '?')}  {ai.get('off_time', '?')}",
-            f"  Agreement: {agree}{flag}  (confidence {res.get('confidence', '?')}/100)",
+            f"  Agreement: {agree}{flag}  (confidence {conf_str})",
         ]
         note = str(res.get("agreement_note") or "").strip()
         if note:

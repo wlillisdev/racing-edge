@@ -96,8 +96,9 @@ from src.llm_client import get_llm_client, llm_available
 MAX_ALTERNATIVES: int = 12
 # How many "key reasons" to include per candidate (keep the payload compact).
 MAX_REASONS: int = 4
-# Output token cap for the arbiter call.
-MAX_TOKENS: int = 1024
+# Output token cap. The full schema (ai_nap + ai_top3×3 + agreement + note +
+# confidence) in JSON is ~400-600 tokens; 2048 gives headroom for verbose notes.
+MAX_TOKENS: int = 2048
 
 
 # ---------------------------------------------------------------------------
