@@ -1013,6 +1013,11 @@ def main() -> int:
     _min_odds = float(_p["nap_min_odds"])
     _max_odds = float(_p["nap_max_odds"])
     _min_score = float(_p["nap_min_score"])
+    # Minimum score gap over 2nd place to rank-promote a below-floor horse. When
+    # scores are compressed (full_form absent, thin card) a horse can still be the
+    # clear best in its race even without hitting the absolute floor. A margin >=
+    # nap_clear_margin qualifies it as a NAP candidate with MEDIUM confidence.
+    _clear_margin = float(_p.get("nap_clear_margin", 3.0))
 
     nap_candidates: list[dict] = []
     fallback_pool: list[dict] = []   # passed every STRUCTURAL gate but below the score floor
@@ -1040,9 +1045,15 @@ def main() -> int:
         if race_id in cluster_races:
             top = dict(top)
             top["warnings"] = list(top.get("warnings") or []) + ["cluster_warning"]
-        # Above the floor → a full-confidence candidate. Below the floor → kept in the
-        # fallback pool so a structurally-sound card ALWAYS yields a best-available pick.
-        if top["score"] >= _min_score:
+        # Compute margin over 2nd — used for rank-based promotion.
+        second_score = scored[1]["score"] if len(scored) > 1 else 0.0
+        margin = top["score"] - second_score
+        top = dict(top)
+        top["_margin"] = margin
+        # Above the score floor OR a clear leader by margin → NAP candidate.
+        # Below floor AND small margin → fallback only (best-available, low conf).
+        if top["score"] >= _min_score or margin >= _clear_margin:
+            top["_rank_promoted"] = top["score"] < _min_score
             nap_candidates.append(top)
         else:
             fallback_pool.append(top)
@@ -1056,15 +1067,34 @@ def main() -> int:
         best_candidate = nap_candidates[0]
         best_candidate["status"] = "NAP"
         is_clustered = "cluster_warning" in (best_candidate.get("warnings") or [])
-        confidence, stake_rec = assign_confidence(best_candidate["score"], is_clustered)
+        rank_promoted = best_candidate.get("_rank_promoted", False)
+        if not rank_promoted:
+            # Absolute score qualifies → standard confidence bands.
+            confidence, stake_rec = assign_confidence(best_candidate["score"], is_clustered)
+            day_verdict = f"NAP_SELECTED ({confidence} CONFIDENCE)"
+        else:
+            # Rank-promoted: score below floor but clear leader in the race.
+            margin = best_candidate.get("_margin", 0.0)
+            if is_clustered:
+                confidence = "LOW"
+                stake_rec = "SMALL STAKE or PASS — tight field despite rank lead"
+            elif margin >= _clear_margin * 2:
+                confidence = "MEDIUM"
+                stake_rec = "HALF STAKE or EACH WAY"
+            else:
+                confidence = "LOW-MEDIUM"
+                stake_rec = "SMALL STAKE / EACH WAY only"
+            day_verdict = (
+                f"NAP_SELECTED ({confidence} CONFIDENCE — rank-promoted, "
+                f"score {best_candidate['score']:.1f} below floor {_min_score:.0f}, "
+                f"margin +{margin:.1f})"
+            )
         best_candidate["confidence"] = confidence
         best_candidate["stake_recommendation"] = stake_rec
         nap = best_candidate
-        day_verdict = f"NAP_SELECTED ({confidence} CONFIDENCE)"
     elif fallback_pool:
-        # No horse cleared the score floor, but racing exists and structurally-sound
-        # options remain. Surface the single best one as the pick with honest LOW
-        # confidence — the system always gives an option, never a blank day.
+        # No horse cleared the score floor AND no race had a clear leader.
+        # Surface the single best one as the pick with honest LOW confidence.
         best_candidate = fallback_pool[0]
         best_candidate["status"] = "NAP"
         best_candidate["confidence"] = "LOW"
@@ -1075,7 +1105,7 @@ def main() -> int:
         nap = best_candidate
         day_verdict = (
             f"BEST_AVAILABLE (LOW CONFIDENCE — top score {best_candidate['score']:.1f} "
-            f"below floor {_min_score:.0f})"
+            f"below floor {_min_score:.0f}, no clear leader)"
         )
     else:
         day_verdict = "NO_BET — every card top was a chase, dangerous drift, or excluded going/odds"

@@ -39,6 +39,7 @@ DEFAULTS: dict[str, Any] = {
     "nap_min_score": 50.0,
     "nap_min_odds": 2.0,
     "nap_max_odds": 7.0,
+    "nap_clear_margin": 3.0,   # min score gap over 2nd to rank-promote below-floor horse
     "form_read_overlay_cap": 3.0,
     "pace_overlay_cap": 2.0,
     "grade_thresholds": {"A": 70.0, "B+": 60.0, "B": 50.0, "C": 40.0},
@@ -50,6 +51,7 @@ PARAM_BOUNDS: dict[str, tuple[float, float]] = {
     "nap_min_score": (40.0, 75.0),
     "nap_min_odds": (1.5, 4.0),
     "nap_max_odds": (4.0, 15.0),
+    "nap_clear_margin": (1.0, 10.0),
     "form_read_overlay_cap": (0.0, 6.0),
     "pace_overlay_cap": (0.0, 5.0),
     "grade_thresholds.A": (60.0, 85.0),
@@ -67,6 +69,7 @@ PARAM_MAX_STEP: dict[str, float] = {
     "nap_min_score": 3.0,
     "nap_min_odds": 0.5,
     "nap_max_odds": 1.0,
+    "nap_clear_margin": 0.5,
     "form_read_overlay_cap": 0.5,
     "pace_overlay_cap": 0.5,
     "grade_thresholds.A": 2.0,
