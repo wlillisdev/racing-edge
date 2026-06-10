@@ -38,6 +38,8 @@ from typing import Optional
 
 from src.config import get_config
 from src.helpers import data_path, log, report_path, safe_load_json, today_str
+from src.ops import heartbeat, write_run_health
+from preflight import run_preflight
 
 
 # ---------------------------------------------------------------------------
@@ -234,6 +236,14 @@ def main() -> int:
 
     log(f"daily_pipeline: project_dir={project_dir}, date={date_str}, force={force}")
 
+    # --- Preflight self-check (fail loud, abort before doing real work) ----------
+    # Catches the silent-killer class: wrong interpreter / missing deps / dead DB.
+    # On a CRITICAL failure preflight has already emailed a loud alert, so we
+    # abort rather than build a briefing on a broken environment.
+    if not run_preflight("morning"):
+        log("daily_pipeline: preflight FAILED — aborting run (alert emailed)", "ERROR")
+        return 1
+
     # --- Freshness check for run_daily.py ---------------------------------------
     skip_run_daily = False
     if not force and _racecard_is_fresh(date_str):
@@ -270,6 +280,11 @@ def main() -> int:
                 "status": "SKIPPED",
             })
             continue
+
+        # Record run health just before the email step so the email can flag a
+        # DEGRADED run instead of sending a confident briefing on broken data.
+        if step_name in ALWAYS_RUN_STEPS:
+            write_run_health("morning", date_str, results)
 
         # Skip data-processing steps when the racecard gate failed.
         # email_report always runs so the operator is notified.
@@ -314,6 +329,11 @@ def main() -> int:
     # --- Write summaries --------------------------------------------------------
     _write_text_summary(date_str, results, total_s)
     _write_json_summary(date_str, results, total_s)
+
+    # --- Heartbeat (dead-man's switch) ------------------------------------------
+    # Ping ONLY on a completed run. If this ping never arrives, the external
+    # monitor emails the operator — catching the "run never started" silence.
+    heartbeat("morning")
 
     # Treat as success even if some non-critical steps failed; the email step
     # always runs regardless, so the operator is always informed.

@@ -32,6 +32,8 @@ from pathlib import Path
 
 from src.config import get_config
 from src.helpers import data_path, log, report_path, today_str
+from src.ops import heartbeat, write_run_health
+from preflight import run_preflight
 
 
 # ---------------------------------------------------------------------------
@@ -281,11 +283,21 @@ def main() -> int:
 
     log(f"evening_audit_pipeline: project_dir={project_dir}, date={date_str}")
 
+    # --- Preflight self-check (fail loud before doing real work) -----------------
+    if not run_preflight("evening"):
+        log("evening_audit_pipeline: preflight FAILED — aborting run (alert emailed)", "ERROR")
+        return 1
+
     # --- Run pipeline -----------------------------------------------------------
     pipeline_start = datetime.now(timezone.utc)
     results: list[dict] = []
 
     for step_name, script, args in PIPELINE_STEPS:
+        # Record run health just before the email step so the audit email can
+        # flag a DEGRADED run instead of looking routine.
+        if step_name == "email_audit":
+            write_run_health("evening", date_str, results)
+
         if step_name == "results_auditor":
             # Special case: retry on exit code 2.
             result = _run_results_auditor(project_dir)
@@ -315,6 +327,9 @@ def main() -> int:
     # --- Write summaries --------------------------------------------------------
     _write_text_summary(date_str, results, total_s)
     _write_json_summary(date_str, results, total_s)
+
+    # --- Heartbeat (dead-man's switch) ------------------------------------------
+    heartbeat("evening")
 
     return 0
 

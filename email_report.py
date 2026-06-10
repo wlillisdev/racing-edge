@@ -18,6 +18,7 @@ from pathlib import Path
 
 from src.config import get_config
 from src.helpers import data_path, log, report_path, today_str
+from src.ops import degraded_banner, degraded_subject_tag
 
 
 # ---------------------------------------------------------------------------
@@ -130,8 +131,11 @@ def main() -> int:
         body_text = f"{ai_brief}\n\n{sep}\n\n{body_text}"
         log("email_report: prepended AI natural-language briefing")
 
-    subject = _build_subject(date_str, is_fallback)
-    body = _build_body(body_text)
+    subject = _build_subject(date_str, is_fallback) + degraded_subject_tag("morning", date_str)
+    # Prepend a loud banner if any pipeline step failed, so a degraded run is
+    # never mistaken for a clean one.
+    banner = degraded_banner("morning", date_str)
+    body = _build_body(banner + body_text)
 
     log(f"email_report: subject='{subject}'")
     log(f"email_report: sending to {cfg.email_recipient} via {cfg.smtp_host}:{cfg.smtp_port}")

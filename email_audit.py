@@ -24,6 +24,7 @@ from typing import Optional
 
 from src.config import get_config
 from src.helpers import data_path, log, report_path, today_str
+from src.ops import degraded_banner, degraded_subject_tag
 
 
 # ---------------------------------------------------------------------------
@@ -175,6 +176,8 @@ def main() -> int:
 
     # --- Compose email ----------------------------------------------------------
     subject, body = _compose_email(date_str, results_text, profit_text, perf_text)
+    subject += degraded_subject_tag("evening", date_str)
+    body = degraded_banner("evening", date_str) + body
 
     log(f"email_audit: subject='{subject}'")
     log(
