@@ -16,15 +16,15 @@ Exit codes:
 
 from __future__ import annotations
 
-import smtplib
 import sys
 from datetime import datetime
-from email.mime.text import MIMEText
 from pathlib import Path
 from typing import Optional
 
 from src.config import get_config
+from src.email_render import to_html
 from src.helpers import data_path, log, report_path, today_str
+from src.mailer import send_email
 
 
 # ---------------------------------------------------------------------------
@@ -188,33 +188,25 @@ def main() -> int:
     # --- Compose email ----------------------------------------------------------
     subject, body = _compose_email(date_str, nap_text, movers_text, nr_text)
 
+    # HTML version (multipart/alternative — plain text above is the fallback).
+    try:
+        dt = datetime.strptime(date_str, "%Y-%m-%d")
+        subtitle = f"Market Update — {dt.strftime('%a')} {date_str}"
+    except ValueError:
+        subtitle = f"Market Update — {date_str}"
+    html_body = to_html("Racing Intelligence", subtitle, body)
+
     log(f"email_market_update: subject='{subject}'")
     log(
         f"email_market_update: sending to {cfg.email_recipient} "
         f"via {cfg.smtp_host}:{cfg.smtp_port}"
     )
 
-    # --- Build MIME message -----------------------------------------------------
-    msg = MIMEText(body, "plain", "utf-8")
-    msg["Subject"] = subject
-    msg["From"] = cfg.email_sender
-    msg["To"] = cfg.email_recipient
-
-    # --- Send (CRITICAL: always attempt SMTP — never let missing files stop send) -
+    # --- Send (CRITICAL: always attempt — never let missing files stop send) -----
     sent_flag = data_path(f"email_market_sent_{date_str}.flag")
 
-    try:
-        with smtplib.SMTP(cfg.smtp_host, cfg.smtp_port, timeout=30) as smtp:
-            smtp.ehlo()
-            smtp.starttls()
-            smtp.ehlo()
-            smtp.login(cfg.email_sender, cfg.email_password)
-            smtp.sendmail(cfg.email_sender, cfg.email_recipient, msg.as_string())
-    except smtplib.SMTPException as exc:
-        log(f"email_market_update: SMTP error — {exc}", "ERROR")
-        return 1
-    except OSError as exc:
-        log(f"email_market_update: network/OS error — {exc}", "ERROR")
+    if not send_email(subject, body, html_body=html_body):
+        log("email_market_update: send failed — see mailer log above", "ERROR")
         return 1
 
     _write_flag(sent_flag)

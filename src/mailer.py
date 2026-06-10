@@ -17,14 +17,21 @@ from __future__ import annotations
 
 import smtplib
 from datetime import datetime
+from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from typing import Optional
 
 from src.config import get_config
 from src.helpers import log
 
 
-def send_email(subject: str, body: str) -> bool:
-    """Send a plain-text email via the configured SMTP/TLS server.
+def send_email(subject: str, body: str, html_body: Optional[str] = None) -> bool:
+    """Send an email via the configured SMTP/TLS server.
+
+    When `html_body` is given the message is sent as multipart/alternative:
+    `body` is the plain-text fallback and `html_body` the rich version, so a
+    client that blocks HTML still shows the readable text. Plain-text-only
+    callers (alerts) pass `body` alone and behaviour is unchanged.
 
     Returns True if the message was accepted by the server, False otherwise.
     Never raises — callers (including alert paths) can rely on a bool.
@@ -35,7 +42,15 @@ def send_email(subject: str, body: str) -> bool:
         log(f"mailer: cannot send — missing config key {exc}", "ERROR")
         return False
 
-    msg = MIMEText(body, "plain", "utf-8")
+    msg: MIMEText | MIMEMultipart
+    if html_body:
+        msg = MIMEMultipart("alternative")
+        # Order matters: clients render the LAST part they can display, so the
+        # plain-text fallback must come first and the HTML version last.
+        msg.attach(MIMEText(body, "plain", "utf-8"))
+        msg.attach(MIMEText(html_body, "html", "utf-8"))
+    else:
+        msg = MIMEText(body, "plain", "utf-8")
     msg["Subject"] = subject
     msg["From"] = cfg.email_sender
     msg["To"] = cfg.email_recipient

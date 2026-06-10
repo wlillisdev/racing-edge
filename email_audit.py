@@ -15,15 +15,15 @@ Exit codes:
 
 from __future__ import annotations
 
-import smtplib
 import sys
 from datetime import datetime
-from email.mime.text import MIMEText
 from pathlib import Path
 from typing import Optional
 
 from src.config import get_config
+from src.email_render import to_html
 from src.helpers import data_path, log, report_path, today_str
+from src.mailer import send_email
 from src.ops import degraded_banner, degraded_subject_tag
 
 
@@ -175,9 +175,18 @@ def main() -> int:
         log(f"email_audit: unavailable reports — {unavailable}", "WARNING")
 
     # --- Compose email ----------------------------------------------------------
-    subject, body = _compose_email(date_str, results_text, profit_text, perf_text)
+    subject, composed = _compose_email(date_str, results_text, profit_text, perf_text)
     subject += degraded_subject_tag("evening", date_str)
-    body = degraded_banner("evening", date_str) + body
+    banner = degraded_banner("evening", date_str)
+    plain_body = banner + composed
+
+    # HTML version (multipart/alternative — plain text above is the fallback).
+    try:
+        dt = datetime.strptime(date_str, "%Y-%m-%d")
+        subtitle = f"Evening Audit — {dt.strftime('%a')} {date_str}"
+    except ValueError:
+        subtitle = f"Evening Audit — {date_str}"
+    html_body = to_html("Racing Intelligence", subtitle, composed, degraded_note=banner)
 
     log(f"email_audit: subject='{subject}'")
     log(
@@ -185,27 +194,11 @@ def main() -> int:
         f"via {cfg.smtp_host}:{cfg.smtp_port}"
     )
 
-    # --- Build MIME message -----------------------------------------------------
-    msg = MIMEText(body, "plain", "utf-8")
-    msg["Subject"] = subject
-    msg["From"] = cfg.email_sender
-    msg["To"] = cfg.email_recipient
-
-    # --- Send via SMTP/TLS -------------------------------------------------------
+    # --- Send (single shared SMTP path; HTML + plain-text fallback) --------------
     sent_flag = data_path(f"email_audit_sent_{date_str}.flag")
 
-    try:
-        with smtplib.SMTP(cfg.smtp_host, cfg.smtp_port, timeout=30) as smtp:
-            smtp.ehlo()
-            smtp.starttls()
-            smtp.ehlo()
-            smtp.login(cfg.email_sender, cfg.email_password)
-            smtp.sendmail(cfg.email_sender, cfg.email_recipient, msg.as_string())
-    except smtplib.SMTPException as exc:
-        log(f"email_audit: SMTP error — {exc}", "ERROR")
-        return 1
-    except OSError as exc:
-        log(f"email_audit: network/OS error — {exc}", "ERROR")
+    if not send_email(subject, plain_body, html_body=html_body):
+        log("email_audit: send failed — see mailer log above", "ERROR")
         return 1
 
     _write_flag(sent_flag)
