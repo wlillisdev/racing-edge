@@ -57,6 +57,10 @@ NAP_MIN_SCORE: float = 50.0   # floor — model must always output the best hors
 NAP_MAX_SCORE: float = 100.0  # no upper cap — a high score is a strong signal, not a block
 CLUSTER_SPREAD: float = 8.0
 CLUSTER_MIN_SCORE: float = 50.0
+# Rank promotion (clear-leader-by-margin) needs an absolute quality floor too:
+# without it a debutant scoring 8.0 in a 1-runner/garbage race has "margin" over
+# nothing and would be promoted. 40.0 = the Grade C line — never promote below it.
+RANK_PROMOTION_MIN_SCORE: float = 40.0
 
 NAP_EXCLUDED_RACE_TYPES: frozenset[str] = frozenset({"chase"})
 NAP_MIN_ODDS: float = 2.0   # Evens minimum — need >50% WR to break even
@@ -860,7 +864,9 @@ def score_runner(
         "jockey": str(runner.get("jockey") or ""),
         "rpr": runner.get("rpr"), "ofr": runner.get("ofr"), "status": None,
         "race_type": str(race.get("type") or ""),
-        "going": str(race.get("going") or ""),
+        # Prefer going_detailed (stripped of parentheticals) — `going` alone can
+        # be blank, which would silently pass the Firm/Heavy exclusion gate.
+        "going": str(race.get("going_detailed") or race.get("going") or "").split("(")[0].strip(),
         "distance_f": float(race.get("distance_f") or 0.0),
     }
 
@@ -1041,6 +1047,17 @@ def main() -> int:
         _is_flat = not any(x in (top.get("race_type") or "").lower() for x in ("chase", "hurdle", "bumper"))
         if _is_flat and going_normalise(top.get("going") or "") in FLAT_EXCLUDED_GOING:
             no_bet_races.append(race_id); continue
+        # Flat staying-trip exclusion (16f+) — the backtest that validated the
+        # model enforced this; the live selector must match it.
+        if _is_flat and float(top.get("distance_f") or 0.0) >= FLAT_MAX_DIST_F:
+            no_bet_races.append(race_id); continue
+        # Unpriced horses can't be checked against the odds gates, so they are
+        # never full candidates — best-available fallback only, clearly flagged.
+        if top.get("morning_price") is None:
+            top = dict(top)
+            top["warnings"] = list(top.get("warnings") or []) + ["unpriced"]
+            fallback_pool.append(top)
+            continue
         # Cluster races get a warning flag on the pick, not a hard block.
         if race_id in cluster_races:
             top = dict(top)
@@ -1050,9 +1067,16 @@ def main() -> int:
         margin = top["score"] - second_score
         top = dict(top)
         top["_margin"] = margin
-        # Above the score floor OR a clear leader by margin → NAP candidate.
-        # Below floor AND small margin → fallback only (best-available, low conf).
-        if top["score"] >= _min_score or margin >= _clear_margin:
+        # Above the score floor → NAP candidate. Below the floor, a clear leader
+        # by margin is promoted ONLY when the race is competitive (2+ runners,
+        # so the margin is over a real rival) and the score clears an absolute
+        # quality floor (a big margin over a garbage field is not a signal).
+        promotable = (
+            len(scored) >= 2
+            and top["score"] >= RANK_PROMOTION_MIN_SCORE
+            and margin >= _clear_margin
+        )
+        if top["score"] >= _min_score or promotable:
             top["_rank_promoted"] = top["score"] < _min_score
             nap_candidates.append(top)
         else:
@@ -1141,6 +1165,16 @@ def main() -> int:
         if top["score"] < JUMP_ALTERNATIVE_MIN_SCORE:
             continue
         if "dangerous_drift" in (top.get("warnings") or []):
+            continue
+        # The jump alternative is presented as a bettable secondary pick, so it
+        # must clear the same structural gates as the NAP: priced and inside the
+        # odds window, rideable going, and a field small enough to handicap.
+        _jp = top.get("morning_price")
+        if _jp is None or _jp < _min_odds or _jp > _max_odds:
+            continue
+        if going_normalise(top.get("going") or "") in JUMP_EXCLUDED_GOING:
+            continue
+        if len(scored) > JUMP_MAX_RUNNERS:
             continue
         if jump_nap is None or top["score"] > jump_nap["score"]:
             jump_nap = dict(top)
