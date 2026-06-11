@@ -35,11 +35,20 @@ from src.helpers import data_path, log, safe_load_json
 _HEARTBEAT_ENV = {
     "morning": "HEARTBEAT_URL_MORNING",
     "evening": "HEARTBEAT_URL_EVENING",
+    "market":  "HEARTBEAT_URL_MARKET",
+    "weekly":  "HEARTBEAT_URL_WEEKLY",
+    "db":      "HEARTBEAT_URL_DB",
 }
 
 
-def heartbeat(stage: str) -> bool:
-    """Ping the dead-man's-switch URL for *stage* ("morning"|"evening").
+def heartbeat(stage: str, ok: bool = True) -> bool:
+    """Ping the dead-man's-switch URL for *stage*.
+
+    ok=True pings the success URL; ok=False pings the /fail endpoint
+    (healthchecks.io convention) so a degraded run raises an alert instead of
+    resetting the monitor as if everything were healthy. A heartbeat that
+    pings success unconditionally is worse than none — it actively vouches
+    for broken runs.
 
     Returns True if a ping was sent and accepted, False if no URL is configured
     or the ping failed. Never raises — a monitoring ping must not break a run.
@@ -49,15 +58,45 @@ def heartbeat(stage: str) -> bool:
     if not url:
         log(f"ops.heartbeat: no {env_name} configured — skipping ping", "INFO")
         return False
+    if not ok:
+        url = url.rstrip("/") + "/fail"
     try:
         import requests  # local import: keep ops importable even if requests is absent
 
         requests.get(url, timeout=10)
-        log(f"ops.heartbeat: pinged {stage} heartbeat OK")
+        log(f"ops.heartbeat: pinged {stage} heartbeat {'OK' if ok else 'FAIL endpoint'}")
         return True
     except Exception as exc:  # never let a monitoring ping break the pipeline
         log(f"ops.heartbeat: ping failed for {stage} — {exc}", "WARNING")
         return False
+
+
+def verify_step_outputs(expected_paths: list[str], started_at: float) -> list[str]:
+    """Check that a pipeline step actually produced its declared outputs.
+
+    A step that exits 0 without writing its outputs (stubbed file, early
+    return, wrong filename) must be treated as FAILED — exit codes alone let
+    a wiped script "pass" indefinitely. Returns a list of problem strings
+    (empty = all outputs verified). A file must exist, be non-empty, and have
+    been modified at/after *started_at* (so yesterday's leftover doesn't
+    vouch for today's step).
+    """
+    problems: list[str] = []
+    for path in expected_paths:
+        p = Path(path)
+        if not p.exists():
+            problems.append(f"missing output: {path}")
+            continue
+        try:
+            st = p.stat()
+        except OSError as exc:
+            problems.append(f"unreadable output: {path} ({exc})")
+            continue
+        if st.st_size == 0:
+            problems.append(f"empty output: {path}")
+        elif st.st_mtime < started_at - 1.0:  # 1s slack for filesystem timestamp rounding
+            problems.append(f"stale output (not rewritten this run): {path}")
+    return problems
 
 
 def _health_path(stage: str, date_str: str) -> str:

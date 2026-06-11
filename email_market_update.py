@@ -25,6 +25,7 @@ from src.config import get_config
 from src.email_render import to_html
 from src.helpers import data_path, log, report_path, today_str
 from src.mailer import send_email
+from src.ops import degraded_banner, degraded_subject_tag
 
 
 # ---------------------------------------------------------------------------
@@ -172,7 +173,8 @@ def main() -> int:
 
     # If ALL reports are missing there is nothing useful to send — send a clear
     # PIPELINE FAILURE alert rather than an email full of placeholder text.
-    if nap_text is None and movers_text is None and nr_text is None:
+    total_failure = nap_text is None and movers_text is None and nr_text is None
+    if total_failure:
         log("email_market_update: ALL reports missing — sending PIPELINE FAILURE alert", "ERROR")
         nap_text = (
             "PIPELINE FAILURE — NO REPORTS GENERATED\n\n"
@@ -187,6 +189,14 @@ def main() -> int:
 
     # --- Compose email ----------------------------------------------------------
     subject, body = _compose_email(date_str, nap_text, movers_text, nr_text)
+    if total_failure:
+        # The failure notice must not hide under a routine subject line.
+        subject = f"🚨 PIPELINE FAILURE | Market Update | {date_str}"
+    else:
+        subject += degraded_subject_tag("market", date_str)
+        banner = degraded_banner("market", date_str)
+        if banner:
+            body = banner + body
 
     # HTML version (multipart/alternative — plain text above is the fallback).
     try:

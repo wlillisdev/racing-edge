@@ -38,7 +38,7 @@ from typing import Optional
 
 from src.config import get_config
 from src.helpers import data_path, log, report_path, safe_load_json, today_str
-from src.ops import heartbeat, write_run_health
+from src.ops import heartbeat, verify_step_outputs, write_run_health
 from preflight import run_preflight
 
 
@@ -67,6 +67,20 @@ PIPELINE_STEPS: list[tuple[str, str, list[str]]] = [
     ("briefing_writer_ai",     "briefing_writer_ai.py",    []),
     ("email_report",           "email_report.py",          []),
 ]
+
+# Expected outputs per step ({d} = date). A step that exits 0 without
+# producing these is downgraded to FAIL — exit codes alone let a wiped or
+# stubbed script "pass" indefinitely (results_auditor incident). Only the
+# deterministic, load-bearing outputs are listed; AI overlay steps may
+# legitimately degrade to nothing.
+STEP_OUTPUTS: dict[str, list[str]] = {
+    "run_daily":               ["data/racecards_{d}.json"],
+    "market_snapshot_morning": ["data/market_snapshots/market_snapshot_{d}_morning.json"],
+    "race_shortlist":          ["data/shortlist_{d}.json"],
+    "full_form_reader":        ["data/full_form_{d}.json"],
+    "nap_selector_v3":         ["data/nap_candidates_{d}.json"],
+    "morning_briefing_report": ["reports/morning_briefing_{d}.txt"],
+}
 
 
 # ---------------------------------------------------------------------------
@@ -132,7 +146,7 @@ def _run_step(
         )
         returncode = result.returncode
     except subprocess.TimeoutExpired:
-        log(f"daily_pipeline: [{step_name}] TIMEOUT after 600 s", "ERROR")
+        log(f"daily_pipeline: [{step_name}] TIMEOUT after 900 s", "ERROR")
         returncode = -1
     except OSError as exc:
         log(f"daily_pipeline: [{step_name}] OS error — {exc}", "ERROR")
@@ -141,6 +155,19 @@ def _run_step(
     finished_at = datetime.now(timezone.utc)
     duration_s = round((finished_at - started_at).total_seconds(), 2)
     status = "PASS" if returncode == 0 else "FAIL"
+
+    # Output-manifest check: a PASS that produced nothing is a FAIL.
+    if status == "PASS" and step_name in STEP_OUTPUTS:
+        date_str = today_str()
+        expected = [
+            str(Path(project_dir) / tpl.format(d=date_str))
+            for tpl in STEP_OUTPUTS[step_name]
+        ]
+        problems = verify_step_outputs(expected, started_at.timestamp())
+        if problems:
+            status = "FAIL"
+            for prob in problems:
+                log(f"daily_pipeline: [{step_name}] output check FAILED — {prob}", "ERROR")
 
     log(
         f"daily_pipeline: [{step_name}] {status} "
@@ -331,9 +358,9 @@ def main() -> int:
     _write_json_summary(date_str, results, total_s)
 
     # --- Heartbeat (dead-man's switch) ------------------------------------------
-    # Ping ONLY on a completed run. If this ping never arrives, the external
-    # monitor emails the operator — catching the "run never started" silence.
-    heartbeat("morning")
+    # Ping success only when every step genuinely passed; otherwise ping the
+    # /fail endpoint so the monitor alerts instead of vouching for a broken run.
+    heartbeat("morning", ok=(fail_count == 0))
 
     # Treat as success even if some non-critical steps failed; the email step
     # always runs regardless, so the operator is always informed.

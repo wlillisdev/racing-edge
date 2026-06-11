@@ -169,6 +169,20 @@ def run_preflight(stage: str = "manual") -> bool:
         warnings += _check_smtp(cfg)
         warnings += _check_anthropic(cfg)
 
+    # 7. Heartbeat (WARN-only). The dead-man's switch is the net under every
+    # other check — if it's unconfigured, a run that never starts is invisible.
+    import os as _os
+    _hb_env = {
+        "morning": "HEARTBEAT_URL_MORNING",
+        "evening": "HEARTBEAT_URL_EVENING",
+        "market":  "HEARTBEAT_URL_MARKET",
+    }.get(stage)
+    if _hb_env and not _os.environ.get(_hb_env, "").strip():
+        warnings.append(
+            f"{_hb_env} not configured — a silent non-start of this pipeline "
+            "will go unnoticed (set up healthchecks.io and add the URL to .env)"
+        )
+
     # --- Report ---------------------------------------------------------------
     sep = "=" * 60
     print(sep)

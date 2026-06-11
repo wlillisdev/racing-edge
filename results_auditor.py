@@ -287,11 +287,19 @@ def _format_text_report(
 # ---------------------------------------------------------------------------
 
 def main() -> int:
-    """Run results audit. Returns exit code."""
+    """Run results audit. Returns exit code.
+
+    Optional argv[1] = YYYY-MM-DD overrides the date, so a day whose results
+    published late can be recovered the next evening instead of becoming a
+    permanent gap in P/L and learning data.
+    """
     log("results_auditor.py started")
 
     # Define date first — avoids any possible NameError downstream.
     date_str: str = today_str()
+    if len(sys.argv) > 1 and sys.argv[1].strip():
+        date_str = sys.argv[1].strip()
+        log(f"results_auditor: date override — auditing {date_str}")
     now = datetime.now(timezone.utc)
     audit_ts = now.isoformat()
     generated_hm = now.strftime("%H:%M")
