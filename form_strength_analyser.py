@@ -82,6 +82,9 @@ def _parse_form(form: str) -> list[str]:
     form = form.strip().replace(" ", "")
     last_dash = form.rfind("-")
     segment = form[last_dash + 1:] if last_dash != -1 else form
+    if not segment and last_dash != -1:
+        # Trailing dash ("12345-"): all runs were last season — still form.
+        segment = form[:last_dash]
     valid: list[str] = []
     for ch in reversed(segment):
         upper = ch.upper()
@@ -192,19 +195,9 @@ def _check_hidden_positive(
 
         return False, ""
 
-    # Basic heuristic from form string + field size.
-    chars = _parse_form(form)
-    if not chars:
-        return False, ""
-
-    recent = chars[0]
-    if recent in ("3", "4"):
-        fs = field_size or 0
-        if fs >= LARGE_FIELD_THRESHOLD:
-            return (
-                True,
-                f"Last run {recent} in large field ({fs} runners) — could be better than it looks",
-            )
+    # Basic path: without full form we don't know the PREVIOUS race's field
+    # size — today's field size says nothing about how hard last time's 3rd
+    # was, so no heuristic is honest here.
     return False, ""
 
 
@@ -232,12 +225,18 @@ def _assess_form_strength_full(
         except (ValueError, TypeError):
             pos_int = None
 
-        rpr = run.get("rpr") or run.get("rating") or run.get("official_rating")
-        ts  = run.get("ts")  or run.get("topspeed")
-        try:
-            rating = float(rpr or ts or 0)
-        except (TypeError, ValueError):
-            rating = 0.0
+        # Parse each candidate value independently — a junk rpr like "-"
+        # must not zero out a perfectly good ts figure.
+        rating = 0.0
+        for cand in (run.get("rpr"), run.get("rating"), run.get("official_rating"),
+                     run.get("ts"), run.get("topspeed")):
+            try:
+                v = float(cand)
+                if v > 0:
+                    rating = v
+                    break
+            except (TypeError, ValueError):
+                continue
 
         if pos_int is not None:
             total_considered += 1

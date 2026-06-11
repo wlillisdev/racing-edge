@@ -151,6 +151,9 @@ def _parse_form_chars(form: str) -> list[str]:
     form = form.strip().replace(" ", "")
     last_dash = form.rfind("-")
     segment = form[last_dash + 1:] if last_dash != -1 else form
+    if not segment and last_dash != -1:
+        # Trailing dash ("12345-"): all runs were last season — still form.
+        segment = form[:last_dash]
     valid: list[str] = []
     for ch in reversed(segment):
         upper = ch.upper()
@@ -793,8 +796,9 @@ def score_runner(
             wisdom_score, wisdom_reasons = score_racing_wisdom(
                 runner, race, all_runners, full_form
             )
-        except Exception:  # pragma: no cover - never let the overlay break scoring
+        except Exception as exc:  # pragma: no cover - never let the overlay break scoring
             wisdom_score, wisdom_reasons = 0.0, []
+            log(f"nap_selector: wisdom overlay failed for {runner.get('horse')} — {exc}", "WARNING")
     base = form_score + suit_score + ctx_score + draw_score + trnr_score + mkt_score
     total = max(0.0, min(100.0, base + wisdom_score))
 

@@ -72,12 +72,26 @@ def _parse_date(raw: str) -> Optional[datetime]:
         return None
 
 
-def _dist_round(raw) -> Optional[int]:
+def _exact_dist(raw) -> Optional[float]:
+    """Parse a distance to furlongs (float), handling "1m2f"-style strings."""
     try:
         d = float(raw)
-        return int(round(d)) if d > 0 else None
+        return d if d > 0 else None
     except (TypeError, ValueError):
-        return None
+        pass
+    m = re.fullmatch(
+        r"(?:(\d+)m)?(?:(\d+(?:\.\d+)?)f)?(?:(\d+)y)?",
+        str(raw or "").strip().lower().replace(" ", ""),
+    )
+    if m and m.group(0):
+        d = int(m.group(1) or 0) * 8.0 + float(m.group(2) or 0) + int(m.group(3) or 0) / 220.0
+        return d if d > 0 else None
+    return None
+
+
+def _dist_round(raw) -> Optional[int]:
+    d = _exact_dist(raw)
+    return int(round(d)) if d is not None else None
 
 
 def composite_key(date_str: str, course: str, distance_f) -> Optional[str]:
@@ -148,6 +162,9 @@ def build_cache(csv_path: str) -> dict:
             "subs_winners": subs,
             "field": n,
             "date": meta["date"],
+            # Exact distance kept so lookups can refuse near-miss matches
+            # (a 6.5f form entry must not match the card's 6f race).
+            "distance_f": _exact_dist(meta["distance_f"]),
         }
         key = composite_key(meta["date"], meta["course"], meta["distance_f"])
         if key:
@@ -176,15 +193,16 @@ def quality_for_run(run: dict, cache: Optional[dict],
     """Look up race quality for one form entry (a past run of a horse).
 
     Returns the race meta dict {"q", "subs_winners", "field", "date"} or None
-    when the race can't be identified, is ambiguous, or is too recent for its
-    q=0 to mean anything (younger than MIN_AGE_DAYS with no franking yet).
+    when the race can't be identified, is ambiguous, doesn't match the form
+    entry's exact distance, or is too recent for its q=0 to mean anything.
     """
     if not cache:
         return None
+    raw_dist = run.get("distance_f") or run.get("dist_f") or run.get("distance")
     key = composite_key(
         run.get("date") or run.get("race_date") or "",
         run.get("course") or "",
-        run.get("distance_f") or run.get("distance"),
+        raw_dist,
     )
     if not key:
         return None
@@ -194,11 +212,22 @@ def quality_for_run(run: dict, cache: Optional[dict],
     meta = (cache.get("races") or {}).get(race_id)
     if not meta:
         return None
+    # The rounded key can collide across nearby trips on the same card
+    # (6f and 6.5f both round to 6 under banker's rounding) and the
+    # ambiguity guard only sees races that made it into the cache. Refuse
+    # any match whose exact distance differs from the form entry's.
+    run_dist = _exact_dist(raw_dist)
+    cache_dist = meta.get("distance_f")
+    if run_dist is not None and cache_dist is not None and abs(run_dist - cache_dist) > 0.25:
+        return None
     # A young race with q=0 simply hasn't had time to be franked — unknown.
+    # Age is measured against when the cache was BUILT, not now: a stale
+    # cache must not let a never-observed window pass the age guard.
     if meta.get("q", 0.0) == 0.0:
         race_dt = _parse_date(meta.get("date") or "")
-        now = today or datetime.now(timezone.utc).replace(tzinfo=None)
-        if race_dt is None or (now - race_dt).days < MIN_AGE_DAYS:
+        ref = today or _parse_date(str(cache.get("built_at") or "")[:10]) \
+            or datetime.now(timezone.utc).replace(tzinfo=None)
+        if race_dt is None or (ref - race_dt).days < MIN_AGE_DAYS:
             return None
     return meta
 

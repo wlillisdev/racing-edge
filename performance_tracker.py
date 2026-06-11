@@ -301,15 +301,16 @@ def main() -> int:
     official_results: list[dict] = results_doc.get("official_results") or []
     shadow_results: list[dict] = results_doc.get("shadow_results") or []
 
-    # Build a lookup of shadow P/L by race_id+horse_id for reference
-    # (shadow P/L is tracked but NOT mixed with official P/L).
-    shadow_pl_by_horse: dict[str, float] = {}
-    for sr in shadow_results:
-        key = f"{sr.get('race_id', '')}_{sr.get('horse_id', '')}"
-        try:
-            shadow_pl_by_horse[key] = float(sr.get("official_pl") or 0)
-        except (ValueError, TypeError):
-            shadow_pl_by_horse[key] = 0.0
+    # Re-run protection: the CSV is append-only with no upsert, so running the
+    # evening pipeline twice (e.g. after late results) would double-book P/L
+    # and corrupt cumulative_official_pl forever. Skip rows already logged.
+    existing_keys: set[tuple[str, str, str]] = set()
+    for prev in _read_all_rows(csv_path):
+        existing_keys.add((
+            str(prev.get("date") or ""),
+            str(prev.get("race_id") or ""),
+            str(prev.get("horse") or ""),
+        ))
 
     # Read current cumulative before we start appending.
     cumulative_pl = _read_last_cumulative_pl(csv_path)
@@ -317,20 +318,12 @@ def main() -> int:
 
     today_pl: float = 0.0
     appended_count: int = 0
+    skipped_dupes: int = 0
     write_errors: int = 0
 
-    for res in official_results:
-        official_stake = float(res.get("official_stake") or 0)
-        official_pl = float(res.get("official_pl") or 0)
-        cumulative_pl = round(cumulative_pl + official_pl, 2)
-        today_pl = round(today_pl + official_pl, 2)
-
-        # Shadow tracking columns — zero for official rows unless cross-
-        # referenced with shadow list (we keep them as 0 for clarity).
-        shadow_stake = 0.0
-        shadow_pl_val = 0.0
-
-        row: dict = {
+    def _row_for(res: dict, official_stake: float, official_pl: float,
+                 shadow_stake: float, shadow_pl_val: float, cum: float) -> dict:
+        return {
             "date":                 date_str,
             "horse":                res.get("horse", ""),
             "race_id":              res.get("race_id", ""),
@@ -347,14 +340,51 @@ def main() -> int:
             "official_pl":          official_pl,
             "shadow_stake":         shadow_stake,
             "shadow_pl":            shadow_pl_val,
-            "cumulative_official_pl": cumulative_pl,
+            "cumulative_official_pl": cum,
             "model_version":        model_version,
         }
 
+    for res in official_results:
+        key = (date_str, str(res.get("race_id") or ""), str(res.get("horse") or ""))
+        if key in existing_keys:
+            skipped_dupes += 1
+            continue
+        existing_keys.add(key)
+
+        official_stake = float(res.get("official_stake") or 0)
+        official_pl = float(res.get("official_pl") or 0)
+        cumulative_pl = round(cumulative_pl + official_pl, 2)
+        today_pl = round(today_pl + official_pl, 2)
+
+        row = _row_for(res, official_stake, official_pl, 0.0, 0.0, cumulative_pl)
         if _append_row(csv_path, row):
             appended_count += 1
         else:
             write_errors += 1
+
+    # Shadow results: persisted as their own rows (shadow_stake=1.0 paper bet)
+    # so the profit report's shadow section has data — previously these were
+    # collected nightly and discarded, leaving the section at zero forever.
+    # Shadow P/L never touches official cumulative.
+    for res in shadow_results:
+        key = (date_str, str(res.get("race_id") or ""), str(res.get("horse") or ""))
+        if key in existing_keys:
+            skipped_dupes += 1
+            continue
+        existing_keys.add(key)
+
+        try:
+            shadow_pl_val = float(res.get("official_pl") or res.get("shadow_pl") or 0)
+        except (ValueError, TypeError):
+            shadow_pl_val = 0.0
+        row = _row_for(res, 0.0, 0.0, 1.0, shadow_pl_val, cumulative_pl)
+        if _append_row(csv_path, row):
+            appended_count += 1
+        else:
+            write_errors += 1
+
+    if skipped_dupes:
+        log(f"performance_tracker: skipped {skipped_dupes} already-logged row(s) (re-run)")
 
     log(
         f"performance_tracker: appended {appended_count} row(s), "

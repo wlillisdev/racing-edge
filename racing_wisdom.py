@@ -54,6 +54,9 @@ def _parse_form_chars(form: str) -> list[str]:
     form = form.strip().replace(" ", "")
     last_dash = form.rfind("-")
     segment = form[last_dash + 1:] if last_dash != -1 else form
+    if not segment and last_dash != -1:
+        # Trailing dash ("12345-"): all runs were last season — still form.
+        segment = form[:last_dash]
     valid: list[str] = []
     for ch in reversed(segment):
         upper = ch.upper()
@@ -69,10 +72,10 @@ def _normalise_class(class_str: str) -> Optional[int]:
     s = str(class_str or "").strip().lower()
     if s.startswith("class"):
         s = s[5:].strip()
-    # grade 1/2/3 → map to equivalent class 1/2/3
-    m = re.search(r"grade\s*(\d)", s)
-    if m:
-        return int(m.group(1))
+    # Grade 1/2/3 (NH), Group 1/2/3 (flat) and Listed races are ALL Class 1
+    # in the UK classification — a Grade 3 is NOT Class 3.
+    if re.search(r"\b(?:grade|group)\s*\d\b", s) or "listed" in s:
+        return 1
     try:
         c = int(s)
         if 1 <= c <= 7:
@@ -213,9 +216,10 @@ def _score_pace_projection(
         return 3.0, [
             "Pace advantage: likely sole pace-setter based on recent dominant form"
         ]
-    if this_recent_wins == 0 and field_front_runners >= 3:
-        # Closer in a hot-pace race — genuine pace will burn out the leaders
-        return 3.0, ["Pace benefit: closer in a hot-pace race — strong pace suits"]
+    # NOTE: no bonus for winless horses in "hot pace" fields — zero recent
+    # wins is evidence of being out of form, not of being a hold-up runner.
+    # The old +3 here handed a 5-point swing to worse horses in competitive
+    # races. There is no running-style data in the inputs to gate it on.
     if this_recent_wins >= 2 and field_front_runners >= 3:
         return -2.0, [
             f"Contested pace: {field_front_runners} likely front-runners in field, pace war likely"
@@ -722,8 +726,13 @@ def _get_quality_cache() -> Optional[dict]:
         try:
             from race_quality_builder import load_quality_lookup
             _quality_cache = load_quality_lookup()
-        except Exception:
+        except Exception as exc:
             _quality_cache = None
+            try:
+                from src.helpers import log
+                log(f"racing_wisdom: race quality cache unavailable — {exc}", "WARNING")
+            except Exception:
+                pass
     return _quality_cache
 
 
@@ -735,8 +744,10 @@ def _score_form_franking(
     that field did NEXT (race_quality_builder cache):
 
     Win/close placing in a frankened race (>=25% of field won since)  → +2/+3
-    Win in a proven-weak race (decent field, nobody has won since)    → -2
 
+    No penalty for q=0 races: the cache only sees races the system itself
+    tracked, so "nobody from the field has won since" usually means "we
+    didn't see the field's later runs" — not evidence the race was weak.
     Races too recent to judge, unmatched, or ambiguous score nothing.
     """
     if not full_form:
@@ -766,7 +777,10 @@ def _score_form_franking(
         field = int(meta.get("field") or 0)
 
         if q >= _FRANK_STRONG_Q:
-            bl = _safe_float(run.get("beaten_lengths") or run.get("btn"), -1.0)
+            bl_raw = run.get("beaten_lengths")
+            if bl_raw is None:
+                bl_raw = run.get("btn")
+            bl = _safe_float(bl_raw, -1.0) if bl_raw is not None else -1.0
             if pos_int == 1:
                 pts += 3.0
                 reasons.append(
@@ -782,13 +796,8 @@ def _score_form_franking(
                 reasons.append(
                     f"Form franked: placed in a race where {subs}/{field} have won since"
                 )
-        elif q == 0.0 and field >= _FRANK_MIN_FIELD and pos_int == 1:
-            pts -= 2.0
-            reasons.append(
-                f"Weak race warning: won, but none of the {field}-runner field has won since"
-            )
 
-    return max(-3.0, min(4.0, pts)), reasons
+    return min(4.0, pts), reasons
 
 
 # ---------------------------------------------------------------------------
@@ -827,7 +836,14 @@ def score_racing_wisdom(
         nonlocal total
         try:
             pts, reasons = fn(*args)
-        except Exception:
+        except Exception as exc:
+            # Degrade to 0 but say so — a silently broken pattern is
+            # indistinguishable from "no signal" and stays broken forever.
+            try:
+                from src.helpers import log
+                log(f"racing_wisdom: pattern {fn.__name__} failed — {exc}", "WARNING")
+            except Exception:
+                pass
             return
         total += pts
         all_reasons.extend(reasons)
