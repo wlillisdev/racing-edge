@@ -49,7 +49,7 @@ from datetime import datetime, timezone
 from src.helpers import data_path, log, report_path, safe_load_json, today_str
 from src.model_params import (
     get_params, write_params, current_version, is_auto_tune_enabled,
-    PARAM_BOUNDS, PARAM_MAX_STEP,
+    history, PARAM_BOUNDS, PARAM_MAX_STEP,
 )
 
 # ---------------------------------------------------------------------------
@@ -59,6 +59,25 @@ AUTO_APPLY_ENABLED: bool = True   # flip to False for propose/review-only
 MIN_SAMPLE_AUTO: int = 50         # labelled rows behind a proposal to auto-apply
 MIN_CONFIDENCE_AUTO: float = 0.60 # 0-1 scale (or HIGH/MEDIUM-HIGH strings)
 MAX_CHANGES_PER_NIGHT: int = 2    # cap simultaneous changes — drift, not lurch
+COOLDOWN_DAYS: int = 7            # min days between changes to the SAME param.
+                                  # The 90-day window barely changes overnight,
+                                  # so a standing signal would re-apply at max
+                                  # step nightly — a ratchet, not learning. The
+                                  # cooldown forces a week of fresh evidence
+                                  # before the same knob can move again.
+
+# Cross-param invariants — each (higher, lower) pair must satisfy hi >= lo.
+# Per-scalar clamping alone can produce an inverted set (e.g. medium 65 with
+# medium_high 52), which silently assigns the wrong stake/grade.
+_ORDERINGS: list[tuple[str, str]] = [
+    ("confidence_bands.high", "confidence_bands.medium_high"),
+    ("confidence_bands.medium_high", "confidence_bands.medium"),
+    ("confidence_bands.medium", "confidence_bands.low_medium"),
+    ("grade_thresholds.A", "grade_thresholds.B+"),
+    ("grade_thresholds.B+", "grade_thresholds.B"),
+    ("grade_thresholds.B", "grade_thresholds.C"),
+]
+MIN_ODDS_WINDOW: float = 1.0      # nap_max_odds must exceed nap_min_odds by this
 
 
 def _get_dotted(d: dict, dotted: str):
@@ -76,6 +95,42 @@ def _set_dotted(d: dict, dotted: str, value) -> None:
     for part in parts[:-1]:
         cur = cur.setdefault(part, {})
     cur[parts[-1]] = value
+
+
+def _last_applied_at(target: str):
+    """Return the most recent datetime *target* was changed by the tuner, or None.
+
+    Scans the versioned params history; REVERT entries carry no 'changes' list
+    and are ignored (a revert should not extend a param's cooldown).
+    """
+    latest = None
+    for entry in history():
+        changes = (entry.get("evidence") or {}).get("changes") or []
+        if not any(isinstance(c, dict) and c.get("target") == target for c in changes):
+            continue
+        try:
+            dt = datetime.fromisoformat(str(entry.get("applied_at")))
+        except (TypeError, ValueError):
+            continue
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=timezone.utc)
+        if latest is None or dt > latest:
+            latest = dt
+    return latest
+
+
+def _consistency_violations(params: dict) -> list[str]:
+    """Return human-readable violations of the cross-param invariants."""
+    out: list[str] = []
+    for hi_key, lo_key in _ORDERINGS:
+        hi, lo = _get_dotted(params, hi_key), _get_dotted(params, lo_key)
+        if isinstance(hi, (int, float)) and isinstance(lo, (int, float)) and hi < lo:
+            out.append(f"{hi_key} ({hi}) < {lo_key} ({lo})")
+    mn, mx = params.get("nap_min_odds"), params.get("nap_max_odds")
+    if (isinstance(mn, (int, float)) and isinstance(mx, (int, float))
+            and mx - mn < MIN_ODDS_WINDOW):
+        out.append(f"odds window too narrow: [{mn}, {mx}] (need >= {MIN_ODDS_WINDOW})")
+    return out
 
 
 def _confidence_ok(conf) -> bool:
@@ -136,6 +191,14 @@ def _evaluate(proposal: dict, live: dict) -> dict:
         return {**base, "decision": "DEFER", "reason": f"sample {sample} < {MIN_SAMPLE_AUTO}"}
     if not _confidence_ok(proposal.get("confidence")):
         return {**base, "decision": "DEFER", "reason": "confidence below auto-apply threshold"}
+
+    last = _last_applied_at(target)
+    if last is not None:
+        age_days = (datetime.now(timezone.utc) - last).days
+        if age_days < COOLDOWN_DAYS:
+            return {**base, "decision": "DEFER",
+                    "reason": f"cooldown — changed {age_days}d ago (< {COOLDOWN_DAYS}d)"}
+
     return {**base, "decision": "APPLY", "reason": "passed all gates"}
 
 
@@ -220,6 +283,17 @@ def main() -> int:
         new_params = copy.deepcopy(live)
         for v in to_apply:
             _set_dotted(new_params, v["target"], v["clamped_value"])
+        violations = _consistency_violations(new_params)
+        if violations:
+            # Per-scalar bounds can't see cross-param relationships — never
+            # write an inverted band set or a degenerate odds window.
+            why = "would break param consistency: " + "; ".join(violations)
+            log(f"model_param_tuner: {why} — deferring", "WARNING")
+            for v in to_apply:
+                v["decision"] = "DEFER"
+                v["reason"] = why
+            to_apply = []
+    if auto_on and to_apply:
         evidence = {
             "source": f"proposed_params_{date_str}.json",
             "window_days": proposals_doc.get("window_days"),

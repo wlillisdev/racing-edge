@@ -175,6 +175,7 @@ def _rows_for_day(date_str: str, races: list[dict], results_lookup: dict) -> lis
                 "pace_fit": None,    # no AI pace projection in historical replay
                 "morning_price": s.get("morning_price"),
                 "is_nap": 0,         # set below for the day's top-scored runner
+                "source": "backfill",  # degraded scorer — see CSV_COLUMNS note
                 **outcome,
             })
 

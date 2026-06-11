@@ -737,9 +737,16 @@ def build_proposals(params: dict, calib: dict, grades: dict,
     cur_min_odds = float(params.get("nap_min_odds", DEFAULTS["nap_min_odds"]))
     cur_max_odds = float(params.get("nap_max_odds", DEFAULTS["nap_max_odds"]))
 
-    # Tighten the floor if the odds-on bracket is a loss zone.
+    # A gate proposal is only meaningful when the loss-zone bracket OVERLAPS the
+    # currently-allowed odds range. A bracket already outside the gates (e.g.
+    # 11.0+ when the cap is 7.0) says nothing about the gate, yet its ROI stays
+    # terrible forever (favourite-longshot bias) — without this check the same
+    # proposal re-fired every night, ratcheting the gate to its bound.
+
+    # Tighten the floor if the odds-on bracket is a loss zone INSIDE the gate.
     onb = brackets.get("<2.0 (odds-on)", {})
-    if "<2.0 (odds-on)" in loss_zones and onb.get("n", 0) >= MIN_SAMPLE:
+    if ("<2.0 (odds-on)" in loss_zones and cur_min_odds < 2.0
+            and onb.get("n", 0) >= MIN_SAMPLE):
         p = _make_proposal(
             "nap_min_odds", cur_min_odds, cur_min_odds + PARAM_MAX_STEP["nap_min_odds"],
             onb["n"],
@@ -751,9 +758,10 @@ def build_proposals(params: dict, calib: dict, grades: dict,
         if p:
             proposals.append(p)
 
-    # Tighten the ceiling if the longest bracket is a loss zone.
+    # Tighten the ceiling if the longest bracket is a loss zone INSIDE the gate.
     longb = brackets.get("11.0+", {})
-    if "11.0+" in loss_zones and longb.get("n", 0) >= MIN_SAMPLE:
+    if ("11.0+" in loss_zones and cur_max_odds > 11.0
+            and longb.get("n", 0) >= MIN_SAMPLE):
         p = _make_proposal(
             "nap_max_odds", cur_max_odds, cur_max_odds - PARAM_MAX_STEP["nap_max_odds"],
             longb["n"],
@@ -867,21 +875,11 @@ def main() -> int:
     recent_start = end_date - timedelta(days=RECENT_DAYS - 1)
 
     window_rows: list[dict] = []
-    recent_rows: list[dict] = []
-    prior_rows: list[dict] = []
     for r in all_rows:
         d = _parse_date(r.get("date"))
         if d is None or d < window_start or d > end_date:
             continue
         window_rows.append(r)
-        if d >= recent_start:
-            recent_rows.append(r)
-        else:
-            prior_rows.append(r)
-
-    # Result rows = rows with a usable outcome label.
-    result_rows = [r for r in window_rows if _b(r.get("won")) is not None]
-    n_result = len(result_rows)
 
     if not window_rows:
         return _no_data_report(
@@ -889,12 +887,40 @@ def main() -> int:
             f"No rows fall inside the {WINDOW_DAYS}-day window "
             f"({window_start} … {end_date}).")
 
+    # --- Selection-relevant restriction (audit fix) ----------------------------
+    # The gates being tuned act on the model's PICK in each race, so learning
+    # from every runner mixes ~10 mutually-exclusive (correlated) rows per race
+    # and inflates n — 13k "samples" were really ~1.2k races, and backing every
+    # longshot on the card is ALWAYS a loss zone (favourite-longshot bias), so
+    # the odds-gate proposal re-fired nightly regardless of model quality.
+    # Gate-informing analyses therefore use only the top-ranked runner per race
+    # (≈ one row per race ≈ honest trials), and only LIVE rows: backfilled rows
+    # score on a degraded scorer (no full_form / AI overlays), so their score
+    # distribution is not comparable with the live one.
+    pick_rows = [r for r in window_rows if _f(r.get("rank_in_race")) == 1.0]
+    live_pick_rows = [
+        r for r in pick_rows
+        if str(r.get("source") or "").strip().lower() == "live"
+    ]
+    recent_pick: list[dict] = []
+    prior_pick: list[dict] = []
+    for r in live_pick_rows:
+        d = _parse_date(r.get("date"))
+        if d is not None and d >= recent_start:
+            recent_pick.append(r)
+        else:
+            prior_pick.append(r)
+
+    # Result rows = live pick rows with a usable outcome label (the proposal gate).
+    result_rows = [r for r in live_pick_rows if _b(r.get("won")) is not None]
+    n_result = len(result_rows)
+
     # --- Run analyses --------------------------------------------------------
-    calib_lines, calib_data = analyse_score_calibration(window_rows)
-    grade_lines, grade_data = analyse_grades(window_rows)
+    calib_lines, calib_data = analyse_score_calibration(live_pick_rows)
+    grade_lines, grade_data = analyse_grades(live_pick_rows)
     attr_lines, attr_data = analyse_subscore_attribution(window_rows)
-    odds_lines, odds_data = analyse_odds_brackets(window_rows)
-    drift_lines, drift_data = analyse_drift(recent_rows, prior_rows)
+    odds_lines, odds_data = analyse_odds_brackets(live_pick_rows)
+    drift_lines, drift_data = analyse_drift(recent_pick, prior_pick)
 
     # --- Proposals (gated on the overall result-row sample) ------------------
     params = get_params()
@@ -909,15 +935,19 @@ def main() -> int:
         "=" * 78,
         "  DAILY FORENSIC LEARNER — ROLLING 90-DAY CALIBRATION",
         f"  Window:      {window_start} … {end_date}  ({WINDOW_DAYS} days)",
-        f"  Rows in window: {len(window_rows)}  |  With outcome labels: {n_result}",
+        f"  Rows in window: {len(window_rows)}  |  top-ranked picks: {len(pick_rows)}"
+        f"  |  live picks: {len(live_pick_rows)}",
+        f"  Labelled live picks (proposal basis): {n_result}",
         f"  All-time rows:  {len(all_rows)}",
         f"  Generated:   {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
         f"  MIN_SAMPLE for any proposal: {MIN_SAMPLE}",
+        "  Gate analyses (A/B/D/E) use LIVE top-ranked picks only — backfilled",
+        "  rows score on a degraded scorer and would bias every threshold.",
         "=" * 78,
     ]
     if n_result < MIN_SAMPLE:
         header.append(
-            f"  NOTE: only {n_result} labelled rows (< {MIN_SAMPLE}) — "
+            f"  NOTE: only {n_result} labelled live picks (< {MIN_SAMPLE}) — "
             "metrics are LOW confidence and NO proposals will be emitted.")
 
     all_lines = header + calib_lines + grade_lines + attr_lines + odds_lines + drift_lines

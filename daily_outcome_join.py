@@ -148,6 +148,11 @@ CSV_COLUMNS: list[str] = [
     "placed",
     "sp_decimal",
     "pnl_1pt",
+    # Provenance: "live" (evening join, full scorer with AI/full_form overlays)
+    # vs "backfill" (historical replay on the degraded scorer). The two score
+    # distributions are NOT comparable, so the learner restricts score-sensitive
+    # proposals to live rows. Legacy rows (pre-column) read as "" = unknown.
+    "source",
 ]
 
 
@@ -354,19 +359,27 @@ def _has_outcome(row: dict) -> bool:
     return str(v).strip() != ""
 
 
-def _read_existing_rows(csv_path: str) -> list[dict]:
-    """Read all existing CSV rows. Empty list when the file doesn't exist."""
+def _read_existing_rows(csv_path: str) -> tuple[list[dict], bool]:
+    """Read all existing CSV rows. Returns (rows, header_current).
+
+    header_current is False when the file's header differs from CSV_COLUMNS
+    (e.g. a column was added since the file was created) — the caller must
+    rewrite rather than append, or the new rows would be ragged.
+    """
     p = Path(csv_path)
     if not p.exists():
-        return []
+        return [], True
     rows: list[dict] = []
+    header_current = True
     try:
         with open(p, "r", encoding="utf-8", newline="") as fh:
-            for row in csv.DictReader(fh):
+            reader = csv.DictReader(fh)
+            header_current = reader.fieldnames == CSV_COLUMNS
+            for row in reader:
                 rows.append(row)
     except OSError as exc:
         log(f"daily_outcome_join: could not read existing CSV {csv_path} — {exc}", "WARNING")
-    return rows
+    return rows, header_current
 
 
 def _append_csv(csv_path: str, labelled_rows: list[dict]) -> tuple[bool, int]:
@@ -379,7 +392,7 @@ def _append_csv(csv_path: str, labelled_rows: list[dict]) -> tuple[bool, int]:
     Returns (success, rows_appended_or_updated).
     """
     p = Path(csv_path)
-    existing_rows = _read_existing_rows(csv_path)
+    existing_rows, header_current = _read_existing_rows(csv_path)
     by_key: dict[tuple[str, str, str], int] = {
         _row_key(r): i for i, r in enumerate(existing_rows)
     }
@@ -408,9 +421,11 @@ def _append_csv(csv_path: str, labelled_rows: list[dict]) -> tuple[bool, int]:
 
     try:
         p.parent.mkdir(parents=True, exist_ok=True)
-        if replaced:
-            # Rewrite atomically: null-outcome rows were updated in place.
-            # (This also migrates the file to the current CSV_COLUMNS header.)
+        if replaced or (existing_rows and not header_current):
+            # Rewrite atomically: null-outcome rows were updated in place, or
+            # the on-disk header is stale (a column was added since the file
+            # was created) — appending to a stale header writes ragged rows.
+            # The rewrite migrates everything to the current CSV_COLUMNS.
             tmp = p.with_suffix(".csv.tmp")
             with open(tmp, "w", encoding="utf-8", newline="") as fh:
                 writer = csv.DictWriter(fh, fieldnames=CSV_COLUMNS, extrasaction="ignore")
@@ -501,6 +516,7 @@ def _csv_row_from_labelled(date_str: str, row: dict) -> dict:
         "placed": row.get("placed"),
         "sp_decimal": row.get("sp_decimal"),
         "pnl_1pt": row.get("pnl_1pt"),
+        "source": "live",
     }
 
 
