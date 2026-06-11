@@ -243,14 +243,28 @@ def main() -> int:
         _record_system_run("fail", "racecard file not found", 0, 0, round(time.time() - start_ts, 2))
         return 1
 
-    # Normalise: racecard may be a list or a dict with a 'races' key
+    # Normalise: run_daily.py writes the array under "racecards"; accept the
+    # legacy 'races'/'results' keys and a bare list too.
     if isinstance(racecard, list):
         races_data: list[dict] = racecard
     elif isinstance(racecard, dict):
-        races_data = racecard.get("races") or racecard.get("results") or []
+        races_data = (
+            racecard.get("racecards")
+            or racecard.get("races")
+            or racecard.get("results")
+            or []
+        )
     else:
         log("db_import_racecards: unexpected racecard format", "ERROR")
         _record_system_run("fail", "unexpected racecard format", 0, 0, round(time.time() - start_ts, 2))
+        return 1
+
+    if not races_data:
+        # A racecard file with zero races means the key layout changed or the
+        # fetch failed upstream — importing nothing must be a loud failure,
+        # not a "pass" (this exact bug silently imported 0 races for weeks).
+        log("db_import_racecards: 0 races in racecard file — failing loudly", "ERROR")
+        _record_system_run("fail", "0 races in racecard file", 0, 0, round(time.time() - start_ts, 2))
         return 1
 
     log(f"db_import_racecards: {len(races_data)} races found in racecard")

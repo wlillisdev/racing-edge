@@ -220,11 +220,17 @@ def main() -> int:
     decision_imported = 0
 
     if decision_doc is not None:
-        # final_nap_decision may contain a 'selection' key with the final NAP
-        selection = decision_doc.get("selection") or decision_doc.get("final_selection") or {}
+        # final_nap_decision.py writes the selection under "nap" and the
+        # outcome under "status" (CONFIRMED/BLOCKED/NO_BET); legacy keys kept.
+        selection = (
+            decision_doc.get("nap")
+            or decision_doc.get("selection")
+            or decision_doc.get("final_selection")
+            or {}
+        )
         if selection and isinstance(selection, dict):
             # Use 'no_bet' type if the decision was a no-bet; otherwise 'nap'
-            decision_type = decision_doc.get("decision") or "nap"
+            decision_type = decision_doc.get("status") or decision_doc.get("decision") or "nap"
             if decision_type == "NO_BET":
                 final_ctype = "no_bet"
             else:

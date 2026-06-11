@@ -406,15 +406,16 @@ def _assess_candidate(
     off_time   = candidate.get("off_time", "")
     ctype      = candidate.get("candidate_type", "")
 
-    # Attempt to pull full form runs for this horse.
+    # Attempt to pull full form runs for this horse. full_form_reader.py
+    # stores runs under full_form["horses"][horse_id] — check there first
+    # (same lookup as racing_wisdom._get_horse_history).
     full_form_runs: Optional[list[dict]] = None
     if full_form and isinstance(full_form, dict):
-        if horse_id in full_form:
-            entry = full_form[horse_id]
-            if isinstance(entry, list):
-                full_form_runs = entry
-            elif isinstance(entry, dict):
-                full_form_runs = entry.get("results") or entry.get("runs")
+        entry = (full_form.get("horses") or {}).get(horse_id) or full_form.get(horse_id)
+        if isinstance(entry, list):
+            full_form_runs = entry
+        elif isinstance(entry, dict):
+            full_form_runs = entry.get("results") or entry.get("runs")
         elif "results" in full_form:
             full_form_runs = [
                 r for r in (full_form["results"] or [])
@@ -609,6 +610,12 @@ def main() -> int:
         c["candidate_type"] = "nap"
         all_candidates.append(c)
 
+    jump_nap = candidates_doc.get("jump_nap")
+    if jump_nap:
+        c = dict(jump_nap)
+        c["candidate_type"] = "jump_nap"
+        all_candidates.append(c)
+
     best = candidates_doc.get("best_of_card")
     if best:
         c = dict(best)
@@ -633,7 +640,7 @@ def main() -> int:
     # Build a lightweight race context map from candidates_doc structure.
     # The candidates themselves carry course/off_time etc., and the going/
     # distance may be available in a racecard or shortlist file if present.
-    racecard_doc: Optional[dict] = safe_load_json(data_path(f"racecard_{date_str}.json"))
+    racecard_doc: Optional[dict] = safe_load_json(data_path(f"racecards_{date_str}.json"))
     race_context_map: dict[str, dict] = {}
     if racecard_doc:
         for race in (racecard_doc.get("racecards") or []):

@@ -151,7 +151,8 @@ def main() -> int:
     # --- Load reports -----------------------------------------------------------
     results_path = report_path(f"results_audit_{date_str}.txt")
     profit_path  = report_path(f"profit_report_{date_str}.txt")
-    perf_path    = report_path(f"performance_log_summary_{date_str}.txt")
+    # performance_tracker.py writes performance_summary_{date}.txt
+    perf_path    = report_path(f"performance_summary_{date_str}.txt")
 
     results_text = _try_read(results_path)
     profit_text  = _try_read(profit_path)
@@ -163,7 +164,7 @@ def main() -> int:
     for label, text, fname in [
         ("results_audit",          results_text, f"results_audit_{date_str}.txt"),
         ("profit_report",          profit_text,  f"profit_report_{date_str}.txt"),
-        ("performance_log_summary", perf_text,   f"performance_log_summary_{date_str}.txt"),
+        ("performance_summary",    perf_text,   f"performance_summary_{date_str}.txt"),
     ]:
         if text is not None:
             available.append(label)
