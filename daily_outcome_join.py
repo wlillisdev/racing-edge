@@ -86,6 +86,7 @@ above is documentation for the orchestrator to apply, not done here.
 from __future__ import annotations
 
 import csv
+import re
 import sys
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
@@ -154,24 +155,54 @@ CSV_COLUMNS: list[str] = [
 # Parsing helpers
 # ---------------------------------------------------------------------------
 
+# Position codes that mean the horse never took part — the stake is returned,
+# so the row must be VOID (all-None outcomes), not a 1pt loss.
+_VOID_CODES: frozenset[str] = frozenset({"nr", "ns", "wd", "w", "void", "voi", "abd"})
+# Position codes for a horse that ran but did not complete (fell, unseated,
+# pulled up, brought down, ran out, slipped up, refused, carried out). The
+# stake IS lost — a genuine 1pt losing bet.
+_LOSS_CODES: frozenset[str] = frozenset({"f", "u", "ur", "p", "pu", "bd", "ro", "su", "r", "ref", "co"})
+
+
 def _parse_position(raw: object) -> Optional[int]:
     """Parse a finishing position to int.
 
-    Handles "1", "1st", "2nd", "10", etc. Non-completion codes
-    (F/U/P/PU/BD/RO etc.) and blanks return None — they are neither a win
-    nor a place.
+    Handles "1", "1st", "2nd", "10", and dead-heat notations ("1=", "=1",
+    "1 dh"). Non-completion codes (F/U/P/PU/BD/RO etc.), non-runner codes and
+    blanks return None — use _position_kind() to tell those cases apart.
     """
     if raw is None:
         return None
     s = str(raw).strip()
     if not s:
         return None
-    # Strip ordinal suffixes ("1st" -> "1", "2nd" -> "2").
-    s = s.rstrip("stndrh").strip()
-    try:
-        return int(s)
-    except (ValueError, TypeError):
-        return None
+    # Leading digits (after an optional dead-heat "="): "1st"->1, "1="->1, "=2"->2.
+    m = re.match(r"^=?\s*(\d+)", s)
+    if m:
+        try:
+            return int(m.group(1))
+        except ValueError:
+            return None
+    return None
+
+
+def _position_kind(raw: object) -> str:
+    """Classify a raw position value: 'finished' | 'loss' | 'void' | 'unknown'.
+
+    'loss'  — ran but didn't complete (fell/pulled up/...): a real 1pt loss.
+    'void'  — never took part (non-runner/withdrawn): stake returned, no bet.
+    'unknown' — blank or unrecognised: outcome cannot be labelled.
+    """
+    if _parse_position(raw) is not None:
+        return "finished"
+    s = str(raw or "").strip().lower().rstrip(".")
+    if not s:
+        return "unknown"
+    if s in _VOID_CODES:
+        return "void"
+    if s in _LOSS_CODES:
+        return "loss"
+    return "unknown"
 
 
 def _parse_sp(raw: object) -> Optional[float]:
@@ -240,7 +271,17 @@ def _build_outcome_map(api_result: Optional[dict]) -> dict[str, dict]:
         if not horse_id:
             continue
 
-        pos = _parse_position(_first_present(row, _POSITION_KEYS))
+        raw_pos = _first_present(row, _POSITION_KEYS)
+        kind = _position_kind(raw_pos)
+        # Void (non-runner/withdrawn) and unknown codes are NOT labelled: a
+        # void bet returns the stake, and an unknown code can't be priced.
+        # Leaving them out of the map yields all-None outcomes downstream —
+        # previously both were silently counted as 1pt losses, biasing every
+        # ROI figure the learner sees downward.
+        if kind in ("void", "unknown"):
+            continue
+
+        pos = _parse_position(raw_pos)
         sp = _parse_sp(_first_present(row, _SP_KEYS))
 
         won = pos == 1
@@ -264,11 +305,14 @@ def _pnl_1pt(won: bool, sp_decimal: Optional[float]) -> Optional[float]:
     """Realised P&L for a flat 1pt win stake at SP.
 
     won -> sp_decimal - 1 (profit), else -1 (lost stake). Returns None when
-    the horse won but we have no SP to price the return.
+    SP is missing — for winners AND losers. A loser's -1 doesn't need the SP,
+    but counting SP-less losers while excluding SP-less winners (the old
+    behaviour) systematically biased every ROI average downward; missing-SP
+    rows are excluded symmetrically instead.
     """
+    if sp_decimal is None:
+        return None
     if won:
-        if sp_decimal is None:
-            return None
         return round(sp_decimal - 1.0, 4)
     return -1.0
 
@@ -294,69 +338,102 @@ def _resolve_date(arg: Optional[str]) -> str:
 # CSV append (idempotent)
 # ---------------------------------------------------------------------------
 
-def _existing_keys(csv_path: str) -> set[tuple[str, str, str]]:
-    """Return the set of (date, race_id, horse_id) keys already in the CSV.
+def _row_key(row: dict) -> tuple[str, str, str]:
+    return (
+        str(row.get("date") or ""),
+        str(row.get("race_id") or ""),
+        str(row.get("horse_id") or ""),
+    )
 
-    Returns an empty set when the file does not exist yet.
-    """
+
+def _has_outcome(row: dict) -> bool:
+    """True if the row carries a usable `won` label (str or bool form)."""
+    v = row.get("won")
+    if v is None:
+        return False
+    return str(v).strip() != ""
+
+
+def _read_existing_rows(csv_path: str) -> list[dict]:
+    """Read all existing CSV rows. Empty list when the file doesn't exist."""
     p = Path(csv_path)
     if not p.exists():
-        return set()
-    keys: set[tuple[str, str, str]] = set()
+        return []
+    rows: list[dict] = []
     try:
         with open(p, "r", encoding="utf-8", newline="") as fh:
-            reader = csv.DictReader(fh)
-            for row in reader:
-                keys.add((
-                    str(row.get("date") or ""),
-                    str(row.get("race_id") or ""),
-                    str(row.get("horse_id") or ""),
-                ))
+            for row in csv.DictReader(fh):
+                rows.append(row)
     except OSError as exc:
         log(f"daily_outcome_join: could not read existing CSV {csv_path} — {exc}", "WARNING")
-    return keys
+    return rows
 
 
 def _append_csv(csv_path: str, labelled_rows: list[dict]) -> tuple[bool, int]:
-    """Append labelled rows to the cumulative CSV, skipping duplicates.
+    """Append labelled rows to the cumulative CSV, upserting late results.
 
-    Writes the header if the file is new. De-dups by (date, race_id, horse_id)
-    against rows already in the file. Returns (success, rows_appended).
+    De-dups by (date, race_id, horse_id). A key already present with NULL
+    outcomes is REPLACED when the new row carries an outcome — so a re-run
+    after late-published results genuinely fills the gaps (previously the
+    dedup froze the null row forever, contradicting the module docstring).
+    Returns (success, rows_appended_or_updated).
     """
     p = Path(csv_path)
-    file_exists = p.exists()
-    existing = _existing_keys(csv_path)
+    existing_rows = _read_existing_rows(csv_path)
+    by_key: dict[tuple[str, str, str], int] = {
+        _row_key(r): i for i, r in enumerate(existing_rows)
+    }
 
-    to_write: list[dict] = []
+    to_append: list[dict] = []
+    replaced = 0
     seen_this_run: set[tuple[str, str, str]] = set()
     for row in labelled_rows:
-        key = (
-            str(row.get("date") or ""),
-            str(row.get("race_id") or ""),
-            str(row.get("horse_id") or ""),
-        )
-        if key in existing or key in seen_this_run:
+        key = _row_key(row)
+        if key in seen_this_run:
             continue
         seen_this_run.add(key)
-        to_write.append({col: row.get(col) for col in CSV_COLUMNS})
+        projected = {col: row.get(col) for col in CSV_COLUMNS}
+        idx = by_key.get(key)
+        if idx is not None:
+            old = existing_rows[idx]
+            if not _has_outcome(old) and _has_outcome(projected):
+                existing_rows[idx] = projected
+                replaced += 1
+            continue
+        to_append.append(projected)
 
-    if not to_write:
+    if not to_append and not replaced:
         log("daily_outcome_join: CSV already up to date for this date — nothing appended")
         return True, 0
 
     try:
         p.parent.mkdir(parents=True, exist_ok=True)
-        with open(p, "a", encoding="utf-8", newline="") as fh:
-            writer = csv.DictWriter(fh, fieldnames=CSV_COLUMNS)
-            if not file_exists:
+        if replaced:
+            # Rewrite atomically: null-outcome rows were updated in place.
+            # (This also migrates the file to the current CSV_COLUMNS header.)
+            tmp = p.with_suffix(".csv.tmp")
+            with open(tmp, "w", encoding="utf-8", newline="") as fh:
+                writer = csv.DictWriter(fh, fieldnames=CSV_COLUMNS, extrasaction="ignore")
                 writer.writeheader()
-            for row in to_write:
-                writer.writerow(row)
+                for row in existing_rows:
+                    writer.writerow({col: row.get(col) for col in CSV_COLUMNS})
+                for row in to_append:
+                    writer.writerow(row)
+            tmp.replace(p)
+            log(f"daily_outcome_join: updated {replaced} null-outcome row(s) with late results")
+        else:
+            file_exists = p.exists()
+            with open(p, "a", encoding="utf-8", newline="") as fh:
+                writer = csv.DictWriter(fh, fieldnames=CSV_COLUMNS)
+                if not file_exists:
+                    writer.writeheader()
+                for row in to_append:
+                    writer.writerow(row)
     except OSError as exc:
-        log(f"daily_outcome_join: failed to append CSV {csv_path} — {exc}", "ERROR")
+        log(f"daily_outcome_join: failed to write CSV {csv_path} — {exc}", "ERROR")
         return False, 0
 
-    return True, len(to_write)
+    return True, len(to_append) + replaced
 
 
 # ---------------------------------------------------------------------------
@@ -415,7 +492,10 @@ def _csv_row_from_labelled(date_str: str, row: dict) -> dict:
         "ai_rating": row.get("ai_rating"),
         "pace_fit": row.get("pace_fit"),
         "morning_price": row.get("morning_price"),
-        "is_nap": row.get("is_nap"),
+        # Normalised to int 1/0 — the live path historically wrote bool
+        # ("True"/"False" in CSV) while the backfill wrote 1/0 for a different
+        # notion of NAP. One literal form keeps the learner's parsing trivial.
+        "is_nap": int(bool(row.get("is_nap"))),
         "finish_position": row.get("finish_position"),
         "won": row.get("won"),
         "placed": row.get("placed"),

@@ -57,6 +57,7 @@ from daily_outcome_join import (
     _parse_position,
     _parse_sp,
     _pnl_1pt,
+    _position_kind,
 )
 
 LEARNING_CSV = "learning_dataset.csv"
@@ -78,12 +79,18 @@ def _outcome_for(horse_id: str, results_lookup: dict, field_size: int) -> dict:
     row) get all-None outcomes, identical to the live join.
     """
     res = results_lookup.get(horse_id)
+    no_label = {
+        "finish_position": None, "won": None, "placed": None,
+        "sp_decimal": None, "pnl_1pt": None,
+    }
     if not res:
-        return {
-            "finish_position": None, "won": None, "placed": None,
-            "sp_decimal": None, "pnl_1pt": None,
-        }
-    pos = _parse_position(res.get("position"))
+        return no_label
+    raw_pos = res.get("position")
+    # Mirror the live join's classification: non-runners/withdrawals (void) and
+    # unrecognised codes are unlabelled, NOT counted as 1pt losses.
+    if _position_kind(raw_pos) in ("void", "unknown"):
+        return no_label
+    pos = _parse_position(raw_pos)
     sp = _parse_sp(res.get("sp_dec"))
     won = pos == 1
     cutoff = 3 if field_size >= LARGE_FIELD_FOR_TOP3 else 2
