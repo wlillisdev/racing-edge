@@ -335,6 +335,59 @@ def _going_adjacent(a: str, b: str) -> bool:
 
 
 # ---------------------------------------------------------------------------
+# Around-horse form (form franking)
+# ---------------------------------------------------------------------------
+
+def _assess_around_horse_form(
+    full_form_runs: list[dict],
+) -> tuple[Optional[bool], str]:
+    """Assess whether the candidate's recent races have been franked by
+    subsequent results. Returns (franked: True/False/None, description).
+
+    None means the cache is unavailable or no recent race could be matched.
+    """
+    try:
+        from race_quality_builder import load_quality_lookup, quality_for_run
+        cache = load_quality_lookup()
+    except Exception:
+        cache = None
+    if not cache:
+        return None, "Around-horse form: race quality cache unavailable"
+
+    franked_races = 0
+    weak_races = 0
+    assessed = 0
+    details: list[str] = []
+    for run in full_form_runs[:4]:
+        meta = quality_for_run(run, cache)
+        if not meta:
+            continue
+        assessed += 1
+        q = float(meta.get("q") or 0.0)
+        subs = int(meta.get("subs_winners") or 0)
+        field = int(meta.get("field") or 0)
+        if q >= 0.25:
+            franked_races += 1
+            details.append(f"{run.get('course', '?')} {run.get('date', '?')}: {subs}/{field} won since")
+        elif q == 0.0 and field >= 6:
+            weak_races += 1
+
+    if assessed == 0:
+        return None, "Around-horse form: no recent races matched in quality cache"
+    if franked_races:
+        return True, (
+            f"Around-horse form FRANKED — {franked_races}/{assessed} recent races "
+            f"produced subsequent winners ({'; '.join(details)})"
+        )
+    if weak_races == assessed:
+        return False, (
+            f"Around-horse form WEAK — no runner from {weak_races} assessed "
+            "recent race(s) has won since"
+        )
+    return None, f"Around-horse form: neutral ({assessed} race(s) assessed, no strong signal)"
+
+
+# ---------------------------------------------------------------------------
 # Per-candidate assessment
 # ---------------------------------------------------------------------------
 
@@ -392,12 +445,13 @@ def _assess_candidate(
         relevance_level = "medium"
         relevance_desc = "Insufficient data for full relevance check — defaulting to medium"
 
-    # --- 3. Around-horse form (basic) ---
+    # --- 3. Around-horse form (race quality cache) ---
+    # "Have horses that ran near this candidate won since?" — answered from
+    # race_quality_builder's subsequent-results cache when available.
     around_horse_desc: Optional[str] = None
+    around_horse_franked: Optional[bool] = None
     if full_form_runs:
-        # Check if any rivals mentioned in past runs subsequently won.
-        # We don't have full rival history in basic data, so note "not assessed".
-        around_horse_desc = "Around-horse form: not fully assessed in this build (requires rival history)"
+        around_horse_franked, around_horse_desc = _assess_around_horse_form(full_form_runs)
 
     # --- 4. Flattered risk ---
     flattered, flattered_desc = _check_flattered_risk(form_str, full_form_runs)
@@ -426,6 +480,10 @@ def _assess_candidate(
         flags.append("high_relevance")
     elif relevance_level == "low":
         flags.append("low_relevance")
+    if around_horse_franked is True:
+        flags.append("form_franked")
+    elif around_horse_franked is False:
+        flags.append("form_unfranked")
 
     return {
         "horse_id":          horse_id,

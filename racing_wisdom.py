@@ -702,6 +702,96 @@ def _score_field_quality(
 
 
 # ---------------------------------------------------------------------------
+# PATTERN 11: FORM FRANKING (race quality from subsequent results)
+# ---------------------------------------------------------------------------
+
+# Field share that must have won since for a race to count as "frankened".
+_FRANK_STRONG_Q: float = 0.25
+_FRANK_MIN_FIELD: int = 6  # below this, q=0 is too noisy to call a race weak
+
+_quality_cache: Optional[dict] = None
+_quality_cache_loaded: bool = False
+
+
+def _get_quality_cache() -> Optional[dict]:
+    """Lazy-load the race quality cache once per process. None when absent —
+    the pattern then scores 0, same as every other data-missing case."""
+    global _quality_cache, _quality_cache_loaded
+    if not _quality_cache_loaded:
+        _quality_cache_loaded = True
+        try:
+            from race_quality_builder import load_quality_lookup
+            _quality_cache = load_quality_lookup()
+        except Exception:
+            _quality_cache = None
+    return _quality_cache
+
+
+def _score_form_franking(
+    runner: dict, full_form: list[dict]
+) -> tuple[float, list[str]]:
+    """
+    Not all races are equal — judge a horse's recent runs by what the rest of
+    that field did NEXT (race_quality_builder cache):
+
+    Win/close placing in a frankened race (>=25% of field won since)  → +2/+3
+    Win in a proven-weak race (decent field, nobody has won since)    → -2
+
+    Races too recent to judge, unmatched, or ambiguous score nothing.
+    """
+    if not full_form:
+        return 0.0, []
+    cache = _get_quality_cache()
+    if not cache:
+        return 0.0, []
+
+    try:
+        from race_quality_builder import quality_for_run
+    except Exception:
+        return 0.0, []
+
+    pts = 0.0
+    reasons: list[str] = []
+    for run in full_form[:3]:  # most recent runs carry the live form
+        meta = quality_for_run(run, cache)
+        if not meta:
+            continue
+        pos = str(run.get("position") or run.get("finish_position") or "").strip()
+        try:
+            pos_int = int(pos)
+        except (ValueError, TypeError):
+            continue
+        q = float(meta.get("q") or 0.0)
+        subs = int(meta.get("subs_winners") or 0)
+        field = int(meta.get("field") or 0)
+
+        if q >= _FRANK_STRONG_Q:
+            bl = _safe_float(run.get("beaten_lengths") or run.get("btn"), -1.0)
+            if pos_int == 1:
+                pts += 3.0
+                reasons.append(
+                    f"Form franked: won a race where {subs}/{field} have won since"
+                )
+            elif pos_int <= 3 and 0.0 <= bl <= 1.5:
+                pts += 3.0
+                reasons.append(
+                    f"Form franked: beaten {bl}L in a hot race — {subs}/{field} won since"
+                )
+            elif pos_int <= 3:
+                pts += 2.0
+                reasons.append(
+                    f"Form franked: placed in a race where {subs}/{field} have won since"
+                )
+        elif q == 0.0 and field >= _FRANK_MIN_FIELD and pos_int == 1:
+            pts -= 2.0
+            reasons.append(
+                f"Weak race warning: won, but none of the {field}-runner field has won since"
+            )
+
+    return max(-3.0, min(4.0, pts)), reasons
+
+
+# ---------------------------------------------------------------------------
 # Public API
 # ---------------------------------------------------------------------------
 
@@ -771,6 +861,9 @@ def score_racing_wisdom(
 
     # Pattern 10 — Field quality assessment
     _apply(_score_field_quality, runner, all_runners)
+
+    # Pattern 11 — Form franking (subsequent-results race quality)
+    _apply(_score_form_franking, runner, history)
 
     # Clamp to declared range
     clamped = round(max(WISDOM_MIN, min(WISDOM_MAX, total)), 2)
