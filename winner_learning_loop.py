@@ -42,6 +42,7 @@ from typing import Optional
 
 from src.db import get_db
 from src.helpers import data_path, log, safe_load_json, today_str
+import model_cost_guard as guard
 
 try:
     from src.llm_client import get_llm_client, llm_available
@@ -53,7 +54,7 @@ except Exception:  # pragma: no cover - optional layers
 
 # --- Config (no magic numbers) ----------------------------------------------
 PROMPT_VERSION = "v1"
-READ_MODEL = "claude-sonnet-4-6"   # reasoning-capable, cost-sane for ~40/day
+READ_MODEL = "claude-opus-4-8"     # best judgement for open-eyes reads; cost-guarded
 _RESULT_CACHE = "winner_cache"      # data/winner_cache/<race_id>.json
 
 FACTOR_VOCAB = [
@@ -186,15 +187,16 @@ def find_winner(result: Optional[dict]) -> Optional[dict]:
 
 
 # --- LLM stages -------------------------------------------------------------
-def blind_read(client, payload: dict) -> Optional[dict]:
-    return client.call_structured(BLIND_SYSTEM, payload, BLIND_SCHEMA, model=READ_MODEL)
+def blind_read(client, payload: dict, on_usage=None) -> Optional[dict]:
+    return client.call_structured(BLIND_SYSTEM, payload, BLIND_SCHEMA,
+                                  model=READ_MODEL, on_usage=on_usage)
 
 
-def explain_win(client, blind: dict, form: dict, result: dict) -> Optional[dict]:
+def explain_win(client, blind: dict, form: dict, result: dict, on_usage=None) -> Optional[dict]:
     return client.call_structured(
         EXPLAIN_SYSTEM,
         {"pre_race_read": blind, "form": form, "result": result},
-        EXPLAIN_SCHEMA, model=READ_MODEL,
+        EXPLAIN_SCHEMA, model=READ_MODEL, on_usage=on_usage,
     )
 
 
@@ -263,11 +265,12 @@ def rebuild_patterns(db) -> int:
 
 
 # --- Orchestration ----------------------------------------------------------
-def process_date(d: str, db, llm, api) -> dict:
+def process_date(d: str, db, llm, api, meter=None) -> dict:
     races = load_racecards(d)
     done = _already_read(db, d)
     stats = {"date": d, "races": len(races), "new": 0, "skipped": 0,
-             "no_result": 0, "failed": 0}
+             "no_result": 0, "failed": 0, "halted": 0}
+    on_usage = (lambda u: meter.add(READ_MODEL, u)) if meter is not None else None
 
     for race in races:
         race_id = str(race.get("race_id") or "")
@@ -288,14 +291,19 @@ def process_date(d: str, db, llm, api) -> dict:
             stats["no_result"] += 1
             continue
 
+        # Hard cost cap — stop making LLM calls once the month's budget is hit.
+        if guard.should_halt(d):
+            stats["halted"] += 1
+            continue
+
         try:
             form = build_form_payload(race, winner, runners)
-            blind = blind_read(llm, form)
+            blind = blind_read(llm, form, on_usage)
             if not blind:
                 stats["failed"] += 1
                 continue
             result = {"finishing_position": 1, "sp": win["sp"], "won": True}
-            explain = explain_win(llm, blind, form, result)
+            explain = explain_win(llm, blind, form, result, on_usage)
             if not explain:
                 stats["failed"] += 1
                 continue
@@ -339,18 +347,29 @@ def main() -> int:
         base = datetime.strptime(args.date, "%Y-%m-%d").date()
         dates = [(base - timedelta(days=i)).isoformat() for i in range(args.backfill)]
 
-    totals = {"races": 0, "new": 0, "skipped": 0, "no_result": 0, "failed": 0}
+    if guard.should_halt(args.date):
+        print(f"COST HALT — {guard.status_line(args.date)}. No reads this run.")
+        log("winner_learning: month budget reached — skipping all LLM reads", "WARNING")
+        return 0
+
+    meter = guard.CostMeter()
+    totals = {"races": 0, "new": 0, "skipped": 0, "no_result": 0, "failed": 0, "halted": 0}
     for d in dates:
-        s = process_date(d, db, llm, api)
+        s = process_date(d, db, llm, api, meter)
         for k in totals:
             totals[k] += s[k]
         print(f"  {d}: races={s['races']} new={s['new']} skipped={s['skipped']} "
-              f"no_result={s['no_result']} failed={s['failed']}")
+              f"no_result={s['no_result']} failed={s['failed']} halted={s['halted']}")
 
+    # Record spend, alert if over budget, and show this run's cost.
+    month_total = guard.commit(meter, args.date, "winner_learning")
+    budget = guard.check_and_alert(month_total, args.date)
     n = rebuild_patterns(db)
     print(f"Done. new={totals['new']} skipped={totals['skipped']} "
-          f"failed={totals['failed']} | patterns={n}")
-    log(f"winner_learning: {totals}")
+          f"failed={totals['failed']} halted={totals['halted']} | patterns={n}")
+    print(f"This run: {meter.calls} calls, ${meter.usd:.2f}. "
+          f"{guard.status_line(args.date)} [{budget}]")
+    log(f"winner_learning: {totals} | run_usd={meter.usd:.2f} month_usd={month_total:.2f}")
     return 0
 
 
