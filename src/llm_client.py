@@ -74,6 +74,7 @@ class LLMClient:
         schema: dict,
         model: Optional[str] = None,
         max_tokens: Optional[int] = None,
+        on_usage=None,
     ) -> Optional[dict]:
         """Make one structured-output call. Returns parsed dict or None.
 
@@ -122,6 +123,12 @@ class LLMClient:
             if tool_use is None:
                 log("llm_client: no tool_use block in response", "WARNING")
                 return None
+            # Report real token usage for cost tracking (best-effort, never fatal).
+            if on_usage is not None:
+                try:
+                    on_usage(getattr(response, "usage", None))
+                except Exception as exc:  # noqa: BLE001
+                    log(f"llm_client: on_usage callback failed — {exc}", "WARNING")
             return tool_use.input  # already a dict, no json.loads needed
         except (AttributeError, ValueError) as exc:
             log(f"llm_client: could not parse response — {exc}", "WARNING")
