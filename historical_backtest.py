@@ -49,6 +49,12 @@ from nap_selector_v3 import (
 
 API_DELAY_S = 0.6
 MAX_DAYS = 900  # ~30 months; cached days are free on subsequent runs
+HORSE_FORM_LIMIT = 50  # per-horse career results to fetch in --deep mode;
+                       # generous so point-in-time filtering still leaves history
+                       # for races early in the window
+
+# Module-level counter so the long deep pull shows progress.
+_horse_fetch_count = 0
 
 # ---------------------------------------------------------------------------
 # Cache helpers
@@ -84,6 +90,56 @@ def _save_cache(subdir: str, date_str: str, data: dict) -> None:
             json.dump(data, fh)
     except OSError as exc:
         log(f"backtest: cache write failed ({p}) — {exc}", "WARNING")
+
+
+# ---------------------------------------------------------------------------
+# Deep (full-fidelity) form fetch — gives score_runner the same per-horse form
+# it has live, so historical scores live on the same 0-100 scale as production.
+# ---------------------------------------------------------------------------
+
+def _get_horse_form(client, horse_id: str) -> list[dict]:
+    """Return a horse's career results, cached once per horse_id.
+
+    The full career is cached; point-in-time filtering (results strictly before
+    a given race date) happens per-race in _build_full_form, so one fetch serves
+    every race the horse appears in across the whole window.
+    """
+    global _horse_fetch_count
+    if not horse_id:
+        return []
+    cached = _load_cache("horse_form", horse_id)
+    if cached is not None:
+        return cached.get("results", [])
+    try:
+        results = client.get_horse_results(horse_id, limit=HORSE_FORM_LIMIT) or []
+    except Exception as exc:  # noqa: BLE001 — never let one horse abort the pull
+        log(f"backtest: horse_results error {horse_id} — {exc}", "WARNING")
+        results = []
+    _save_cache("horse_form", horse_id, {"results": results})
+    _horse_fetch_count += 1
+    if _horse_fetch_count % 200 == 0:
+        print(f"    [deep] fetched form for {_horse_fetch_count} new horses…")
+    time.sleep(API_DELAY_S)
+    return results
+
+
+def _build_full_form(client, runners: list[dict], race_date: str) -> dict:
+    """Build a point-in-time full_form dict for a race's runners.
+
+    Only counts each horse's runs strictly before race_date (ISO dates compare
+    lexically), so there is no lookahead from results after the race.
+    """
+    horses: dict[str, list[dict]] = {}
+    for runner in runners:
+        hid = str(runner.get("horse_id") or "")
+        if not hid:
+            continue
+        prior = [
+            r for r in _get_horse_form(client, hid)
+            if str(r.get("date") or r.get("race_date") or "") < race_date
+        ]
+        horses[hid] = prior
+    return {"horses": horses}
 
 # ---------------------------------------------------------------------------
 # Runner / racecard normalisation helpers
@@ -373,6 +429,9 @@ def main() -> int:
     parser.add_argument("--include-jumps", action="store_true", default=False,
                         dest="include_jumps",
                         help="Include excluded race types (chases etc) in daily NAP pool")
+    parser.add_argument("--deep", action="store_true", default=False,
+                        help="Full-fidelity: fetch per-horse form so scores match "
+                             "the live model (one cached API call per horse).")
     parser.add_argument("--max-flat-dist", type=float, default=FLAT_MAX_DIST_F,
                         dest="max_flat_dist",
                         help="Max distance in furlongs for flat NAP selection (default 16f)")
@@ -446,6 +505,12 @@ def main() -> int:
             going      = race.get("going", "")
             course     = race.get("course", "")
 
+            # In --deep mode, build point-in-time full form so suitability
+            # scoring matches the live model; otherwise use the fallback.
+            race_full_form = (
+                _build_full_form(client, runners, date_str) if args.deep else None
+            )
+
             # Score every runner
             scored = []
             for runner in runners:
@@ -454,8 +519,8 @@ def main() -> int:
                         runner=runner,
                         race=race,
                         all_runners=runners,
-                        full_form=None,      # fallback suitability
-                        market_movers=None,  # no historical movement data
+                        full_form=race_full_form,  # deep: real form; else fallback
+                        market_movers=None,        # no historical movement data
                     )
                     scored.append(s)
                 except Exception as exc:
@@ -592,8 +657,12 @@ def main() -> int:
         f"  Generated:  {datetime.now().strftime('%Y-%m-%d %H:%M')}",
         sep,
         "",
-        "  NOTE: Suitability = form-string fallback (no full_form fetch).",
-        "  Market = racecard odds only, no movement data.",
+        ("  NOTE: DEEP mode — suitability uses real per-horse form (point-in-time),"
+         if args.deep else
+         "  NOTE: Suitability = form-string fallback (no full_form fetch)."),
+        ("  so scores match the live 0-100 scale. Market = racecard odds only."
+         if args.deep else
+         "  Market = racecard odds only, no movement data."),
         "  Composite max ≈ 95 pts in backtest vs 100 in live model.",
         "",
     ]
@@ -676,7 +745,7 @@ def main() -> int:
     report_text = "\n".join(lines)
 
     # --- Write outputs -----------------------------------------------------------
-    tag = f"{start_str}_to_{end_str}"
+    tag = f"{start_str}_to_{end_str}" + ("_deep" if args.deep else "")
 
     report_dest = report_path(f"backtest_{tag}.txt")
     try:
