@@ -82,6 +82,9 @@ def _parse_form(form: str) -> list[str]:
     form = form.strip().replace(" ", "")
     last_dash = form.rfind("-")
     segment = form[last_dash + 1:] if last_dash != -1 else form
+    if not segment and last_dash != -1:
+        # Trailing dash ("12345-"): all runs were last season — still form.
+        segment = form[:last_dash]
     valid: list[str] = []
     for ch in reversed(segment):
         upper = ch.upper()
@@ -192,19 +195,9 @@ def _check_hidden_positive(
 
         return False, ""
 
-    # Basic heuristic from form string + field size.
-    chars = _parse_form(form)
-    if not chars:
-        return False, ""
-
-    recent = chars[0]
-    if recent in ("3", "4"):
-        fs = field_size or 0
-        if fs >= LARGE_FIELD_THRESHOLD:
-            return (
-                True,
-                f"Last run {recent} in large field ({fs} runners) — could be better than it looks",
-            )
+    # Basic path: without full form we don't know the PREVIOUS race's field
+    # size — today's field size says nothing about how hard last time's 3rd
+    # was, so no heuristic is honest here.
     return False, ""
 
 
@@ -232,12 +225,18 @@ def _assess_form_strength_full(
         except (ValueError, TypeError):
             pos_int = None
 
-        rpr = run.get("rpr") or run.get("rating") or run.get("official_rating")
-        ts  = run.get("ts")  or run.get("topspeed")
-        try:
-            rating = float(rpr or ts or 0)
-        except (TypeError, ValueError):
-            rating = 0.0
+        # Parse each candidate value independently — a junk rpr like "-"
+        # must not zero out a perfectly good ts figure.
+        rating = 0.0
+        for cand in (run.get("rpr"), run.get("rating"), run.get("official_rating"),
+                     run.get("ts"), run.get("topspeed")):
+            try:
+                v = float(cand)
+                if v > 0:
+                    rating = v
+                    break
+            except (TypeError, ValueError):
+                continue
 
         if pos_int is not None:
             total_considered += 1
@@ -335,6 +334,59 @@ def _going_adjacent(a: str, b: str) -> bool:
 
 
 # ---------------------------------------------------------------------------
+# Around-horse form (form franking)
+# ---------------------------------------------------------------------------
+
+def _assess_around_horse_form(
+    full_form_runs: list[dict],
+) -> tuple[Optional[bool], str]:
+    """Assess whether the candidate's recent races have been franked by
+    subsequent results. Returns (franked: True/False/None, description).
+
+    None means the cache is unavailable or no recent race could be matched.
+    """
+    try:
+        from race_quality_builder import load_quality_lookup, quality_for_run
+        cache = load_quality_lookup()
+    except Exception:
+        cache = None
+    if not cache:
+        return None, "Around-horse form: race quality cache unavailable"
+
+    franked_races = 0
+    weak_races = 0
+    assessed = 0
+    details: list[str] = []
+    for run in full_form_runs[:4]:
+        meta = quality_for_run(run, cache)
+        if not meta:
+            continue
+        assessed += 1
+        q = float(meta.get("q") or 0.0)
+        subs = int(meta.get("subs_winners") or 0)
+        field = int(meta.get("field") or 0)
+        if q >= 0.25:
+            franked_races += 1
+            details.append(f"{run.get('course', '?')} {run.get('date', '?')}: {subs}/{field} won since")
+        elif q == 0.0 and field >= 6:
+            weak_races += 1
+
+    if assessed == 0:
+        return None, "Around-horse form: no recent races matched in quality cache"
+    if franked_races:
+        return True, (
+            f"Around-horse form FRANKED — {franked_races}/{assessed} recent races "
+            f"produced subsequent winners ({'; '.join(details)})"
+        )
+    if weak_races == assessed:
+        return False, (
+            f"Around-horse form WEAK — no runner from {weak_races} assessed "
+            "recent race(s) has won since"
+        )
+    return None, f"Around-horse form: neutral ({assessed} race(s) assessed, no strong signal)"
+
+
+# ---------------------------------------------------------------------------
 # Per-candidate assessment
 # ---------------------------------------------------------------------------
 
@@ -353,15 +405,16 @@ def _assess_candidate(
     off_time   = candidate.get("off_time", "")
     ctype      = candidate.get("candidate_type", "")
 
-    # Attempt to pull full form runs for this horse.
+    # Attempt to pull full form runs for this horse. full_form_reader.py
+    # stores runs under full_form["horses"][horse_id] — check there first
+    # (same lookup as racing_wisdom._get_horse_history).
     full_form_runs: Optional[list[dict]] = None
     if full_form and isinstance(full_form, dict):
-        if horse_id in full_form:
-            entry = full_form[horse_id]
-            if isinstance(entry, list):
-                full_form_runs = entry
-            elif isinstance(entry, dict):
-                full_form_runs = entry.get("results") or entry.get("runs")
+        entry = (full_form.get("horses") or {}).get(horse_id) or full_form.get(horse_id)
+        if isinstance(entry, list):
+            full_form_runs = entry
+        elif isinstance(entry, dict):
+            full_form_runs = entry.get("results") or entry.get("runs")
         elif "results" in full_form:
             full_form_runs = [
                 r for r in (full_form["results"] or [])
@@ -392,12 +445,13 @@ def _assess_candidate(
         relevance_level = "medium"
         relevance_desc = "Insufficient data for full relevance check — defaulting to medium"
 
-    # --- 3. Around-horse form (basic) ---
+    # --- 3. Around-horse form (race quality cache) ---
+    # "Have horses that ran near this candidate won since?" — answered from
+    # race_quality_builder's subsequent-results cache when available.
     around_horse_desc: Optional[str] = None
+    around_horse_franked: Optional[bool] = None
     if full_form_runs:
-        # Check if any rivals mentioned in past runs subsequently won.
-        # We don't have full rival history in basic data, so note "not assessed".
-        around_horse_desc = "Around-horse form: not fully assessed in this build (requires rival history)"
+        around_horse_franked, around_horse_desc = _assess_around_horse_form(full_form_runs)
 
     # --- 4. Flattered risk ---
     flattered, flattered_desc = _check_flattered_risk(form_str, full_form_runs)
@@ -426,6 +480,10 @@ def _assess_candidate(
         flags.append("high_relevance")
     elif relevance_level == "low":
         flags.append("low_relevance")
+    if around_horse_franked is True:
+        flags.append("form_franked")
+    elif around_horse_franked is False:
+        flags.append("form_unfranked")
 
     return {
         "horse_id":          horse_id,
@@ -551,6 +609,12 @@ def main() -> int:
         c["candidate_type"] = "nap"
         all_candidates.append(c)
 
+    jump_nap = candidates_doc.get("jump_nap")
+    if jump_nap:
+        c = dict(jump_nap)
+        c["candidate_type"] = "jump_nap"
+        all_candidates.append(c)
+
     best = candidates_doc.get("best_of_card")
     if best:
         c = dict(best)
@@ -575,7 +639,7 @@ def main() -> int:
     # Build a lightweight race context map from candidates_doc structure.
     # The candidates themselves carry course/off_time etc., and the going/
     # distance may be available in a racecard or shortlist file if present.
-    racecard_doc: Optional[dict] = safe_load_json(data_path(f"racecard_{date_str}.json"))
+    racecard_doc: Optional[dict] = safe_load_json(data_path(f"racecards_{date_str}.json"))
     race_context_map: dict[str, dict] = {}
     if racecard_doc:
         for race in (racecard_doc.get("racecards") or []):

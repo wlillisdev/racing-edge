@@ -27,11 +27,13 @@ import json
 import subprocess
 import sys
 import time
-from datetime import datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
 from src.config import get_config
 from src.helpers import data_path, log, report_path, today_str
+from src.ops import heartbeat, verify_step_outputs, write_run_health
+from preflight import run_preflight
 
 
 # ---------------------------------------------------------------------------
@@ -47,11 +49,27 @@ RESULTS_RETRY_WAIT_S: int = 15 * 60  # 15 minutes
 
 # Pipeline definition: (display_name, script_path, extra_args)
 PIPELINE_STEPS: list[tuple[str, str, list[str]]] = [
-    ("results_auditor",    "results_auditor.py",    []),
-    ("performance_tracker","performance_tracker.py", []),
-    ("profit_report",      "profit_report.py",       []),
-    ("email_audit",        "email_audit.py",         []),
+    ("results_auditor",       "results_auditor.py",       []),
+    ("daily_outcome_join",    "daily_outcome_join.py",    []),
+    ("race_quality_builder",  "race_quality_builder.py",  []),
+    ("performance_tracker",   "performance_tracker.py",   []),
+    ("result_enricher",       "result_enricher.py",       []),
+    ("loser_autopsy_ai",      "loser_autopsy_ai.py",      []),
+    ("daily_learning_analysis","daily_learning_analysis.py",[]),
+    ("model_param_tuner",     "model_param_tuner.py",     []),
+    ("profit_report",         "profit_report.py",         []),
+    ("email_audit",           "email_audit.py",           []),
 ]
+
+# Expected outputs per step ({d} = date). A step that exits 0 without
+# producing these is downgraded to FAIL — exit codes alone let a wiped or
+# stubbed script "pass" indefinitely (results_auditor incident).
+STEP_OUTPUTS: dict[str, list[str]] = {
+    "results_auditor":      ["data/results_{d}.json", "reports/results_audit_{d}.txt"],
+    "race_quality_builder": ["data/race_quality_cache.json"],
+    "performance_tracker":  ["reports/performance_summary_{d}.txt"],
+    "profit_report":        ["reports/profit_report_{d}.txt"],
+}
 
 
 # ---------------------------------------------------------------------------
@@ -277,16 +295,54 @@ def main() -> int:
 
     log(f"evening_audit_pipeline: project_dir={project_dir}, date={date_str}")
 
+    # --- Preflight self-check (fail loud before doing real work) -----------------
+    if not run_preflight("evening"):
+        log("evening_audit_pipeline: preflight FAILED — aborting run (alert emailed)", "ERROR")
+        return 1
+
+    # --- Recover yesterday's results if they never landed -------------------------
+    # results_auditor is all-or-nothing per day: if even one race published
+    # late, the whole day exited rc=2 and — before this — nothing ever retried,
+    # leaving a permanent gap in P/L and learning data after one soft notice.
+    yesterday = (date.today() - timedelta(days=1)).isoformat()
+    y_results = data_path(f"results_{yesterday}.json")
+    y_candidates = data_path(f"nap_candidates_{yesterday}.json")
+    if not Path(y_results).exists() and Path(y_candidates).exists():
+        log(f"evening_audit_pipeline: results_{yesterday}.json missing — recovery attempt")
+        recovery = _run_step("results_auditor_catchup", "results_auditor.py", [yesterday], project_dir)
+        log(f"evening_audit_pipeline: yesterday recovery — {recovery['status']}")
+
     # --- Run pipeline -----------------------------------------------------------
     pipeline_start = datetime.now(timezone.utc)
     results: list[dict] = []
 
     for step_name, script, args in PIPELINE_STEPS:
+        # Record run health just before the email step so the audit email can
+        # flag a DEGRADED run instead of looking routine.
+        if step_name == "email_audit":
+            write_run_health("evening", date_str, results)
+
         if step_name == "results_auditor":
             # Special case: retry on exit code 2.
             result = _run_results_auditor(project_dir)
         else:
             result = _run_step(step_name, script, args, project_dir)
+
+        # Output-manifest check: a PASS that produced nothing is a FAIL.
+        if result["status"] == "PASS" and step_name in STEP_OUTPUTS:
+            expected = [
+                str(Path(project_dir) / tpl.format(d=date_str))
+                for tpl in STEP_OUTPUTS[step_name]
+            ]
+            started_ts = datetime.fromisoformat(result["started_at"]).timestamp()
+            problems = verify_step_outputs(expected, started_ts)
+            if problems:
+                result["status"] = "FAIL"
+                for prob in problems:
+                    log(
+                        f"evening_audit_pipeline: [{step_name}] output check FAILED — {prob}",
+                        "ERROR",
+                    )
 
         results.append(result)
 
@@ -311,6 +367,11 @@ def main() -> int:
     # --- Write summaries --------------------------------------------------------
     _write_text_summary(date_str, results, total_s)
     _write_json_summary(date_str, results, total_s)
+
+    # --- Heartbeat (dead-man's switch) ------------------------------------------
+    # Success ping only when every step genuinely passed; otherwise hit the
+    # /fail endpoint so the monitor alerts instead of vouching for a broken run.
+    heartbeat("evening", ok=(fail_count == 0))
 
     return 0
 

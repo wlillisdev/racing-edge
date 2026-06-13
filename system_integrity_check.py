@@ -107,7 +107,8 @@ REQUIRED_DIRS: list[str] = [
 
 # Config keys that are mandatory (must be in .env)
 MANDATORY_ENV_KEYS: list[str] = [
-    "RACING_API_KEY",
+    "RACING_API_USERNAME",
+    "RACING_API_PASSWORD",
     "DB_HOST",
     "DB_NAME",
     "DB_USER",

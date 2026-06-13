@@ -36,6 +36,15 @@ from src.helpers import (
     today_str, format_odds, going_normalise, distance_to_furlongs,
 )
 from racecard_loader import load_racecard
+from src.model_params import get_params
+
+# Professional form-reading overlay (-15..+25). Self-contained, degrades to
+# 0.0 if the module is unavailable so the core model never breaks.
+try:
+    from racing_wisdom import score_racing_wisdom
+    _WISDOM_AVAILABLE = True
+except Exception:  # pragma: no cover - defensive: never let an overlay break scoring
+    _WISDOM_AVAILABLE = False
 
 MODEL_VERSION: str = "v4"
 
@@ -44,10 +53,14 @@ GRADE_B_PLUS_THRESHOLD: float = 60.0
 GRADE_B_THRESHOLD: float = 50.0
 GRADE_C_THRESHOLD: float = 40.0
 
-NAP_MIN_SCORE: float = 60.0   # 60-69 band = 50% WR / +1.9% ROI in backtest (sweet spot)
-NAP_MAX_SCORE: float = 82.0   # 83-85 band = 0% WR; 75-82 band = 33-50% WR / +113-233% ROI
+NAP_MIN_SCORE: float = 50.0   # floor — model must always output the best horse; confidence via label
+NAP_MAX_SCORE: float = 100.0  # no upper cap — a high score is a strong signal, not a block
 CLUSTER_SPREAD: float = 8.0
-CLUSTER_MIN_SCORE: float = 55.0
+CLUSTER_MIN_SCORE: float = 50.0
+# Rank promotion (clear-leader-by-margin) needs an absolute quality floor too:
+# without it a debutant scoring 8.0 in a 1-runner/garbage race has "margin" over
+# nothing and would be promoted. 40.0 = the Grade C line — never promote below it.
+RANK_PROMOTION_MIN_SCORE: float = 40.0
 
 NAP_EXCLUDED_RACE_TYPES: frozenset[str] = frozenset({"chase"})
 NAP_MIN_ODDS: float = 2.0   # Evens minimum — need >50% WR to break even
@@ -58,9 +71,10 @@ JUMP_EXCLUDED_GOING: frozenset[str] = frozenset({"Firm", "Good to Firm"})
 FLAT_MAX_DIST_F: float = 16.0   # exclude flat staying trips (16f+)
 FLAT_MIN_DIST_F: float = 0.0    # no sprint exclusion — 6-month backtest: sprints +45.7% NAP ROI (979 selections)
 FLAT_EXCLUDED_GOING: frozenset[str] = frozenset({
-    "Firm",         # concrete-hard turf — 0% WR, -100% ROI in 6-month NAP data
-    "Good to Firm", # fast ground — 0% WR in NAP, -25.7% ROI forensic; removed AW (Chelmsford +23.8% NAP ROI)
-    "Heavy",        # waterlogged — 42.9% WR but avg SP below evens, no value
+    "Firm",   # concrete-hard turf — 0% WR in NAP data; no model edge on extremes
+    "Heavy",  # waterlogged — high win% but odds below value threshold consistently
+    # "Good to Firm" removed: only 5 NAP selections — too small to exclude an entire
+    # summer going type. Monitor over next 50+ picks before re-adding.
 })
 
 _GOING_ADJACENCY: list[list[str]] = [
@@ -137,6 +151,9 @@ def _parse_form_chars(form: str) -> list[str]:
     form = form.strip().replace(" ", "")
     last_dash = form.rfind("-")
     segment = form[last_dash + 1:] if last_dash != -1 else form
+    if not segment and last_dash != -1:
+        # Trailing dash ("12345-"): all runs were last season — still form.
+        segment = form[:last_dash]
     valid: list[str] = []
     for ch in reversed(segment):
         upper = ch.upper()
@@ -155,6 +172,7 @@ def _going_adjacent(going_a: str, going_b: str) -> bool:
 
 
 def _best_morning_price(runner: dict) -> Optional[float]:
+    """Longest available decimal across books — used for display and staking."""
     odds_list = runner.get("odds") or []
     best: Optional[float] = None
     for entry in odds_list:
@@ -166,6 +184,34 @@ def _best_morning_price(runner: dict) -> Optional[float]:
         except (TypeError, ValueError):
             continue
     return best
+
+
+def _consensus_morning_price(runner: dict) -> Optional[float]:
+    """Median bookmaker decimal — a consensus proxy for SP.
+
+    The odds gate (nap_min_odds/nap_max_odds) and outsider penalties were
+    calibrated on SP in the backtest. Taking the *best available* (max)
+    decimal across ~30 books is biased materially longer than SP, so gating
+    on it wrongly excludes runners whose consensus price sits inside the
+    profitable window. The median restores an SP-comparable basis for those
+    gates; _best_morning_price (max) is kept for display and staking.
+    """
+    decs: list[float] = []
+    for entry in runner.get("odds") or []:
+        try:
+            dec = float(entry.get("decimal") or 0)
+        except (TypeError, ValueError):
+            continue
+        if dec > 1.0:
+            decs.append(dec)
+    if not decs:
+        return None
+    decs.sort()
+    n = len(decs)
+    mid = n // 2
+    if n % 2:
+        return decs[mid]
+    return (decs[mid - 1] + decs[mid]) / 2.0
 
 
 def _ts_rank_score(runner: dict, all_runners: list[dict]) -> tuple[float, list[str]]:
@@ -705,14 +751,18 @@ def compute_market_score(
     reasons: list[str] = []; fatal_flags: list[str] = []; score = 0.0
     horse_id = str(runner.get("horse_id") or "")
     morning_price = _best_morning_price(runner)
+    consensus_price = _consensus_morning_price(runner)
 
     if morning_price is not None:
         reasons.append(f"Morning price: {format_odds(morning_price)}")
-        # No positive scoring for any price band.
-        # Penalty only when market significantly disagrees with our form assessment.
-        if morning_price > 20.0:
+    # No positive scoring for any price band. Penalty only when the market
+    # clearly disagrees — gated on the consensus (median) price, not the
+    # best-available outlier, to match the SP basis these thresholds were
+    # calibrated on.
+    if consensus_price is not None:
+        if consensus_price > 20.0:
             score -= 3.0; reasons.append("Outsider — market significantly disagrees with form assessment")
-        elif morning_price > 12.0:
+        elif consensus_price > 12.0:
             score -= 1.0; reasons.append("Double-figure price — market lukewarm on this runner")
 
     if market_movers and isinstance(market_movers, dict):
@@ -728,11 +778,29 @@ def compute_market_score(
     return round(max(-10.0, min(5.0, score)), 2), reasons, fatal_flags
 
 
+def assign_confidence(score: float, clustered: bool = False) -> tuple[str, str]:
+    """Return (confidence_label, stake_recommendation) based on score.
+    Bands are tunable via data/model_params.json (learning loop)."""
+    if clustered:
+        return "LOW", "SMALL STAKE or PASS — tight field, no clear standout"
+    cb = get_params()["confidence_bands"]
+    if score >= cb["high"]:
+        return "HIGH", "FULL STAKE"
+    if score >= cb["medium_high"]:
+        return "MEDIUM-HIGH", "FULL STAKE"
+    if score >= cb["medium"]:
+        return "MEDIUM", "HALF STAKE or EACH WAY"
+    if score >= cb["low_medium"]:
+        return "LOW-MEDIUM", "SMALL STAKE / EACH WAY only"
+    return "LOW", "SPECULATIVE — minimal stake or PASS"
+
+
 def assign_grade(total_score: float) -> str:
-    if total_score >= GRADE_A_THRESHOLD: return "A"
-    if total_score >= GRADE_B_PLUS_THRESHOLD: return "B+"
-    if total_score >= GRADE_B_THRESHOLD: return "B"
-    if total_score >= GRADE_C_THRESHOLD: return "C"
+    gt = get_params()["grade_thresholds"]
+    if total_score >= gt["A"]: return "A"
+    if total_score >= gt["B+"]: return "B+"
+    if total_score >= gt["B"]: return "B"
+    if total_score >= gt["C"]: return "C"
     return "D"
 
 
@@ -740,6 +808,8 @@ def score_runner(
     runner: dict, race: dict, all_runners: list[dict],
     full_form: Optional[dict], market_movers: Optional[dict],
     trainer_profiles: Optional[dict] = None,
+    form_read: Optional[dict] = None,
+    race_shape: Optional[dict] = None,
 ) -> dict:
     runner = dict(runner)
     runner["_race_type"] = str(race.get("type") or "")
@@ -749,9 +819,68 @@ def score_runner(
     draw_score, draw_reasons = compute_draw_score(runner, race)
     trnr_score, trnr_reasons = compute_trainer_score(runner, race, trainer_profiles)
     mkt_score, mkt_reasons, fatal_flags = compute_market_score(runner, market_movers)
-    total = max(0.0, min(100.0, form_score + suit_score + ctx_score + draw_score + trnr_score + mkt_score))
+    # Professional form-reading overlay (-15..+25): class drops, pace shape,
+    # proven course+distance, freshness, narrative. Lifts genuinely strong
+    # horses out of the score-compression zone so the card yields real picks.
+    wisdom_score: float = 0.0
+    wisdom_reasons: list[str] = []
+    if _WISDOM_AVAILABLE:
+        try:
+            wisdom_score, wisdom_reasons = score_racing_wisdom(
+                runner, race, all_runners, full_form
+            )
+        except Exception as exc:  # pragma: no cover - never let the overlay break scoring
+            wisdom_score, wisdom_reasons = 0.0, []
+            log(f"nap_selector: wisdom overlay failed for {runner.get('horse')} — {exc}", "WARNING")
+    base = form_score + suit_score + ctx_score + draw_score + trnr_score + mkt_score
+    total = max(0.0, min(100.0, base + wisdom_score))
+
+    # AI Form Reader overlay (bounded ±3): a professional-tipster read of the
+    # narrative (spotlight/quotes/stable tour) the numeric model can't see. It
+    # refines ordering and breaks ties but can NEVER override the quant model.
+    ai_verdict: str = ""
+    ai_rating: Optional[int] = None
+    ai_read: str = ""
+    ai_reasons: list[str] = []
+    if form_read:
+        _fr = form_read.get(str(runner.get("horse_id") or ""))
+        if isinstance(_fr, dict) and isinstance(_fr.get("rating"), (int, float)):
+            ai_rating = int(_fr["rating"])
+            ai_verdict = str(_fr.get("verdict") or "")
+            ai_read = str(_fr.get("one_line_read") or "").strip()
+            _fr_cap = float(get_params()["form_read_overlay_cap"])
+            delta = max(-_fr_cap, min(_fr_cap, (ai_rating - 50) / 50.0 * _fr_cap))
+            total = max(0.0, min(100.0, total + delta))
+            if ai_read:
+                ai_reasons.append(
+                    f"AI form read: {ai_verdict or '—'} (rating {ai_rating}) — {ai_read} [{delta:+.1f}]"
+                )
+
+    # AI Pace overlay (bounded ±2): does this horse's running style suit the
+    # projected race shape? Pace is the model's biggest structural blind spot.
+    # Capped tighter than the form read (±2 < ±3) so it only refines ordering.
+    pace_style: str = ""
+    pace_fit: Optional[int] = None
+    pace_reasons: list[str] = []
+    if race_shape:
+        _rs = race_shape.get(str(race.get("race_id") or ""))
+        if isinstance(_rs, dict):
+            _ph = (_rs.get("horses") or {}).get(str(runner.get("horse_id") or ""))
+            if isinstance(_ph, dict) and isinstance(_ph.get("pace_fit"), (int, float)):
+                pace_fit = int(_ph["pace_fit"])
+                pace_style = str(_ph.get("running_style") or "")
+                _pace_cap = float(get_params()["pace_overlay_cap"])
+                p_delta = max(-_pace_cap, min(_pace_cap, (pace_fit - 50) / 50.0 * _pace_cap))
+                total = max(0.0, min(100.0, total + p_delta))
+                _note = str(_ph.get("note") or "").strip()
+                if _note:
+                    pace_reasons.append(
+                        f"AI pace ({pace_style or '?'}, fit {pace_fit}): {_note} [{p_delta:+.1f}]"
+                    )
+
     grade = assign_grade(total)
     morning_price = _best_morning_price(runner)
+    consensus_price = _consensus_morning_price(runner)
     return {
         "horse_id": str(runner.get("horse_id") or ""),
         "horse": str(runner.get("horse") or ""),
@@ -762,15 +891,21 @@ def score_runner(
         "form_score": form_score, "suitability_score": suit_score,
         "context_score": ctx_score, "draw_score": round(draw_score, 2),
         "trainer_score": trnr_score, "market_score": mkt_score,
-        "reasons": form_reasons + suit_reasons + ctx_reasons + draw_reasons + trnr_reasons + mkt_reasons,
+        "wisdom_score": round(wisdom_score, 2),
+        "ai_verdict": ai_verdict, "ai_rating": ai_rating, "ai_read": ai_read,
+        "pace_style": pace_style, "pace_fit": pace_fit,
+        "reasons": form_reasons + suit_reasons + ctx_reasons + draw_reasons + trnr_reasons + mkt_reasons + wisdom_reasons + ai_reasons + pace_reasons,
         "warnings": list(fatal_flags),
         "morning_price": morning_price,
+        "consensus_price": consensus_price,
         "form": runner.get("form") or "",
         "trainer": str(runner.get("trainer") or ""),
         "jockey": str(runner.get("jockey") or ""),
         "rpr": runner.get("rpr"), "ofr": runner.get("ofr"), "status": None,
         "race_type": str(race.get("type") or ""),
-        "going": str(race.get("going") or ""),
+        # Prefer going_detailed (stripped of parentheticals) — `going` alone can
+        # be blank, which would silently pass the Firm/Heavy exclusion gate.
+        "going": str(race.get("going_detailed") or race.get("going") or "").split("(")[0].strip(),
         "distance_f": float(race.get("distance_f") or 0.0),
     }
 
@@ -887,12 +1022,26 @@ def main() -> int:
     if trainer_profiles is None:
         log("nap_selector_v3: trainer_profiles not available — course/combo signals skipped", "INFO")
 
+    # AI Form Reader verdicts (keyed by horse_id). Absent/empty => no overlay.
+    form_read: Optional[dict] = safe_load_json(data_path(f"form_read_{date_str}.json"))
+    if form_read:
+        log(f"nap_selector_v3: AI form reads loaded for {len(form_read)} horses — applying bounded overlay")
+    else:
+        log("nap_selector_v3: no AI form reads — numeric model only", "INFO")
+
+    # AI Pace projection (keyed by race_id, each with a per-horse 'horses' map).
+    race_shape: Optional[dict] = safe_load_json(data_path(f"race_shape_{date_str}.json"))
+    if race_shape:
+        log(f"nap_selector_v3: AI pace projections loaded for {len(race_shape)} races — applying bounded overlay")
+    else:
+        log("nap_selector_v3: no AI pace projections — numeric model only", "INFO")
+
     race_scores: dict[str, list[dict]] = {}
     for race in racecards:
         race_id = str(race.get("race_id") or "")
         runners: list[dict] = race.get("runners") or []
         if not runners: continue
-        scored = [score_runner(r, race, runners, full_form, market_movers, trainer_profiles) for r in runners]
+        scored = [score_runner(r, race, runners, full_form, market_movers, trainer_profiles, form_read, race_shape) for r in runners]
         scored.sort(key=lambda r: r["score"], reverse=True)
         race_scores[race_id] = scored
 
@@ -904,54 +1053,130 @@ def main() -> int:
         if detect_race_cluster(scored):
             cluster_races.append(race_id)
 
+    # Tunable gate thresholds (learning loop) — default to the original constants.
+    _p = get_params()
+    _min_odds = float(_p["nap_min_odds"])
+    _max_odds = float(_p["nap_max_odds"])
+    _min_score = float(_p["nap_min_score"])
+    # Minimum score gap over 2nd place to rank-promote a below-floor horse. When
+    # scores are compressed (full_form absent, thin card) a horse can still be the
+    # clear best in its race even without hitting the absolute floor. A margin >=
+    # nap_clear_margin qualifies it as a NAP candidate with MEDIUM confidence.
+    _clear_margin = float(_p.get("nap_clear_margin", 3.0))
+
     nap_candidates: list[dict] = []
+    fallback_pool: list[dict] = []   # passed every STRUCTURAL gate but below the score floor
     no_bet_races: list[str] = []
     for race_id, scored in race_scores.items():
         if not scored: continue
         top = scored[0]
-        # Exclude configured race types (e.g. chase — poor ROI historically)
+        # Hard exclusions — these are structural, not score-based. A horse failing
+        # any of these can NEVER be the pick (not even as a thin-card fallback).
         if any(x in (top.get("race_type") or "").lower() for x in NAP_EXCLUDED_RACE_TYPES):
             no_bet_races.append(race_id); continue
-        # Odds gates — no value at short prices; 8/1+ is -39.4% ROI over 524 selections
-        if top.get("morning_price") is not None and top["morning_price"] < NAP_MIN_ODDS:
-            no_bet_races.append(race_id); continue
-        if top.get("morning_price") is not None and top["morning_price"] > NAP_MAX_ODDS:
-            no_bet_races.append(race_id); continue
-        # Flat filters — data-driven exclusions from backtest analysis
-        _is_flat = not any(x in (top.get("race_type") or "").lower() for x in ("chase", "hurdle", "bumper"))
-        if _is_flat and (top.get("distance_f") or 0.0) >= FLAT_MAX_DIST_F:
-            no_bet_races.append(race_id); continue  # staying trips
-        if _is_flat and 0.0 < (top.get("distance_f") or 0.0) < FLAT_MIN_DIST_F:
-            no_bet_races.append(race_id); continue  # sprint filter (currently disabled — FLAT_MIN_DIST_F=0.0)
-        # Flat going filter — Firm/G-F: 0% WR; Heavy: value-less at short odds
-        if _is_flat and going_normalise(top.get("going") or "") in FLAT_EXCLUDED_GOING:
-            no_bet_races.append(race_id); continue
-        if race_id in cluster_races: no_bet_races.append(race_id); continue
-        if top["score"] < NAP_MIN_SCORE: no_bet_races.append(race_id); continue
-        if top["score"] > NAP_MAX_SCORE: no_bet_races.append(race_id); continue  # 83-85 band = 0% WR
+        # dangerous_drift = only fatal market signal
         if "dangerous_drift" in (top.get("warnings") or []):
             no_bet_races.append(race_id); continue
-        nap_candidates.append(top)
+        # Odds gates — no value at short prices; 8/1+ is -39.4% ROI.
+        # Gate on the consensus (median) price, which matches the SP basis the
+        # thresholds were calibrated on; fall back to best-available if absent.
+        _gate_price = top.get("consensus_price")
+        if _gate_price is None:
+            _gate_price = top.get("morning_price")
+        if _gate_price is not None and _gate_price < _min_odds:
+            no_bet_races.append(race_id); continue
+        if _gate_price is not None and _gate_price > _max_odds:
+            no_bet_races.append(race_id); continue
+        # Flat going filter — Firm/Heavy excluded; G-F monitored but not excluded
+        _is_flat = not any(x in (top.get("race_type") or "").lower() for x in ("chase", "hurdle", "bumper"))
+        if _is_flat and going_normalise(top.get("going") or "") in FLAT_EXCLUDED_GOING:
+            no_bet_races.append(race_id); continue
+        # Flat staying-trip exclusion (16f+) — the backtest that validated the
+        # model enforced this; the live selector must match it.
+        if _is_flat and float(top.get("distance_f") or 0.0) >= FLAT_MAX_DIST_F:
+            no_bet_races.append(race_id); continue
+        # Unpriced horses can't be checked against the odds gates, so they are
+        # never full candidates — best-available fallback only, clearly flagged.
+        if top.get("morning_price") is None:
+            top = dict(top)
+            top["warnings"] = list(top.get("warnings") or []) + ["unpriced"]
+            fallback_pool.append(top)
+            continue
+        # Cluster races get a warning flag on the pick, not a hard block.
+        if race_id in cluster_races:
+            top = dict(top)
+            top["warnings"] = list(top.get("warnings") or []) + ["cluster_warning"]
+        # Compute margin over 2nd — used for rank-based promotion.
+        second_score = scored[1]["score"] if len(scored) > 1 else 0.0
+        margin = top["score"] - second_score
+        top = dict(top)
+        top["_margin"] = margin
+        # Above the score floor → NAP candidate. Below the floor, a clear leader
+        # by margin is promoted ONLY when the race is competitive (2+ runners,
+        # so the margin is over a real rival) and the score clears an absolute
+        # quality floor (a big margin over a garbage field is not a signal).
+        promotable = (
+            len(scored) >= 2
+            and top["score"] >= RANK_PROMOTION_MIN_SCORE
+            and margin >= _clear_margin
+        )
+        if top["score"] >= _min_score or promotable:
+            top["_rank_promoted"] = top["score"] < _min_score
+            nap_candidates.append(top)
+        else:
+            fallback_pool.append(top)
 
     nap_candidates.sort(key=lambda r: r["score"], reverse=True)
+    fallback_pool.sort(key=lambda r: r["score"], reverse=True)
 
     nap: Optional[dict] = None
     day_verdict: str
     if nap_candidates:
         best_candidate = nap_candidates[0]
         best_candidate["status"] = "NAP"
+        is_clustered = "cluster_warning" in (best_candidate.get("warnings") or [])
+        rank_promoted = best_candidate.get("_rank_promoted", False)
+        if not rank_promoted:
+            # Absolute score qualifies → standard confidence bands.
+            confidence, stake_rec = assign_confidence(best_candidate["score"], is_clustered)
+            day_verdict = f"NAP_SELECTED ({confidence} CONFIDENCE)"
+        else:
+            # Rank-promoted: score below floor but clear leader in the race.
+            margin = best_candidate.get("_margin", 0.0)
+            if is_clustered:
+                confidence = "LOW"
+                stake_rec = "SMALL STAKE or PASS — tight field despite rank lead"
+            elif margin >= _clear_margin * 2:
+                confidence = "MEDIUM"
+                stake_rec = "HALF STAKE or EACH WAY"
+            else:
+                confidence = "LOW-MEDIUM"
+                stake_rec = "SMALL STAKE / EACH WAY only"
+            day_verdict = (
+                f"NAP_SELECTED ({confidence} CONFIDENCE — rank-promoted, "
+                f"score {best_candidate['score']:.1f} below floor {_min_score:.0f}, "
+                f"margin +{margin:.1f})"
+            )
+        best_candidate["confidence"] = confidence
+        best_candidate["stake_recommendation"] = stake_rec
         nap = best_candidate
-        day_verdict = "NAP_SELECTED"
-        if len(nap_candidates) >= 2:
-            second = nap_candidates[1]
-            if (best_candidate["score"] - second["score"]) <= best_candidate["score"] * 0.10:
-                nap["warnings"] = list(nap.get("warnings") or [])
-                if "field_cluster_warning" not in nap["warnings"]:
-                    nap["warnings"].append("field_cluster_warning")
-    elif cluster_races:
-        day_verdict = "NO_BET_CLUSTERED"
+    elif fallback_pool:
+        # No horse cleared the score floor AND no race had a clear leader.
+        # Surface the single best one as the pick with honest LOW confidence.
+        best_candidate = fallback_pool[0]
+        best_candidate["status"] = "NAP"
+        best_candidate["confidence"] = "LOW"
+        best_candidate["stake_recommendation"] = (
+            "SPECULATIVE — best available on a thin card; minimal stake or watch only"
+        )
+        best_candidate["warnings"] = list(best_candidate.get("warnings") or []) + ["below_score_floor"]
+        nap = best_candidate
+        day_verdict = (
+            f"BEST_AVAILABLE (LOW CONFIDENCE — top score {best_candidate['score']:.1f} "
+            f"below floor {_min_score:.0f}, no clear leader)"
+        )
     else:
-        day_verdict = "NO_BET_NO_STANDOUT"
+        day_verdict = "NO_BET — every card top was a chase, dangerous drift, or excluded going/odds"
 
     nap_horse_id = nap["horse_id"] if nap else None
     seen_ids: dict[str, dict] = {}
@@ -985,6 +1210,18 @@ def main() -> int:
             continue
         if "dangerous_drift" in (top.get("warnings") or []):
             continue
+        # The jump alternative is presented as a bettable secondary pick, so it
+        # must clear the same structural gates as the NAP: priced and inside the
+        # odds window, rideable going, and a field small enough to handicap.
+        _jp = top.get("consensus_price")
+        if _jp is None:
+            _jp = top.get("morning_price")
+        if _jp is None or _jp < _min_odds or _jp > _max_odds:
+            continue
+        if going_normalise(top.get("going") or "") in JUMP_EXCLUDED_GOING:
+            continue
+        if len(scored) > JUMP_MAX_RUNNERS:
+            continue
         if jump_nap is None or top["score"] > jump_nap["score"]:
             jump_nap = dict(top)
             jump_nap["status"] = "JUMP_ALTERNATIVE"
@@ -1004,6 +1241,38 @@ def main() -> int:
     if not safe_write_json(json_dest, output):
         log(f"nap_selector_v3: failed to write JSON — {json_dest}", "ERROR"); return 1
     log(f"nap_selector_v3: JSON saved → {json_dest}")
+
+    # --- Full-card capture (daily learning dataset, Stage 1) --------------------
+    # Persist EVERY scored runner across EVERY race so the evening outcome-join
+    # can label the whole card (not just the NAP). This is the raw material for
+    # the daily closed-loop learning machine — hundreds of labelled-in-waiting
+    # rows per day instead of a single NAP.
+    predictions: list[dict] = []
+    for _rid, _scored in race_scores.items():
+        for _rank, _r in enumerate(_scored, start=1):
+            predictions.append({
+                "race_id": _r.get("race_id"), "course": _r.get("course"),
+                "off_time": _r.get("off_time"), "race_type": _r.get("race_type"),
+                "going": _r.get("going"), "distance_f": _r.get("distance_f"),
+                "horse_id": _r.get("horse_id"), "horse": _r.get("horse"),
+                "rank_in_race": _rank, "score": _r.get("score"), "grade": _r.get("grade"),
+                "form_score": _r.get("form_score"), "suitability_score": _r.get("suitability_score"),
+                "context_score": _r.get("context_score"), "draw_score": _r.get("draw_score"),
+                "trainer_score": _r.get("trainer_score"), "market_score": _r.get("market_score"),
+                "wisdom_score": _r.get("wisdom_score"), "ai_rating": _r.get("ai_rating"),
+                "pace_fit": _r.get("pace_fit"), "morning_price": _r.get("morning_price"),
+                "is_nap": _r.get("horse_id") == nap_horse_id,
+            })
+    predictions_doc = {
+        "date": date_str, "generated_at": generated_at_iso, "model_version": MODEL_VERSION,
+        "race_count": len(race_scores), "runner_count": len(predictions),
+        "predictions": predictions,
+    }
+    pred_dest = data_path(f"predictions_{date_str}.json")
+    if safe_write_json(pred_dest, predictions_doc):
+        log(f"nap_selector_v3: full-card predictions saved → {pred_dest} ({len(predictions)} runners)")
+    else:
+        log(f"nap_selector_v3: failed to write predictions — {pred_dest}", "WARNING")
 
     report_text = _format_text_report(date_str, generated_hm, output)
     report_dest = report_path(f"nap_candidates_{date_str}.txt")

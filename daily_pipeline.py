@@ -38,6 +38,8 @@ from typing import Optional
 
 from src.config import get_config
 from src.helpers import data_path, log, report_path, safe_load_json, today_str
+from src.ops import heartbeat, verify_step_outputs, write_run_health
+from preflight import run_preflight
 
 
 # ---------------------------------------------------------------------------
@@ -56,11 +58,29 @@ PIPELINE_STEPS: list[tuple[str, str, list[str]]] = [
     ("race_reader",            "race_reader.py",           []),
     ("full_form_reader",       "full_form_reader.py",      []),
     ("trainer_profile_reader", "trainer_profile_reader.py",[]),
+    ("form_reader_ai",         "form_reader_ai.py",        []),
+    ("race_shape_ai",          "race_shape_ai.py",         []),
     ("nap_selector_v3",        "nap_selector_v3.py",       []),
+    ("nap_arbiter_ai",         "nap_arbiter_ai.py",        []),
     ("cluster_review",         "cluster_review.py",        []),
     ("morning_briefing_report","morning_briefing_report.py",[]),
+    ("briefing_writer_ai",     "briefing_writer_ai.py",    []),
     ("email_report",           "email_report.py",          []),
 ]
+
+# Expected outputs per step ({d} = date). A step that exits 0 without
+# producing these is downgraded to FAIL — exit codes alone let a wiped or
+# stubbed script "pass" indefinitely (results_auditor incident). Only the
+# deterministic, load-bearing outputs are listed; AI overlay steps may
+# legitimately degrade to nothing.
+STEP_OUTPUTS: dict[str, list[str]] = {
+    "run_daily":               ["data/racecards_{d}.json"],
+    "market_snapshot_morning": ["data/market_snapshots/market_snapshot_{d}_morning.json"],
+    "race_shortlist":          ["data/shortlist_{d}.json"],
+    "full_form_reader":        ["data/full_form_{d}.json"],
+    "nap_selector_v3":         ["data/nap_candidates_{d}.json"],
+    "morning_briefing_report": ["reports/morning_briefing_{d}.txt"],
+}
 
 
 # ---------------------------------------------------------------------------
@@ -122,11 +142,11 @@ def _run_step(
             cmd,
             cwd=project_dir,
             capture_output=False,   # let stdout/stderr flow to the task log
-            timeout=600,            # 10-minute hard cap per step
+            timeout=900,            # 15-minute hard cap per step
         )
         returncode = result.returncode
     except subprocess.TimeoutExpired:
-        log(f"daily_pipeline: [{step_name}] TIMEOUT after 600 s", "ERROR")
+        log(f"daily_pipeline: [{step_name}] TIMEOUT after 900 s", "ERROR")
         returncode = -1
     except OSError as exc:
         log(f"daily_pipeline: [{step_name}] OS error — {exc}", "ERROR")
@@ -135,6 +155,19 @@ def _run_step(
     finished_at = datetime.now(timezone.utc)
     duration_s = round((finished_at - started_at).total_seconds(), 2)
     status = "PASS" if returncode == 0 else "FAIL"
+
+    # Output-manifest check: a PASS that produced nothing is a FAIL.
+    if status == "PASS" and step_name in STEP_OUTPUTS:
+        date_str = today_str()
+        expected = [
+            str(Path(project_dir) / tpl.format(d=date_str))
+            for tpl in STEP_OUTPUTS[step_name]
+        ]
+        problems = verify_step_outputs(expected, started_at.timestamp())
+        if problems:
+            status = "FAIL"
+            for prob in problems:
+                log(f"daily_pipeline: [{step_name}] output check FAILED — {prob}", "ERROR")
 
     log(
         f"daily_pipeline: [{step_name}] {status} "
@@ -230,6 +263,14 @@ def main() -> int:
 
     log(f"daily_pipeline: project_dir={project_dir}, date={date_str}, force={force}")
 
+    # --- Preflight self-check (fail loud, abort before doing real work) ----------
+    # Catches the silent-killer class: wrong interpreter / missing deps / dead DB.
+    # On a CRITICAL failure preflight has already emailed a loud alert, so we
+    # abort rather than build a briefing on a broken environment.
+    if not run_preflight("morning"):
+        log("daily_pipeline: preflight FAILED — aborting run (alert emailed)", "ERROR")
+        return 1
+
     # --- Freshness check for run_daily.py ---------------------------------------
     skip_run_daily = False
     if not force and _racecard_is_fresh(date_str):
@@ -266,6 +307,11 @@ def main() -> int:
                 "status": "SKIPPED",
             })
             continue
+
+        # Record run health just before the email step so the email can flag a
+        # DEGRADED run instead of sending a confident briefing on broken data.
+        if step_name in ALWAYS_RUN_STEPS:
+            write_run_health("morning", date_str, results)
 
         # Skip data-processing steps when the racecard gate failed.
         # email_report always runs so the operator is notified.
@@ -310,6 +356,11 @@ def main() -> int:
     # --- Write summaries --------------------------------------------------------
     _write_text_summary(date_str, results, total_s)
     _write_json_summary(date_str, results, total_s)
+
+    # --- Heartbeat (dead-man's switch) ------------------------------------------
+    # Ping success only when every step genuinely passed; otherwise ping the
+    # /fail endpoint so the monitor alerts instead of vouching for a broken run.
+    heartbeat("morning", ok=(fail_count == 0))
 
     # Treat as success even if some non-critical steps failed; the email step
     # always runs regardless, so the operator is always informed.

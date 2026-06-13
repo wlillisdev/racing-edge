@@ -102,10 +102,12 @@ def _get_market_movement(horse_id: str, market_movers: dict | None) -> str:
     if not market_movers or not isinstance(market_movers, dict):
         return "unknown"
 
-    movers: list[dict] = market_movers.get("movements") or []
+    # market_movers.py writes "movements" with per-entry "move_type";
+    # legacy keys kept as fallbacks.
+    movers: list[dict] = market_movers.get("movements") or market_movers.get("movers") or []
     for mover in movers:
         if str(mover.get("horse_id") or "") == str(horse_id):
-            return (mover.get("move_type") or "stable").lower()
+            return (mover.get("move_type") or mover.get("movement") or "stable").lower()
 
     return "unknown"
 
@@ -115,15 +117,16 @@ def _get_latest_odds(horse_id: str, market_movers: dict | None,
     """
     Return the most up-to-date decimal odds for a horse.
 
-    Prefers the 'late_odds' from the market_movers entry, then the
-    'morning_odds', then falls back to the NAP's morning price.
+    Prefers the 'latest_price' from the market_movers entry, then the
+    'morning_price', then falls back to the racecard sp_dec.
     """
     if market_movers and isinstance(market_movers, dict):
-        movers: list[dict] = market_movers.get("movements") or []
+        movers: list[dict] = market_movers.get("movements") or market_movers.get("movers") or []
         for mover in movers:
             if str(mover.get("horse_id") or "") != str(horse_id):
                 continue
-            for key in ("late_odds", "morning_odds"):
+            # market_movers.py writes "late_odds"/"morning_odds"
+            for key in ("late_odds", "latest_price", "late_price", "morning_odds", "morning_price"):
                 val = mover.get(key)
                 if val is not None:
                     try:
@@ -208,7 +211,7 @@ def _make_decision(
             "horse":       horse_name,
             "course":      nap.get("course", ""),
             "off_time":    nap.get("off_time", ""),
-            "latest_odds": nap.get("morning_price"),
+            "latest_odds": nap.get("morning_price") or nap.get("sp_dec"),
             "movement":    "dangerous_drift",
             "status":      "LIVE",
         }
@@ -216,7 +219,10 @@ def _make_decision(
 
     # --- Market movement ---
     movement    = _get_market_movement(horse_id, market_movers)
-    latest_odds = _get_latest_odds(horse_id, market_movers, nap.get("morning_price"))
+    # nap_candidates entries carry "morning_price" (not "sp_dec")
+    latest_odds = _get_latest_odds(
+        horse_id, market_movers, nap.get("morning_price") or nap.get("sp_dec")
+    )
 
     # Also check for dangerous_drift surfaced via movers (belt-and-braces)
     if movement == "dangerous_drift":

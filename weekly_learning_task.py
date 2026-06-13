@@ -237,6 +237,26 @@ def main() -> int:
     # --- Save summary report ---
     _write_summary_report(date_str, results, total_s)
 
+    # --- Alert on failures + heartbeat -----------------------------------
+    # The weekly cycle has no email step of its own, so a failed task would
+    # otherwise be invisible until someone reads a report file by hand.
+    if fail_count:
+        try:
+            from src.mailer import send_alert
+            failed = ", ".join(r["task"] for r in results if r["status"] == "FAIL")
+            send_alert(
+                f"WEEKLY LEARNING CYCLE: {fail_count} task(s) FAILED",
+                f"Date: {date_str}\nFailed: {failed}\n"
+                f"See reports/weekly_tasks_summary_{date_str}.txt for details.",
+            )
+        except Exception as exc:
+            log(f"weekly_learning_task: could not send failure alert — {exc}", "ERROR")
+    try:
+        from src.ops import heartbeat
+        heartbeat("weekly", ok=(fail_count == 0))
+    except Exception as exc:
+        log(f"weekly_learning_task: heartbeat failed — {exc}", "WARNING")
+
     # --- Console completion summary ---
     print("")
     print("=" * 60)

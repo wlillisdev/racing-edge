@@ -39,7 +39,7 @@ from src.api_client import get_client, RacingAPIError
 from nap_selector_v3 import (
     score_runner, NAP_MIN_SCORE, NAP_MAX_SCORE, GRADE_A_THRESHOLD,
     NAP_EXCLUDED_RACE_TYPES, NAP_MIN_ODDS, NAP_MAX_ODDS, FLAT_MAX_DIST_F, FLAT_MIN_DIST_F,
-    FLAT_EXCLUDED_GOING, CLUSTER_SPREAD, CLUSTER_MIN_SCORE,
+    FLAT_EXCLUDED_GOING, CLUSTER_SPREAD, CLUSTER_MIN_SCORE, RANK_PROMOTION_MIN_SCORE,
     detect_race_cluster,
 )
 
@@ -376,6 +376,11 @@ def main() -> int:
     parser.add_argument("--max-flat-dist", type=float, default=FLAT_MAX_DIST_F,
                         dest="max_flat_dist",
                         help="Max distance in furlongs for flat NAP selection (default 16f)")
+    parser.add_argument("--clear-margin", type=float, default=3.0,
+                        dest="clear_margin",
+                        help="Rank-promotion margin over 2nd (default 3.0 = live "
+                             "nap_clear_margin default). The A/B section shows what "
+                             "the new rank-promotion rule would have added.")
     args = parser.parse_args()
 
     # Date range
@@ -412,6 +417,7 @@ def main() -> int:
     # --- Collect records -------------------------------------------------------
     all_records:  list[dict] = []
     daily_naps:   list[dict] = []
+    promoted_naps: list[dict] = []   # B-only picks: rank-promoted on floor-blank days
     days_data     = 0
     days_no_data  = 0
     days_with_nap = 0
@@ -434,6 +440,8 @@ def main() -> int:
 
         best_day_score  = -1.0
         best_day_record: Optional[dict] = None
+        best_promoted_score  = -1.0
+        best_promoted_record: Optional[dict] = None
 
         for race in races:
             runners = race.get("runners") or []
@@ -469,6 +477,8 @@ def main() -> int:
             top = scored[0]
             horse_id = top["horse_id"]
             composite = top["score"]
+            # Margin over 2nd — the live selector's rank-promotion signal.
+            margin = composite - scored[1]["score"] if len(scored) > 1 else 0.0
 
             result     = results_lookup.get(horse_id, {})
             has_result = bool(result)
@@ -509,6 +519,8 @@ def main() -> int:
                 "score_band":     _score_band(composite),
                 "going_group":    _going_group(going),
                 "dist_group":     _dist_group(dist_f),
+                "margin":         round(margin, 2),
+                "n_scored":       len(scored),
             }
             all_records.append(record)
 
@@ -539,9 +551,31 @@ def main() -> int:
                 best_day_score  = composite
                 best_day_record = record
 
+            # Rank-promotion candidate (the NEW live rule): below the floor but
+            # the clear leader of a competitive race, passing every structural
+            # gate AND priced (live diverts unpriced horses to fallback only).
+            _structurally_ok = (
+                not _excluded and not _too_big and not _too_short
+                and not _dist_filtered and not _sprint_filtered
+                and not _going_filtered and not _dangerous
+                and top.get("morning_price") is not None
+            )
+            if (_structurally_ok
+                    and len(scored) >= 2
+                    and composite < args.min_score
+                    and composite >= RANK_PROMOTION_MIN_SCORE
+                    and margin >= args.clear_margin
+                    and composite > best_promoted_score):
+                best_promoted_score  = composite
+                best_promoted_record = record
+
         if best_day_record:
             daily_naps.append(best_day_record)
             days_with_nap += 1
+        elif best_promoted_record:
+            # In live selection a promoted pick only becomes NAP when no horse
+            # cleared the floor — so B-only picks occur exactly on A-blank days.
+            promoted_naps.append(best_promoted_record)
 
     if not all_records:
         print("No records collected — check API credentials and date range.")
@@ -568,6 +602,21 @@ def main() -> int:
     nap_stats = _Stats()
     for r in daily_naps:
         nap_stats.record(r["is_win"], r["is_place"], r["sp_dec"], r["has_result"])
+
+    # Rank-promotion A/B: what the new live rule would have added on days the
+    # floor-only model went blank, plus a margin-band split to tune the margin.
+    promoted_stats = _Stats()
+    promoted_by_margin: dict[str, _Stats] = defaultdict(_Stats)
+    for r in promoted_naps:
+        promoted_stats.record(r["is_win"], r["is_place"], r["sp_dec"], r["has_result"])
+        m = r.get("margin", 0.0)
+        band = (f"+{args.clear_margin:.1f}-{args.clear_margin * 1.5:.1f}" if m < args.clear_margin * 1.5
+                else f"+{args.clear_margin * 1.5:.1f}-{args.clear_margin * 2:.1f}" if m < args.clear_margin * 2
+                else f"+{args.clear_margin * 2:.1f}+")
+        promoted_by_margin[band].record(r["is_win"], r["is_place"], r["sp_dec"], r["has_result"])
+    combined_stats = _Stats()
+    for r in daily_naps + promoted_naps:
+        combined_stats.record(r["is_win"], r["is_place"], r["sp_dec"], r["has_result"])
 
     # --- Findings (auto-identify best/worst) ----------------------------------------
     def _best_worst(bd: dict[str, _Stats], min_n: int = 5):
@@ -611,6 +660,39 @@ def main() -> int:
         f"  ROI:                 {nap_stats.roi:+.1f}%",
         "",
     ]
+
+    # Rank-promotion A/B block
+    lines += [
+        f"RANK-PROMOTION A/B  (new live rule: leader by >= {args.clear_margin:.1f} pts, "
+        f"score >= {RANK_PROMOTION_MIN_SCORE:.0f}, on floor-blank days)",
+        "-" * 70,
+        f"  A — floor-only (above):       {nap_stats.n} picks, "
+        f"{nap_stats.win_pct:.1f}% win, ROI {nap_stats.roi:+.1f}%",
+        f"  Promoted picks ADDED by B:    {promoted_stats.n} "
+        f"(on {len(promoted_naps)} previously-blank days)",
+    ]
+    if promoted_stats.n:
+        lines += [
+            f"    Wins:              {promoted_stats.wins}  ({promoted_stats.win_pct:.1f}%)",
+            f"    Places (top 3):    {promoted_stats.places}  ({promoted_stats.place_pct:.1f}%)",
+            f"    Level-stakes P/L:  {promoted_stats.pl:+.1f} pts",
+            f"    ROI:               {promoted_stats.roi:+.1f}%",
+            f"  B — combined:                 {combined_stats.n} picks, "
+            f"{combined_stats.win_pct:.1f}% win, ROI {combined_stats.roi:+.1f}%",
+            "",
+            "  Promoted picks by margin over 2nd (tunes nap_clear_margin):",
+        ]
+        lines += _render_table(dict(promoted_by_margin))
+        verdict = ("KEEP — promoted picks add profit"
+                   if promoted_stats.roi > 0 else
+                   "ACCEPTABLE — adds coverage at small cost; consider a higher --clear-margin"
+                   if promoted_stats.roi > -15 else
+                   "RECONSIDER — promoted picks lose heavily; raise nap_clear_margin or "
+                   "RANK_PROMOTION_MIN_SCORE")
+        lines.append(f"  ► Verdict: {verdict}")
+    else:
+        lines.append("  (no promoted picks in this window — rule never fired)")
+    lines.append("")
 
     # Per-category tables
     lines.append(f"RACE TYPE BREAKDOWN  (top scorer per race, score >= {args.min_score})")

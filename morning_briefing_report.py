@@ -58,6 +58,8 @@ def _build_briefing(date_str: str, data: dict) -> str:
     if nap:
         price = nap.get("morning_price")
         warnings = nap.get("warnings") or []
+        confidence = nap.get("confidence", "")
+        stake_rec = nap.get("stake_recommendation", "")
         try:
             score_str = f"{float(nap.get('score', 0)):.1f}"
         except (TypeError, ValueError):
@@ -68,18 +70,52 @@ def _build_briefing(date_str: str, data: dict) -> str:
             f"  Score: {score_str}  |  Grade: {nap.get('grade', '?')}  |  Price: {_fmt_odds(price)}",
             f"  Form: {nap.get('form', '—')}  |  RPR: {nap.get('rpr', '—')}  |  OR: {nap.get('ofr', '—')}",
             f"  Race type: {nap.get('race_type', '?')}  |  Going: {nap.get('going', '?')}",
-            "",
-            "  Key reasons:",
         ]
+        if confidence:
+            lines.append(f"  Confidence: {confidence}  |  Stake: {stake_rec}")
+        lines += ["", "  Key reasons:"]
         for r in (nap.get("reasons") or [])[:6]:
             lines.append(f"    • {r}")
         if warnings:
-            lines.append(f"\n  ⚠ Warnings: {', '.join(warnings)}")
+            clean_warnings = [w for w in warnings if w != "cluster_warning"]
+            if "cluster_warning" in warnings:
+                clean_warnings = ["CLUSTERED RACE — tight margins, reduce stake"] + clean_warnings
+            if clean_warnings:
+                lines.append(f"\n  ⚠ Warnings: {', '.join(clean_warnings)}")
     else:
         day_verdict = data.get("day_verdict", "NO BET")
         lines.append(f"  No NAP selected today — {day_verdict}")
 
     lines.append("")
+
+    # --- AI second opinion (independent arbiter) ---
+    arb = safe_load_json(data_path(f"arbiter_{date_str}.json")) or {}
+    res = arb.get("result") or {}
+    if res:
+        lines.append("■ AI SECOND OPINION")
+        ai = res.get("ai_nap") or {}
+        # If the model truncated before writing agreement, derive it from horse names.
+        agree = str(res.get("agreement") or "").upper()
+        if not agree:
+            model_horse = str((nap or {}).get("horse") or "").strip().lower()
+            ai_horse = str(ai.get("horse") or "").strip().lower()
+            if model_horse and ai_horse:
+                agree = "AGREE" if model_horse == ai_horse else "DISAGREE"
+            else:
+                agree = "UNKNOWN"
+        flag = "   ⚠⚠ DISAGREES WITH MODEL ⚠⚠" if agree == "DISAGREE" else ""
+        conf = res.get("confidence")
+        conf_str = f"{conf}/100" if isinstance(conf, int) else "—"
+        lines += [
+            f"  AI NAP: {str(ai.get('horse', '?')).upper()} — {ai.get('course', '?')}  {ai.get('off_time', '?')}",
+            f"  Agreement: {agree}{flag}  (confidence {conf_str})",
+        ]
+        note = str(res.get("agreement_note") or "").strip()
+        if note:
+            lines.append(f"  {note}")
+        if ai.get("reason"):
+            lines.append(f"  Why: {ai.get('reason')}")
+        lines.append("")
 
     # --- Jump alternative ---
     jump_nap = data.get("jump_nap")
@@ -102,9 +138,9 @@ def _build_briefing(date_str: str, data: dict) -> str:
 
     lines.append("")
 
-    # --- Watchlist ---
+    # --- Watchlist / Alternative bets ---
     watchlist = data.get("watchlist") or []
-    lines.append("■ WATCHLIST")
+    lines.append("■ OTHER OPTIONS — ALTERNATIVE BETS")
     if watchlist:
         for h in watchlist[:5]:
             price = h.get("morning_price")
@@ -112,12 +148,14 @@ def _build_briefing(date_str: str, data: dict) -> str:
                 w_score_str = f"{float(h.get('score', 0)):.1f}"
             except (TypeError, ValueError):
                 w_score_str = "?"
+            w_conf = h.get("confidence", "")
+            conf_tag = f" [{w_conf}]" if w_conf else ""
             lines.append(
                 f"  {h.get('horse', '?')} | {h.get('course','?')} {h.get('off_time','?')} "
-                f"| Score: {w_score_str} | {_fmt_odds(price)}"
+                f"| Score: {w_score_str}{conf_tag} | {_fmt_odds(price)}"
             )
     else:
-        lines.append("  Empty.")
+        lines.append("  None qualifying today.")
 
     lines.append("")
 

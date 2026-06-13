@@ -139,6 +139,7 @@ def _update_trainer_profiles(db, results_with_meta: list[dict], date_str: str) -
         return 0
 
     upsert_count = 0
+    lookup_errors = 0
 
     for result in results_with_meta:
         horse_id = str(result.get("horse_id") or "").strip()
@@ -152,7 +153,10 @@ def _update_trainer_profiles(db, results_with_meta: list[dict], date_str: str) -
                 "SELECT trainer FROM runners WHERE race_id = %s AND horse_id = %s LIMIT 1",
                 (race_id, horse_id),
             )
-        except Exception:  # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
+            lookup_errors += 1
+            if lookup_errors <= 3:  # log first few, don't spam a dead-DB loop
+                log(f"db_import_results: trainer lookup failed ({race_id}/{horse_id}) — {exc}", "WARNING")
             continue
 
         trainer = (runner_row or {}).get("trainer")
@@ -166,7 +170,10 @@ def _update_trainer_profiles(db, results_with_meta: list[dict], date_str: str) -
                 "WHERE race_id = %s AND horse_id = %s AND move_date = %s LIMIT 1",
                 (race_id, horse_id, date_str),
             )
-        except Exception:  # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
+            lookup_errors += 1
+            if lookup_errors <= 3:
+                log(f"db_import_results: move_type lookup failed ({race_id}/{horse_id}) — {exc}", "WARNING")
             continue
 
         move_type = (move_row or {}).get("move_type")
@@ -191,6 +198,13 @@ def _update_trainer_profiles(db, results_with_meta: list[dict], date_str: str) -
                 f"({trainer}/{move_type}) — {exc}",
                 "WARNING",
             )
+
+    if lookup_errors:
+        log(
+            f"db_import_results: {lookup_errors} DB lookup error(s) during trainer "
+            "profile update — profiles may be incomplete for this date",
+            "ERROR" if lookup_errors >= len(results_with_meta) else "WARNING",
+        )
 
     return upsert_count
 

@@ -10,14 +10,15 @@ Exit codes:
 
 from __future__ import annotations
 
-import smtplib
 import sys
 from datetime import datetime
-from email.mime.text import MIMEText
 from pathlib import Path
 
 from src.config import get_config
+from src.email_render import to_html
 from src.helpers import data_path, log, report_path, today_str
+from src.mailer import send_email
+from src.ops import degraded_banner, degraded_subject_tag
 
 
 # ---------------------------------------------------------------------------
@@ -50,6 +51,26 @@ def _load_briefing(path: str) -> tuple[str, bool]:
     )
     log("email_report: using fallback body — briefing file missing or empty", "WARNING")
     return fallback, True
+
+
+def _load_ai_briefing(date_str: str) -> str:
+    """Return the AI natural-language briefing if present and non-empty, else ''.
+
+    A no-op when briefing_writer_ai degraded (no key / stub) — the templated
+    briefing remains the source of truth and is unaffected.
+    """
+    p = Path(report_path(f"ai_briefing_{date_str}.txt"))
+    if not p.exists():
+        return ""
+    try:
+        content = p.read_text(encoding="utf-8").strip()
+    except OSError as exc:
+        log(f"email_report: could not read AI briefing — {exc}", "WARNING")
+        return ""
+    # Skip degraded stubs so we never prepend a placeholder above the real brief.
+    if not content or "STUB" in content[:200].upper() or "unavailable" in content[:200].lower():
+        return ""
+    return content
 
 
 def _build_subject(date_str: str, is_fallback: bool) -> str:
@@ -103,35 +124,39 @@ def main() -> int:
     briefing_path = report_path(f"morning_briefing_{date_str}.txt")
     body_text, is_fallback = _load_briefing(briefing_path)
 
-    subject = _build_subject(date_str, is_fallback)
-    body = _build_body(body_text)
+    # Prepend the AI natural-language briefing when available (no-op if absent).
+    ai_brief = _load_ai_briefing(date_str)
+    if ai_brief:
+        sep = "─" * 60
+        body_text = f"{ai_brief}\n\n{sep}\n\n{body_text}"
+        log("email_report: prepended AI natural-language briefing")
+
+    subject = _build_subject(date_str, is_fallback) + degraded_subject_tag("morning", date_str)
+    # A loud banner if any pipeline step failed, so a degraded run is never
+    # mistaken for a clean one. It headlines the plain-text fallback and becomes
+    # the red callout in the HTML version.
+    banner = degraded_banner("morning", date_str)
+    plain_body = _build_body(banner + body_text)
+
+    # HTML version (multipart/alternative — plain text above is the fallback).
+    try:
+        dt = datetime.strptime(date_str, "%Y-%m-%d")
+        subtitle = f"Morning Briefing — {dt.strftime('%a')} {date_str}"
+    except ValueError:
+        subtitle = f"Morning Briefing — {date_str}"
+    if is_fallback:
+        subtitle += " (MISSING)"
+    html_body = to_html("Racing Intelligence", subtitle, body_text, degraded_note=banner)
 
     log(f"email_report: subject='{subject}'")
     log(f"email_report: sending to {cfg.email_recipient} via {cfg.smtp_host}:{cfg.smtp_port}")
 
-    # --- Build MIME message -----------------------------------------------------
-    msg = MIMEText(body, "plain", "utf-8")
-    msg["Subject"] = subject
-    msg["From"] = cfg.email_sender
-    msg["To"] = cfg.email_recipient
-
-    # --- Send via SMTP/TLS -------------------------------------------------------
+    # --- Send (single shared SMTP path; HTML + plain-text fallback) --------------
     failed_flag = data_path(f"email_morning_failed_{date_str}.flag")
     sent_flag = data_path(f"email_morning_sent_{date_str}.flag")
 
-    try:
-        with smtplib.SMTP(cfg.smtp_host, cfg.smtp_port, timeout=30) as smtp:
-            smtp.ehlo()
-            smtp.starttls()
-            smtp.ehlo()
-            smtp.login(cfg.email_sender, cfg.email_password)
-            smtp.sendmail(cfg.email_sender, cfg.email_recipient, msg.as_string())
-    except smtplib.SMTPException as exc:
-        log(f"email_report: SMTP error — {exc}", "ERROR")
-        _write_flag(failed_flag)
-        return 1
-    except OSError as exc:
-        log(f"email_report: network/OS error — {exc}", "ERROR")
+    if not send_email(subject, plain_body, html_body=html_body):
+        log("email_report: send failed — see mailer log above", "ERROR")
         _write_flag(failed_flag)
         return 1
 

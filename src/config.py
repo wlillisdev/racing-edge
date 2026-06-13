@@ -50,6 +50,10 @@ class Config:
     model_version: str
     regions: str
 
+    # AI Form Reader (Anthropic) — optional, safe defaults so absence never raises
+    anthropic_api_key: str
+    anthropic_model: str
+
 
 # ---------------------------------------------------------------------------
 # Factory
@@ -88,4 +92,7 @@ def get_config() -> Config:
         ),
         model_version=os.environ.get("MODEL_VERSION", "v3"),
         regions=os.environ.get("REGIONS", "gb,ire"),
+        # AI Form Reader — optional with safe defaults
+        anthropic_api_key=os.environ.get("ANTHROPIC_API_KEY", ""),
+        anthropic_model=os.environ.get("ANTHROPIC_MODEL", "claude-haiku-4-5"),
     )

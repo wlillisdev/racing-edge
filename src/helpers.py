@@ -104,7 +104,15 @@ def safe_load_json(path: str) -> Optional[dict]:
         with open(p, "r", encoding="utf-8") as fh:
             return json.load(fh)
     except json.JSONDecodeError as exc:
-        log(f"safe_load_json: corrupt JSON in {path} — {exc}", "WARNING")
+        # Corrupt is worse than missing: quarantine it so the evidence
+        # survives and the next run doesn't read the same poison.
+        log(f"safe_load_json: CORRUPT JSON in {path} — {exc}", "ERROR")
+        try:
+            quarantine = p.with_suffix(p.suffix + ".corrupt")
+            os.replace(p, quarantine)
+            log(f"safe_load_json: quarantined corrupt file → {quarantine}", "ERROR")
+        except OSError:
+            pass
         return None
     except OSError as exc:
         log(f"safe_load_json: OS error reading {path} — {exc}", "WARNING")
@@ -112,21 +120,29 @@ def safe_load_json(path: str) -> Optional[dict]:
 
 
 def safe_write_json(path: str, data: dict) -> bool:
-    """Serialise *data* as indented JSON and write to *path*.
+    """Serialise *data* as indented JSON and write to *path* atomically.
 
-    Creates parent directories automatically.
+    Writes to a temp file in the same directory then os.replace()s it into
+    place, so a crash mid-write can never leave a truncated JSON at the
+    final path. Creates parent directories automatically.
 
     Returns:
         True on success, False on any write error (logs ERROR).
     """
     p = Path(path)
     p.parent.mkdir(parents=True, exist_ok=True)
+    tmp = p.with_suffix(p.suffix + ".tmp")
     try:
-        with open(p, "w", encoding="utf-8") as fh:
+        with open(tmp, "w", encoding="utf-8") as fh:
             json.dump(data, fh, indent=2, ensure_ascii=False)
+        os.replace(tmp, p)
         return True
     except (OSError, TypeError, ValueError) as exc:
         log(f"safe_write_json: failed to write {path} — {exc}", "ERROR")
+        try:
+            tmp.unlink(missing_ok=True)
+        except OSError:
+            pass
         return False
 
 

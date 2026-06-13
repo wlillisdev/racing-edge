@@ -28,6 +28,8 @@ from pathlib import Path
 
 from src.config import get_config
 from src.helpers import data_path, log, report_path, today_str
+from src.ops import heartbeat, verify_step_outputs, write_run_health
+from preflight import run_preflight
 
 
 # ---------------------------------------------------------------------------
@@ -43,6 +45,14 @@ PIPELINE_STEPS: list[tuple[str, str, list[str]]] = [
     ("final_decision_guard",   "final_decision_guard.py",  []),
     ("email_market_update",    "email_market_update.py",   []),
 ]
+
+# Expected outputs per step ({d} = date). A step that exits 0 without
+# producing these is downgraded to FAIL.
+STEP_OUTPUTS: dict[str, list[str]] = {
+    "market_snapshot_late": ["data/market_snapshots/market_snapshot_{d}_late.json"],
+    "market_movers":        ["data/market_movers_{d}.json"],
+    "final_nap_decision":   ["data/final_nap_decision_{d}.json"],
+}
 
 
 # ---------------------------------------------------------------------------
@@ -179,6 +189,11 @@ def main() -> int:
 
     log(f"market_update_pipeline: project_dir={project_dir}, date={date_str}")
 
+    # --- Preflight self-check (fail loud before doing real work) -----------------
+    if not run_preflight("market"):
+        log("market_update_pipeline: preflight FAILED — aborting run (alert emailed)", "ERROR")
+        return 1
+
     CRITICAL_GATE_STEPS: frozenset[str] = frozenset({"run_daily"})
     ALWAYS_RUN_STEPS: frozenset[str] = frozenset({"email_market_update"})
 
@@ -198,7 +213,28 @@ def main() -> int:
             })
             continue
 
+        # Record run health just before the email step so it can flag DEGRADED.
+        if step_name in ALWAYS_RUN_STEPS:
+            write_run_health("market", date_str, results)
+
         result = _run_step(step_name, script, args, project_dir)
+
+        # Output-manifest check: a PASS that produced nothing is a FAIL.
+        if result["status"] == "PASS" and step_name in STEP_OUTPUTS:
+            expected = [
+                str(Path(project_dir) / tpl.format(d=date_str))
+                for tpl in STEP_OUTPUTS[step_name]
+            ]
+            started_ts = datetime.fromisoformat(result["started_at"]).timestamp()
+            problems = verify_step_outputs(expected, started_ts)
+            if problems:
+                result["status"] = "FAIL"
+                for prob in problems:
+                    log(
+                        f"market_update_pipeline: [{step_name}] output check FAILED — {prob}",
+                        "ERROR",
+                    )
+
         results.append(result)
 
         if result["status"] == "FAIL":
@@ -229,6 +265,9 @@ def main() -> int:
     # --- Write summaries --------------------------------------------------------
     _write_text_summary(date_str, results, total_s)
     _write_json_summary(date_str, results, total_s)
+
+    # --- Heartbeat (dead-man's switch) ------------------------------------------
+    heartbeat("market", ok=(fail_count == 0))
 
     return 0
 
