@@ -31,8 +31,8 @@ PRICES: dict[str, tuple[float, float]] = {
 }
 _DEFAULT_PRICE = PRICES["claude-opus-4-8"]
 
-SOFT_USD = float(os.environ.get("LLM_BUDGET_SOFT_USD", "30"))   # warn at
-HARD_USD = float(os.environ.get("LLM_BUDGET_HARD_USD", "50"))   # halt at
+SOFT_USD = float(os.environ.get("LLM_BUDGET_SOFT_USD", "25"))   # warn at
+HARD_USD = float(os.environ.get("LLM_BUDGET_HARD_USD", "30"))   # halt at
 
 
 def cost_of(model: str, in_tok: int, out_tok: int) -> float:
