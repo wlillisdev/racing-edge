@@ -56,6 +56,7 @@ PIPELINE_STEPS: list[tuple[str, str, list[str]]] = [
     ("result_enricher",       "result_enricher.py",       []),
     ("loser_autopsy_ai",      "loser_autopsy_ai.py",      []),
     ("daily_learning_analysis","daily_learning_analysis.py",[]),
+    ("winner_learning",       "winner_learning_loop.py",  []),
     ("model_param_tuner",     "model_param_tuner.py",     []),
     ("profit_report",         "profit_report.py",         []),
     ("email_audit",           "email_audit.py",           []),
