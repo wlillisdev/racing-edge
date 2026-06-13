@@ -1,7 +1,7 @@
 """
 winner_learning_loop.py — Track A: daily open-eyes winner-learning loop.
 
-For every race winner, independently of the numeric scoring model:
+For EVERY race winner (not just our picks), independently of the numeric model:
   1. blind_read   — an LLM reads the winner's PRE-RACE form with open eyes and
                     gives an honest assessment + a pre-race win likelihood. It is
                     NOT told the result, so there is no hindsight leakage.
@@ -10,48 +10,52 @@ For every race winner, independently of the numeric scoring model:
                     contributing winning factors, and whether the blind read
                     would have caught it (was_findable).
 
+Data sources (deliberately full-field, not candidate-only):
+  - data/racecards_<date>.json — all races, all runners, all form (morning
+    snapshot → point-in-time). Falls back to the deep-backtest racecard cache
+    for historical backfill.
+  - the Racing API result per race → identifies the actual winner (cached).
+
 Results bank into `winner_reads`; `winning_patterns` aggregates the recurring
-reasons. Over time this builds a model-independent picture of what actually wins
-— used to improve, or eventually replace, the score.
+reasons. Over time this is a model-independent picture of what actually wins —
+to improve, or eventually replace, the score.
 
-Design notes (senior build):
-  - Never imports score_runner: "open eyes" is enforced structurally.
-  - Idempotent: re-running a date skips winners already read (saves LLM cost);
-    DB writes are upserts on the natural keys.
-  - Failure-isolated: one bad winner logs and is skipped, never aborts the day.
-  - Graceful: no API key / no SDK / DB down → logs and exits cleanly, like the
-    rest of the codebase.
-  - Reproducible: prompt_version + model stored per row.
-  - Pure core (build_form_payload, aggregate_patterns, derive_findable) is unit
-    tested without DB or LLM.
+Design (senior build): never imports score_runner ("open eyes" is structural);
+idempotent (skips winners already read, caches race results); failure-isolated
+per winner; graceful when the LLM/API/DB is absent; reproducible (prompt_version
++ model per row); pure core unit-tested without DB/LLM/API.
 
-Usage (runs after results land — evening pipeline or PA scheduled task):
+Usage (after results land — evening pipeline or PA scheduled task):
     python winner_learning_loop.py                 # today
-    python winner_learning_loop.py 2026-06-12      # a specific date
+    python winner_learning_loop.py 2026-06-12      # a date
     python winner_learning_loop.py --backfill 7    # last 7 days
-    python winner_learning_loop.py --rebuild-only  # just rebuild patterns
+    python winner_learning_loop.py --rebuild-only  # rebuild patterns only
 """
 
 from __future__ import annotations
 
 import argparse
 import json
-from datetime import date, datetime, timedelta
+from datetime import datetime, timedelta
+from pathlib import Path
 from typing import Optional
 
 from src.db import get_db
-from src.helpers import log, today_str
+from src.helpers import data_path, log, safe_load_json, today_str
 
 try:
     from src.llm_client import get_llm_client, llm_available
-except Exception:  # pragma: no cover - llm layer optional
+    from src.api_client import get_client
+except Exception:  # pragma: no cover - optional layers
     get_llm_client = lambda *a, **k: None          # noqa: E731
     llm_available = lambda: False                  # noqa: E731
+    get_client = lambda *a, **k: None              # noqa: E731
 
 # --- Config (no magic numbers) ----------------------------------------------
 PROMPT_VERSION = "v1"
 READ_MODEL = "claude-sonnet-4-6"   # reasoning-capable, cost-sane for ~40/day
-# Suggested factor vocabulary — the LLM prefers these but may add its own.
+_RESULT_CACHE = "winner_cache"      # data/winner_cache/<race_id>.json
+
 FACTOR_VOCAB = [
     "class drop", "class rise", "first-time headgear", "headgear retained",
     "proven going", "proven distance", "step up in trip", "step down in trip",
@@ -88,8 +92,9 @@ BLIND_SYSTEM = (
     "You are an expert racing form reader. Assess the given horse PURELY on its "
     "pre-race form and the race context — you do NOT know the result. Read with "
     "open eyes: weigh recent form, class, going and distance suitability, ratings, "
-    "draw, trainer/jockey, days since last run, and the strength of the field. "
-    "Give an honest assessment and an unbiased pre-race win likelihood."
+    "draw, trainer/jockey, days since last run, the spotlight comment, and the "
+    "strength of the field. Give an honest assessment and an unbiased pre-race "
+    "win likelihood."
 )
 EXPLAIN_SYSTEM = (
     "This horse WON its race. You are given your own pre-race read and the result. "
@@ -100,42 +105,43 @@ EXPLAIN_SYSTEM = (
 )
 
 
-# --- Pure core (unit-tested without DB/LLM) ---------------------------------
+# --- Pure core (unit-tested without DB/LLM/API) -----------------------------
 def build_form_payload(race: dict, winner: dict, field: list[dict]) -> dict:
-    """PRE-RACE only payload for the blind read. Contains NO result/position/SP."""
+    """PRE-RACE only payload (racecard fields). Contains NO result/position/SP."""
+    def runner_brief(r: dict) -> dict:
+        return {"name": r.get("horse"), "form": r.get("form"),
+                "or": r.get("ofr"), "rpr": r.get("rpr"),
+                "morning_price": r.get("sp_dec")}
     return {
         "race": {
             "course": race.get("course"),
-            "going": race.get("going"),
+            "going": race.get("going_detailed") or race.get("going"),
             "distance_furlongs": race.get("distance_f"),
-            "class": race.get("race_class"),
-            "type": race.get("race_type"),
+            "class": race.get("class"),
+            "type": race.get("type"),
             "field_size": race.get("field_size"),
         },
         "horse": {
-            "name": winner.get("horse_name"),
-            "form": winner.get("form_string"),
-            "official_rating": winner.get("official_rating"),
+            "name": winner.get("horse"),
+            "form": winner.get("form"),
+            "official_rating": winner.get("ofr"),
             "rpr": winner.get("rpr"),
-            "topspeed": winner.get("ts_rating"),
+            "topspeed": winner.get("ts"),
             "age": winner.get("age"),
             "draw": winner.get("draw"),
             "trainer": winner.get("trainer"),
             "jockey": winner.get("jockey"),
-            "morning_price": winner.get("sp_morning"),
-            "days_since_run": winner.get("last_run_days"),
+            "morning_price": winner.get("sp_dec"),
+            "days_since_run": winner.get("last_run"),
+            "spotlight": winner.get("spotlight"),
+            "comment": winner.get("comment"),
         },
-        "field": [
-            {"name": r.get("horse_name"), "form": r.get("form_string"),
-             "or": r.get("official_rating"), "rpr": r.get("rpr"),
-             "morning_price": r.get("sp_morning")}
-            for r in field if r.get("horse_id") != winner.get("horse_id")
-        ],
+        "field": [runner_brief(r) for r in field
+                  if r.get("horse_id") != winner.get("horse_id")],
     }
 
 
 def derive_findable(blind: dict, explain: dict) -> bool:
-    """Trust the LLM's was_findable, but fall back to the blind likelihood."""
     if isinstance(explain.get("was_findable"), bool):
         return explain["was_findable"]
     return str(blind.get("win_likelihood", "")).lower() in ("high", "medium")
@@ -153,8 +159,7 @@ def aggregate_patterns(reads: list[dict]) -> list[tuple]:
             factors = json.loads(r.get("winning_factors") or "[]")
         except (TypeError, ValueError):
             factors = []
-        seen_today = {_norm_factor(f) for f in factors if str(f).strip()}
-        for f in seen_today:
+        for f in {_norm_factor(x) for x in factors if str(x).strip()}:
             a = agg.setdefault(f, {"n": 0, "find": 0, "last": None})
             a["n"] += 1
             a["find"] += 1 if r.get("was_findable") else 0
@@ -163,6 +168,21 @@ def aggregate_patterns(reads: list[dict]) -> list[tuple]:
             if ds and (a["last"] is None or ds > a["last"]):
                 a["last"] = ds
     return [(f, a["n"], a["find"], a["last"]) for f, a in agg.items()]
+
+
+def find_winner(result: Optional[dict]) -> Optional[dict]:
+    """Pure: extract {horse_id, sp} of the position-1 finisher from an API result."""
+    if not result:
+        return None
+    for r in (result.get("runners") or result.get("results") or []):
+        if str(r.get("position") or r.get("finish_position") or "").strip() == "1":
+            sp = r.get("sp_dec") or r.get("bsp") or r.get("sp")
+            try:
+                sp = float(sp)
+            except (TypeError, ValueError):
+                sp = None
+            return {"horse_id": str(r.get("horse_id") or ""), "sp": sp}
+    return None
 
 
 # --- LLM stages -------------------------------------------------------------
@@ -178,24 +198,38 @@ def explain_win(client, blind: dict, form: dict, result: dict) -> Optional[dict]
     )
 
 
-# --- DB access --------------------------------------------------------------
-def _winners(db, d: str) -> list[dict]:
-    return db.fetch_all(
-        "SELECT race_id, horse_id, horse_name, sp_decimal "
-        "FROM results WHERE result_date=%s AND won=1", (d,))
+# --- I/O --------------------------------------------------------------------
+def load_racecards(d: str) -> list[dict]:
+    """Morning snapshot for the date; fall back to the deep-backtest cache."""
+    doc = safe_load_json(data_path(f"racecards_{d}.json"))
+    if doc:
+        return doc.get("racecards") or doc.get("races") or []
+    cached = safe_load_json(data_path(f"backtest_cache/racecards/{d}.json"))
+    return (cached or {}).get("races", []) if cached else []
 
 
-def _race(db, race_id: str) -> Optional[dict]:
-    return db.fetch_one("SELECT * FROM races WHERE race_id=%s", (race_id,))
+def race_result(api, race_id: str) -> Optional[dict]:
+    """Fetch a race result, cached per race_id so re-runs are free."""
+    p = Path(data_path(f"{_RESULT_CACHE}/{race_id}.json"))
+    if p.exists():
+        return safe_load_json(str(p))
+    try:
+        res = api.get_race_results(race_id)
+    except Exception as exc:  # noqa: BLE001
+        log(f"winner_learning: result fetch failed {race_id} — {exc}", "WARNING")
+        return None
+    if res:
+        p.parent.mkdir(parents=True, exist_ok=True)
+        try:
+            p.write_text(json.dumps(res))
+        except OSError:
+            pass
+    return res
 
 
-def _field(db, race_id: str) -> list[dict]:
-    return db.fetch_all("SELECT * FROM runners WHERE race_id=%s", (race_id,))
-
-
+# --- DB ---------------------------------------------------------------------
 def _already_read(db, d: str) -> set:
-    rows = db.fetch_all(
-        "SELECT race_id, horse_id FROM winner_reads WHERE read_date=%s", (d,))
+    rows = db.fetch_all("SELECT race_id, horse_id FROM winner_reads WHERE read_date=%s", (d,))
     return {(r["race_id"], r["horse_id"]) for r in rows}
 
 
@@ -211,7 +245,6 @@ ON DUPLICATE KEY UPDATE
   was_findable=VALUES(was_findable), rationale=VALUES(rationale),
   prompt_version=VALUES(prompt_version), model=VALUES(model)
 """
-
 _PATTERN_UPSERT = """
 INSERT INTO winning_patterns (factor, occurrences, findable_count, last_seen)
 VALUES (%s,%s,%s,%s)
@@ -222,8 +255,7 @@ ON DUPLICATE KEY UPDATE
 
 
 def rebuild_patterns(db) -> int:
-    reads = db.fetch_all(
-        "SELECT winning_factors, was_findable, read_date FROM winner_reads")
+    reads = db.fetch_all("SELECT winning_factors, was_findable, read_date FROM winner_reads")
     rows = aggregate_patterns(reads)
     for r in rows:
         db.execute(_PATTERN_UPSERT, r)
@@ -231,56 +263,55 @@ def rebuild_patterns(db) -> int:
 
 
 # --- Orchestration ----------------------------------------------------------
-def process_date(d: str, db, client) -> dict:
-    winners = _winners(db, d)
+def process_date(d: str, db, llm, api) -> dict:
+    races = load_racecards(d)
     done = _already_read(db, d)
-    stats = {"date": d, "winners": len(winners), "new": 0, "skipped": 0, "failed": 0}
+    stats = {"date": d, "races": len(races), "new": 0, "skipped": 0,
+             "no_result": 0, "failed": 0}
 
-    for w in winners:
-        key = (w["race_id"], w["horse_id"])
-        if key in done:
+    for race in races:
+        race_id = str(race.get("race_id") or "")
+        runners = race.get("runners") or []
+        if not race_id or not runners:
+            continue
+
+        win = find_winner(race_result(api, race_id))
+        if not win or not win["horse_id"]:
+            stats["no_result"] += 1
+            continue
+        if (race_id, win["horse_id"]) in done:
             stats["skipped"] += 1
             continue
-        try:
-            race = _race(db, w["race_id"])
-            if not race:
-                stats["failed"] += 1
-                continue
-            field = _field(db, w["race_id"])
-            form = build_form_payload(race, {**w, **_winner_runner(field, w)}, field)
 
-            blind = blind_read(client, form)
+        winner = next((r for r in runners if r.get("horse_id") == win["horse_id"]), None)
+        if not winner:
+            stats["no_result"] += 1
+            continue
+
+        try:
+            form = build_form_payload(race, winner, runners)
+            blind = blind_read(llm, form)
             if not blind:
                 stats["failed"] += 1
                 continue
-            result = {"finishing_position": 1, "sp": w.get("sp_decimal"), "won": True}
-            explain = explain_win(client, blind, form, result)
+            result = {"finishing_position": 1, "sp": win["sp"], "won": True}
+            explain = explain_win(llm, blind, form, result)
             if not explain:
                 stats["failed"] += 1
                 continue
-
             db.execute(_UPSERT, (
-                w["race_id"], w["horse_id"], d, race.get("course"), w.get("horse_name"),
-                w.get("sp_decimal"),
-                blind.get("assessment"), blind.get("win_likelihood"),
+                race_id, win["horse_id"], d, race.get("course"), winner.get("horse"),
+                win["sp"], blind.get("assessment"), blind.get("win_likelihood"),
                 explain.get("decisive_factor"),
                 json.dumps([_norm_factor(f) for f in explain.get("winning_factors", [])]),
                 1 if derive_findable(blind, explain) else 0,
                 explain.get("rationale"), PROMPT_VERSION, READ_MODEL,
             ))
             stats["new"] += 1
-        except Exception as exc:  # noqa: BLE001 — isolate one winner's failure
-            log(f"winner_learning: {w.get('horse_id')} failed — {exc}", "WARNING")
+        except Exception as exc:  # noqa: BLE001 — isolate one winner
+            log(f"winner_learning: {win['horse_id']} failed — {exc}", "WARNING")
             stats["failed"] += 1
     return stats
-
-
-def _winner_runner(field: list[dict], w: dict) -> dict:
-    """The winner's runner row (form/ratings) from the field, if present."""
-    for r in field:
-        if r.get("horse_id") == w.get("horse_id"):
-            return r
-    return {}
 
 
 def main() -> int:
@@ -293,31 +324,31 @@ def main() -> int:
     db = get_db()
 
     if args.rebuild_only:
-        n = rebuild_patterns(db)
-        print(f"Rebuilt winning_patterns: {n} factors.")
+        print(f"Rebuilt winning_patterns: {rebuild_patterns(db)} factors.")
         return 0
 
     if not llm_available():
         log("winner_learning: LLM unavailable (no API key/SDK) — nothing to do", "WARNING")
         print("LLM unavailable — set ANTHROPIC_API_KEY. No reads performed.")
         return 0
-    client = get_llm_client(default_model=READ_MODEL)
+    llm = get_llm_client(default_model=READ_MODEL)
+    api = get_client()
 
     dates = [args.date]
     if args.backfill > 0:
         base = datetime.strptime(args.date, "%Y-%m-%d").date()
         dates = [(base - timedelta(days=i)).isoformat() for i in range(args.backfill)]
 
-    totals = {"winners": 0, "new": 0, "skipped": 0, "failed": 0}
+    totals = {"races": 0, "new": 0, "skipped": 0, "no_result": 0, "failed": 0}
     for d in dates:
-        s = process_date(d, db, client)
+        s = process_date(d, db, llm, api)
         for k in totals:
             totals[k] += s[k]
-        print(f"  {d}: winners={s['winners']} new={s['new']} "
-              f"skipped={s['skipped']} failed={s['failed']}")
+        print(f"  {d}: races={s['races']} new={s['new']} skipped={s['skipped']} "
+              f"no_result={s['no_result']} failed={s['failed']}")
 
     n = rebuild_patterns(db)
-    print(f"Done. Reads new={totals['new']} skipped={totals['skipped']} "
+    print(f"Done. new={totals['new']} skipped={totals['skipped']} "
           f"failed={totals['failed']} | patterns={n}")
     log(f"winner_learning: {totals}")
     return 0
