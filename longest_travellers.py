@@ -56,8 +56,10 @@ def _clean(html: str) -> str:
 
 
 def normalise_horse(name: str) -> str:
-    """Lowercase, strip everything but alphanumerics — for name matching."""
-    return re.sub(r"[^a-z0-9]", "", (name or "").lower())
+    """Lowercase, drop country suffix like '(FR)'/'(IRE)', keep alphanumerics —
+    so 'Obsessedwithyou (FR)' (results feed) matches 'Obsessedwithyou' (list)."""
+    s = re.sub(r"\(.*?\)", "", (name or "").lower())
+    return re.sub(r"[^a-z0-9]", "", s)
 
 
 def parse_html(html: str) -> list[dict]:
