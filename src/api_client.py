@@ -348,7 +348,7 @@ class RacingAPIClient:
             Results response dict (may contain 'results' list), or {} if
             no data is available for that date.
         """
-        params = [("start_date", date_str), ("end_date", date_str), ("limit", 200)]
+        params = [("start_date", date_str), ("end_date", date_str), ("limit", 100)]
         result = self._get("/results", params=params, allow_404=True)
         return result if result is not None else {}
 
