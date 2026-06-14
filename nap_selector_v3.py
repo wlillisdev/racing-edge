@@ -383,6 +383,34 @@ def compute_form_score(runner: dict, all_runners: list[dict]) -> tuple[float, li
     return round(max(0.0, min(40.0, score)), 2), reasons
 
 
+def _horse_position(result: dict, horse_id: str) -> str:
+    """Finishing position of `horse_id` in a past race.
+
+    The Racing API nests each runner's result under result['runners']; the
+    horse's own finishing position is there, not at the top level. Fall back to
+    a flat 'position'/'finish_position' field if the data is already flattened.
+    """
+    flat = str(result.get("position") or result.get("finish_position") or "").strip()
+    if flat:
+        return flat
+    for rr in (result.get("runners") or []):
+        if str(rr.get("horse_id") or "") == horse_id:
+            return str(rr.get("position") or "").strip()
+    return ""
+
+
+def _parse_class(raw) -> Optional[int]:
+    """Parse 'Class 4' / 'class4' / 'C4' / '4' → 4 (None if not parseable)."""
+    s = str(raw or "").strip().lower()
+    if s.startswith("class"):
+        s = s[5:].strip()
+    s = s.lstrip("c").strip()
+    try:
+        return int(s)
+    except (ValueError, TypeError):
+        return None
+
+
 def compute_suitability_score(
     runner: dict, race: dict, full_form: Optional[dict],
 ) -> tuple[float, list[str]]:
@@ -413,10 +441,13 @@ def compute_suitability_score(
         going_win = going_placed = going_similar = False
         course_win = course_placed = False
         for result in horse_history:
-            pos = str(result.get("position") or result.get("finish_position") or "")
+            pos = _horse_position(result, horse_id)
             win = pos == "1"
             placed = pos in ("1", "2", "3")
-            r_dist_raw = str(result.get("distance_f") or result.get("distance") or "")
+            # API stores past-race distance as 'dist_f' ("12f") / 'dist' ("1m4f");
+            # only today's racecard uses 'distance_f'.
+            r_dist_raw = str(result.get("dist_f") or result.get("distance_f")
+                             or result.get("dist") or result.get("distance") or "")
             try: r_dist_f = float(r_dist_raw)
             except (ValueError, TypeError): r_dist_f = distance_to_furlongs(r_dist_raw)
             r_going = going_normalise(result.get("going") or "")
@@ -445,17 +476,13 @@ def compute_suitability_score(
         # Extract class from full_form results (if available)
         prev_classes: list[int] = []
         for result in horse_history[:5]:
-            _rc = str(result.get("class") or result.get("race_class") or "").strip().lstrip("cC")
-            try:
-                _rc_int = int(_rc)
+            _rc_int = _parse_class(result.get("class") or result.get("race_class"))
+            if _rc_int is not None:
                 prev_classes.append(_rc_int)
-            except (ValueError, TypeError):
-                pass
-        today_class_raw = str(race.get("class") or race.get("race_class") or "").strip().lower()
-        if today_class_raw.startswith("class"):
-            today_class_raw = today_class_raw[5:].strip()
+        today_class_int = _parse_class(race.get("class") or race.get("race_class"))
         try:
-            today_class_int = int(today_class_raw)
+            if today_class_int is None:
+                raise ValueError
             if prev_classes and len(prev_classes) >= 2:
                 avg_prev_class = sum(prev_classes) / len(prev_classes)
                 if today_class_int >= avg_prev_class + 2:
