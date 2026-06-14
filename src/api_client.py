@@ -337,15 +337,19 @@ class RacingAPIClient:
     ) -> dict:
         """Fetch all race results for a specific date.
 
-        Endpoint: GET /results/pro
+        Endpoint: GET /results  (filtered by start_date/end_date == date_str)
+
+        Note: the archive endpoint is /results with a date RANGE, not
+        /results/pro (which the API parses as /results/{race_id} and rejects
+        with 422 "Invalid race id"). region is optional — omitted here so the
+        call can't 422 on a param-name mismatch; callers filter by horse anyway.
 
         Returns:
             Results response dict (may contain 'results' list), or {} if
             no data is available for that date.
         """
-        regions = [r.strip() for r in region_codes.split(",")]
-        params = [("date", date_str)] + [("region_codes", r) for r in regions]
-        result = self._get("/results/pro", params=params, allow_404=True)
+        params = [("start_date", date_str), ("end_date", date_str), ("limit", 200)]
+        result = self._get("/results", params=params, allow_404=True)
         return result if result is not None else {}
 
 
