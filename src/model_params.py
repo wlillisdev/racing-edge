@@ -33,35 +33,51 @@ from src.helpers import data_path, log, safe_load_json, safe_write_json
 PARAMS_FILENAME = "model_params.json"
 
 # ---------------------------------------------------------------------------
-# Defaults — MUST equal the original hard-coded constants in nap_selector_v3.
+# Defaults — calibrated to the model's ACTUAL score scale.
+#
+# The original defaults (nap_min_score 50, grade A 70, confidence high 70) were
+# set for a score scale the current points-additive model does not produce. The
+# scoring_healthcheck audit measured the real per-race top-scorer (the picks)
+# distribution on a full 29-race card with the fixed scorer:
+#     min 11 · p50 29 · p75 31.5 · p90 35 · max 44.7
+# i.e. the best horse on a card scores ~30 typically, ~45 at the ceiling, never
+# 50+. Against the old thresholds NO horse cleared the NAP floor (50) on merit,
+# nothing graded above C, and every pick was forced to LOW confidence. These
+# defaults move the goalposts onto the real distribution so the selector can
+# choose its best horse on merit and grade/confidence become informative again.
+# Provisional (anchored to one card); to be confirmed/refined by a >=12-month
+# fixed-scorer backtest. Fully reversible via the params version history.
 # ---------------------------------------------------------------------------
 DEFAULTS: dict[str, Any] = {
-    "nap_min_score": 50.0,
+    "nap_min_score": 28.0,      # ~p50 of picks — merit NAP floor
     "nap_min_odds": 2.0,
     "nap_max_odds": 7.0,
     "nap_clear_margin": 3.0,   # min score gap over 2nd to rank-promote below-floor horse
     "form_read_overlay_cap": 3.0,
     "pace_overlay_cap": 2.0,
-    "grade_thresholds": {"A": 70.0, "B+": 60.0, "B": 50.0, "C": 40.0},
-    "confidence_bands": {"high": 70.0, "medium_high": 60.0, "medium": 55.0, "low_medium": 50.0},
+    "grade_thresholds": {"A": 38.0, "B+": 33.0, "B": 28.0, "C": 22.0},
+    "confidence_bands": {"high": 38.0, "medium_high": 33.0, "medium": 29.0, "low_medium": 25.0},
 }
 
 # Hard clamps the tuner may never exceed. (scalars only; nested handled below)
+# Rescaled with the defaults above onto the real ~11-45 pick distribution. NOTE:
+# get_params() clamps EVERY value into these bounds on read, so these must track
+# the defaults or the read-time clamp would snap a recalibrated default back.
 PARAM_BOUNDS: dict[str, tuple[float, float]] = {
-    "nap_min_score": (40.0, 75.0),
+    "nap_min_score": (18.0, 45.0),
     "nap_min_odds": (1.5, 4.0),
     "nap_max_odds": (4.0, 15.0),
     "nap_clear_margin": (1.0, 10.0),
     "form_read_overlay_cap": (0.0, 6.0),
     "pace_overlay_cap": (0.0, 5.0),
-    "grade_thresholds.A": (60.0, 85.0),
-    "grade_thresholds.B+": (50.0, 70.0),
-    "grade_thresholds.B": (40.0, 60.0),
-    "grade_thresholds.C": (30.0, 50.0),
-    "confidence_bands.high": (60.0, 85.0),
-    "confidence_bands.medium_high": (52.0, 70.0),
-    "confidence_bands.medium": (48.0, 65.0),
-    "confidence_bands.low_medium": (40.0, 58.0),
+    "grade_thresholds.A": (30.0, 50.0),
+    "grade_thresholds.B+": (26.0, 44.0),
+    "grade_thresholds.B": (22.0, 38.0),
+    "grade_thresholds.C": (16.0, 32.0),
+    "confidence_bands.high": (30.0, 50.0),
+    "confidence_bands.medium_high": (26.0, 44.0),
+    "confidence_bands.medium": (22.0, 38.0),
+    "confidence_bands.low_medium": (18.0, 32.0),
 }
 
 # Largest single-night change per tunable (bounded drift, never a lurch).

@@ -59,13 +59,15 @@ CLUSTER_SPREAD: float = 8.0
 CLUSTER_MIN_SCORE: float = 50.0
 # Rank promotion (clear-leader-by-margin) needs an absolute quality floor too:
 # without it a debutant scoring 8.0 in a 1-runner/garbage race has "margin" over
-# nothing and would be promoted. 40.0 = the Grade C line — never promote below it.
-RANK_PROMOTION_MIN_SCORE: float = 40.0
+# nothing and would be promoted. Set to the Grade C line (22.0) on the real
+# ~11-45 pick scale — never promote below it. (Was 40.0, unreachable on the
+# real scale, which left most cards with no NAP at all.)
+RANK_PROMOTION_MIN_SCORE: float = 22.0
 
 NAP_EXCLUDED_RACE_TYPES: frozenset[str] = frozenset({"chase"})
 NAP_MIN_ODDS: float = 2.0   # Evens minimum — need >50% WR to break even
 NAP_MAX_ODDS: float = 7.0   # 6/1 cap — 8/1+ zone is -39.4% ROI over 524 selections (6-month backtest)
-JUMP_ALTERNATIVE_MIN_SCORE: float = 55.0
+JUMP_ALTERNATIVE_MIN_SCORE: float = 32.0  # ~p80 of picks on the real ~11-45 scale (was 55.0, never reached)
 JUMP_MAX_RUNNERS: int = 12
 JUMP_EXCLUDED_GOING: frozenset[str] = frozenset({"Firm", "Good to Firm"})
 FLAT_MAX_DIST_F: float = 16.0   # exclude flat staying trips (16f+)
