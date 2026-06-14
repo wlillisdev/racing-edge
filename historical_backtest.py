@@ -40,7 +40,7 @@ from nap_selector_v3 import (
     score_runner, NAP_MIN_SCORE, NAP_MAX_SCORE, GRADE_A_THRESHOLD,
     NAP_EXCLUDED_RACE_TYPES, NAP_MIN_ODDS, NAP_MAX_ODDS, FLAT_MAX_DIST_F, FLAT_MIN_DIST_F,
     FLAT_EXCLUDED_GOING, CLUSTER_SPREAD, CLUSTER_MIN_SCORE, RANK_PROMOTION_MIN_SCORE,
-    detect_race_cluster,
+    detect_race_cluster, handicap_trajectory,
 )
 
 # ---------------------------------------------------------------------------
@@ -578,6 +578,11 @@ def main() -> int:
             is_win   = pos_int == 1
             is_place = pos_int <= 3
 
+            # Weight + handicap-trajectory read (the well-in & ahead-of-mark test).
+            top_runner = next((r for r in runners
+                               if str(r.get("horse_id") or "") == horse_id), {})
+            traj = handicap_trajectory(top_runner, race, race_full_form)
+
             record = {
                 "date":           date_str,
                 "race_type":      race_type,
@@ -608,6 +613,13 @@ def main() -> int:
                 "dist_group":     _dist_group(dist_f),
                 "margin":         round(margin, 2),
                 "n_scored":       len(scored),
+                # Weight + handicap-trajectory (well-in & ahead-of-mark read)
+                "weight_lbs":     traj["weight_lbs"],
+                "weight_vs_last": traj["weight_vs_last"],
+                "well_in":        traj["well_in"],
+                "best_class_won": traj["best_class_won"],
+                "won_at_level":   traj["won_at_level"],
+                "traj":           traj["traj"],
             }
             all_records.append(record)
 

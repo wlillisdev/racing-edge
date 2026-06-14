@@ -420,6 +420,74 @@ def _parse_class(raw) -> Optional[int]:
         return None
 
 
+def _runner_weight_lbs(d: dict) -> int:
+    """Carried weight in lbs from a racecard runner OR a past-race runner dict."""
+    for k in ("lbs", "weight_lbs"):
+        try:
+            v = int(str(d.get(k) or "").strip() or 0)
+            if v > 0:
+                return v
+        except (ValueError, TypeError):
+            pass
+    return 0
+
+
+def handicap_trajectory(runner: dict, race: dict, full_form: Optional[dict]) -> dict:
+    """The 'well-in AND ahead-of-his-mark' read — weight first.
+
+    The numeric model rewards 'fits the race' (a placer trait). The winner test
+    is two-part, and BOTH must hold:
+      - well_in:       carries less weight than last time (1 length ~ 1 lb). A
+                       horse dropping lead is favourably treated by the assessor.
+      - ahead_of_mark: has actually WON at today's class or higher — not only
+                       below it. A horse that only wins in lower grades and
+                       *places* when raised has been caught by the handicapper
+                       (the Wrydcroft pattern: Class-6 winner, beaten in Class 5).
+
+    well_in WITHOUT ahead_of_mark = 'topped_out' → a placer, not a NAP.
+    Both = 'live_winner'. Returned as data (no scoring) so it can be validated
+    on the backtest before it is allowed to drive selection.
+    """
+    out = {
+        "weight_lbs": None, "weight_vs_last": None, "well_in": False,
+        "best_class_won": None, "won_at_level": False, "traj": "unknown",
+    }
+    today_w = _runner_weight_lbs(runner)
+    out["weight_lbs"] = today_w or None
+    today_cls = _parse_class(race.get("class"))
+    horse_id = str(runner.get("horse_id") or "")
+    past = ((full_form or {}).get("horses") or {}).get(horse_id) or []
+    if not past:
+        return out
+
+    last_w = _runner_weight_lbs(
+        next((x for x in (past[0].get("runners") or [])
+              if str(x.get("horse_id") or "") == horse_id), {})
+    )
+    if today_w and last_w:
+        out["weight_vs_last"] = today_w - last_w          # negative = relief
+        out["well_in"] = (today_w - last_w) <= -2
+
+    won_classes = [
+        _parse_class(pr.get("class")) for pr in past
+        if _horse_position(pr, horse_id) == "1"
+    ]
+    won_classes = [c for c in won_classes if c is not None]
+    if won_classes:
+        out["best_class_won"] = min(won_classes)          # lower number = higher class
+        if today_cls is not None:
+            out["won_at_level"] = out["best_class_won"] <= today_cls
+
+    if today_cls is not None and out["best_class_won"] is not None:
+        if not out["won_at_level"]:
+            out["traj"] = "topped_out"                    # only won below today's class
+        elif out["well_in"]:
+            out["traj"] = "live_winner"                   # well-in AND proven at the level
+        else:
+            out["traj"] = "neutral"
+    return out
+
+
 def compute_suitability_score(
     runner: dict, race: dict, full_form: Optional[dict],
 ) -> tuple[float, list[str]]:
