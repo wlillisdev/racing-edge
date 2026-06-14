@@ -64,7 +64,8 @@ SKIP_BELOW_SP = float(os.environ.get("WINNER_SKIP_BELOW_SP", "3.0"))
 _RESULT_CACHE = "winner_cache"      # data/winner_cache/<race_id>.json
 
 FACTOR_VOCAB = [
-    "class drop", "class rise", "first-time headgear", "headgear retained",
+    "class edge", "ratings edge", "class drop", "class rise",
+    "first-time headgear", "headgear retained",
     "proven going", "proven distance", "step up in trip", "step down in trip",
     "strong recent form", "back from a break", "well drawn", "trainer in form",
     "jockey booking", "market support", "weight advantage", "improving profile",
