@@ -148,6 +148,18 @@ def get_params(refresh: bool = False) -> dict[str, Any]:
     return merged
 
 
+def set_overrides(overrides: dict) -> None:
+    """Merge *overrides* into the in-memory params for THIS process only.
+
+    For experiments (e.g. the backtest's --weights): it does NOT write
+    model_params.json, so it can never leak into the live pipeline. Call before
+    any scoring so get_params() returns the merged view for the rest of the run.
+    """
+    global _cache
+    _cache = _deep_merge(get_params(), overrides or {})
+    log(f"model_params: applied in-memory overrides (not persisted): {overrides}")
+
+
 def _get_dotted(d: dict, dotted: str) -> Any:
     cur: Any = d
     for part in dotted.split("."):

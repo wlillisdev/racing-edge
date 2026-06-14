@@ -446,8 +446,23 @@ def main() -> int:
                         help="Per-horse results to fetch in --deep mode (default 50). "
                              "Lower (e.g. 20) shrinks the cache ~3x — enough for a "
                              "12-month window's point-in-time history.")
+    parser.add_argument("--weights", type=str, default=None,
+                        help='Experiment with component weights, e.g. '
+                             '\'{"trainer":1.6,"form":0.7}\'. In-memory only — '
+                             'never written to the live model_params.json.')
     args = parser.parse_args()
     HORSE_FORM_LIMIT = args.form_limit
+
+    # Experimental component-weight override (backtest-only, never persisted).
+    if args.weights:
+        import json as _json
+        from src.model_params import set_overrides
+        try:
+            _w = _json.loads(args.weights)
+        except ValueError as exc:
+            print(f"Bad --weights JSON: {exc}"); return 1
+        set_overrides({"component_weights": _w})
+        print(f"Component-weight experiment (in-memory): {_w}")
 
     # Date range
     end_date   = date.today() - timedelta(days=1)
