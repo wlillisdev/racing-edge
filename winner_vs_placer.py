@@ -30,11 +30,13 @@ import glob
 import statistics
 from typing import Optional
 
-# Live gates (mirror nap_selector_v3.py) — only score components vary in study.
+# Live gates (mirror nap_selector_v3.py Config C) — only score components vary.
 NAP_MAX_SCORE = 82.0
 NAP_MIN_ODDS = 2.0
 NAP_MAX_ODDS = 7.0
-DEFAULT_MIN_SCORE = 60.0
+DEFAULT_MIN_SCORE = 44.0                 # Config C profit floor
+NAP_EXCLUDED_CLASSES = {3, 6, 7}         # bled money in the deep backtest
+NAP_EXCLUDE_UNKNOWN_CLASS = True
 
 # Score components present in the backtest CSV.
 COMPONENTS = ["form_score", "suit_score", "ctx_score", "draw_score",
@@ -69,6 +71,17 @@ def _truthy(v) -> bool:
     return str(v).strip().lower() in ("true", "1", "yes")
 
 
+def _parse_class(raw) -> Optional[int]:
+    s = str(raw or "").strip().lower()
+    if s.startswith("class"):
+        s = s[5:].strip()
+    s = s.lstrip("c").strip()
+    try:
+        return int(s)
+    except (ValueError, TypeError):
+        return None
+
+
 def load(paths: list[str], min_score: float) -> list[dict]:
     seen, rows = set(), []
     for p in paths:
@@ -87,7 +100,10 @@ def load(paths: list[str], min_score: float) -> list[dict]:
                     continue
                 if sp <= 0 or sp < NAP_MIN_ODDS or sp > NAP_MAX_ODDS:
                     continue
-                if "chase" in rt:
+                if "chase" in rt or "hurdle" in rt:   # Config C excludes jumps
+                    continue
+                _cls = _parse_class(r.get("race_class"))
+                if _cls in NAP_EXCLUDED_CLASSES or (_cls is None and NAP_EXCLUDE_UNKNOWN_CLASS):
                     continue
                 is_flat = not any(x in rt for x in ("chase", "hurdle", "bumper"))
                 if is_flat and _f(r.get("distance_f")) >= 16.0:
