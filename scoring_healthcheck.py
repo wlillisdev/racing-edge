@@ -193,9 +193,8 @@ def main() -> int:
         print(f"  reaching MEDIUM (>={med:.0f}): {_pct(sum(t>=med for t in totals),len(totals)):.0f}%  |  "
               f"MEDIUM-HIGH (>={mh:.0f}): {_pct(sum(t>=mh for t in totals),len(totals)):.0f}%  |  "
               f"HIGH (>={hi:.0f}): {_pct(sum(t>=hi for t in totals),len(totals)):.0f}%")
-        if _pct(sum(t >= mh for t in totals), len(totals)) < 2:
-            print("  NOTE: almost no runner reaches MEDIUM-HIGH — score scale may be"
-                  " mis-calibrated to the thresholds, or a component is still degraded.")
+        print("  (most runners are not picks; the calibration block below judges the"
+              " bands against the per-race top scorers, which is the right population.)")
         print()
 
     # --- Confidence calibration: per-race top scorer vs the thresholds ----------
