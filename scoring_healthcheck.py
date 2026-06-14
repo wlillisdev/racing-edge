@@ -79,10 +79,12 @@ def main() -> int:
 
     comps = {k: [] for k in CRITICAL + INFO_ONLY}
     totals: list[float] = []
+    top_scores: list[float] = []   # per-race best total — the population confidence applies to
     runners_seen = scored = failed = 0
 
     for race in races:
         all_runners = race.get("runners") or []
+        race_totals: list[float] = []
         for runner in all_runners:
             runners_seen += 1
             try:
@@ -96,7 +98,11 @@ def main() -> int:
             scored += 1
             for k in comps:
                 comps[k].append(float(s.get(k) or 0.0))
-            totals.append(float(s.get("score") or 0.0))
+            tot = float(s.get("score") or 0.0)
+            totals.append(tot)
+            race_totals.append(tot)
+        if race_totals:
+            top_scores.append(max(race_totals))
 
     print("=" * 74)
     print(f"SCORING HEALTH-CHECK — {date}")
@@ -190,6 +196,40 @@ def main() -> int:
         if _pct(sum(t >= mh for t in totals), len(totals)) < 2:
             print("  NOTE: almost no runner reaches MEDIUM-HIGH — score scale may be"
                   " mis-calibrated to the thresholds, or a component is still degraded.")
+        print()
+
+    # --- Confidence calibration: per-race top scorer vs the thresholds ----------
+    # Confidence is assigned to the SELECTED runner (per-race top scorer / best of
+    # card), not to every runner — so calibrate the bands against THAT population.
+    if top_scores:
+        cb = get_params().get("confidence_bands", {})
+        lm = cb.get("low_medium", 50); med = cb.get("medium", 55)
+        mh = cb.get("medium_high", 60); hi = cb.get("high", 70)
+        ts = sorted(top_scores)
+
+        def _q(p):  # p in 0..100
+            if not ts:
+                return 0.0
+            i = min(len(ts) - 1, max(0, int(round((p / 100.0) * (len(ts) - 1)))))
+            return ts[i]
+
+        print("CONFIDENCE CALIBRATION — per-race top scorer (the picks)")
+        print("-" * 74)
+        print(f"  n_races={len(ts)}  min={ts[0]:.1f}  p50={_q(50):.1f}  "
+              f"p75={_q(75):.1f}  p90={_q(90):.1f}  max={ts[-1]:.1f}")
+        reach_lm = _pct(sum(t >= lm for t in ts), len(ts))
+        print(f"  active bands: low_medium>={lm:.0f} medium>={med:.0f} "
+              f"medium_high>={mh:.0f} high>={hi:.0f}")
+        print(f"  share of picks clearing LOW_MEDIUM (>={lm:.0f}): {reach_lm:.0f}%")
+        if reach_lm < 5:
+            # The picks live far below the bands → confidence is dead by construction.
+            sug = {"low_medium": round(_q(35)), "medium": round(_q(60)),
+                   "medium_high": round(_q(80)), "high": round(_q(93))}
+            print("  >>> MIS-CALIBRATED: almost no pick can reach even LOW_MEDIUM — "
+                  "every NAP is forced to LOW.")
+            print(f"  >>> data-driven suggestion (percentiles of THIS sample): {sug}")
+            print("      Confirm over a full >=12-month backtest with the FIXED scorer "
+                  "before committing — don't overfit one card.")
         print()
 
     # --- Verdict ----------------------------------------------------------------
