@@ -36,27 +36,29 @@ PARAMS_FILENAME = "model_params.json"
 # Defaults — calibrated to the model's ACTUAL score scale.
 #
 # The original defaults (nap_min_score 50, grade A 70, confidence high 70) were
-# set for a score scale the current points-additive model does not produce. The
-# scoring_healthcheck audit measured the real per-race top-scorer (the picks)
-# distribution on a full 29-race card with the fixed scorer:
-#     min 11 · p50 29 · p75 31.5 · p90 35 · max 44.7
-# i.e. the best horse on a card scores ~30 typically, ~45 at the ceiling, never
-# 50+. Against the old thresholds NO horse cleared the NAP floor (50) on merit,
-# nothing graded above C, and every pick was forced to LOW confidence. These
-# defaults move the goalposts onto the real distribution so the selector can
-# choose its best horse on merit and grade/confidence become informative again.
-# Provisional (anchored to one card); to be confirmed/refined by a >=12-month
-# fixed-scorer backtest. Fully reversible via the params version history.
+# set for a score scale the current points-additive model does not produce, AND
+# the live form builder was starved to 15 results/horse, compressing scores.
+# With live form depth raised to 50 (matching the deep backtest), scores land on
+# the validated 0-100 scale. A deep backtest over 51 summer-2025 days (1845
+# graded picks with real results) showed the daily-NAP edge by score floor:
+#     floor 38 -> +19.5% ROI (45 bets) ;  floor 44 -> +48.5% ROI (33 bets, 54.5% win)
+# The marginal 38-43 zone is net-losing; the edge concentrates at score>=44.
+# These defaults set that profit floor and map grade/confidence onto the tiers
+# where ROI actually rises (44 entry, 47 ~+24%, 50+ ~+38%). Category exclusions
+# (Class 3/6-7/Unknown, jumps) are enforced in nap_selector_v3's gate.
+# Caveat: validated on a summer-flat window (n=33 at floor 44) — the winter/NH
+# backtest must still confirm before this is considered locked. All non-seasonal
+# filters; fully reversible via the params version history.
 # ---------------------------------------------------------------------------
 DEFAULTS: dict[str, Any] = {
-    "nap_min_score": 28.0,      # ~p50 of picks — merit NAP floor
+    "nap_min_score": 44.0,      # backtest-validated profit floor (see below)
     "nap_min_odds": 2.0,
     "nap_max_odds": 7.0,
     "nap_clear_margin": 3.0,   # min score gap over 2nd to rank-promote below-floor horse
     "form_read_overlay_cap": 3.0,
     "pace_overlay_cap": 2.0,
-    "grade_thresholds": {"A": 38.0, "B+": 33.0, "B": 28.0, "C": 22.0},
-    "confidence_bands": {"high": 38.0, "medium_high": 33.0, "medium": 29.0, "low_medium": 25.0},
+    "grade_thresholds": {"A": 50.0, "B+": 47.0, "B": 44.0, "C": 40.0},
+    "confidence_bands": {"high": 50.0, "medium_high": 47.0, "medium": 44.0, "low_medium": 40.0},
 }
 
 # Hard clamps the tuner may never exceed. (scalars only; nested handled below)
@@ -64,20 +66,20 @@ DEFAULTS: dict[str, Any] = {
 # get_params() clamps EVERY value into these bounds on read, so these must track
 # the defaults or the read-time clamp would snap a recalibrated default back.
 PARAM_BOUNDS: dict[str, tuple[float, float]] = {
-    "nap_min_score": (18.0, 45.0),
+    "nap_min_score": (34.0, 60.0),
     "nap_min_odds": (1.5, 4.0),
     "nap_max_odds": (4.0, 15.0),
     "nap_clear_margin": (1.0, 10.0),
     "form_read_overlay_cap": (0.0, 6.0),
     "pace_overlay_cap": (0.0, 5.0),
-    "grade_thresholds.A": (30.0, 50.0),
-    "grade_thresholds.B+": (26.0, 44.0),
-    "grade_thresholds.B": (22.0, 38.0),
-    "grade_thresholds.C": (16.0, 32.0),
-    "confidence_bands.high": (30.0, 50.0),
-    "confidence_bands.medium_high": (26.0, 44.0),
-    "confidence_bands.medium": (22.0, 38.0),
-    "confidence_bands.low_medium": (18.0, 32.0),
+    "grade_thresholds.A": (44.0, 65.0),
+    "grade_thresholds.B+": (40.0, 58.0),
+    "grade_thresholds.B": (38.0, 54.0),
+    "grade_thresholds.C": (34.0, 50.0),
+    "confidence_bands.high": (44.0, 65.0),
+    "confidence_bands.medium_high": (40.0, 58.0),
+    "confidence_bands.medium": (38.0, 54.0),
+    "confidence_bands.low_medium": (34.0, 50.0),
 }
 
 # Largest single-night change per tunable (bounded drift, never a lurch).
