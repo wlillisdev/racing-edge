@@ -420,6 +420,7 @@ def _render_table(breakdown: dict[str, _Stats]) -> list[str]:
 # ---------------------------------------------------------------------------
 
 def main() -> int:
+    global HORSE_FORM_LIMIT
     parser = argparse.ArgumentParser()
     parser.add_argument("--months",    type=int,   default=6)
     parser.add_argument("--start",     type=str,   default=None)
@@ -440,7 +441,13 @@ def main() -> int:
     parser.add_argument("--deep", action="store_true", default=False,
                         help="Full-fidelity: fetch per-horse form so scores match "
                              "the live model (one cached API call per horse).")
+    parser.add_argument("--form-limit", type=int, default=HORSE_FORM_LIMIT,
+                        dest="form_limit",
+                        help="Per-horse results to fetch in --deep mode (default 50). "
+                             "Lower (e.g. 20) shrinks the cache ~3x — enough for a "
+                             "12-month window's point-in-time history.")
     args = parser.parse_args()
+    HORSE_FORM_LIMIT = args.form_limit
 
     # Date range
     end_date   = date.today() - timedelta(days=1)
