@@ -36,6 +36,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Optional
@@ -55,6 +56,11 @@ except Exception:  # pragma: no cover - optional layers
 # --- Config (no magic numbers) ----------------------------------------------
 PROMPT_VERSION = "v1"
 READ_MODEL = "claude-opus-4-8"     # best judgement for open-eyes reads; cost-guarded
+# Skip the *obvious* winners — a short-priced favourite winning teaches nothing
+# about finding non-obvious winners (the actual goal). Reading only value winners
+# sharpens the corpus AND keeps Opus affordable. Set WINNER_SKIP_BELOW_SP=0 to
+# read every winner.
+SKIP_BELOW_SP = float(os.environ.get("WINNER_SKIP_BELOW_SP", "3.0"))
 _RESULT_CACHE = "winner_cache"      # data/winner_cache/<race_id>.json
 
 FACTOR_VOCAB = [
@@ -269,7 +275,7 @@ def process_date(d: str, db, llm, api, meter=None) -> dict:
     races = load_racecards(d)
     done = _already_read(db, d)
     stats = {"date": d, "races": len(races), "new": 0, "skipped": 0,
-             "no_result": 0, "failed": 0, "halted": 0}
+             "skipped_fav": 0, "no_result": 0, "failed": 0, "halted": 0}
     on_usage = (lambda u: meter.add(READ_MODEL, u)) if meter is not None else None
 
     for race in races:
@@ -281,6 +287,10 @@ def process_date(d: str, db, llm, api, meter=None) -> dict:
         win = find_winner(race_result(api, race_id))
         if not win or not win["horse_id"]:
             stats["no_result"] += 1
+            continue
+        # Skip obvious favourites — no learning value, and keeps Opus affordable.
+        if SKIP_BELOW_SP > 0 and win.get("sp") and win["sp"] < SKIP_BELOW_SP:
+            stats["skipped_fav"] += 1
             continue
         if (race_id, win["horse_id"]) in done:
             stats["skipped"] += 1
@@ -353,13 +363,15 @@ def main() -> int:
         return 0
 
     meter = guard.CostMeter()
-    totals = {"races": 0, "new": 0, "skipped": 0, "no_result": 0, "failed": 0, "halted": 0}
+    totals = {"races": 0, "new": 0, "skipped": 0, "skipped_fav": 0,
+              "no_result": 0, "failed": 0, "halted": 0}
     for d in dates:
         s = process_date(d, db, llm, api, meter)
         for k in totals:
             totals[k] += s[k]
         print(f"  {d}: races={s['races']} new={s['new']} skipped={s['skipped']} "
-              f"no_result={s['no_result']} failed={s['failed']} halted={s['halted']}")
+              f"skipped_fav={s['skipped_fav']} no_result={s['no_result']} "
+              f"failed={s['failed']} halted={s['halted']}")
 
     # Record spend, alert if over budget, and show this run's cost.
     month_total = guard.commit(meter, args.date, "winner_learning")
