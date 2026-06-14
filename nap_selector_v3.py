@@ -59,13 +59,22 @@ CLUSTER_SPREAD: float = 8.0
 CLUSTER_MIN_SCORE: float = 50.0
 # Rank promotion (clear-leader-by-margin) needs an absolute quality floor too:
 # without it a debutant scoring 8.0 in a 1-runner/garbage race has "margin" over
-# nothing and would be promoted. 40.0 = the Grade C line — never promote below it.
+# nothing and would be promoted. Set to 40 — just below the nap_min_score 44
+# profit floor — so only a near-floor clear leader is promoted (and labelled
+# low confidence); the deep backtest showed score<38 is firmly loss-making.
 RANK_PROMOTION_MIN_SCORE: float = 40.0
 
-NAP_EXCLUDED_RACE_TYPES: frozenset[str] = frozenset({"chase"})
+# Jumps (chase + hurdle) lost money across the deep summer-2025 backtest
+# (chase -8.6%, hurdle -11.7% ROI). Excluded for now — the system is flat-
+# focused. REVISIT when a winter/NH backtest is available before trusting NH.
+NAP_EXCLUDED_RACE_TYPES: frozenset[str] = frozenset({"chase", "hurdle"})
+# Race classes that bled money in the deep backtest: Class 3 (-32%),
+# Class 6-7 (-14%), and unclassified/Unknown (-9%). Excluded from the NAP pool.
+NAP_EXCLUDED_CLASSES: frozenset[int] = frozenset({3, 6, 7})
+NAP_EXCLUDE_UNKNOWN_CLASS: bool = True
 NAP_MIN_ODDS: float = 2.0   # Evens minimum — need >50% WR to break even
 NAP_MAX_ODDS: float = 7.0   # 6/1 cap — 8/1+ zone is -39.4% ROI over 524 selections (6-month backtest)
-JUMP_ALTERNATIVE_MIN_SCORE: float = 55.0
+JUMP_ALTERNATIVE_MIN_SCORE: float = 50.0  # jumps excluded above; kept high so the alt path stays dormant
 JUMP_MAX_RUNNERS: int = 12
 JUMP_EXCLUDED_GOING: frozenset[str] = frozenset({"Firm", "Good to Firm"})
 FLAT_MAX_DIST_F: float = 16.0   # exclude flat staying trips (16f+)
@@ -859,7 +868,18 @@ def score_runner(
         except Exception as exc:  # pragma: no cover - never let the overlay break scoring
             wisdom_score, wisdom_reasons = 0.0, []
             log(f"nap_selector: wisdom overlay failed for {runner.get('horse')} — {exc}", "WARNING")
-    base = form_score + suit_score + ctx_score + draw_score + trnr_score + mkt_score
+    # Component weights (learning knob). Default all 1.0 → identical to before.
+    # The winner-vs-placer study showed trainer separates WINNERS while raw form
+    # separates placers; this knob lets us re-balance toward win-finding and
+    # prove it on the backtest before going live. Re-weighting shifts the score
+    # scale, so nap_min_score must be re-calibrated for any non-default weights.
+    _cw = get_params().get("component_weights") or {}
+    base = (_cw.get("form", 1.0)    * form_score
+            + _cw.get("suit", 1.0)    * suit_score
+            + _cw.get("context", 1.0) * ctx_score
+            + _cw.get("draw", 1.0)    * draw_score
+            + _cw.get("trainer", 1.0) * trnr_score
+            + _cw.get("market", 1.0)  * mkt_score)
     total = max(0.0, min(100.0, base + wisdom_score))
 
     # AI Form Reader overlay (bounded ±3): a professional-tipster read of the
@@ -930,6 +950,7 @@ def score_runner(
         "jockey": str(runner.get("jockey") or ""),
         "rpr": runner.get("rpr"), "ofr": runner.get("ofr"), "status": None,
         "race_type": str(race.get("type") or ""),
+        "race_class": str(race.get("class") or ""),
         # Prefer going_detailed (stripped of parentheticals) — `going` alone can
         # be blank, which would silently pass the Firm/Heavy exclusion gate.
         "going": str(race.get("going_detailed") or race.get("going") or "").split("(")[0].strip(),
@@ -1100,6 +1121,11 @@ def main() -> int:
         # Hard exclusions — these are structural, not score-based. A horse failing
         # any of these can NEVER be the pick (not even as a thin-card fallback).
         if any(x in (top.get("race_type") or "").lower() for x in NAP_EXCLUDED_RACE_TYPES):
+            no_bet_races.append(race_id); continue
+        # Class-quality filter — Class 3/6/7 and unclassified races bled money in
+        # the deep backtest; never bet them (structural, like the type exclusion).
+        _cls = _parse_class(top.get("race_class"))
+        if _cls in NAP_EXCLUDED_CLASSES or (_cls is None and NAP_EXCLUDE_UNKNOWN_CLASS):
             no_bet_races.append(race_id); continue
         # dangerous_drift = only fatal market signal
         if "dangerous_drift" in (top.get("warnings") or []):

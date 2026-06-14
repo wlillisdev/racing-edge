@@ -299,7 +299,7 @@ def going_normalise(going_str: str) -> str:
 # ---------------------------------------------------------------------------
 
 _DIST_RE = re.compile(
-    r"(?:(\d+)m)?\s*(?:(\d+)f)?\s*(?:(\d+)y)?",
+    r"(?:(\d+)m)?\s*(?:(\d+(?:\.\d+)?)f)?\s*(?:(\d+)y)?",
     re.IGNORECASE,
 )
 
@@ -331,7 +331,7 @@ def distance_to_furlongs(dist_str: str) -> float:
 
     miles_part, furlongs_part, yards_part = m.groups()
     miles     = int(miles_part)   if miles_part   else 0
-    furlongs  = int(furlongs_part) if furlongs_part else 0
+    furlongs  = float(furlongs_part) if furlongs_part else 0
     yards     = int(yards_part)   if yards_part   else 0
 
     total = miles * 8.0 + furlongs + yards / 220.0

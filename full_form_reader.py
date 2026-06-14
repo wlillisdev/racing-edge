@@ -35,7 +35,13 @@ from src.api_client import get_client
 from racecard_loader import get_race
 
 API_DELAY_SECONDS: float = 0.5
-RESULT_LIMIT:      int   = 15  # 12 months history for an active horse
+# 50 career results per horse — matches the deep-backtest form depth
+# (historical_backtest HORSE_FORM_LIMIT=50) so LIVE scores land on the SAME
+# 0-100 scale the backtest validated. At 15 the live scorer was starved of
+# history and scores compressed below the profitable score>=50 zone, forcing
+# promotion of mediocre 40-49 picks. It is the SAME one API call per horse,
+# just more rows, so this costs no extra calls.
+RESULT_LIMIT:      int   = 50
 
 _CLASS_NUMERIC_MAP: dict[str, int] = {
     "1": 1, "2": 2, "3": 3, "4": 4, "5": 5, "6": 6, "7": 7,

@@ -33,35 +33,61 @@ from src.helpers import data_path, log, safe_load_json, safe_write_json
 PARAMS_FILENAME = "model_params.json"
 
 # ---------------------------------------------------------------------------
-# Defaults — MUST equal the original hard-coded constants in nap_selector_v3.
+# Defaults — calibrated to the model's ACTUAL score scale.
+#
+# The original defaults (nap_min_score 50, grade A 70, confidence high 70) were
+# set for a score scale the current points-additive model does not produce, AND
+# the live form builder was starved to 15 results/horse, compressing scores.
+# With live form depth raised to 50 (matching the deep backtest), scores land on
+# the validated 0-100 scale. A deep backtest over 51 summer-2025 days (1845
+# graded picks with real results) showed the daily-NAP edge by score floor:
+#     floor 38 -> +19.5% ROI (45 bets) ;  floor 44 -> +48.5% ROI (33 bets, 54.5% win)
+# The marginal 38-43 zone is net-losing; the edge concentrates at score>=44.
+# These defaults set that profit floor and map grade/confidence onto the tiers
+# where ROI actually rises (44 entry, 47 ~+24%, 50+ ~+38%). Category exclusions
+# (Class 3/6-7/Unknown, jumps) are enforced in nap_selector_v3's gate.
+# Caveat: validated on a summer-flat window (n=33 at floor 44) — the winter/NH
+# backtest must still confirm before this is considered locked. All non-seasonal
+# filters; fully reversible via the params version history.
 # ---------------------------------------------------------------------------
 DEFAULTS: dict[str, Any] = {
-    "nap_min_score": 50.0,
+    "nap_min_score": 44.0,      # backtest-validated profit floor (see below)
     "nap_min_odds": 2.0,
     "nap_max_odds": 7.0,
     "nap_clear_margin": 3.0,   # min score gap over 2nd to rank-promote below-floor horse
     "form_read_overlay_cap": 3.0,
     "pace_overlay_cap": 2.0,
-    "grade_thresholds": {"A": 70.0, "B+": 60.0, "B": 50.0, "C": 40.0},
-    "confidence_bands": {"high": 70.0, "medium_high": 60.0, "medium": 55.0, "low_medium": 50.0},
+    "grade_thresholds": {"A": 50.0, "B+": 47.0, "B": 44.0, "C": 40.0},
+    "confidence_bands": {"high": 50.0, "medium_high": 47.0, "medium": 44.0, "low_medium": 40.0},
+    # Per-component score weights (learning knob). Default 1.0 = unchanged.
+    # winner_vs_placer showed trainer is win-predictive and raw form favours
+    # placers; tune these (then re-calibrate nap_min_score and validate
+    # out-of-sample) to dial selection toward winners rather than placers.
+    "component_weights": {
+        "form": 1.0, "suit": 1.0, "context": 1.0,
+        "draw": 1.0, "trainer": 1.0, "market": 1.0,
+    },
 }
 
 # Hard clamps the tuner may never exceed. (scalars only; nested handled below)
+# Rescaled with the defaults above onto the real ~11-45 pick distribution. NOTE:
+# get_params() clamps EVERY value into these bounds on read, so these must track
+# the defaults or the read-time clamp would snap a recalibrated default back.
 PARAM_BOUNDS: dict[str, tuple[float, float]] = {
-    "nap_min_score": (40.0, 75.0),
+    "nap_min_score": (34.0, 60.0),
     "nap_min_odds": (1.5, 4.0),
     "nap_max_odds": (4.0, 15.0),
     "nap_clear_margin": (1.0, 10.0),
     "form_read_overlay_cap": (0.0, 6.0),
     "pace_overlay_cap": (0.0, 5.0),
-    "grade_thresholds.A": (60.0, 85.0),
-    "grade_thresholds.B+": (50.0, 70.0),
-    "grade_thresholds.B": (40.0, 60.0),
-    "grade_thresholds.C": (30.0, 50.0),
-    "confidence_bands.high": (60.0, 85.0),
-    "confidence_bands.medium_high": (52.0, 70.0),
-    "confidence_bands.medium": (48.0, 65.0),
-    "confidence_bands.low_medium": (40.0, 58.0),
+    "grade_thresholds.A": (44.0, 65.0),
+    "grade_thresholds.B+": (40.0, 58.0),
+    "grade_thresholds.B": (38.0, 54.0),
+    "grade_thresholds.C": (34.0, 50.0),
+    "confidence_bands.high": (44.0, 65.0),
+    "confidence_bands.medium_high": (40.0, 58.0),
+    "confidence_bands.medium": (38.0, 54.0),
+    "confidence_bands.low_medium": (34.0, 50.0),
 }
 
 # Largest single-night change per tunable (bounded drift, never a lurch).
@@ -120,6 +146,18 @@ def get_params(refresh: bool = False) -> dict[str, Any]:
         ver = file_doc.get("version", "?")
         log(f"model_params: loaded override v{ver} from {PARAMS_FILENAME}")
     return merged
+
+
+def set_overrides(overrides: dict) -> None:
+    """Merge *overrides* into the in-memory params for THIS process only.
+
+    For experiments (e.g. the backtest's --weights): it does NOT write
+    model_params.json, so it can never leak into the live pipeline. Call before
+    any scoring so get_params() returns the merged view for the rest of the run.
+    """
+    global _cache
+    _cache = _deep_merge(get_params(), overrides or {})
+    log(f"model_params: applied in-memory overrides (not persisted): {overrides}")
 
 
 def _get_dotted(d: dict, dotted: str) -> Any:
