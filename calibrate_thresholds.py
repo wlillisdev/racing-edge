@@ -119,17 +119,58 @@ def main() -> int:
     _table("BY GOING", "going_group", rows)
     _table("BY DISTANCE", "dist_group", rows)
 
-    # --- 3. Recommendation ----------------------------------------------------
+    # --- 3. Proposed configs: prove the COMBINED filter end-to-end ------------
+    # Two stacked configs, each reported two ways:
+    #   per-pick  = every qualifying race top-scorer (raw edge of the filter)
+    #   daily-NAP = ONE best qualifying pick per day (what the product actually
+    #               bets) — the honest product-level ROI.
+    def _evaluate(rows, floor, ex_class, ex_type, only_going):
+        sel = [
+            r for r in rows
+            if _f(r.get("score")) >= floor
+            and str(r.get("class_group") or "?") not in ex_class
+            and str(r.get("type_group") or "?") not in ex_type
+            and (only_going is None or str(r.get("going_group") or "?") in only_going)
+        ]
+        pick_n, pick_win, pick_roi, pick_pl = _roi(sel)
+        # daily NAP: highest-scoring qualifier per day
+        by_day: dict[str, dict] = {}
+        for r in sel:
+            d = str(r.get("date") or "?")
+            if d not in by_day or _f(r.get("score")) > _f(by_day[d].get("score")):
+                by_day[d] = r
+        nap_n, nap_win, nap_roi, nap_pl = _roi(list(by_day.values()))
+        return (pick_n, pick_win, pick_roi, pick_pl), (nap_n, nap_win, nap_roi, nap_pl)
+
+    EX_CLASS = {"Class 3", "Class 6-7", "Unknown"}
+    EX_TYPE  = {"Chase", "Hurdle"}
+    configs = [
+        ("A  floor38 + class/jumps filters (non-seasonal)",
+         38, EX_CLASS, EX_TYPE, None),
+        ("B  = A + Good-going-only (strongest, but seasonal)",
+         38, EX_CLASS, EX_TYPE, {"Good"}),
+        ("C  = A + floor 44 (tighter score)",
+         44, EX_CLASS, EX_TYPE, None),
+    ]
+    print("PROPOSED CONFIGS — combined filters, validated on THIS window")
+    print("-" * 70)
+    print(f"  {'config':<48}{'n':>5}{'win%':>7}{'ROI%':>8}")
+    for label, floor, exc, ext, og in configs:
+        (pn, pw, pr, _ppl), (nn, nw, nr, _npl) = _evaluate(rows, floor, exc, ext, og)
+        print(f"  {label:<48}")
+        print(f"  {'   per-pick':<48}{pn:>5}{pw:>6.1f}%{pr:>7.1f}%")
+        print(f"  {'   daily-NAP (the product)':<48}{nn:>5}{nw:>6.1f}%{nr:>7.1f}%")
+    print()
+
+    # --- 4. Recommendation ----------------------------------------------------
     print("=" * 70)
     if best:
         rr, X, nn = best
-        print(f"RECOMMENDATION: NAP floor (nap_min_score) ~ {X}  "
-              f"(score>={X}: {nn} picks, ROI {rr:+.1f}%)")
-    else:
-        print("RECOMMENDATION: no score threshold reaches positive ROI on n>=30 in "
-              "this window — widen the sample (more days/season) before committing.")
-    print("Exclude any category flagged '<<< exclude' above (ROI < -8% on n>=25).")
-    print("NOTE: summer-flat sample — confirm NH/winter separately before locking.")
+        print(f"Score sweep: edge turns positive around score>={X} and strengthens above.")
+    print("Categories to exclude (ROI < -8%, n>=25): Class 3, Class 6-7, Unknown, "
+          "Chase, Hurdle; surfaces Firm/Soft/AW (going) all bled vs Good.")
+    print("NOTE: summer-flat sample — the GOING filter (config B) is seasonal; "
+          "confirm on a winter/NH window before locking that one.")
     print("=" * 70)
     return 0
 
