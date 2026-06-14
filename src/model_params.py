@@ -59,6 +59,14 @@ DEFAULTS: dict[str, Any] = {
     "pace_overlay_cap": 2.0,
     "grade_thresholds": {"A": 50.0, "B+": 47.0, "B": 44.0, "C": 40.0},
     "confidence_bands": {"high": 50.0, "medium_high": 47.0, "medium": 44.0, "low_medium": 40.0},
+    # Per-component score weights (learning knob). Default 1.0 = unchanged.
+    # winner_vs_placer showed trainer is win-predictive and raw form favours
+    # placers; tune these (then re-calibrate nap_min_score and validate
+    # out-of-sample) to dial selection toward winners rather than placers.
+    "component_weights": {
+        "form": 1.0, "suit": 1.0, "context": 1.0,
+        "draw": 1.0, "trainer": 1.0, "market": 1.0,
+    },
 }
 
 # Hard clamps the tuner may never exceed. (scalars only; nested handled below)

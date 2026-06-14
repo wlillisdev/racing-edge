@@ -868,7 +868,18 @@ def score_runner(
         except Exception as exc:  # pragma: no cover - never let the overlay break scoring
             wisdom_score, wisdom_reasons = 0.0, []
             log(f"nap_selector: wisdom overlay failed for {runner.get('horse')} — {exc}", "WARNING")
-    base = form_score + suit_score + ctx_score + draw_score + trnr_score + mkt_score
+    # Component weights (learning knob). Default all 1.0 → identical to before.
+    # The winner-vs-placer study showed trainer separates WINNERS while raw form
+    # separates placers; this knob lets us re-balance toward win-finding and
+    # prove it on the backtest before going live. Re-weighting shifts the score
+    # scale, so nap_min_score must be re-calibrated for any non-default weights.
+    _cw = get_params().get("component_weights") or {}
+    base = (_cw.get("form", 1.0)    * form_score
+            + _cw.get("suit", 1.0)    * suit_score
+            + _cw.get("context", 1.0) * ctx_score
+            + _cw.get("draw", 1.0)    * draw_score
+            + _cw.get("trainer", 1.0) * trnr_score
+            + _cw.get("market", 1.0)  * mkt_score)
     total = max(0.0, min(100.0, base + wisdom_score))
 
     # AI Form Reader overlay (bounded ±3): a professional-tipster read of the
