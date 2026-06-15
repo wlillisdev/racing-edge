@@ -30,6 +30,51 @@ LONG_HAUL_MILES = 150.0            # "came a long way" threshold (guide)
 
 _cache: Optional[dict] = None
 
+# Fixed course coordinates (lat, lon) — geocoding course names is unreliable,
+# and the set is finite. Covers GB + IRE. Obscure/abroad courses fall back to
+# geocoding "<name> Racecourse".
+COURSE_COORDS: dict[str, tuple] = {
+    # GB
+    "ascot": (51.41, -0.68), "aintree": (53.47, -2.94), "ayr": (55.46, -4.61),
+    "bangor": (52.99, -2.92), "bath": (51.41, -2.42), "beverley": (53.85, -0.45),
+    "brighton": (50.83, -0.10), "carlisle": (54.87, -2.96), "cartmel": (54.20, -2.95),
+    "catterick": (54.37, -1.65), "chelmsford": (51.76, 0.45), "cheltenham": (51.92, -2.06),
+    "chepstow": (51.65, -2.68), "chester": (53.18, -2.89), "doncaster": (53.51, -1.12),
+    "epsom": (51.31, -0.26), "exeter": (50.69, -3.47), "fakenham": (52.83, 0.85),
+    "ffos las": (51.75, -4.27), "fontwell": (50.85, -0.65), "goodwood": (50.90, -0.74),
+    "hamilton": (55.79, -4.06), "haydock": (53.48, -2.63), "hereford": (52.07, -2.74),
+    "hexham": (54.96, -2.13), "huntingdon": (52.34, -0.18), "kelso": (55.60, -2.43),
+    "kempton": (51.41, -0.41), "leicester": (52.60, -1.10), "lingfield": (51.17, -0.01),
+    "ludlow": (52.39, -2.70), "market rasen": (53.39, -0.32), "musselburgh": (55.94, -3.05),
+    "newbury": (51.40, -1.30), "newcastle": (55.00, -1.65), "newmarket": (52.24, 0.40),
+    "newton abbot": (50.53, -3.61), "nottingham": (52.95, -1.10), "perth": (56.43, -3.42),
+    "plumpton": (50.92, -0.04), "pontefract": (53.69, -1.31), "redcar": (54.61, -1.07),
+    "ripon": (54.13, -1.50), "salisbury": (51.05, -1.84), "sandown": (51.36, -0.36),
+    "sedgefield": (54.65, -1.45), "southwell": (53.08, -0.95), "stratford": (52.18, -1.71),
+    "taunton": (51.00, -3.10), "thirsk": (54.23, -1.34), "uttoxeter": (52.89, -1.86),
+    "warwick": (52.27, -1.59), "wetherby": (53.94, -1.39), "wincanton": (51.05, -2.40),
+    "windsor": (51.48, -0.61), "wolverhampton": (52.59, -2.13), "worcester": (52.19, -2.21),
+    "yarmouth": (52.61, 1.71), "york": (53.99, -1.09),
+    # IRE
+    "ballinrobe": (53.62, -9.22), "bellewstown": (53.70, -6.43), "clonmel": (52.36, -7.71),
+    "cork": (51.90, -8.42), "curragh": (53.16, -6.84), "down royal": (54.51, -6.11),
+    "downpatrick": (54.33, -5.72), "dundalk": (53.97, -6.43), "fairyhouse": (53.51, -6.42),
+    "galway": (53.25, -9.02), "gowran park": (52.63, -7.07), "kilbeggan": (53.36, -7.50),
+    "killarney": (52.06, -9.51), "laytown": (53.68, -6.24), "leopardstown": (53.26, -6.17),
+    "limerick": (52.60, -8.52), "listowel": (52.45, -9.48), "naas": (53.21, -6.66),
+    "navan": (53.66, -6.68), "punchestown": (53.18, -6.62), "roscommon": (53.62, -8.18),
+    "sligo": (54.27, -8.47), "thurles": (52.68, -7.81), "tipperary": (52.47, -8.14),
+    "tramore": (52.16, -7.15), "wexford": (52.34, -6.47),
+}
+
+
+def _course_coord(name: str) -> Optional[tuple]:
+    """Static course coords (strips '(AW)' etc.); geocode fallback for the rest."""
+    norm = (name or "").lower().split("(")[0].strip()
+    if norm in COURSE_COORDS:
+        return COURSE_COORDS[norm]
+    return geocode(f"{name} Racecourse")
+
 
 def _load_cache() -> dict:
     global _cache
@@ -87,7 +132,7 @@ def compute(date_str: Optional[str] = None) -> dict:
     locs = {run.get("trainer_location")
             for r in races for run in (r.get("runners") or [])
             if run.get("trainer_location")}
-    course_xy = {c: geocode(f"{c} Racecourse") for c in courses}
+    course_xy = {c: _course_coord(c) for c in courses}
     loc_xy = {l: geocode(l) for l in locs}
 
     travellers: list[dict] = []
