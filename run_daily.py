@@ -75,6 +75,7 @@ def _normalise_runner(raw: dict) -> dict:
         "wind_surgery":     _safe_str(raw.get("wind_surgery")),
         "trainer_14_days":  raw.get("trainer_14_days") if isinstance(raw.get("trainer_14_days"), dict) else {},
         "trainer_rtf":      _safe_str(raw.get("trainer_rtf")),
+        "trainer_location": _safe_str(raw.get("trainer_location")),
         "spotlight":        _safe_str(raw.get("spotlight")),
         "comment":          _safe_str(raw.get("comment")),
         "quotes":           _safe_str(raw.get("quotes")),

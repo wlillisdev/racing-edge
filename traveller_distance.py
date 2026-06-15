@@ -122,10 +122,34 @@ def haversine_miles(a: tuple, b: tuple) -> float:
     return 2 * R * math.asin(math.sqrt(h))
 
 
-def compute(date_str: Optional[str] = None) -> dict:
-    date_str = date_str or today_str()
+def _get_races(date_str: str) -> list[dict]:
+    """Races WITH trainer_location. Prefer the saved card; if it was normalised
+    without trainer_location, pull the live Standard card (today) which has it."""
     rc = safe_load_json(data_path(f"racecards_{date_str}.json")) or {}
     races = rc.get("racecards") or []
+    has_loc = any(run.get("trainer_location")
+                  for r in races for run in (r.get("runners") or []))
+    if races and has_loc:
+        return races
+    try:
+        from src.api_client import get_client
+        raw = get_client()._get(
+            "/racecards/standard",
+            params=[("region_codes", "gb"), ("region_codes", "ire")],
+        ) or {}
+        live = raw.get("racecards") or raw.get("races") or []
+        if live:
+            log(f"traveller_distance: using live Standard card ({len(live)} races) "
+                "— saved card had no trainer_location")
+            return live
+    except Exception as exc:  # noqa: BLE001
+        log(f"traveller_distance: live card fetch failed — {exc}", "WARNING")
+    return races
+
+
+def compute(date_str: Optional[str] = None) -> dict:
+    date_str = date_str or today_str()
+    races = _get_races(date_str)
 
     # Dedupe geocode targets first (one network call per unique place, ever).
     courses = {r.get("course") for r in races if r.get("course")}
