@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS nap_misses (
   winner_sp      DECIMAL(8,2),
   winner_edge    TEXT,
   missed_factors JSON,
-  we_had_line    TINYINT,        -- 1 = weighting fault (method has it); 0 = new signal
+  we_had_line    TINYINT,
   was_findable   TINYINT,
   rationale      TEXT,
   prompt_version VARCHAR(8),
