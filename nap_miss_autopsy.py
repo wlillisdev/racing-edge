@@ -27,6 +27,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 from datetime import datetime, timedelta
 from typing import Optional
 
@@ -63,7 +64,7 @@ MISS_SCHEMA = {
     "properties": {
         "winner_edge": {"type": "string", "description": "The single edge the WINNER had over our pick."},
         "missed_factors": {"type": "array", "items": {"type": "string"},
-                           "description": "Lines of the method the winner had that we missed/under-weighted. Prefer the vocabulary."},
+                           "description": "SHORT canonical tags (3-5 words) for the method lines the winner had that we missed. Use the vocabulary verbatim where it fits. NO race-specific detail in the tag (no figures, names, day counts) — that goes in winner_edge/rationale. e.g. 'jockey booking', 'freshness / back from a break', 'improving form / trajectory'."},
         "we_had_the_line": {"type": "boolean",
                             "description": "True if the method DOES contain this signal (a weighting fault); False if it's a NEW signal we lack."},
         "was_findable": {"type": "boolean",
@@ -80,11 +81,23 @@ MISS_SYSTEM = (
     "MISSED or under-weighted. For each, judge honestly whether the method "
     "already contains that signal (a weighting fault) or lacks it (a new signal). "
     "Say whether it was findable beforehand. Prefer these method lines where they "
-    "apply, add others only if genuinely needed: " + ", ".join(METHOD_VOCAB) + "."
+    "apply, add others only if genuinely needed: " + ", ".join(METHOD_VOCAB) + ". "
+    "CRITICAL: missed_factors must be SHORT canonical tags only — no figures, "
+    "names or race detail in the tag (put all that in winner_edge and rationale), "
+    "so the same blind spot aggregates across races."
 )
 
 
 # --- Pure core (unit-tested without DB/LLM/API) -----------------------------
+def canon_tag(f: str) -> str:
+    """Canonical method-line tag — strip race-specific detail so tags AGGREGATE.
+    'freshness edge - only 12 days vs our 29' -> 'freshness edge';
+    'trainer in form (roger fell)' -> 'trainer in form'."""
+    s = str(f or "").strip().lower()
+    s = re.split(r"\s[-–—:]\s|\s*\(", s, maxsplit=1)[0]   # cut at ' - ', ' (', ':'
+    return " ".join(s.split())
+
+
 def runner_brief(r: dict) -> dict:
     return {"name": r.get("horse"), "form": r.get("form"), "or": r.get("ofr"),
             "rpr": r.get("rpr"), "ts": r.get("ts"), "draw": r.get("draw"),
@@ -129,7 +142,7 @@ def aggregate_misses(rows: list[dict]) -> list[tuple]:
             factors = json.loads(r.get("missed_factors") or "[]")
         except (TypeError, ValueError):
             factors = []
-        for f in {_norm_factor(x) for x in factors if str(x).strip()}:
+        for f in {canon_tag(x) for x in factors if str(x).strip()}:
             a = agg.setdefault(f, {"n": 0, "find": 0, "last": None})
             a["n"] += 1
             a["find"] += 1 if r.get("was_findable") else 0
@@ -182,6 +195,7 @@ def _already(db, d: str) -> set:
 def rebuild_patterns(db) -> int:
     rows = db.fetch_all("SELECT missed_factors, was_findable, miss_date FROM nap_misses")
     agg = aggregate_misses(rows)
+    db.execute("DELETE FROM nap_miss_patterns")   # clean rebuild (drops stale tags)
     for r in agg:
         db.execute(_PATTERN_UPSERT, r)
     return len(agg)
@@ -253,7 +267,7 @@ def process_date(d: str, db, llm, api, meter=None) -> dict:
                 our.get("horse"), our_id, our_pos, our_sp,
                 winner.get("horse"), win["horse_id"], win.get("sp"),
                 ex.get("winner_edge"),
-                json.dumps([_norm_factor(f) for f in ex.get("missed_factors", [])]),
+                json.dumps([canon_tag(f) for f in ex.get("missed_factors", [])]),
                 1 if ex.get("we_had_the_line") else 0,
                 1 if ex.get("was_findable") else 0,
                 ex.get("rationale"), PROMPT_VERSION, READ_MODEL,
@@ -270,9 +284,15 @@ def main() -> int:
     ap.add_argument("date", nargs="?", default=today_str())
     ap.add_argument("--backfill", type=int, default=0, help="Process the last N days")
     ap.add_argument("--report", action="store_true", help="Show blind spots only (no LLM)")
+    ap.add_argument("--rebuild", action="store_true",
+                    help="Re-aggregate stored misses into clean tags (no LLM)")
     args = ap.parse_args()
 
     db = get_db()
+    if args.rebuild:
+        print(f"Rebuilt nap_miss_patterns: {rebuild_patterns(db)} clean tags.\n")
+        report(db)
+        return 0
     if args.report:
         report(db)
         return 0
