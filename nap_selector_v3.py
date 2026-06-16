@@ -73,7 +73,12 @@ RANK_PROMOTION_MIN_SCORE: float = 40.0
 # weak-field races (summer NH, winter AW) instead clear a higher seasonal bar.
 NAP_JUMP_TYPES: frozenset[str] = frozenset({"chase", "hurdle"})
 NAP_EXCLUDED_RACE_TYPES: frozenset[str] = NAP_JUMP_TYPES   # back-compat alias
-WEAK_TIER_PREMIUM: float = 6.0   # extra score a weak-field race must clear
+# Off-season weak-field premium. DISABLED (0) — the summer-NH backtest showed a
+# +6 bar SKIPS the profitable 44-49 band (the standouts that won) and keeps only
+# a tiny variance-negative 50+ slice. A race is a race: the normal floor already
+# filters weak fields (their dross scores below it). Re-enable only if a real
+# sample ever proves a premium earns its place.
+WEAK_TIER_PREMIUM: float = 0.0
 # Race classes that bled money in the deep backtest: Class 3 (-32%),
 # Class 6-7 (-14%), and unclassified/Unknown (-9%). Excluded from the NAP pool.
 NAP_EXCLUDED_CLASSES: frozenset[int] = frozenset({3, 6, 7})
