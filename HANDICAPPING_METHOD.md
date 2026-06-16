@@ -12,6 +12,21 @@ Each line is tagged:
 The read is a **case you build**: stack the positives, weigh the one big
 negative, and the **price has to be in your favour**. Most races are a no-bet.
 
+## Core principle — a race is a race
+**Read every race. Pass at the *race* level, never the *category* level.**
+There are no excluded race types, classes, or grades. "Some races are worse than
+others" is true — but you still *look*, because a blanket exclusion just leaves
+your own winners behind. The category filters that lived in the old quant
+(jumps, Class 3, "Unknown") existed to patch a placer-finding picker — they are
+scaffolding to be removed once the *read* does the picking, not handicapping.
+
+**The greats start humble.** Every champion began as a maiden / bumper /
+point-to-pointer — unexposed, no figures, cheap to be on. *Best Mate* was a
+point-to-pointer bought for a few hundred; a category-exclusion system would
+never have looked at him. The "lowly" races are where breeding + intent earn
+their keep and where the sharp money gets on *first* — so they are exactly the
+races to read, not skip.
+
 ---
 
 ## 1. Is the form even worth a damn?  (does it lie?)
