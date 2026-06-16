@@ -37,6 +37,7 @@ from src.helpers import (
 )
 from racecard_loader import load_racecard
 from src.model_params import get_params
+from seasonal_context import race_tier
 
 # Professional form-reading overlay (-15..+25). Self-contained, degrades to
 # 0.0 if the module is unavailable so the core model never breaks.
@@ -67,7 +68,12 @@ RANK_PROMOTION_MIN_SCORE: float = 40.0
 # Jumps (chase + hurdle) lost money across the deep summer-2025 backtest
 # (chase -8.6%, hurdle -11.7% ROI). Excluded for now — the system is flat-
 # focused. REVISIT when a winter/NH backtest is available before trusting NH.
-NAP_EXCLUDED_RACE_TYPES: frozenset[str] = frozenset({"chase", "hurdle"})
+# Jump race types (used for code detection, e.g. flat-only going filters).
+# NOTE: these are NO LONGER blanket-excluded — a race is a race. Off-season /
+# weak-field races (summer NH, winter AW) instead clear a higher seasonal bar.
+NAP_JUMP_TYPES: frozenset[str] = frozenset({"chase", "hurdle"})
+NAP_EXCLUDED_RACE_TYPES: frozenset[str] = NAP_JUMP_TYPES   # back-compat alias
+WEAK_TIER_PREMIUM: float = 6.0   # extra score a weak-field race must clear
 # Race classes that bled money in the deep backtest: Class 3 (-32%),
 # Class 6-7 (-14%), and unclassified/Unknown (-9%). Excluded from the NAP pool.
 NAP_EXCLUDED_CLASSES: frozenset[int] = frozenset({3, 6, 7})
@@ -1174,6 +1180,10 @@ def main() -> int:
     _min_odds = float(_p["nap_min_odds"])
     _max_odds = float(_p["nap_max_odds"])
     _min_score = float(_p["nap_min_score"])
+    try:
+        _today_date = datetime.strptime(date_str, "%Y-%m-%d").date()
+    except (ValueError, TypeError):
+        _today_date = None   # race_tier falls back to today
     # Minimum score gap over 2nd place to rank-promote a below-floor horse. When
     # scores are compressed (full_form absent, thin card) a horse can still be the
     # clear best in its race even without hitting the absolute floor. A margin >=
@@ -1186,10 +1196,11 @@ def main() -> int:
     for race_id, scored in race_scores.items():
         if not scored: continue
         top = scored[0]
-        # Hard exclusions — these are structural, not score-based. A horse failing
-        # any of these can NEVER be the pick (not even as a thin-card fallback).
-        if any(x in (top.get("race_type") or "").lower() for x in NAP_EXCLUDED_RACE_TYPES):
-            no_bet_races.append(race_id); continue
+        # A race is a race — NO blanket type exclusion. Seasonal reality instead:
+        # off-season / weak-field races (summer NH, winter AW flat) must clear a
+        # HIGHER bar, so we only take a standout there — never best-of-a-bad-lot.
+        _tier = race_tier({"type": top.get("race_type")}, _today_date)
+        _eff_floor = _min_score + (WEAK_TIER_PREMIUM if _tier["selectivity"] == "weak" else 0.0)
         # Class-quality filter — Class 3/6/7 and unclassified races bled money in
         # the deep backtest; never bet them (structural, like the type exclusion).
         _cls = _parse_class(top.get("race_class"))
@@ -1241,8 +1252,9 @@ def main() -> int:
             and top["score"] >= RANK_PROMOTION_MIN_SCORE
             and margin >= _clear_margin
         )
-        if top["score"] >= _min_score or promotable:
-            top["_rank_promoted"] = top["score"] < _min_score
+        if top["score"] >= _eff_floor or promotable:
+            top["_rank_promoted"] = top["score"] < _eff_floor
+            top["_seasonal_tier"] = _tier["label"]
             nap_candidates.append(top)
         else:
             fallback_pool.append(top)
