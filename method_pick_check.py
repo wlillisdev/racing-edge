@@ -18,12 +18,60 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import csv
+import os
 from datetime import datetime, timedelta
 from typing import Optional
 
 from method_pick import build as method_build
 from src.api_client import get_client
 from src.helpers import data_path, log, safe_load_json, today_str
+
+_LOG = "scoreboard_log.csv"     # data/scoreboard_log.csv — banks every day's 3 outcomes
+
+
+def _logged_dates() -> set:
+    path = data_path(_LOG)
+    if not os.path.exists(path):
+        return set()
+    with open(path, newline="", encoding="utf-8") as fh:
+        return {r["date"] for r in csv.DictReader(fh)}
+
+
+def _append_log(rows: list[dict]) -> None:
+    """Append (date, system, horse, won, placed, sp) rows; never double-log a date."""
+    if not rows:
+        return
+    path = data_path(_LOG)
+    is_new = not os.path.exists(path)
+    with open(path, "a", newline="", encoding="utf-8") as fh:
+        w = csv.DictWriter(fh, fieldnames=["date", "system", "horse", "won", "placed", "sp"])
+        if is_new:
+            w.writeheader()
+        w.writerows(rows)
+
+
+def summary() -> None:
+    """The RUNNING scoreboard — cumulative win%/place%/ROI from the whole log."""
+    path = data_path(_LOG)
+    if not os.path.exists(path):
+        print("No scoreboard log yet — run the check after some results.")
+        return
+    rows = list(csv.DictReader(open(path, newline="", encoding="utf-8")))
+    days = sorted({r["date"] for r in rows})
+    print("=" * 60)
+    print(f"RUNNING SCOREBOARD — {len(days)} day(s): {days[0]} → {days[-1]}")
+    print("=" * 60)
+    print(f"  {'system':<10}{'picks':>6}{'wins':>6}{'win%':>7}{'plc%':>7}{'ROI%':>8}")
+    for s in ("METHOD", "NAP", "SHADOW"):
+        sr = [r for r in rows if r["system"] == s]
+        n = len(sr) or 1
+        win = sum(r["won"] == "1" for r in sr)
+        plc = sum(r["placed"] == "1" for r in sr)
+        bets = [r for r in sr if r["sp"] not in ("", "None") and float(r["sp"]) > 1]
+        pl = sum((float(r["sp"]) - 1) if r["won"] == "1" else -1 for r in bets)
+        roi = 100 * pl / len(bets) if bets else 0.0
+        print(f"  {s:<10}{len(sr):>6}{win:>6}{100*win/n:>6.0f}%{100*plc/n:>6.0f}%{roi:>7.1f}%")
 
 
 def _result_lookup(date_str: str) -> dict:
@@ -84,7 +132,12 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("date", nargs="?", default=today_str())
     ap.add_argument("--backfill", type=int, default=0)
+    ap.add_argument("--summary", action="store_true", help="Running scoreboard from the log (no API)")
     args = ap.parse_args()
+
+    if args.summary:
+        summary()
+        return 0
 
     dates = [args.date]
     if args.backfill > 0:
@@ -92,7 +145,8 @@ def main() -> int:
         dates = [(base - timedelta(days=i)).isoformat() for i in range(args.backfill)]
 
     systems = ["METHOD", "NAP", "SHADOW"]
-    stats = {s: {"n": 0, "win": 0, "plc": 0, "bets": 0, "pl": 0.0} for s in systems}
+    already = _logged_dates()
+    new_rows: list[dict] = []
 
     print(f"{'date':<12}{'METHOD':<26}{'NAP':<26}{'SHADOW':<26}")
     print("-" * 90)
@@ -102,28 +156,23 @@ def main() -> int:
             continue
         method_nap = (method_build(d) or {}).get("method_nap")
         napdoc = safe_load_json(data_path(f"nap_candidates_{d}.json")) or {}
-        quant_nap = napdoc.get("nap")
         shadow_list = napdoc.get("shadow") or []
-        shadow = shadow_list[0] if shadow_list else None
-
-        picks = {"METHOD": method_nap, "NAP": quant_nap, "SHADOW": shadow}
+        picks = {"METHOD": method_nap, "NAP": napdoc.get("nap"),
+                 "SHADOW": shadow_list[0] if shadow_list else None}
         cells = []
         for s in systems:
             o = _outcome(picks[s], results)
-            _tally(stats[s], o)
-            name = (picks[s] or {}).get("horse") or "-"
-            cells.append(f"{str(name)[:14]:<15}{_fmt(o):<11}")
+            cells.append(f"{str((picks[s] or {}).get('horse') or '-')[:14]:<15}{_fmt(o):<11}")
+            if o and d not in already:    # bank it once, only resulted picks
+                new_rows.append({"date": d, "system": s, "horse": (picks[s] or {}).get("horse"),
+                                 "won": int(o["won"]), "placed": int(o["placed"]), "sp": o["sp"]})
         print(f"{d:<12}" + "".join(cells))
 
-    print("-" * 90)
-    print(f"{'':<12}{'picks':>6}{'wins':>6}{'win%':>7}{'plc%':>7}{'ROI%':>8}")
-    for s in systems:
-        st = stats[s]
-        n = st["n"] or 1
-        roi = 100 * st["pl"] / st["bets"] if st["bets"] else 0.0
-        print(f"  {s:<10}{st['n']:>6}{st['win']:>6}{100*st['win']/n:>6.0f}%"
-              f"{100*st['plc']/n:>6.0f}%{roi:>7.1f}%")
-    print("\n  (small samples — this is the start of the head-to-head, not the verdict.)")
+    _append_log(new_rows)
+    if new_rows:
+        print(f"\n  banked {len({r['date'] for r in new_rows})} new day(s) to {_LOG}")
+    print()
+    summary()    # always show the cumulative running scoreboard
     return 0
 
 
