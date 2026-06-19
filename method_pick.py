@@ -115,13 +115,24 @@ def method_case(runner: dict, race: dict, all_runners: list[dict],
         total += pts
         reasons += rs
 
+    # --- The "when to pass" discipline: vetoes override the positive stack. ---
+    # A proven non-winner cannot be the pick, however nice the other lines look.
+    digits = [int(c) for c in (runner.get("form") or "") if c.isdigit()]
+    improving = any("Improving" in r for r in reasons)
+    vetoed = False
+    if len(digits) >= 6 and 1 not in digits[-8:] and not improving:
+        # 6+ runs, no win in the last 8, not on an upward curve = exposed loser.
+        reasons.append("VETO: no win in last 8 — proven non-winner, leave it")
+        vetoed = True
+
     return {
+        "vetoed": vetoed,
         "horse_id": str(runner.get("horse_id") or ""),
         "horse": runner.get("horse"),
         "trainer": runner.get("trainer"),
         "jockey": runner.get("jockey"),
         "price": _consensus_price(runner),
-        "method_case": round(total, 2),
+        "method_case": round(-99.0 if vetoed else total, 2),
         "reasons": reasons,
     }
 
@@ -140,6 +151,8 @@ def build(date_str: Optional[str] = None) -> dict:
         cases = [method_case(r, race, runners, full_form, market_movers) for r in runners]
         cases.sort(key=lambda c: -c["method_case"])
         top = cases[0]
+        if top.get("vetoed"):
+            continue   # whole race headed by a non-winner → the method passes it
         # Only a bettable pick if it's priced in the value band.
         top["bettable"] = top["price"] is not None and MIN_ODDS <= top["price"] <= MAX_ODDS
         top["course"] = race.get("course")
