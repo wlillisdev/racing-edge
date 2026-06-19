@@ -49,6 +49,11 @@ from src.helpers import data_path, log, safe_load_json, safe_write_json, today_s
 
 LEDGER = "bet_ledger.csv"
 UNIT = 1.0                       # £ per line (the staking unit; total scales from this)
+# Conviction press: ON only once the paper-trade ledger shows a real edge.
+# Flat staking is the honest default — pressing on faith (and pressing the
+# shortest price, which is anti-Kelly) is how edges get given back.
+PRESS_ENABLED = False
+PRESS_FACTOR = 1.5               # modest, capped; NOT a 3x vote-count multiplier
 VALUE_PRICE = 4.5                # decimal odds at/above which the EACH-WAY place part earns its keep
 SHORT_PRICE = 3.5                # at/below which a leg is a "banker" and EW is dead money
 MIN_ODDS, MAX_ODDS = 2.0, 11.0   # bettable band for a multiple leg (wider than singles: value needs price)
@@ -115,14 +120,17 @@ def settle_ticket(legs: list[dict], structure: str, ew: bool, unit: float) -> di
                 total += unit * _prod(1 + (legs[i]["odds"] - 1) * legs[i]["place_frac"] for i in combo)
 
     # --- Lucky 15 bonuses (bookmaker-standard; documented assumption) ---
+    # Void legs (non-runners) are settled at odds 1.0 and excluded from the
+    # winner count so they don't spuriously trigger the one-/all-winner bonuses.
     bonus = 0.0
     if structure == "lucky15":
-        winners = sum(1 for l in legs if l["won"])
+        live = [l for l in legs if not l.get("void")]
+        winners = sum(1 for l in live if l["won"])
         if winners == 1:
             # one-winner: double the odds on that single's WIN return (a single is 1 unit)
-            w = next(l for l in legs if l["won"])
+            w = next(l for l in live if l["won"])
             bonus += unit * (w["odds"] - 1)              # extra (odds-1) on top of the single already counted
-        elif winners == n:
+        elif live and winners == len(live):
             bonus += 0.10 * total                        # all-winners +10%
     total += bonus
 
@@ -149,8 +157,10 @@ def _race_index(doc: dict) -> dict:
     for race in (doc.get("racecards") or []):
         runners = race.get("runners") or []
         name = f"{race.get('race_name','')} {race.get('type','')}".lower()
-        meta = {"field_size": len(runners),
-                "is_handicap": "handicap" in name or "h'cap" in name}
+        # Keep handicap detection in step with the NAP scorer's keywords — a
+        # wrong call flips the each-way place terms (real-money impact).
+        is_hcap = any(k in name for k in ("handicap", "hcap", "h'cap", "nursery"))
+        meta = {"field_size": len(runners), "is_handicap": is_hcap}
         for r in runners:
             idx[str(r.get("horse_id") or "")] = meta
     return idx
@@ -168,10 +178,21 @@ def _price(p: dict) -> Optional[float]:
     return None
 
 
+# source priority for ordering (NAP is the primary read; Method overlay is the
+# only genuinely NEW lens on top of it; Shadow is the quant's second string).
+SRC_PRIORITY = {"NAP": 3, "METHOD": 2, "SHADOW": 1}
+
+
 def gather(date_str: str) -> list[dict]:
-    """The day's candidate legs, with ALIGNMENT: when the 3 systems land on the
-    same horse, agreement is signal. Each leg carries the set of systems that
-    chose it (`agree` = how many) — the anchor for conviction sizing.
+    """The day's candidate legs.
+
+    A blunt vote-count across the 3 systems is misleading: Method is the NAP
+    score PLUS your overlay, and the Shadow is built by excluding the NAP — so
+    NAP and Shadow can never coincide, and "Method agrees with NAP" is mostly
+    the overlay leaving the NAP's pick alone. The genuinely independent lens is
+    the OVERLAY itself. So each leg carries `overlay` (your read's contribution)
+    and a `two_lens` flag — the NAP pick that your overlay ALSO pushes up — which
+    is real, if modest, confirmation rather than re-counting one model's number.
     """
     doc = load_racecard(date_str) or {}
     ridx = _race_index(doc)
@@ -180,22 +201,18 @@ def gather(date_str: str) -> list[dict]:
     method = safe_load_json(data_path(f"method_pick_{date_str}.json")) or method_build(date_str) or {}
     napdoc = safe_load_json(data_path(f"nap_candidates_{date_str}.json")) or {}
 
-    raw: list[tuple[float, dict, str]] = []   # (confidence_rank, pick, source)
-    # Method: the per-race picks (already vetoed-clean), strongest carry highest case
+    raw: list[tuple[dict, str, Optional[float]]] = []     # (pick, source, overlay)
     for p in (method.get("race_picks") or []):
         if not p.get("vetoed"):
-            raw.append((float(p.get("method_case") or 0), p, "METHOD"))
-    # Quant NAP + Shadow #1
+            raw.append((p, "METHOD", p.get("overlay")))
     if napdoc.get("nap"):
-        raw.append((float(napdoc["nap"].get("score") or 0) + 100, napdoc["nap"], "NAP"))
+        raw.append((napdoc["nap"], "NAP", None))
     shadow = napdoc.get("shadow") or []
     if shadow:
-        raw.append((float(shadow[0].get("score") or 0), shadow[0], "SHADOW"))
+        raw.append((shadow[0], "SHADOW", None))
 
-    # Aggregate by horse so a pick chosen by several systems is ONE leg that
-    # records every system backing it — that overlap is the alignment edge.
     by_horse: dict[str, dict] = {}
-    for rank, p, src in sorted(raw, key=lambda t: -t[0]):
+    for p, src, overlay in raw:
         hid = str(p.get("horse_id") or "")
         if not hid:
             continue
@@ -204,34 +221,49 @@ def gather(date_str: str) -> list[dict]:
             continue
         if hid in by_horse:
             by_horse[hid]["sources"].add(src)
-            by_horse[hid]["rank"] = max(by_horse[hid]["rank"], round(rank, 1))
+            if overlay is not None:
+                by_horse[hid]["overlay"] = float(overlay)
             continue
-        meta = ridx.get(hid, {"field_size": 8, "is_handicap": False})
-        frac, pos = place_terms(meta["field_size"], meta["is_handicap"])
+        meta = ridx.get(hid)
+        if meta is None:
+            # Not found in the racecard (ID mismatch / non-runner): don't invent
+            # each-way terms — settle win-only rather than fabricate places.
+            frac, pos = 0.0, 0
+            log(f"dynamic_bet: {p.get('horse')} not in racecard index — win-only terms", "WARNING")
+        else:
+            frac, pos = place_terms(meta["field_size"], meta["is_handicap"])
         by_horse[hid] = {
             "horse_id": hid, "horse": p.get("horse"), "sources": {src},
             "course": p.get("course"), "off_time": p.get("off_time"),
             "odds": round(price, 2), "place_frac": frac, "place_pos": pos,
-            "rank": round(rank, 1),
+            "overlay": float(overlay) if overlay is not None else None,
         }
     legs = list(by_horse.values())
     for l in legs:
         l["agree"] = len(l["sources"])
         l["source"] = "+".join(sorted(l["sources"]))
-    # Alignment first (agreement is the strongest signal), then model rank.
-    legs.sort(key=lambda l: (-l["agree"], -l["rank"]))
+        # two genuine lenses: the NAP's pick that your overlay ALSO rates up.
+        l["two_lens"] = ("NAP" in l["sources"] and "METHOD" in l["sources"]
+                         and (l.get("overlay") or 0) > 0)
+        l["prio"] = max(SRC_PRIORITY[s] for s in l["sources"])
+    # Genuine two-lens first, then source priority (NAP>Method>Shadow), then price.
+    legs.sort(key=lambda l: (-int(l["two_lens"]), -l["prio"], l["odds"]))
     return legs
 
 
 def choose_structure(legs: list[dict]) -> dict:
-    """Dynamic: the hand picks the shape, and AGREEMENT picks the conviction.
+    """The hand picks the shape; the genuine two-lens read picks the conviction.
 
-    Max output / min risk is a tension — the resolution is alignment:
-      • when the systems CONVERGE on one horse it is the BANKER. It anchors
-        every line (min risk: the slip can't die on a weak leg you didn't rate)
-        and the stake is PRESSED (conviction sizing) for max output.
-      • when they're SPREAD, do the opposite — base stake, cover the risk with
-        an EW Patent / Lucky 15 so one winner still pays you back.
+    Honest conviction (the audit's correction): the 3 systems are NOT
+    independent — Method = NAP + overlay, and Shadow excludes the NAP — so a
+    vote-count over-states confirmation. The one real cross-check is the NAP's
+    pick that your OVERLAY also rates up (`two_lens`). That earns a BANKER tag
+    and a modest press — but staking stays FLAT until the paper-trade ledger
+    actually shows an edge (PRESS_ENABLED). Pressing the shortest price hardest
+    is anti-Kelly; we don't do it on faith.
+
+    Each-way is offered only when EVERY leg is value-priced AND offers places —
+    no dead place stakes on short or small-field legs.
     """
     if not legs:
         return {"structure": None, "ew": False, "legs": [], "why": "no bettable selections today",
@@ -239,52 +271,47 @@ def choose_structure(legs: list[dict]) -> dict:
 
     legs = legs[:4]                                   # never more than a Lucky 15
     prices = [l["odds"] for l in legs]
-    med = sorted(prices)[len(prices) // 2]
     n = len(legs)
-    value_day = med >= VALUE_PRICE                    # prices rich enough for EW to pay
-    short_day = all(p <= SHORT_PRICE for p in prices)  # all bankers
+    # EW only when the place part earns its keep on EVERY leg (lowest price in
+    # the value band) and every leg actually offers places.
+    ew_ok = min(prices) >= VALUE_PRICE and all(l["place_pos"] > 0 for l in legs)
+    short_day = all(p <= SHORT_PRICE for p in prices)
 
-    # --- alignment / conviction (legs already sorted agree-first) ---
-    top_agree = legs[0]["agree"]
-    banker = legs[0] if top_agree >= 2 else None      # 2+ systems on the same horse
-    # press the stake with conviction; flat when the systems disagree
-    stake_mult = {3: 3.0, 2: 2.0}.get(top_agree, 1.0)
-    conviction = {3: "FULL alignment — all systems agree", 2: "aligned — 2 systems agree"}.get(
-        top_agree, "spread — systems disagree")
+    # --- genuine two-lens conviction (NAP pick your overlay also likes) ---
+    banker = legs[0] if legs[0].get("two_lens") else None
+    press = PRESS_FACTOR if (banker and PRESS_ENABLED) else 1.0
+    if banker:
+        conviction = (f"two-lens — quant NAP + your overlay both on {banker['horse']}"
+                      + ("" if PRESS_ENABLED else " (staking flat until the ledger earns the press)"))
+    else:
+        conviction = "single-lens — no independent confirmation"
 
     def _ret(structure, ew, why, used=None):
         return {"structure": structure, "ew": ew, "legs": used if used is not None else legs,
-                "why": why, "conviction": conviction, "stake_mult": stake_mult, "banker": banker}
+                "why": why, "conviction": conviction, "stake_mult": press, "banker": banker}
 
-    # All-systems-on-one-horse: the lowest-variance way to grow a bank is to
-    # back the surest thing hard. Press the single ON THE BANKER ALONE — don't
-    # dilute the conviction with legs the other systems didn't rate.
-    if banker and top_agree >= 3:
-        return _ret("single", banker["odds"] >= VALUE_PRICE,
-                    f"all 3 systems on {banker['horse']} — max output / min risk is the "
-                    f"pressed single ({stake_mult:.0f}× stake), not a diluted multiple",
-                    used=[banker])
+    def _kind(ew):
+        return "each-way" if ew else "win"
 
     if n == 1:
-        return _ret("single", value_day,
-                    f"only one strong selection — {'each-way' if value_day else 'win'} single")
+        return _ret("single", ew_ok, f"one strong selection — {_kind(ew_ok)} single")
     if n == 2:
-        return _ret("double", value_day,
-                    f"two strong selections — {'each-way ' if value_day else ''}double"
+        return _ret("double", ew_ok,
+                    f"two selections — {_kind(ew_ok)} double"
                     + (f", anchored on banker {banker['horse']}" if banker else ""))
     if n == 3:
         if short_day and not banker:
             return _ret("treble", False,
-                        "three short-priced bankers — straight treble (EW would be dead money)")
-        return _ret("patent", value_day,
-                    "three value selections — EW Patent: land just ONE and a single pays you back"
+                        "three short-priced bankers — straight win treble (EW would be dead money)")
+        return _ret("patent", ew_ok,
+                    f"three selections — {_kind(ew_ok)} Patent: land just ONE and a single pays you back"
                     + (f"; banker {banker['horse']} anchors it" if banker else ""))
     # n == 4
     if short_day and not banker:
         return _ret("yankee", False,
-                    "four short bankers — Yankee (11 bets, no singles): needs two+ to land")
-    return _ret("lucky15", value_day,
-                "four value selections — Lucky 15: one winner returns, two+ and you're in profit"
+                    "four short bankers — win Yankee (11 bets, no singles): needs two+ to land")
+    return _ret("lucky15", ew_ok,
+                f"four selections — {_kind(ew_ok)} Lucky 15: one winner returns, two+ and you're in profit"
                 + (f"; banker {banker['horse']}'s single underwrites the slip" if banker else ""))
 
 
@@ -358,11 +385,18 @@ def _log_pending(out: dict) -> None:
 
 
 def settle(date_str: str, unit: float = UNIT) -> Optional[dict]:
-    """Settle a previously-built ticket against the day's results; update the ledger."""
+    """Settle a previously-built ticket against the day's results; update the ledger.
+
+    Settles at the SAME (pressed) unit the ticket was logged with — never the
+    base unit — so the ledger ROI is internally consistent. Won't settle until
+    the day's results are actually in; a leg whose horse never appears in a
+    non-empty result set is treated as a NON-RUNNER (void leg @ 1.0), not a loser.
+    """
     out = safe_load_json(data_path(f"dynamic_bet_{date_str}.json"))
     if not out or not out.get("legs"):
         print(f"No ticket to settle for {date_str}.")
         return None
+    staked_unit = float(out.get("unit") or unit)      # the pressed unit, as logged
     try:
         doc = get_client().get_results_by_date(date_str) or {}
     except Exception as exc:  # noqa: BLE001
@@ -379,36 +413,52 @@ def settle(date_str: str, unit: float = UNIT) -> Optional[dict]:
                     pos = 99
                 res[hid] = {"pos": pos, "sp": r.get("sp_dec") or r.get("sp")}
 
+    if not res:                                       # results not published yet
+        print(f"Results not available yet for {date_str} — leaving ticket pending.")
+        return None
+
     legs = []
     for l in out["legs"]:
-        r = res.get(l["horse_id"], {})
-        pos = r.get("pos", 99)
-        legs.append({**l, "won": pos == 1, "placed": pos <= l["place_pos"] if l["place_pos"] else pos == 1})
-    s = settle_ticket(legs, out["structure"], out["ew"], unit)
+        r = res.get(l["horse_id"])
+        if r is None:
+            # day's results are in but this horse isn't in them -> non-runner.
+            # Void leg: settled at 1.0, passes through any multiple (correct rule).
+            legs.append({**l, "odds": 1.0, "won": True, "placed": True, "void": True})
+        else:
+            pos = r["pos"]
+            legs.append({**l, "won": pos == 1,
+                         "placed": pos <= l["place_pos"] if l["place_pos"] else pos == 1,
+                         "void": False})
+    s = settle_ticket(legs, out["structure"], out["ew"], staked_unit)
     _update_ledger(date_str, s)
     print(f"SETTLED {date_str}: {out['structure']} "
           f"stake £{s['stake']:.2f} -> return £{s['return']:.2f}  (P/L £{s['pl']:+.2f})")
     for l in legs:
-        flag = "WON" if l["won"] else ("plc" if l["placed"] else "—")
-        print(f"   {flag:>3}  {l['horse']:<20} @{l['odds']}")
+        flag = "VOID" if l.get("void") else ("WON" if l["won"] else ("plc" if l["placed"] else "—"))
+        print(f"   {flag:>4}  {l['horse']:<20} @{l['odds']}")
     return s
 
 
 def _update_ledger(date_str: str, s: dict) -> None:
+    """Mark a day settled — atomic rewrite (temp file + os.replace) so a crash
+    or an overlapping run can never truncate the whole ledger."""
     path = data_path(LEDGER)
     if not os.path.exists(path):
         return
-    rows = list(csv.DictReader(open(path, newline="", encoding="utf-8")))
+    with open(path, newline="", encoding="utf-8") as fh:
+        rows = list(csv.DictReader(fh))
     for r in rows:
         if r["date"] == date_str:
             r["status"] = "settled"
             r["return"] = f"{s['return']:.2f}"
             r["pl"] = f"{s['pl']:.2f}"
-    with open(path, "w", newline="", encoding="utf-8") as fh:
+    tmp = f"{path}.tmp"
+    with open(tmp, "w", newline="", encoding="utf-8") as fh:
         w = csv.DictWriter(fh, fieldnames=["date", "structure", "ew", "legs",
                                            "stake", "status", "return", "pl"])
         w.writeheader()
         w.writerows(rows)
+    os.replace(tmp, path)
 
 
 def summary() -> None:
