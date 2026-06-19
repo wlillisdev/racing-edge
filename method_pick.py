@@ -117,15 +117,17 @@ def method_case(runner: dict, race: dict, all_runners: list[dict],
 
     # --- The "when to pass" discipline: vetoes override the positive stack. ---
     # An EXPOSED non-winner cannot be the pick, however nice the other lines look.
-    # Exposed = 7+ runs with no win in the last 8 (a lightly-raced improver is NOT
-    # exposed — that's the next Best Mate). The one let-off is your rule: a
-    # *class drop* (proven a grade higher), where it can finally be good enough.
-    digits = [int(c) for c in (runner.get("form") or "") if c.isdigit()]
-    exposed_nonwinner = len(digits) >= 7 and digits[-8:].count(1) == 0
-    class_drop = any("Class drop" in r for r in reasons)
+    # Use racing_wisdom's OWN flags (read off the real race history, not the form
+    # string which can hide an old win): "Perennial loser" (no wins in last 8) or
+    # "Class ceiling" (losses at the level without a win). The one let-off is your
+    # rule — a genuine "Class drop" (proven a grade higher), where it can finally
+    # be good enough.
+    blob = " ".join(reasons)
+    exposed_nonwinner = ("Perennial loser" in blob) or ("Class ceiling" in blob)
+    class_drop = "Class drop" in blob
     vetoed = bool(exposed_nonwinner and not class_drop)
     if vetoed:
-        reasons.append("VETO: exposed non-winner (7+ runs, no win in last 8, no class drop)")
+        reasons.append("VETO: exposed non-winner (per the read) — leave it")
 
     return {
         "vetoed": vetoed,
