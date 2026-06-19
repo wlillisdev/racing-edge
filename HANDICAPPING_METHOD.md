@@ -117,6 +117,24 @@ hole, **price in our favour → bet.** Anything less → wait.
 
 ---
 
+## The learning loop — the post-race autopsy
+The habit that sharpens the read: **after every race, go to the winner's form
+and work out why we didn't have it.** Not "we lost" — *why*. For each race the
+NAP didn't win, read the actual winner with open eyes and answer one question:
+
+> **Which line of the method would have flagged this winner — and did we have it?**
+
+- **Had the line, ignored it** → a *weighting* fault in the build (fix the code).
+- **Didn't have the line** → a *new signal* to add to the method.
+
+Done by hand it sharpens one punter; done by the machine on **every** race it
+finds the pattern across hundreds of misses no memory could hold — "we keep
+passing gambled travellers", "we keep missing improvers dropping in class." That
+is where the analysis earns its place: not inventing edges, but telling us **what
+the read is consistently missing.** Discipline as ever — the autopsy records the
+*handicapping reason* the winner won, never a bare stat. (Engine: the winner-
+learning loop, aimed at our misses; feeds back into this document.)
+
 ## What this means for Pro vs Standard
 - **Standard runs the INTENT cluster** — traveller, local trainer, jockey intent,
   gamble, hot yard, headgear, stable switch, **form trajectory** (improver /
