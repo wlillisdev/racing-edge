@@ -55,7 +55,8 @@ def _consensus_price(runner: dict) -> Optional[float]:
 
 def form_signals(form: str) -> tuple[float, list[str]]:
     """Improving-form (+) / perennial-bottler (-) read off the form string."""
-    digits = [int(c) for c in (form or "") if c.isdigit()]   # left=oldest, right=newest
+    # '0' in form = finished 10th or worse (a BAD run), NOT position zero.
+    digits = [10 if c == "0" else int(c) for c in (form or "") if c.isdigit()]
     if len(digits) < 3:
         return 0.0, []
     recent = list(reversed(digits))[:6]          # most-recent first
