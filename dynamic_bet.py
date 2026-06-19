@@ -474,12 +474,35 @@ def summary() -> None:
     stake = sum(float(r["stake"]) for r in rows)
     pl = sum(float(r["pl"]) for r in rows)
     wins = sum(1 for r in rows if float(r["pl"]) > 0)
+    roi = 100 * pl / stake if stake else 0.0
+    n = len(rows)
     print("=" * 58)
-    print(f"PAPER-TRADE LEDGER — {len(rows)} settled day(s)")
+    print(f"PAPER-TRADE LEDGER — {n} settled day(s)")
     print("=" * 58)
     print(f"  staked £{stake:.2f}   returned £{stake + pl:.2f}   "
-          f"P/L £{pl:+.2f}   ROI {100 * pl / stake if stake else 0:+.1f}%")
-    print(f"  winning days: {wins}/{len(rows)}")
+          f"P/L £{pl:+.2f}   ROI {roi:+.1f}%")
+    print(f"  winning days: {wins}/{n}")
+    # --- honesty guard: don't trust a small sample, and don't press on faith ---
+    print(_trust_verdict(n, roi))
+
+
+# Minimum settled days before the ledger ROI means anything (multiples are
+# high-variance — a handful of days is noise, not signal).
+TRUST_SAMPLE = 40
+# ...and the flat baseline must be PROFITABLE over that sample before we'd ever
+# switch the conviction press on. Pressing into an unproven edge is how you lose.
+PRESS_UNLOCK_ROI = 5.0
+
+
+def _trust_verdict(n: int, roi: float) -> str:
+    if n < TRUST_SAMPLE:
+        return (f"  → SAMPLE TOO SMALL ({n}/{TRUST_SAMPLE} days): treat this ROI as noise. "
+                f"Keep banking flat-staked; do not tune, do not press yet.")
+    if roi < PRESS_UNLOCK_ROI:
+        return (f"  → SAMPLE OK ({n} days) but edge unproven (ROI {roi:+.1f}% < "
+                f"{PRESS_UNLOCK_ROI:.0f}%): stay flat. No real edge to press.")
+    return (f"  → EDGE CONFIRMED ({n} days, ROI {roi:+.1f}%): the flat baseline pays. "
+            f"Now it's defensible to enable the conviction press (PRESS_ENABLED=True).")
 
 
 def _print_ticket(out: dict) -> None:
