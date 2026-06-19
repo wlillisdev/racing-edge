@@ -27,8 +27,7 @@ from typing import Optional
 
 from racecard_loader import load_racecard
 from src.helpers import data_path, log, safe_load_json, safe_write_json, today_str
-from racing_wisdom import score_racing_wisdom, _parse_form_chars
-from nap_selector_v3 import handicap_trajectory
+from nap_selector_v3 import score_runner, handicap_trajectory   # the NAP base + helpers
 
 MIN_ODDS, MAX_ODDS = 2.0, 7.0          # bettable value band (same as the NAP)
 STEAMER_TYPES = {"steamer", "strong_steamer"}
@@ -98,37 +97,40 @@ def trajectory_signal(traj: dict) -> tuple[float, list[str]]:
 
 def method_case(runner: dict, race: dict, all_runners: list[dict],
                 full_form: Optional[dict], market_movers: Optional[dict]) -> dict:
-    """Build the method's case for one horse — pure read, no quant score."""
+    """The NAP quant score is the BASE; your method is laid OVER the top.
+
+    base    = the current NAP system's score for this horse (unchanged)
+    overlay = your ideas added on top: well-in & ahead of the mark, improving
+              form / bottler, the gamble  (the intent stack — traveller, jockey's
+              pick — layers in here next)
+    method  = base + overlay, with the 'when to pass' veto on exposed non-winners.
+    """
+    base_res = score_runner(runner, race, all_runners, full_form, market_movers)
+    base = float(base_res.get("score") or 0.0)
+    base_reasons = list(base_res.get("reasons") or [])
+
+    overlay = 0.0
     reasons: list[str] = []
-    total = 0.0
-
-    w, wr = score_racing_wisdom(runner, race, all_runners, full_form)
-    total += w
-    if wr:
-        reasons.append(f"[read +{w:.0f}] " + "; ".join(wr[:4]))
-
     for fn, args in (
         (trajectory_signal, (handicap_trajectory(runner, race, full_form),)),
         (form_signals, (runner.get("form") or "",)),
         (steamer_signal, (runner, market_movers)),
     ):
         pts, rs = fn(*args)
-        total += pts
+        overlay += pts
         reasons += rs
 
-    # --- The "when to pass" discipline: vetoes override the positive stack. ---
-    # An EXPOSED non-winner cannot be the pick, however nice the other lines look.
-    # Use racing_wisdom's OWN flags (read off the real race history, not the form
-    # string which can hide an old win): "Perennial loser" (no wins in last 8) or
-    # "Class ceiling" (losses at the level without a win). The one let-off is your
-    # rule — a genuine "Class drop" (proven a grade higher), where it can finally
-    # be good enough.
-    blob = " ".join(reasons)
+    # --- The "when to pass" discipline (off the NAP's OWN history-based flags) ---
+    # An exposed non-winner can't be the pick — "Perennial loser" (no wins in last
+    # 8) or "Class ceiling" (losses at the level without a win) — unless your one
+    # let-off applies, a genuine "Class drop" (proven a grade higher).
+    blob = " ".join(base_reasons + reasons)
     exposed_nonwinner = ("Perennial loser" in blob) or ("Class ceiling" in blob)
     class_drop = "Class drop" in blob
     vetoed = bool(exposed_nonwinner and not class_drop)
     if vetoed:
         reasons.append("VETO: exposed non-winner (per the read) — leave it")
+    total = base + overlay
 
     return {
         "vetoed": vetoed,
@@ -137,6 +139,8 @@ def method_case(runner: dict, race: dict, all_runners: list[dict],
         "trainer": runner.get("trainer"),
         "jockey": runner.get("jockey"),
         "price": _consensus_price(runner),
+        "base": round(base, 1),
+        "overlay": round(overlay, 1),
         "method_case": round(-99.0 if vetoed else total, 2),
         "reasons": reasons,
     }
@@ -178,20 +182,21 @@ def build(date_str: Optional[str] = None) -> dict:
 def main() -> int:
     out = build(sys.argv[1] if len(sys.argv) > 1 else None)
     nap = out["method_nap"]
-    print(f"METHOD PICK — {out['date']}  (standalone; your read, not the quant)")
-    print("=" * 66)
+    print(f"METHOD PICK — {out['date']}  (NAP base + your overlay; the NAP itself is unchanged)")
+    print("=" * 70)
     if nap:
-        print(f"  METHOD NAP: {nap['horse']}  —  {nap['course']} {nap['off_time']}  "
-              f"@ {nap['price']}  (case {nap['method_case']:+.0f})")
+        print(f"  METHOD NAP: {nap['horse']}  —  {nap['course']} {nap['off_time']}  @ {nap['price']}")
+        print(f"     NAP base {nap['base']:+.0f}  +  overlay {nap['overlay']:+.0f}  =  {nap['method_case']:+.0f}")
         for r in nap["reasons"]:
             print(f"     · {r}")
     else:
         print("  No bettable Method NAP today (nothing strong in the value band).")
-    print("\n  per-race method picks:")
+    print("\n  per-race method picks   (base + overlay):")
     for p in sorted(out["race_picks"], key=lambda x: -x["method_case"])[:12]:
         tag = "" if p["bettable"] else "  (out of band)"
         pr = f"@{p['price']:.1f}" if p["price"] else "no price"
-        print(f"   {p['method_case']:>+5.0f}  {str(p['horse']):<20} {str(p['course'])[:10]:<10} {pr}{tag}")
+        print(f"   {p['method_case']:>5.0f}  ({p['base']:>4.0f}{p['overlay']:+.0f})  "
+              f"{str(p['horse']):<20} {str(p['course'])[:10]:<10} {pr}{tag}")
     return 0
 
 
