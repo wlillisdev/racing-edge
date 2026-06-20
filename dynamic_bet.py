@@ -294,6 +294,16 @@ def choose_structure(legs: list[dict]) -> dict:
     def _kind(ew):
         return "each-way" if ew else "win"
 
+    # All short-priced AND no genuine conviction: a Yankee / treble / double of
+    # favourites just compounds the bookmaker's margin — a 2-from-4 winning day
+    # still loses (proven 2026-06-19). Back the strongest (shortest price = most
+    # likely winner) to WIN, rather than dress a poor multiple up.
+    if short_day and not banker and n >= 2:
+        strongest = min(legs, key=lambda l: l["odds"])
+        return _ret("single", False,
+                    "all short-priced, no conviction — favourites don't pay in a multiple; "
+                    f"back the strongest ({strongest['horse']}) to win", used=[strongest])
+
     if n == 1:
         return _ret("single", ew_ok, f"one strong selection — {_kind(ew_ok)} single")
     if n == 2:
@@ -301,16 +311,10 @@ def choose_structure(legs: list[dict]) -> dict:
                     f"two selections — {_kind(ew_ok)} double"
                     + (f", anchored on banker {banker['horse']}" if banker else ""))
     if n == 3:
-        if short_day and not banker:
-            return _ret("treble", False,
-                        "three short-priced bankers — straight win treble (EW would be dead money)")
         return _ret("patent", ew_ok,
                     f"three selections — {_kind(ew_ok)} Patent: land just ONE and a single pays you back"
                     + (f"; banker {banker['horse']} anchors it" if banker else ""))
     # n == 4
-    if short_day and not banker:
-        return _ret("yankee", False,
-                    "four short bankers — win Yankee (11 bets, no singles): needs two+ to land")
     return _ret("lucky15", ew_ok,
                 f"four selections — {_kind(ew_ok)} Lucky 15: one winner returns, two+ and you're in profit"
                 + (f"; banker {banker['horse']}'s single underwrites the slip" if banker else ""))

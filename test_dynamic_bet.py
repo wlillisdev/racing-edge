@@ -318,18 +318,27 @@ def t_cs_no_banker_without_two_lens():
     approx(plan["stake_mult"], 1.0)
 
 
-def t_cs_treble_short():
-    # 3 short legs (odds <= 3.5), all agree=1 -> treble, ew False, mult 1.0, banker None
+def t_cs_short_no_conviction_single():
+    # All short-priced, no conviction -> WIN single on the strongest (shortest price),
+    # NOT a margin-heavy treble/Yankee of favourites (the 2026-06-19 lesson).
     legs = sorted_cands([
-        cand("A", 3.0, agree=1, rank=30),
-        cand("B", 3.5, agree=1, rank=20),
-        cand("C", 2.5, agree=1, rank=10),
+        cand("A", 3.0), cand("B", 3.5), cand("C", 2.5),
     ])
     plan = choose_structure(legs)
-    assert plan["structure"] == "treble", plan["structure"]
+    assert plan["structure"] == "single", plan["structure"]
     assert plan["ew"] is False
-    approx(plan["stake_mult"], 1.0)
+    assert len(plan["legs"]) == 1 and plan["legs"][0]["horse_id"] == "C", plan["legs"]  # 2.5 = shortest
     assert plan["banker"] is None
+
+
+def t_cs_four_short_single_not_yankee():
+    # Four short favourites (today's hand) -> single on the shortest, not a Yankee.
+    legs = sorted_cands([
+        cand("A", 2.23), cand("B", 2.1), cand("C", 2.5), cand("D", 2.63),
+    ])
+    plan = choose_structure(legs)
+    assert plan["structure"] == "single", plan["structure"]
+    assert plan["legs"][0]["horse_id"] == "B", plan["legs"]   # 2.1 = shortest
 
 
 def t_cs_lucky15_value():
@@ -459,7 +468,8 @@ def main():
         ("choose_structure two-lens banker flat", t_cs_two_lens_banker_flat),
         ("choose_structure press when enabled", t_cs_press_when_enabled),
         ("choose_structure no banker without two-lens", t_cs_no_banker_without_two_lens),
-        ("choose_structure treble short", t_cs_treble_short),
+        ("choose_structure short no-conviction -> single", t_cs_short_no_conviction_single),
+        ("choose_structure four short -> single not yankee", t_cs_four_short_single_not_yankee),
         ("choose_structure lucky15 value", t_cs_lucky15_value),
         ("choose_structure EW gated off short leg", t_cs_ew_gated_off_short_leg),
         ("choose_structure caps at 4", t_cs_caps_at_four),
