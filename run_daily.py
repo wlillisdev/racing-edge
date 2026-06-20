@@ -58,6 +58,13 @@ def _normalise_runner(raw: dict) -> dict:
         "jockey_id":        _safe_str(raw.get("jockey_id")),
         "age":              _safe_str(raw.get("age")),
         "sex":              _safe_str(raw.get("sex")),
+        # breeding — for the ground/breeding shadow signal (sire ground+trip aptitude)
+        "sire":             _safe_str(raw.get("sire")),
+        "sire_id":          _safe_str(raw.get("sire_id")),
+        "dam":              _safe_str(raw.get("dam")),
+        "dam_id":           _safe_str(raw.get("dam_id")),
+        "damsire":          _safe_str(raw.get("damsire")),
+        "damsire_id":       _safe_str(raw.get("damsire_id")),
         "number":           _safe_int(raw.get("number")),
         "draw":             _safe_int(raw.get("draw")),
         "weight_lbs":       _safe_int(raw.get("weight_lbs")),

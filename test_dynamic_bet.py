@@ -22,7 +22,7 @@ for _k in ("RACING_API_USERNAME", "RACING_API_PASSWORD", "DB_HOST", "DB_NAME",
 import dynamic_bet as db
 from dynamic_bet import (
     place_terms, _lines, _stake, settle_ticket, _prod,
-    choose_structure, _potential,
+    choose_structure, _potential, SRC_PRIORITY,
 )
 
 # --------------------------------------------------------------------------- #
@@ -67,27 +67,35 @@ def win_leg(odds, won=True, place_frac=0.25, place_pos=3, placed=None):
     }
 
 
-def cand(horse_id, odds, agree, rank, place_pos=3, place_frac=0.25,
-         course="Ascot", off_time="14:00", horse=None, source="METHOD"):
-    """A candidate leg for choose_structure (already 'gathered')."""
+def cand(horse_id, odds, agree=1, rank=0, place_pos=3, place_frac=0.25,
+         course="Ascot", off_time="14:00", horse=None, source="METHOD",
+         two_lens=False, sources=None, prio=None):
+    """A candidate leg for choose_structure (already 'gathered').
+
+    two_lens = the NAP pick that the overlay also rates up (the only genuine
+    independent confirmation; drives the banker tag).
+    """
+    srcs = set(sources) if sources else {source}
     return {
         "horse_id": horse_id,
         "horse": horse or f"H{horse_id}",
-        "sources": {source},
-        "source": source,
+        "sources": srcs,
+        "source": "+".join(sorted(srcs)),
         "odds": odds,
         "place_frac": place_frac,
         "place_pos": place_pos,
         "rank": rank,
-        "agree": agree,
+        "agree": len(srcs),
+        "two_lens": two_lens,
+        "prio": prio if prio is not None else max(SRC_PRIORITY[s] for s in srcs),
         "course": course,
         "off_time": off_time,
     }
 
 
 def sorted_cands(legs):
-    """Mirror gather()'s sort: agree-first then rank, both descending."""
-    return sorted(legs, key=lambda l: (-l["agree"], -l["rank"]))
+    """Mirror gather()'s sort: genuine two-lens first, then source priority, then price."""
+    return sorted(legs, key=lambda l: (-int(l["two_lens"]), -l["prio"], l["odds"]))
 
 
 # =========================================================================== #
@@ -266,46 +274,71 @@ def t_cs_empty():
     approx(plan["stake_mult"], 0.0)
 
 
-def t_cs_full_alignment_single():
-    # top has agree=3 -> single on the banker only, mult 3.0
+def t_cs_two_lens_banker_flat():
+    # Genuine two-lens (NAP + overlay on the same horse) tags a banker but, with
+    # PRESS_ENABLED False, staking stays FLAT (mult 1.0) — not a vote-count press.
     legs = sorted_cands([
-        cand("A", 5.0, agree=3, rank=120),
-        cand("B", 6.0, agree=1, rank=50),
-        cand("C", 7.0, agree=1, rank=40),
+        cand("A", 5.0, sources={"NAP", "METHOD"}, two_lens=True),
+        cand("B", 6.0, sources={"METHOD"}),
+        cand("C", 7.0, sources={"SHADOW"}),
+    ])
+    plan = choose_structure(legs)
+    assert plan["banker"] is not None and plan["banker"]["horse_id"] == "A", plan["banker"]
+    assert plan["structure"] == "patent", plan["structure"]
+    approx(plan["stake_mult"], 1.0)        # flat until the ledger earns the press
+    assert plan["ew"] is True              # all legs >= VALUE_PRICE and offer places
+
+
+def t_cs_press_when_enabled():
+    # When PRESS is switched on, a two-lens banker draws the (capped) press factor.
+    legs = sorted_cands([
+        cand("A", 5.0, sources={"NAP", "METHOD"}, two_lens=True),
+        cand("B", 6.0, sources={"METHOD"}),
+        cand("C", 7.0, sources={"SHADOW"}),
+    ])
+    saved = db.PRESS_ENABLED
+    try:
+        db.PRESS_ENABLED = True
+        plan = choose_structure(legs)
+        approx(plan["stake_mult"], db.PRESS_FACTOR)
+    finally:
+        db.PRESS_ENABLED = saved
+
+
+def t_cs_no_banker_without_two_lens():
+    # NAP + METHOD on the same horse but overlay not positive -> NOT two_lens,
+    # so no banker (agreement alone, being shared model DNA, isn't confirmation).
+    legs = sorted_cands([
+        cand("A", 5.0, sources={"NAP", "METHOD"}, two_lens=False),
+        cand("B", 6.0, sources={"METHOD"}),
+        cand("C", 7.0, sources={"SHADOW"}),
+    ])
+    plan = choose_structure(legs)
+    assert plan["banker"] is None, plan["banker"]
+    approx(plan["stake_mult"], 1.0)
+
+
+def t_cs_short_no_conviction_single():
+    # All short-priced, no conviction -> WIN single on the strongest (shortest price),
+    # NOT a margin-heavy treble/Yankee of favourites (the 2026-06-19 lesson).
+    legs = sorted_cands([
+        cand("A", 3.0), cand("B", 3.5), cand("C", 2.5),
     ])
     plan = choose_structure(legs)
     assert plan["structure"] == "single", plan["structure"]
-    assert len(plan["legs"]) == 1 and plan["legs"][0]["horse_id"] == "A", plan["legs"]
-    approx(plan["stake_mult"], 3.0)
-    assert plan["banker"]["horse_id"] == "A"
-
-
-def t_cs_patent_aligned():
-    # top agree=2, 3 value legs (odds 5-7) -> patent, mult 2.0, banker set
-    legs = sorted_cands([
-        cand("A", 5.0, agree=2, rank=120),
-        cand("B", 6.0, agree=1, rank=50),
-        cand("C", 7.0, agree=1, rank=40),
-    ])
-    plan = choose_structure(legs)
-    assert plan["structure"] == "patent", plan["structure"]
-    approx(plan["stake_mult"], 2.0)
-    assert plan["banker"] is not None and plan["banker"]["horse_id"] == "A"
-    assert plan["ew"] is True  # value_day (median 6 >= 4.5)
-
-
-def t_cs_treble_short():
-    # 3 short legs (odds <= 3.5), all agree=1 -> treble, ew False, mult 1.0, banker None
-    legs = sorted_cands([
-        cand("A", 3.0, agree=1, rank=30),
-        cand("B", 3.5, agree=1, rank=20),
-        cand("C", 2.5, agree=1, rank=10),
-    ])
-    plan = choose_structure(legs)
-    assert plan["structure"] == "treble", plan["structure"]
     assert plan["ew"] is False
-    approx(plan["stake_mult"], 1.0)
+    assert len(plan["legs"]) == 1 and plan["legs"][0]["horse_id"] == "C", plan["legs"]  # 2.5 = shortest
     assert plan["banker"] is None
+
+
+def t_cs_four_short_single_not_yankee():
+    # Four short favourites (today's hand) -> single on the shortest, not a Yankee.
+    legs = sorted_cands([
+        cand("A", 2.23), cand("B", 2.1), cand("C", 2.5), cand("D", 2.63),
+    ])
+    plan = choose_structure(legs)
+    assert plan["structure"] == "single", plan["structure"]
+    assert plan["legs"][0]["horse_id"] == "B", plan["legs"]   # 2.1 = shortest
 
 
 def t_cs_lucky15_value():
@@ -319,6 +352,21 @@ def t_cs_lucky15_value():
     plan = choose_structure(legs)
     assert plan["structure"] == "lucky15", plan["structure"]
     assert plan["ew"] is True
+
+
+def t_cs_ew_gated_off_short_leg():
+    # One leg below VALUE_PRICE (or with no places) must turn the whole ticket
+    # win-only — no dead each-way stake on a leg whose place part can't earn.
+    legs = sorted_cands([
+        cand("A", 6.0), cand("B", 6.0), cand("C", 3.0),  # C is short -> EW off
+    ])
+    plan = choose_structure(legs)
+    assert plan["ew"] is False, "short leg should force win-only"
+    legs2 = sorted_cands([
+        cand("A", 6.0), cand("B", 6.0, place_pos=0),     # B offers no places
+    ])
+    plan2 = choose_structure(legs2)
+    assert plan2["ew"] is False, "place_pos=0 leg should force win-only"
 
 
 def t_cs_caps_at_four():
@@ -417,10 +465,13 @@ def main():
         ("_stake", t_stake),
         ("_prod", t_prod),
         ("choose_structure empty -> None", t_cs_empty),
-        ("choose_structure full alignment single", t_cs_full_alignment_single),
-        ("choose_structure patent aligned", t_cs_patent_aligned),
-        ("choose_structure treble short", t_cs_treble_short),
+        ("choose_structure two-lens banker flat", t_cs_two_lens_banker_flat),
+        ("choose_structure press when enabled", t_cs_press_when_enabled),
+        ("choose_structure no banker without two-lens", t_cs_no_banker_without_two_lens),
+        ("choose_structure short no-conviction -> single", t_cs_short_no_conviction_single),
+        ("choose_structure four short -> single not yankee", t_cs_four_short_single_not_yankee),
         ("choose_structure lucky15 value", t_cs_lucky15_value),
+        ("choose_structure EW gated off short leg", t_cs_ew_gated_off_short_leg),
         ("choose_structure caps at 4", t_cs_caps_at_four),
         ("_potential lucky15", t_potential_lucky15),
         ("_potential empty", t_potential_empty),

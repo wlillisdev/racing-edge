@@ -330,6 +330,39 @@ class RacingAPIClient:
 
         return self._get(f"/odds/live/{race_id}", allow_404=True)
 
+    def get_sire_analysis_distances(
+        self,
+        sire_id: str,
+        going: Optional[str] = None,
+        type_: Optional[str] = None,
+        region: str = "gb,ire",
+    ) -> list[dict]:
+        """Fetch a sire's progeny performance broken down by distance.
+
+        Endpoint: GET /sires/{sire_id}/analysis/distances  (Standard tier)
+
+        Optional `going` (e.g. "Good,Soft") and `type_` (e.g. "Flat,Chase")
+        filters narrow the breakdown — used to read a stallion's ground and
+        trip aptitude for the breeding shadow signal. Returns a list of
+        per-distance stat dicts, or [] if unavailable / not entitled.
+        """
+        if not sire_id:
+            return []
+        params: dict = {"region": region}
+        if going:
+            params["going"] = going
+        if type_:
+            params["type"] = type_
+        result = self._get(
+            f"/sires/{sire_id}/analysis/distances", params=params, allow_404=True
+        )
+        if isinstance(result, dict):
+            for key in ("distances", "analysis", "data", "results"):
+                v = result.get(key)
+                if isinstance(v, list):
+                    return v
+        return self._extract_list(result)
+
     def get_results_by_date(
         self,
         date_str: str,

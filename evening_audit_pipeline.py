@@ -60,6 +60,8 @@ PIPELINE_STEPS: list[tuple[str, str, list[str]]] = [
     ("nap_miss_autopsy",      "nap_miss_autopsy.py",      []),
     ("method_scoreboard",     "method_pick_check.py",     []),
     ("dynamic_bet_settle",    "dynamic_bet.py",           ["--settle"]),
+    ("ground_breeding_settle","ground_breeding_signal.py",["--settle"]),
+    ("jockey_intent_settle",  "jockey_intent_signal.py",  ["--settle"]),
     ("model_param_tuner",     "model_param_tuner.py",     []),
     ("profit_report",         "profit_report.py",         []),
     ("email_audit",           "email_audit.py",           []),
