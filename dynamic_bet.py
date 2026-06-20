@@ -246,6 +246,7 @@ def gather(date_str: str) -> list[dict]:
         l["two_lens"] = ("NAP" in l["sources"] and "METHOD" in l["sources"]
                          and (l.get("overlay") or 0) > 0)
         l["prio"] = max(SRC_PRIORITY[s] for s in l["sources"])
+        l["sources"] = sorted(l["sources"])   # JSON-serialisable (sets are not)
     # Genuine two-lens first, then source priority (NAP>Method>Shadow), then price.
     legs.sort(key=lambda l: (-int(l["two_lens"]), -l["prio"], l["odds"]))
     return legs
