@@ -117,6 +117,27 @@ def _build_briefing(date_str: str, data: dict) -> str:
             lines.append(f"  Why: {ai.get('reason')}")
         lines.append("")
 
+    # --- THE METHOD (your pick: NAP base + overlay) ---
+    method = safe_load_json(data_path(f"method_pick_{date_str}.json")) or {}
+    m_nap = method.get("method_nap")
+    lines.append("■ THE METHOD  (your pick — NAP base + your overlay)")
+    if m_nap:
+        lines += [
+            f"  {str(m_nap.get('horse', '?')).upper()}",
+            f"  {m_nap.get('course', '?')}  {m_nap.get('off_time', '?')}",
+            f"  Case: {m_nap.get('method_case', '?')}  "
+            f"(NAP base {m_nap.get('base', '?')} + overlay {m_nap.get('overlay', '?')})  "
+            f"|  Price: {_fmt_odds(m_nap.get('price'))}",
+        ]
+        if nap and str(nap.get("horse", "")).lower() == str(m_nap.get("horse", "")).lower():
+            lines.append("  ✓ Agrees with the quant NAP — both lenses on the same horse")
+        lines += ["", "  Why:"]
+        for r in (m_nap.get("reasons") or [])[:6]:
+            lines.append(f"    • {r}")
+    else:
+        lines.append("  No bettable Method pick in the value band today.")
+    lines.append("")
+
     # --- Jump alternative ---
     jump_nap = data.get("jump_nap")
     lines.append("■ JUMP ALTERNATIVE")
@@ -169,6 +190,28 @@ def _build_briefing(date_str: str, data: dict) -> str:
         for rid in cluster_races:
             lines.append(f"  ⚠ Clustered race: {rid} — no clear standout")
         lines.append("")
+
+    # --- TODAY'S BET (dynamic multiple/single — the reads pick the shape) ---
+    bet = safe_load_json(data_path(f"dynamic_bet_{date_str}.json")) or {}
+    lines.append("■ TODAY'S BET  (dynamic — double / Patent / Lucky 15 / single)")
+    if bet.get("legs"):
+        pot = bet.get("potential") or {}
+        kind = "EACH-WAY" if bet.get("ew") else "WIN"
+        lines.append(f"  {str(bet.get('structure', '?')).upper()}  ({kind})   "
+                     f"stake £{float(pot.get('stake', 0)):.2f}")
+        if bet.get("conviction"):
+            lines.append(f"  {bet['conviction']}")
+        for l in bet["legs"]:
+            lines.append(f"    · {l.get('horse', '?')} — {l.get('course', '?')} "
+                         f"{l.get('off_time', '?')}  @{l.get('odds', '?')}  ({l.get('source', '')})")
+        if pot.get("all_win"):
+            lines.append(f"  if all win: £{float(pot['all_win']):.2f}")
+        if bet.get("why"):
+            lines.append(f"  {bet['why']}")
+        lines.append("  (paper-trade — flat stake until the ledger proves an edge)")
+    else:
+        lines.append("  No bet today — nothing in the value band.")
+    lines.append("")
 
     # --- Day verdict ---
     day_verdict = data.get("day_verdict", "UNKNOWN")
