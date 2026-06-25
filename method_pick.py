@@ -29,7 +29,12 @@ from racecard_loader import load_racecard
 from src.helpers import data_path, log, safe_load_json, safe_write_json, today_str
 from nap_selector_v3 import score_runner, handicap_trajectory   # the NAP base + helpers
 
-MIN_ODDS, MAX_ODDS = 2.0, 7.0          # bettable value band (same as the NAP)
+# Bettable band narrowed to the method's PROVEN sweet spot. edge_tracker over
+# 155 picks (2026-06): the 2.0-4.0 band returned +1.2% and beat the favourite,
+# while 4.0-8.0 bled -24.7%. That split confirms the cross-season principle that
+# winners go off short. Live betting fires only here; edge_tracker still measures
+# every band, so if this regresses we will see it and can widen back.
+MIN_ODDS, MAX_ODDS = 2.0, 4.0
 STEAMER_TYPES = {"steamer", "strong_steamer"}
 
 

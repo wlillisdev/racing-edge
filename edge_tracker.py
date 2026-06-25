@@ -86,7 +86,10 @@ def scan(date_str: str) -> int:
     if date_str in _logged_dates():
         return 0
     method = method_build(date_str) or {}
-    picks = [p for p in (method.get("race_picks") or []) if p.get("bettable")]
+    # Measure EVERY priced per-race pick, not just the (now-narrowed) bettable
+    # ones — this is the control group. If the live band tightens to 2.0-4.0 we
+    # still watch 4.0+ here, so a regression or a turn in the wider band shows up.
+    picks = [p for p in (method.get("race_picks") or []) if p.get("price")]
     if not picks:
         return 0
     try:
