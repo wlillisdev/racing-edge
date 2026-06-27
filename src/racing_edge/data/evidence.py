@@ -75,30 +75,37 @@ class _Fetcher(Protocol):
 
 def build_evidence(race: Race, client: _Fetcher, as_of: date | None = None) -> list[RunnerEvidence]:
     """Assemble each runner's evidence. `as_of` enforces NO LOOK-AHEAD for
-    backtesting: a horse's history is filtered to runs strictly BEFORE that date,
-    so a past race is only ever judged on form that existed at the time."""
-    # cache the trainer-analysis rows once per yard, derive both stable jockeys
-    # and the A/E from the same fetch.
+    backtesting: a horse's history is filtered to runs strictly BEFORE that date.
+
+    In backtest mode (as_of set) the trainer A/E and stable-jockey reads are
+    SKIPPED — those come from the API's *current* analysis endpoint, which knows
+    the trainer's form AFTER the race (a look-ahead leak). The card's own
+    trainer_14d form is point-in-time (as of the card) and is kept. (Testing the
+    A/E/jockey-intent signals historically needs trailing A/E computed from past
+    results — a later build.)"""
+    backtest = as_of is not None
     cache: dict[str, tuple[frozenset[str], float | None, int]] = {}
     evidence: list[RunnerEvidence] = []
     for r in race.runners:
         history = past_runs_from_raw(client.horse_results(r.horse_id))
         if as_of is not None:
             history = tuple(h for h in history if h.date < as_of)
-        tid = r.trainer_id
-        if tid not in cache:
-            rows = client.trainer_jockeys(tid)
-            ae, ae_runs = stable_ae_from_analysis(rows)
-            cache[tid] = (stable_jockeys_from_analysis(rows), ae, ae_runs)
-        jockeys, ae, ae_runs = cache[tid]
+        if backtest:
+            jockeys, ae, ae_runs = frozenset[str](), None, 0   # no current-stats leak
+        else:
+            tid = r.trainer_id
+            if tid not in cache:
+                rows = client.trainer_jockeys(tid)
+                ae, ae_runs = stable_ae_from_analysis(rows)
+                cache[tid] = (stable_jockeys_from_analysis(rows), ae, ae_runs)
+            jockeys, ae, ae_runs = cache[tid]
         evidence.append(RunnerEvidence(
             runner=r,
             history=history,
-            stable_runs=r.trainer_14d_runs or 0,
+            stable_runs=r.trainer_14d_runs or 0,    # point-in-time (on the card) — kept
             stable_wins=r.trainer_14d_wins or 0,
             stable_ae=ae,
             stable_ae_runs=ae_runs,
             stable_jockey_ids=jockeys,
-            # combo record + franked count are later data feeds; default to neutral.
         ))
     return evidence
