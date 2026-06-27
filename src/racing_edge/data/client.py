@@ -54,9 +54,17 @@ class RacingAPIClient:
 
     # ---- racecards / results ------------------------------------------------
     def racecards(self, day: str = "today") -> dict:
-        """Pro racecards for a day. Returns the raw doc (key 'racecards')."""
+        """Pro racecards for a day (accepts 'today', 'tomorrow', or YYYY-MM-DD —
+        a past date for backtesting). Returns the raw doc (key 'racecards')."""
+        from datetime import date, timedelta
+        if day == "today":
+            ds = date.today().isoformat()
+        elif day == "tomorrow":
+            ds = (date.today() + timedelta(days=1)).isoformat()
+        else:
+            ds = day
         regions = [r.strip() for r in self._cfg.api.regions.split(",")]
-        params = [("day", day)] + [("region_codes", r) for r in regions]
+        params = [("date", ds)] + [("region_codes", r) for r in regions]
         return self._get("/racecards/pro", params=params, allow_404=True) or {"racecards": []}
 
     def results_by_date(self, date_str: str) -> dict:

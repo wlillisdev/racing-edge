@@ -11,6 +11,7 @@ the fetches.
 
 from __future__ import annotations
 
+from datetime import date
 from typing import Protocol
 
 from racing_edge.data.normalise import past_runs_from_raw
@@ -72,13 +73,18 @@ class _Fetcher(Protocol):
     def trainer_jockeys(self, trainer_id: str) -> list[dict]: ...
 
 
-def build_evidence(race: Race, client: _Fetcher) -> list[RunnerEvidence]:
+def build_evidence(race: Race, client: _Fetcher, as_of: date | None = None) -> list[RunnerEvidence]:
+    """Assemble each runner's evidence. `as_of` enforces NO LOOK-AHEAD for
+    backtesting: a horse's history is filtered to runs strictly BEFORE that date,
+    so a past race is only ever judged on form that existed at the time."""
     # cache the trainer-analysis rows once per yard, derive both stable jockeys
     # and the A/E from the same fetch.
     cache: dict[str, tuple[frozenset[str], float | None, int]] = {}
     evidence: list[RunnerEvidence] = []
     for r in race.runners:
         history = past_runs_from_raw(client.horse_results(r.horse_id))
+        if as_of is not None:
+            history = tuple(h for h in history if h.date < as_of)
         tid = r.trainer_id
         if tid not in cache:
             rows = client.trainer_jockeys(tid)
