@@ -10,7 +10,7 @@ one. Point-in-time evidence (no look-ahead). Prints the CLV scoreboard.
 from __future__ import annotations
 
 import argparse
-from datetime import datetime
+from datetime import date, datetime
 from pathlib import Path
 
 from racing_edge.config import get_config
@@ -34,10 +34,14 @@ def main() -> int:
     ledger = Ledger(path)
 
     print(f"  backtesting {'flat' if args.flat else 'jumps'} {start} -> {end} "
-          f"(point-in-time, no look-ahead)...")
+          f"(point-in-time, no look-ahead)...", flush=True)
+
+    def _progress(d: date, races: int, picks: int) -> None:
+        print(f"    {d}  {races:>2} races   {picks} picks so far", flush=True)
+
     days, picks = backtest(get_client(), start, end, ledger,
-                           code=("flat" if args.flat else "jump"))
-    print(f"  {days} day(s), {picks} pick(s)\n")
+                           code=("flat" if args.flat else "jump"), progress=_progress)
+    print(f"\n  {days} day(s), {picks} pick(s)\n")
     print(render_ledger(ledger.settled_picks()))
     return 0
 
