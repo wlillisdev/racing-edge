@@ -1,0 +1,61 @@
+[project]
+name = "racing-edge"
+version = "0.1.0"
+description = "A winter-jumps handicapping assistant: the owner picks, the machine fetches and keeps an honest record."
+requires-python = ">=3.11"
+dependencies = [
+    "requests==2.31.0",
+    "python-dotenv==1.0.0",
+    "mysql-connector-python>=9.1.0,<10",
+    "anthropic==0.69.0",
+    "httpx>=0.23.0,<0.28.0",
+    "tabulate==0.9.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "ruff>=0.6", "mypy>=1.11", "import-linter>=2"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+# --------------------------------------------------------------------------- #
+# Quality gates — the thing that was missing for 19 days / 176 commits.
+# --------------------------------------------------------------------------- #
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "RUF"]
+
+[tool.mypy]
+python_version = "3.11"
+packages = ["racing_edge"]
+strict = true
+warn_unused_ignores = true
+disallow_untyped_defs = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+# Architecture gate: the domain (the owner's method) must stay pure.
+[tool.importlinter]
+root_package = "racing_edge"
+
+[[tool.importlinter.contracts]]
+name = "domain stays pure (no data/db/ai/io)"
+type = "forbidden"
+source_modules = ["racing_edge.domain"]
+forbidden_modules = ["racing_edge.data", "racing_edge.ai", "racing_edge.report"]
+
+[[tool.importlinter.contracts]]
+name = "selection never reaches into reporting"
+type = "forbidden"
+source_modules = ["racing_edge.selection"]
+forbidden_modules = ["racing_edge.report"]
