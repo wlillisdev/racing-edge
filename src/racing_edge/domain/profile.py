@@ -122,11 +122,13 @@ def consistency_prb(history: tuple[PastRun, ...]) -> Signal | None:
     rates far above 5th of 6. Averaged, it's a robust merit read for big NH
     fields. Par 0.50; >=0.55 genuinely positive, <=0.45 modest. (Eased/non-trier
     runs corrupt it, but over a sample it holds up.)"""
-    runs = [(h.position, h.field_size) for h in history
-            if h.position is not None and h.field_size and h.field_size >= 2]
+    # Include non-finishers (position=None): a faller/pulled-up beat nobody, so it
+    # scores PRB 0, not dropped. Dropping them flattered horses that don't complete.
+    runs = [(h.position, h.field_size) for h in history if h.field_size and h.field_size >= 2]
     if len(runs) < 4:
         return None
-    prbs = [max(0.0, min(1.0, (fs - pos) / (fs - 1))) for pos, fs in runs]
+    prbs = [0.0 if pos is None else max(0.0, min(1.0, (fs - pos) / (fs - 1)))
+            for pos, fs in runs]
     avg = sum(prbs) / len(prbs)
     if avg >= 0.55:
         return Signal("consistent", 2.0,

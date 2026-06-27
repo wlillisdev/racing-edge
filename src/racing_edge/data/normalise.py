@@ -10,11 +10,11 @@ Pure: dict in, dataclass out. No network, no DB.
 
 from __future__ import annotations
 
-import statistics
 from datetime import date, datetime
 from typing import Any
 
 from racing_edge.domain.models import Odds, PastRun, Race, RaceResult, Runner, RunnerResult
+
 
 # --------------------------------------------------------------------------- #
 # coercions — one set, replacing the 3-5 drifted copies the audit found
@@ -65,16 +65,16 @@ def _odds(raw_odds: Any) -> Odds:
         d = _float(o.get("decimal") if isinstance(o, dict) else o)
         if d and d > 1.0:
             decs.append(d)
-    consensus = round(statistics.median(decs), 2) if decs else None
-    return Odds(morning=consensus, consensus=consensus)
+    # The price a punter actually TAKES is the BEST available, not the median —
+    # recording the median understated every pick's price and biased CLV down.
+    best = round(max(decs), 2) if decs else None
+    return Odds(morning=best, consensus=best)
 
 
 def _headgear_first_time(raw: dict) -> bool:
-    hg = _str(raw.get("headgear"))
-    if not hg:
-        return False
-    run = _str(raw.get("headgear_run"))
-    return run in ("", "0", "1")  # blank / first application
+    # Only headgear_run == "1" is genuinely first-time; "0"/"" mean not-wearing /
+    # unknown and must NOT fire (the old check over-fired on every blank).
+    return bool(_str(raw.get("headgear"))) and _str(raw.get("headgear_run")) == "1"
 
 
 # --------------------------------------------------------------------------- #

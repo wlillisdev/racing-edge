@@ -41,7 +41,7 @@ def test_runner_normalise() -> None:
     assert r.weight_lbs == 152 and r.official_rating == 138 and r.rpr == 150
     assert r.claim_lbs == 5
     assert r.headgear == "b" and r.headgear_first_time is True
-    assert r.odds.consensus == 4.0     # median of 3.5/4.0/4.5
+    assert r.odds.consensus == 4.5     # best (max) of 3.5/4.0/4.5 — the price taken
 
 
 def test_race_normalise() -> None:
