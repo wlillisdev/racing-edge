@@ -1,0 +1,185 @@
+"""Raw Racing API JSON -> typed contracts. ONE home for normalisation.
+
+The audit's biggest data finding: racecards had a normaliser but RESULTS had
+none, so ~20 consumers each re-derived position / won / sp from raw dicts. Here
+both are normalised once. Jumps non-finisher codes (F, PU, UR, RO, BD...) are
+parsed to position=None + a status, never a crashing int().
+
+Pure: dict in, dataclass out. No network, no DB.
+"""
+
+from __future__ import annotations
+
+import statistics
+from datetime import date, datetime
+from typing import Any
+
+from racing_edge.domain.models import Odds, PastRun, Race, RaceResult, Runner, RunnerResult
+
+# --------------------------------------------------------------------------- #
+# coercions — one set, replacing the 3-5 drifted copies the audit found
+# --------------------------------------------------------------------------- #
+def _str(v: Any, default: str = "") -> str:
+    return str(v).strip() if v is not None else default
+
+
+def _int(v: Any) -> int | None:
+    try:
+        return int(float(str(v).strip()))
+    except (TypeError, ValueError):
+        return None
+
+
+def _float(v: Any) -> float | None:
+    try:
+        f = float(str(v).strip())
+        return f if f > 0 else None
+    except (TypeError, ValueError):
+        return None
+
+
+def _date(v: Any) -> date | None:
+    s = _str(v)[:10]
+    try:
+        return datetime.strptime(s, "%Y-%m-%d").date()
+    except ValueError:
+        return None
+
+
+# --------------------------------------------------------------------------- #
+# position: "1" -> 1 ; "F"/"PU"/"UR" -> (None, "F"/"PU"/"UR")
+# --------------------------------------------------------------------------- #
+def _position(raw: Any) -> tuple[int | None, str]:
+    s = _str(raw).upper()
+    if s.isdigit():
+        return int(s), ""
+    return None, s  # faller / pulled-up / unseated / refused / brought-down / void
+
+
+# --------------------------------------------------------------------------- #
+# odds
+# --------------------------------------------------------------------------- #
+def _odds(raw_odds: Any) -> Odds:
+    decs: list[float] = []
+    for o in raw_odds or []:
+        d = _float(o.get("decimal") if isinstance(o, dict) else o)
+        if d and d > 1.0:
+            decs.append(d)
+    consensus = round(statistics.median(decs), 2) if decs else None
+    return Odds(morning=consensus, consensus=consensus)
+
+
+def _headgear_first_time(raw: dict) -> bool:
+    hg = _str(raw.get("headgear"))
+    if not hg:
+        return False
+    run = _str(raw.get("headgear_run"))
+    return run in ("", "0", "1")  # blank / first application
+
+
+# --------------------------------------------------------------------------- #
+# runner / race
+# --------------------------------------------------------------------------- #
+def runner_from_raw(raw: dict) -> Runner:
+    tw = raw.get("trainer_14_days")
+    _ = tw  # 14-day form is attached later via evidence; kept on the raw card
+    return Runner(
+        horse_id=_str(raw.get("horse_id")),
+        horse=_str(raw.get("horse")),
+        trainer=_str(raw.get("trainer")),
+        trainer_id=_str(raw.get("trainer_id")),
+        jockey=_str(raw.get("jockey")),
+        jockey_id=_str(raw.get("jockey_id")),
+        claim_lbs=_int(raw.get("claim")),
+        age=_int(raw.get("age")),
+        sex=_str(raw.get("sex")),
+        weight_lbs=_int(raw.get("lbs")),
+        official_rating=_int(raw.get("ofr")),
+        rpr=_int(raw.get("rpr")),
+        form=_str(raw.get("form")),
+        days_since_run=_int(raw.get("last_run")),
+        headgear=_str(raw.get("headgear")),
+        headgear_first_time=_headgear_first_time(raw),
+        wind_surgery=_str(raw.get("wind_surgery")),
+        draw=_int(raw.get("draw")),
+        sire=_str(raw.get("sire")), sire_id=_str(raw.get("sire_id")),
+        dam=_str(raw.get("dam")), dam_id=_str(raw.get("dam_id")),
+        damsire=_str(raw.get("damsire")), damsire_id=_str(raw.get("damsire_id")),
+        odds=_odds(raw.get("odds")),
+        spotlight=_str(raw.get("spotlight")),
+    )
+
+
+def race_from_raw(raw: dict, race_date: date) -> Race:
+    name = f"{raw.get('race_name', '')} {raw.get('type', '')}".lower()
+    return Race(
+        race_id=_str(raw.get("race_id")),
+        course=_str(raw.get("course")),
+        off_time=_str(raw.get("off_time")),
+        date=race_date,
+        race_type=_str(raw.get("type")),
+        is_handicap=any(k in name for k in ("handicap", "hcap", "h'cap", "nursery")),
+        race_class=_int(raw.get("class") or raw.get("race_class")),
+        distance_f=_float(raw.get("distance_f") or raw.get("dist_f")),
+        going=_str(raw.get("going")),
+        going_detailed=_str(raw.get("going_detailed")),
+        region=_str(raw.get("region")),
+        runners=tuple(runner_from_raw(r) for r in (raw.get("runners") or [])),
+    )
+
+
+def racecards_from_raw(doc: dict) -> list[Race]:
+    races = doc.get("racecards") or doc.get("races") or []
+    out: list[Race] = []
+    for raw in races:
+        d = _date(raw.get("date")) or date.today()
+        out.append(race_from_raw(raw, d))
+    return out
+
+
+# --------------------------------------------------------------------------- #
+# results — the normaliser the old code never had
+# --------------------------------------------------------------------------- #
+def runner_result_from_raw(raw: dict) -> RunnerResult:
+    pos, status = _position(raw.get("position"))
+    return RunnerResult(
+        horse_id=_str(raw.get("horse_id")),
+        position=pos,
+        status=status,
+        sp_dec=_float(raw.get("sp_dec") or raw.get("sp")),
+        bsp=_float(raw.get("bsp")),
+        beaten_lengths=_float(raw.get("btn") or raw.get("beaten_lengths")),
+    )
+
+
+def results_from_raw(doc: dict) -> list[RaceResult]:
+    out: list[RaceResult] = []
+    for race in doc.get("results") or []:
+        rd = _date(race.get("date")) or date.today()
+        out.append(RaceResult(
+            race_id=_str(race.get("race_id")),
+            date=rd,
+            runners=tuple(runner_result_from_raw(r) for r in (race.get("runners") or [])),
+        ))
+    return out
+
+
+# --------------------------------------------------------------------------- #
+# a horse's past runs (from get_horse_results) -> PastRun, for the proven reads
+# --------------------------------------------------------------------------- #
+def past_runs_from_raw(rows: list[dict]) -> tuple[PastRun, ...]:
+    out: list[PastRun] = []
+    for r in rows or []:
+        pos, _status = _position(r.get("position"))
+        out.append(PastRun(
+            date=_date(r.get("date")) or date.today(),
+            position=pos,
+            race_class=_int(r.get("class") or r.get("race_class")),
+            going=_str(r.get("going")),
+            distance_f=_float(r.get("dist_f") or r.get("distance_f")),
+            weight_lbs=_int(r.get("weight_lbs") or r.get("lbs")),
+            course=_str(r.get("course")),
+            race_type=_str(r.get("type")),
+            field_size=_int(r.get("ran") or r.get("field_size")),
+        ))
+    return tuple(out)
