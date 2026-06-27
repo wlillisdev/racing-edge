@@ -57,6 +57,30 @@ def by_signal(picks: list[SettledPick]) -> list[tuple[str, Summary, Summary]]:
     return rows
 
 
+_PRICE_BANDS = [("<= 2.5", 0.0, 2.5), ("2.5-4", 2.5, 4.0), ("4-6", 4.0, 6.0),
+                ("6-10", 6.0, 10.0), ("10+", 10.0, 9e9)]
+
+
+def by_price_band(picks: list[SettledPick]) -> list[tuple[str, Summary]]:
+    """Does the method beat the close at some PRICES and not others? (The clean,
+    point-in-time version of the old loser-patterns price finding.)"""
+    method = [p for p in _method(picks) if p.price_taken]
+    out = []
+    for label, lo, hi in _PRICE_BANDS:
+        sub = [p for p in method if p.price_taken and lo < p.price_taken <= hi]
+        if sub:
+            out.append((label, summarise(sub)))
+    return out
+
+
+def by_month(picks: list[SettledPick]) -> list[tuple[str, Summary]]:
+    """Seasonality within the winter — is any edge concentrated in certain months?"""
+    method = _method(picks)
+    months = sorted({(p.date.year, p.date.month) for p in method})
+    return [(f"{y}-{m:02d}", summarise([p for p in method if p.date.year == y and p.date.month == m]))
+            for y, m in months]
+
+
 def walk_forward(picks: list[SettledPick]) -> list[tuple[str, Summary]]:
     """Split the method's picks chronologically in half: does the edge hold on
     the later half it wasn't 'observed' on, or front-load then fade?"""

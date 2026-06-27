@@ -2,7 +2,13 @@
 
 from __future__ import annotations
 
-from racing_edge.measurement.analyse import by_conviction, by_signal, walk_forward
+from racing_edge.measurement.analyse import (
+    by_conviction,
+    by_month,
+    by_price_band,
+    by_signal,
+    walk_forward,
+)
 from racing_edge.measurement.metrics import Summary
 from racing_edge.measurement.record import SettledPick
 
@@ -28,6 +34,16 @@ def render_analysis(picks: list[SettledPick]) -> str:
     lines.append("\n  by CONVICTION (does the edge concentrate in strong picks?)")
     lines.append(head)
     for label, s in by_conviction(picks):
+        lines.append(_line(label, s))
+
+    lines.append("\n  by PRICE BAND (does the edge sit at certain prices?)")
+    lines.append(head)
+    for label, s in by_price_band(picks):
+        lines.append(_line(label, s))
+
+    lines.append("\n  by MONTH (seasonality within the winter)")
+    lines.append(head)
+    for label, s in by_month(picks):
         lines.append(_line(label, s))
 
     lines.append("\n  WALK-FORWARD (does it hold on the later half, or front-load?)")
