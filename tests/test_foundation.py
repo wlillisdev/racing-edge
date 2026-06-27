@@ -10,7 +10,7 @@ from __future__ import annotations
 import sys
 from datetime import date
 
-from racing_edge.data.schemas import Odds, Race, RaceResult, Runner, RunnerResult
+from racing_edge.domain.models import Odds, Race, RaceResult, Runner, RunnerResult
 from racing_edge.domain.season import is_prime, prime_code, racing_season
 from racing_edge.domain.units import (
     distance_to_furlongs,

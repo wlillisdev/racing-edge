@@ -29,6 +29,29 @@ class Odds:
 
 
 @dataclass(frozen=True)
+class PastRun:
+    """One historical run for a horse — the raw material for the proven-at-the-
+    level, ground, trip, course and weight reads."""
+
+    date: date
+    position: int | None
+    race_class: int | None = None
+    going: str = ""
+    distance_f: float | None = None
+    weight_lbs: int | None = None
+    course: str = ""
+    race_type: str = ""
+
+    @property
+    def won(self) -> bool:
+        return self.position == 1
+
+    @property
+    def placed(self) -> bool:
+        return self.position is not None and self.position in (2, 3)
+
+
+@dataclass(frozen=True)
 class Runner:
     horse_id: str
     horse: str
