@@ -116,6 +116,27 @@ def course_proven(race: Race, history: tuple[PastRun, ...]) -> Signal | None:
     return None
 
 
+def consistency_prb(history: tuple[PastRun, ...]) -> Signal | None:
+    """PRB (Percentage of Rivals Beaten) — the form metric serious students use.
+    Per run = (field - finish) / (field - 1); it scores EVERY run, so 5th of 24
+    rates far above 5th of 6. Averaged, it's a robust merit read for big NH
+    fields. Par 0.50; >=0.55 genuinely positive, <=0.45 modest. (Eased/non-trier
+    runs corrupt it, but over a sample it holds up.)"""
+    runs = [(h.position, h.field_size) for h in history
+            if h.position is not None and h.field_size and h.field_size >= 2]
+    if len(runs) < 4:
+        return None
+    prbs = [max(0.0, min(1.0, (fs - pos) / (fs - 1))) for pos, fs in runs]
+    avg = sum(prbs) / len(prbs)
+    if avg >= 0.55:
+        return Signal("consistent", 2.0,
+                      f"Beats most rivals (PRB {avg:.2f} over {len(runs)} runs) — runs to a level")
+    if avg <= 0.45:
+        return Signal("modest_merit", -2.0,
+                      f"Beaten by most rivals (PRB {avg:.2f}) — modest in his races")
+    return None
+
+
 def quality_of_win(history: tuple[PastRun, ...]) -> Signal | None:
     """How good was the race it won? A win in a competitive, decent-class race is
     far stronger form than a soft win in a small weak field."""

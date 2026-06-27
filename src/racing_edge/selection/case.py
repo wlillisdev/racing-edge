@@ -27,6 +27,7 @@ from racing_edge.domain.profile import (
     claimer_allowance,
     class_ceiling,
     class_drop,
+    consistency_prb,
     course_proven,
     going_proven,
     quality_of_win,
@@ -76,7 +77,7 @@ def assess(ev: RunnerEvidence, race: Race) -> Case:
         improving(r.form), bottler(r.form),
         # class / proven at the level
         well_in_and_proven(r, race, h), class_drop(race, h), class_ceiling(race, h),
-        topped_out(race, h), quality_of_win(h),
+        topped_out(race, h), quality_of_win(h), consistency_prb(h),
         # suitability
         going_proven(race, h), trip_proven(race, h), course_proven(race, h),
         # weight
