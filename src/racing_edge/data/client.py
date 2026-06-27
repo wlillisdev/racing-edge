@@ -26,31 +26,50 @@ class RacingAPIError(RuntimeError):
 
 class RacingAPIClient:
     _TIMEOUT = 30
-    _MAX_RETRIES = 4
+    _MAX_RETRIES = 6
     _BACKOFF = 2.0
+    _MIN_INTERVAL = 0.25     # proactive throttle ~4 req/s — stay under the rate limit
 
     def __init__(self, cfg: Config | None = None) -> None:
         self._cfg = cfg or get_config()
         self._session = requests.Session()
         self._session.auth = (self._cfg.api.username, self._cfg.api.password)  # Basic Auth
+        self._last_request = 0.0
+
+    def _throttle(self) -> None:
+        gap = time.monotonic() - self._last_request
+        if gap < self._MIN_INTERVAL:
+            time.sleep(self._MIN_INTERVAL - gap)
+        self._last_request = time.monotonic()
 
     def _get(self, path: str, params: Any = None, allow_404: bool = True) -> Any:
         url = f"{self._cfg.api.base_url}{path}"
         attempt = 0
         while True:
+            self._throttle()
             try:
                 resp = self._session.get(url, params=params, timeout=self._TIMEOUT)
-                break
             except (ConnectionError, ReadTimeout, Timeout) as exc:
                 attempt += 1
                 if attempt > self._MAX_RETRIES:
                     raise RacingAPIError(0, url, str(exc)) from exc
                 time.sleep(self._BACKOFF * (2 ** (attempt - 1)))
-        if resp.status_code == 200:
-            return resp.json()
-        if resp.status_code == 404 and allow_404:
-            return None
-        raise RacingAPIError(resp.status_code, url, resp.text[:200])
+                continue
+            if resp.status_code == 429:        # rate limited — back off and retry
+                attempt += 1
+                if attempt > self._MAX_RETRIES:
+                    raise RacingAPIError(429, url, "rate limited after retries")
+                try:
+                    wait = float(resp.headers.get("Retry-After", ""))
+                except ValueError:
+                    wait = self._BACKOFF * (2 ** (attempt - 1))
+                time.sleep(min(max(wait, 1.0), 30.0))
+                continue
+            if resp.status_code == 200:
+                return resp.json()
+            if resp.status_code == 404 and allow_404:
+                return None
+            raise RacingAPIError(resp.status_code, url, resp.text[:200])
 
     # ---- racecards / results ------------------------------------------------
     def racecards(self, day: str = "today") -> dict:

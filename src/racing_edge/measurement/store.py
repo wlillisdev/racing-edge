@@ -84,5 +84,9 @@ class Ledger:
     def pending_count(self) -> int:
         return int(self._conn.execute("SELECT COUNT(*) FROM picks WHERE settled=0").fetchone()[0])
 
+    def recorded_dates(self) -> set[str]:
+        """Dates that already have picks — so a backtest can resume, not restart."""
+        return {r[0] for r in self._conn.execute("SELECT DISTINCT date FROM picks")}
+
     def close(self) -> None:
         self._conn.close()

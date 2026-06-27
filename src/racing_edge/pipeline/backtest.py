@@ -64,10 +64,14 @@ def backtest(client: _Client, start: date, end: date, ledger,
     Read the verdict with report.render_ledger."""
     policy = policy or BettingPolicy()
     client = _CachingClient(client)
+    done = ledger.recorded_dates()           # resume: skip days already processed
     day = start
     days = picks = 0
     while day <= end:
         ds = day.isoformat()
+        if ds in done:                       # already in the ledger — don't re-fetch
+            day += timedelta(days=1)
+            continue
         races = [r for r in racecards_from_raw(client.racecards(ds)) if r.code == code]
         card_picks: list[CardPick] = []
         for race in races:
