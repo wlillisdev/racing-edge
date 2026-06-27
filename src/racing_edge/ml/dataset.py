@@ -22,6 +22,7 @@ from typing import Protocol
 
 import numpy as np
 
+from racing_edge.data.client import RacingAPIError
 from racing_edge.data.normalise import (
     past_runs_from_raw,
     racecards_from_raw,
@@ -63,14 +64,26 @@ def assemble(client: _Fetcher, start: date, end: date, code: str = "jump",
              progress: Callable[[date, int], None] | None = None) -> list[TrainingRace]:
     """Walk start..end, emit one TrainingRace per race that has a result. History
     is cached per horse and trimmed point-in-time per race. `progress(day, n_so_far)`
-    is called per day. Runnable on the deployment where the API creds live."""
+    is called per day. Runnable on the deployment where the API creds live.
+
+    NOTE: The Racing API's /results endpoint only serves the trailing ~12 months
+    (older dates 422). Days outside that window are skipped (no labels available),
+    so a multi-year range silently yields only the last ~12 months unless results
+    are sourced elsewhere — the caller should clamp and warn."""
     cache: dict[str, tuple[PastRun, ...]] = {}
     out: list[TrainingRace] = []
     day = start
     while day <= end:
         ds = day.isoformat()
         races = [r for r in racecards_from_raw(client.racecards(ds)) if r.code == code]
-        results = {res.race_id: res for res in results_from_raw(client.results_by_date(ds))}
+        try:
+            results = {res.race_id: res
+                       for res in results_from_raw(client.results_by_date(ds))}
+        except RacingAPIError as exc:
+            if getattr(exc, "status_code", None) == 422:   # outside the result window
+                results = {}                               # races this day go unlabelled
+            else:
+                raise
         for race in races:
             res = results.get(race.race_id)
             if res is None or not race.runners:

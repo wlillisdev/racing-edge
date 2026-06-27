@@ -20,7 +20,7 @@ from __future__ import annotations
 
 import argparse
 import pickle
-from datetime import datetime
+from datetime import date, datetime, timedelta
 from pathlib import Path
 
 import numpy as np
@@ -101,6 +101,14 @@ def main() -> int:
 
     start = datetime.strptime(args.start, "%Y-%m-%d").date()
     end = datetime.strptime(args.end, "%Y-%m-%d").date()
+    # The Racing API /results only serves the trailing ~12 months; clamp transparently
+    # rather than 422-crash or silently truncate.
+    earliest = date.today() - timedelta(days=364)
+    if start < earliest:
+        print(f"  NOTE: /results is capped at the last 12 months — clamping start "
+              f"{start} -> {earliest}. A multi-year run needs a historical results "
+              f"source (see docs/ml_roadmap.md).", flush=True)
+        start = earliest
     code = "flat" if args.flat else "jump"
     cache = Path(get_config().project_dir) / "data" / f"ml_dataset_{code}.pkl"
     cache.parent.mkdir(parents=True, exist_ok=True)

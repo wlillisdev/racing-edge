@@ -58,6 +58,32 @@ no feature reads the race being predicted. The market price is deliberately **no
 a form feature. Walk-forward only: train on the past, test on the strictly later
 period, roll forward — never a random split.
 
+## HARD LIMIT: the /results endpoint only serves the last ~12 months
+
+The Racing API's `/results` endpoint rejects any start date more than 12 months in
+the past (HTTP 422: "start date must be 12 months or less in the past").
+`/racecards/pro` and `/horses/{id}/results` are NOT capped (they serve old dates),
+but `/results` — our source for finishing position + SP per race — is. So:
+
+- `cli/ml.py` clamps `--start` to `today − 364d` and prints a notice; `assemble()`
+  skips any out-of-window day rather than crashing.
+- **We cannot reproduce Wilkens' 10-year study through this API.** The most we can
+  assemble live is ~12 months. That is enough to test the *accuracy* question
+  (market vs fundamental vs augmented log-loss; thousands of races) but the
+  *value-betting* ROI/CLV sample will be thin (Wilkens got ~14 qualifying bets/year),
+  so that verdict is directional only.
+
+Routes to multi-year data (a separate build, in rough order of effort):
+1. **Accumulate forward** — record results daily; combined with the trailing 12
+   months we have now, the window grows ~1 month per month.
+2. **Reconstruct results from `horse_results`** — each runner's career rows carry
+   its finishing position (and possibly SP) for past races, and `/racecards/pro`
+   serves the old field. Assemble a race's labels by joining its runners' career
+   rows for that date. No 12-month cap, but heavier and SP coverage is uncertain.
+3. **Bulk historical source** — Betfair historical files (for BSP/SP, via
+   tarb/betfair_data) joined to a form dataset (Wilkens used Racing Form Book).
+   The proper long-term answer; matches the blueprint's "evidence warehouse".
+
 ## The binding constraint: data (the hard 80%)
 
 The models are easy; assembling a leakage-free, race-grouped historical dataset
