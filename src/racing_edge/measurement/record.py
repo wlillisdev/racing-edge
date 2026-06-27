@@ -22,6 +22,8 @@ class SettledPick:
     price_taken: float | None      # the price actually available when picked (NOT sp)
     sp: float | None               # settled price — for CLV and conservative P&L
     position: int | None
+    score: float | None = None     # the method's conviction (sum of signal weights)
+    signals: str = ""              # comma-joined signal names that fired (for ablation)
 
     @property
     def won(self) -> bool:
