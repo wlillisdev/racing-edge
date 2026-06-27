@@ -11,6 +11,7 @@ import numpy as np
 
 from racing_edge.domain.models import PastRun, Race, Runner
 from racing_edge.ml.baseline import market_probs, or_softmax, softmax
+from racing_edge.ml.calibrate import IsotonicCalibrator, calibrate_race
 from racing_edge.ml.condlogit import ConditionalLogit
 from racing_edge.ml.dataset import (
     Price,
@@ -22,6 +23,14 @@ from racing_edge.ml.dataset import (
 )
 from racing_edge.ml.evaluate import ScoredRace, ScoredRunner, evaluate
 from racing_edge.ml.features import FEATURE_NAMES, design_matrix, point_in_time
+from racing_edge.ml.value import (
+    RaceObs,
+    Thresholds,
+    expected_values,
+    kelly_stake,
+    pick_value_bet,
+    run_strategy,
+)
 
 
 # --------------------------------------------------------------------------- #
@@ -240,3 +249,58 @@ def test_to_scored_races_carries_outcome_and_price() -> None:
     scored = to_scored_races(races, probs)
     assert scored[0].runners[1].won and scored[0].runners[1].prob == 0.5
     assert scored[0].runners[1].sp == 4.2
+
+
+# --------------------------------------------------------------------------- #
+# isotonic calibration
+# --------------------------------------------------------------------------- #
+def test_isotonic_is_monotonic_and_improves_overconfidence() -> None:
+    rng = np.random.default_rng(3)
+    raw = rng.uniform(0.02, 0.98, 4000)
+    true = 0.5 * raw + 0.25                         # model is over-confident vs truth
+    won = (rng.uniform(size=raw.size) < true).astype(float)
+    cal = IsotonicCalibrator().fit(raw[:3000], won[:3000])
+    # monotonic non-decreasing map
+    assert cal.y_ is not None and np.all(np.diff(cal.y_) >= -1e-9)
+    # held-out log-loss improves after calibration
+    h_raw, h_won = raw[3000:], won[3000:]
+    p_cal = np.clip(cal.predict(h_raw), 1e-6, 1 - 1e-6)
+    p_raw = np.clip(h_raw, 1e-6, 1 - 1e-6)
+    ll = lambda p: -np.mean(h_won * np.log(p) + (1 - h_won) * np.log(1 - p))  # noqa: E731
+    assert ll(p_cal) < ll(p_raw)
+
+
+def test_calibrate_race_renormalises() -> None:
+    cal = IsotonicCalibrator().fit(np.array([0.1, 0.5, 0.9]), np.array([0.0, 1.0, 1.0]))
+    out = calibrate_race(cal, np.array([0.2, 0.3, 0.5]))
+    assert abs(out.sum() - 1.0) < 1e-9 and np.all(out > 0)
+
+
+# --------------------------------------------------------------------------- #
+# value selection + fractional Kelly
+# --------------------------------------------------------------------------- #
+def test_expected_values_and_kelly() -> None:
+    ev = expected_values(np.array([0.5, 0.3]), [2.5, None])
+    assert ev[0] == 0.25 and ev[1] == -np.inf
+    assert abs(kelly_stake(0.5, 2.5, 0.10) - 0.10 * 0.25 / 1.5) < 1e-12
+    assert kelly_stake(0.3, 2.0, 0.10) == 0.0     # negative edge -> no stake
+
+
+def test_pick_value_bet_respects_gates() -> None:
+    probs = np.array([0.6, 0.3, 0.2])
+    taken = [2.5, 4.0, 6.0]                        # EVs: 0.50, 0.20, 0.20
+    # edge gate off (edge_min<0) so we isolate the EV/price behaviour
+    assert pick_value_bet(probs, taken, Thresholds(ev_min=0.1, edge_min=-1.0)) == 0
+    # price floor above 4.0 -> only the 6.0 runner survives
+    assert pick_value_bet(probs, taken, Thresholds(ev_min=0.1, sp_min=4.5, edge_min=-1.0)) == 2
+    # demand more EV than any offers -> NO BET
+    assert pick_value_bet(probs, taken, Thresholds(ev_min=0.9, edge_min=-1.0)) is None
+
+
+def test_run_strategy_settles_flat_and_clv() -> None:
+    # runner 0 is the only positive-EV bet (0.7*2-1=0.4); runner 1 is negative
+    race = RaceObs(probs=np.array([0.7, 0.3]), taken=[2.0, 3.0], sp=[1.9, 3.2], winner=0)
+    res = run_strategy([race], Thresholds(ev_min=0.0, sp_min=1.5, edge_min=-1.0), f=0.10)
+    assert res.n_bets == 1 and res.n_wins == 1 and res.win_pct == 100.0
+    assert res.flat_roi == 1.0                     # backed a 2.0 winner at 1pt
+    assert res.mean_clv is not None and abs(res.mean_clv - (2.0 / 1.9 - 1)) < 1e-9
