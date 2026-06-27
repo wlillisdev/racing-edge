@@ -11,6 +11,7 @@ from datetime import date
 from racing_edge.domain.form import bottler, improving
 from racing_edge.domain.models import PastRun, Race, Runner
 from racing_edge.domain.profile import (
+    claimer_allowance,
     class_ceiling,
     class_drop,
     course_proven,
@@ -116,6 +117,13 @@ def test_weight_relief() -> None:
     runner = Runner(horse_id="H", horse="X", weight_lbs=150)
     assert weight_relief(runner, (_run(5, wt=156),)) is not None   # 6lb relief
     assert weight_relief(runner, (_run(5, wt=151),)) is None       # only 1lb
+
+
+def test_claimer_allowance() -> None:
+    assert claimer_allowance(Runner(horse_id="H", horse="X", claim_lbs=7)).weight == 2.5
+    assert claimer_allowance(Runner(horse_id="H", horse="X", claim_lbs=3)).weight == 1.5
+    assert claimer_allowance(Runner(horse_id="H", horse="X", claim_lbs=0)) is None
+    assert claimer_allowance(Runner(horse_id="H", horse="X")) is None
 
 
 def _main() -> int:

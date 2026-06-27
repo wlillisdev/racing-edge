@@ -116,6 +116,18 @@ def course_proven(race: Race, history: tuple[PastRun, ...]) -> Signal | None:
     return None
 
 
+def claimer_allowance(runner: Runner) -> Signal | None:
+    """A claiming/conditional jockey takes weight off the horse's back — a real
+    edge on a well-handicapped horse where every pound counts (and often the
+    yard getting in light on purpose)."""
+    c = runner.claim_lbs
+    if c and c >= 3:
+        weight = 2.5 if c >= 5 else 1.5
+        return Signal("claimer", weight,
+                      f"{c}lb claimer — takes {c}lb off the back, in light at the weights")
+    return None
+
+
 def weight_relief(runner: Runner, history: tuple[PastRun, ...]) -> Signal | None:
     last = _last_weight(history)
     if runner.weight_lbs is None or last is None:

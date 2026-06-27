@@ -59,6 +59,7 @@ class Runner:
     trainer_id: str = ""
     jockey: str = ""
     jockey_id: str = ""
+    claim_lbs: int | None = None     # a claiming/conditional jockey's allowance — weight off the back
     age: int | None = None
     sex: str = ""
     weight_lbs: int | None = None
