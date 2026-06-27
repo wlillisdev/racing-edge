@@ -71,6 +71,8 @@ class Runner:
     headgear: str = ""
     headgear_first_time: bool = False  # first time in this headgear — trainer looking for improvement
     wind_surgery: str = ""           # e.g. "1" = first time after a wind op (a positive signal)
+    trainer_14d_runs: int | None = None   # the yard's recent form — the owner's "critical" stable read
+    trainer_14d_wins: int | None = None
     draw: int | None = None          # usually None/irrelevant over jumps
     sire: str = ""
     sire_id: str = ""

@@ -81,9 +81,10 @@ def _headgear_first_time(raw: dict) -> bool:
 # runner / race
 # --------------------------------------------------------------------------- #
 def runner_from_raw(raw: dict) -> Runner:
-    tw = raw.get("trainer_14_days")
-    _ = tw  # 14-day form is attached later via evidence; kept on the raw card
+    tw = raw.get("trainer_14_days") if isinstance(raw.get("trainer_14_days"), dict) else {}
     return Runner(
+        trainer_14d_runs=_int(tw.get("runs")),
+        trainer_14d_wins=_int(tw.get("wins")),
         horse_id=_str(raw.get("horse_id")),
         horse=_str(raw.get("horse")),
         trainer=_str(raw.get("trainer")),
