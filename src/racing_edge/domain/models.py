@@ -41,6 +41,7 @@ class PastRun:
     weight_lbs: int | None = None
     course: str = ""
     race_type: str = ""
+    field_size: int | None = None    # how competitive the race was — quality of a win
 
     @property
     def won(self) -> bool:
@@ -68,6 +69,7 @@ class Runner:
     form: str = ""
     days_since_run: int | None = None
     headgear: str = ""
+    headgear_first_time: bool = False  # first time in this headgear — trainer looking for improvement
     wind_surgery: str = ""           # e.g. "1" = first time after a wind op (a positive signal)
     draw: int | None = None          # usually None/irrelevant over jumps
     sire: str = ""

@@ -9,6 +9,7 @@ import sys
 from datetime import date
 
 from racing_edge.domain.form import bottler, improving
+from racing_edge.domain.intent import first_time_headgear, form_franked, stable_in_form
 from racing_edge.domain.models import PastRun, Race, Runner
 from racing_edge.domain.profile import (
     claimer_allowance,
@@ -16,6 +17,7 @@ from racing_edge.domain.profile import (
     class_drop,
     course_proven,
     going_proven,
+    quality_of_win,
     topped_out,
     trip_proven,
     weight_relief,
@@ -124,6 +126,34 @@ def test_claimer_allowance() -> None:
     assert claimer_allowance(Runner(horse_id="H", horse="X", claim_lbs=3)).weight == 1.5
     assert claimer_allowance(Runner(horse_id="H", horse="X", claim_lbs=0)) is None
     assert claimer_allowance(Runner(horse_id="H", horse="X")) is None
+
+
+def test_quality_of_win() -> None:
+    good = (_run(1, cls=3, dist=20.0),)
+    # field_size needs setting on the PastRun
+    good = (PastRun(date=date(2025, 12, 1), position=1, race_class=3, field_size=12),)
+    assert quality_of_win(good) is not None
+    weak = (PastRun(date=date(2025, 12, 1), position=1, race_class=6, field_size=4),)
+    assert quality_of_win(weak) is None
+
+
+def test_stable_in_form() -> None:
+    assert stable_in_form(20, 6).name == "stable_hot"      # 30%
+    assert stable_in_form(20, 4).name == "stable_form"     # 20%
+    assert stable_in_form(30, 1).name == "stable_cold"     # ~3%
+    assert stable_in_form(5, 3) is None                    # too few runs
+
+
+def test_first_time_headgear() -> None:
+    on = Runner(horse_id="H", horse="X", headgear="b", headgear_first_time=True)
+    assert first_time_headgear(on) is not None
+    off = Runner(horse_id="H", horse="X", headgear="b", headgear_first_time=False)
+    assert first_time_headgear(off) is None
+
+
+def test_form_franked() -> None:
+    assert form_franked(2) is not None
+    assert form_franked(0) is None
 
 
 def _main() -> int:

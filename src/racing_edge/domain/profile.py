@@ -116,6 +116,21 @@ def course_proven(race: Race, history: tuple[PastRun, ...]) -> Signal | None:
     return None
 
 
+def quality_of_win(history: tuple[PastRun, ...]) -> Signal | None:
+    """How good was the race it won? A win in a competitive, decent-class race is
+    far stronger form than a soft win in a small weak field."""
+    quality = [
+        h for h in history
+        if h.won and h.race_class is not None and h.race_class <= 4
+        and (h.field_size or 0) >= 8
+    ]
+    if quality:
+        best = min(quality, key=lambda h: h.race_class or 99)
+        return Signal("quality_win", 2.0,
+                      f"Won a competitive Class {best.race_class} ({best.field_size} ran) — strong form")
+    return None
+
+
 def claimer_allowance(runner: Runner) -> Signal | None:
     """A claiming/conditional jockey takes weight off the horse's back — a real
     edge on a well-handicapped horse where every pound counts (and often the
