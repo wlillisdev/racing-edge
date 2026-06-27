@@ -71,10 +71,16 @@ def vs_favourite(picks: list[SettledPick]) -> Benchmark:
 
 
 def verdict(s: Summary) -> str:
-    """The sample-size honesty guard — no calling an edge on noise."""
+    """The sample-size honesty guard, calibrated to the research: CLV proves an
+    edge in ~100 bets (P&L needs 300-500+); the sharp bar is beating the close
+    ~60% of the time over 200+ bets. No edge is ever called on noise."""
     if s.n < TRUST_SAMPLE:
-        return (f"SAMPLE {s.n}/{TRUST_SAMPLE} — direction only. CLV {s.mean_clv_pct}% is the "
-                f"signal to watch; treat ROI as noise.")
-    if s.mean_clv_pct is not None and s.mean_clv_pct > 0:
-        return f"Beating the close (+{s.mean_clv_pct}% CLV over {s.n}) — a real edge is showing."
-    return f"Not beating the close ({s.mean_clv_pct}% CLV over {s.n}) — no proven edge yet."
+        return (f"SAMPLE {s.n}/{TRUST_SAMPLE} — direction only. The beat-the-close % is the "
+                f"signal to watch; treat ROI as noise until ~300+ bets.")
+    bc = s.pct_positive_clv
+    if bc is None:
+        return f"No CLV data over {s.n} bets — record the price taken vs SP to measure it."
+    if bc >= 55.0:
+        return (f"Beating the close {bc}% of bets over {s.n} (mean CLV {s.mean_clv_pct}%) — "
+                f"a real edge is showing (the sharp bar is ~60%+).")
+    return f"Beating the close only {bc}% over {s.n} — no proven edge yet (need ~60%)."

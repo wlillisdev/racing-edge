@@ -87,16 +87,20 @@ def jockey_trainer_combo(rides: int, wins: int) -> Signal | None:
 
 
 def market_move(odds: Odds) -> Signal | None:
-    """Winners go short — the market confirming. A steamer (backed in from the
-    morning) is a plus; a big drifter is a warning."""
+    """The market read — but honestly weighted, per the research. Steamers DO win
+    slightly more, but following the steam is NOT profitable: the market prices
+    the move in, so the value was in the EARLY price, before it shortened. So a
+    steamer is mild confirmation only (+1, take the early price), while a big
+    drift is a genuine warning the informed money is against it."""
     morning = odds.morning
     now = odds.late or odds.consensus
     if not morning or not now:
         return None
     if now <= morning * 0.85:        # shortened 15%+
-        return Signal("steamer", 3.0,
-                      f"Backed in {format_odds(morning)} -> {format_odds(now)} — market confirming")
+        return Signal("steamer", 1.0,
+                      f"Backed in {format_odds(morning)} -> {format_odds(now)} — market agrees "
+                      f"(value was the early price)")
     if now >= morning * 1.30:        # drifted 30%+
         return Signal("drifter", -2.0,
-                      f"Drifting {format_odds(morning)} -> {format_odds(now)} — market against it")
+                      f"Drifting {format_odds(morning)} -> {format_odds(now)} — informed money against it")
     return None
