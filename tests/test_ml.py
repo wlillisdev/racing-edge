@@ -12,6 +12,14 @@ import numpy as np
 from racing_edge.domain.models import PastRun, Race, Runner
 from racing_edge.ml.baseline import market_probs, or_softmax, softmax
 from racing_edge.ml.condlogit import ConditionalLogit
+from racing_edge.ml.dataset import (
+    Price,
+    TrainingRace,
+    assemble,
+    chronological_split,
+    fit_pairs,
+    to_scored_races,
+)
 from racing_edge.ml.evaluate import ScoredRace, ScoredRunner, evaluate
 from racing_edge.ml.features import FEATURE_NAMES, design_matrix, point_in_time
 
@@ -160,3 +168,75 @@ def test_design_matrix_shape_and_centring() -> None:
     for name in ("going_proven", "trip_proven", "course_proven"):
         assert X[0, FEATURE_NAMES.index(name)] == 1.0
         assert X[1, FEATURE_NAMES.index(name)] == 0.0
+
+
+# --------------------------------------------------------------------------- #
+# dataset assembly — offline with a fake client (the API contract, no network)
+# --------------------------------------------------------------------------- #
+class _FakeClient:
+    def __init__(self) -> None:
+        self._card = {
+            "racecards": [{
+                "race_id": "rac1", "course": "Kelso", "off_time": "14:00",
+                "date": "2026-02-01", "type": "Chase", "class": "3",
+                "distance_f": "20.0", "going": "Soft", "region": "GB",
+                "runners": [
+                    {"horse_id": "a", "horse": "A", "ofr": "140", "rpr": "150",
+                     "age": "8", "lbs": "160", "odds": [{"decimal": "2.5"}]},
+                    {"horse_id": "b", "horse": "B", "ofr": "130", "rpr": "138",
+                     "age": "7", "lbs": "154", "odds": [{"decimal": "4.0"}]},
+                    {"horse_id": "c", "horse": "C", "ofr": "125", "rpr": "132",
+                     "age": "9", "lbs": "150", "odds": [{"decimal": "6.0"}]},
+                ],
+            }],
+        }
+        self._res = {
+            "results": [{
+                "race_id": "rac1", "date": "2026-02-01",
+                "runners": [
+                    {"horse_id": "a", "position": "2", "sp_dec": "2.6"},
+                    {"horse_id": "b", "position": "1", "sp_dec": "4.2", "bsp": "4.5"},
+                    {"horse_id": "c", "position": "F", "sp_dec": "6.5"},
+                ],
+            }],
+        }
+
+    def racecards(self, day: str = "today") -> dict:
+        return self._card if day == "2026-02-01" else {"racecards": []}
+
+    def results_by_date(self, date_str: str) -> dict:
+        return self._res if date_str == "2026-02-01" else {"results": []}
+
+    def horse_results(self, horse_id: str, limit: int = 12) -> list[dict]:
+        return []
+
+
+def test_assemble_builds_priced_race_with_winner() -> None:
+    races = assemble(_FakeClient(), date(2026, 2, 1), date(2026, 2, 1), code="jump")
+    assert len(races) == 1
+    t = races[0]
+    assert t.race_id == "rac1"
+    assert t.X.shape == (3, len(FEATURE_NAMES))
+    assert t.has_winner and t.horse_ids[t.winner_idx] == "b"     # 'b' won
+    assert t.prices[t.winner_idx].sp == 4.2 and t.prices[t.winner_idx].bsp == 4.5
+    assert t.prices[0].taken == 2.5                              # best card price kept
+
+
+def test_chronological_split_is_time_ordered() -> None:
+    mk = lambda d: TrainingRace(race_id=f"r{d}", date=date(2026, 1, d),  # noqa: E731
+                                X=np.zeros((2, len(FEATURE_NAMES))), winner_idx=0,
+                                horse_ids=("x", "y"),
+                                prices=(Price(2.0, 2.0, None), Price(3.0, 3.0, None)))
+    races = [mk(5), mk(1), mk(3)]
+    train, test = chronological_split(races, train_frac=0.7)     # int(3*0.7)=2
+    assert [t.date.day for t in train] == [1, 3]                 # earliest two
+    assert [t.date.day for t in test] == [5]                     # strictly later
+    assert len(fit_pairs(train)) == 2
+
+
+def test_to_scored_races_carries_outcome_and_price() -> None:
+    races = assemble(_FakeClient(), date(2026, 2, 1), date(2026, 2, 1), code="jump")
+    probs = [np.array([0.2, 0.5, 0.3])]
+    scored = to_scored_races(races, probs)
+    assert scored[0].runners[1].won and scored[0].runners[1].prob == 0.5
+    assert scored[0].runners[1].sp == 4.2
