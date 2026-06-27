@@ -29,19 +29,10 @@ class APIConfig:
 
 
 @dataclass(frozen=True)
-class DBConfig:
-    host: str
-    name: str
-    user: str
-    password: str
-    port: int = 3306
-
-
-@dataclass(frozen=True)
 class Config:
     api: APIConfig
-    db: DBConfig
     project_dir: Path
+    # The ledger is SQLite (data/ledger.db) — no MySQL, no DB creds to configure.
 
 
 def _require(name: str) -> str:
@@ -61,13 +52,6 @@ def get_config() -> Config:
             password=_require("RACING_API_PASSWORD"),
             base_url=os.environ.get("RACING_API_BASE", "https://api.theracingapi.com/v1"),
             regions=os.environ.get("REGIONS", "gb,ire"),
-        ),
-        db=DBConfig(
-            host=_require("DB_HOST"),
-            name=_require("DB_NAME"),
-            user=_require("DB_USER"),
-            password=_require("DB_PASS"),
-            port=int(os.environ.get("DB_PORT", "3306")),
         ),
         project_dir=Path(os.environ.get("PROJECT_DIR", str(_PROJECT_ROOT))),
     )
