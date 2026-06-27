@@ -11,6 +11,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import date
 
+from racing_edge.ai.narrative import NarrativeRead
 from racing_edge.betting.bet import Bet
 from racing_edge.domain.models import Race
 from racing_edge.domain.units import format_odds
@@ -24,7 +25,8 @@ class CardPick:
     race: Race
     case: Case
     price: float | None
-    bet: Bet | None        # None = the method's pick, but not a value bet today
+    bet: Bet | None                          # None = the method's pick, but not a value bet today
+    narrative: tuple[NarrativeRead, ...] = ()  # optional AI reads of the comment (advisory, cited)
 
 
 @dataclass(frozen=True)
@@ -67,6 +69,10 @@ def render_card(card: DayCard) -> str:
             lines.append("    (the method's pick, but the price is out of the value range — no bet)")
         for reason in c.reasons:
             lines.append(f"       - {reason}")
+        if cp.narrative:
+            lines.append("    AI read of the comment (verify — never a tip):")
+            for nr in cp.narrative:
+                lines.append(f"       ~ {nr.note}  [\"{nr.citation}\"]")
     lines.append("\n" + _RULE)
     lines.append("  The method's read. Your eye, your call — overrule any of it.")
     return "\n".join(lines)
