@@ -122,6 +122,16 @@ def test_trip_and_course() -> None:
     assert course_proven(race, (_run(1, course="Ayr"),)) is None
 
 
+def test_well_handicapped() -> None:
+    from racing_edge.domain.profile import well_handicapped
+    h = _race(cls=3)  # is_handicap True
+    assert well_handicapped(Runner(horse_id="H", horse="X", rpr=148, official_rating=138), h) is not None
+    assert well_handicapped(Runner(horse_id="H", horse="X", rpr=141, official_rating=138), h) is None
+    nonh = Race(race_id="R", course="Ayr", off_time="15:00", date=date(2026, 1, 15),
+                race_type="Chase", is_handicap=False, race_class=3)
+    assert well_handicapped(Runner(horse_id="H", horse="X", rpr=148, official_rating=138), nonh) is None
+
+
 def test_weight_relief() -> None:
     runner = Runner(horse_id="H", horse="X", weight_lbs=150)
     assert weight_relief(runner, (_run(5, wt=156),)) is not None   # 6lb relief

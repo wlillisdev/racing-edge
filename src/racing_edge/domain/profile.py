@@ -152,3 +152,16 @@ def weight_relief(runner: Runner, history: tuple[PastRun, ...]) -> Signal | None
         return Signal("weight_relief", 2.0,
                       f"{abs(wv)}lb relief vs last run — the handicapper's been kind")
     return None
+
+
+def well_handicapped(runner: Runner, race: Race) -> Signal | None:
+    """RPR (how well it has run) vs OR (its current mark) — the pounds 'in hand'.
+    The classic well-handicapped angle, only meaningful in handicaps."""
+    if not race.is_handicap or runner.rpr is None or runner.official_rating is None:
+        return None
+    in_hand = runner.rpr - runner.official_rating
+    if in_hand >= 7:
+        return Signal("well_handicapped", 3.0,
+                      f"{in_hand}lb ahead of its mark (RPR {runner.rpr} vs OR "
+                      f"{runner.official_rating}) — well treated")
+    return None

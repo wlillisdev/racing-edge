@@ -33,6 +33,7 @@ from racing_edge.domain.profile import (
     topped_out,
     trip_proven,
     weight_relief,
+    well_handicapped,
     well_in_and_proven,
 )
 from racing_edge.domain.signal import Signal
@@ -79,7 +80,7 @@ def assess(ev: RunnerEvidence, race: Race) -> Case:
         # suitability
         going_proven(race, h), trip_proven(race, h), course_proven(race, h),
         # weight
-        weight_relief(r, h), claimer_allowance(r),
+        weight_relief(r, h), well_handicapped(r, race), claimer_allowance(r),
         # intent
         stable_in_form(ev.stable_runs, ev.stable_wins),
         stable_value(ev.stable_ae, ev.stable_ae_runs), first_time_headgear(r),
