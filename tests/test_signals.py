@@ -151,6 +151,14 @@ def test_stable_in_form() -> None:
     assert stable_in_form(5, 3) is None                    # too few runs
 
 
+def test_stable_value_ae() -> None:
+    from racing_edge.domain.intent import stable_value
+    assert stable_value(1.20, 50).name == "stable_value"      # beats its odds
+    assert stable_value(0.80, 60).name == "stable_overbet"    # underperforms odds, big sample
+    assert stable_value(1.20, 10) is None                     # too few runs
+    assert stable_value(None, 50) is None                     # no A/E supplied
+
+
 def test_first_time_headgear() -> None:
     on = Runner(horse_id="H", horse="X", headgear="b", headgear_first_time=True)
     assert first_time_headgear(on) is not None

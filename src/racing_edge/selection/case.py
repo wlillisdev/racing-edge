@@ -19,6 +19,7 @@ from racing_edge.domain.intent import (
     jockey_trainer_combo,
     market_move,
     stable_in_form,
+    stable_value,
 )
 from racing_edge.domain.market import market_stance
 from racing_edge.domain.models import PastRun, Race, Runner
@@ -46,6 +47,8 @@ class RunnerEvidence:
     history: tuple[PastRun, ...] = ()
     stable_runs: int = 0
     stable_wins: int = 0
+    stable_ae: float | None = None       # the yard's Actual/Expected — value, not just form
+    stable_ae_runs: int = 0
     stable_jockey_ids: frozenset[str] = field(default_factory=frozenset)
     combo_rides: int = 0
     combo_wins: int = 0
@@ -78,7 +81,8 @@ def assess(ev: RunnerEvidence, race: Race) -> Case:
         # weight
         weight_relief(r, h), claimer_allowance(r),
         # intent
-        stable_in_form(ev.stable_runs, ev.stable_wins), first_time_headgear(r),
+        stable_in_form(ev.stable_runs, ev.stable_wins),
+        stable_value(ev.stable_ae, ev.stable_ae_runs), first_time_headgear(r),
         form_franked(ev.franked_count), jockey_intent(r, race, ev.stable_jockey_ids),
         jockey_trainer_combo(ev.combo_rides, ev.combo_wins), market_move(r.odds),
     ]

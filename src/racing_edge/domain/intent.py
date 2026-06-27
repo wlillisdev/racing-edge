@@ -33,6 +33,21 @@ def stable_in_form(runs: int, wins: int) -> Signal | None:
     return None
 
 
+def stable_value(ae: float | None, runs: int) -> Signal | None:
+    """A/E (Actual vs Expected) — the research's sharper stable read. Raw strike
+    rate is already in the price; what's a genuine edge is a yard winning MORE
+    than its odds predict (A/E > 1). This is value, not just 'in form'."""
+    if ae is None or runs < 20:
+        return None
+    if ae >= 1.10:
+        return Signal("stable_value", 3.0,
+                      f"Yard beats its odds (A/E {ae:.2f} over {runs}) — genuine value, not just form")
+    if runs >= 40 and ae <= 0.85:
+        return Signal("stable_overbet", -2.0,
+                      f"Yard underperforms its odds (A/E {ae:.2f}) — its runners are overbet")
+    return None
+
+
 def first_time_headgear(runner: Runner) -> Signal | None:
     """First time in headgear (blinkers/cheekpieces/hood/visor/tongue-tie) — the
     trainer looking for improvement. A positive."""
