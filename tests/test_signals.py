@@ -9,8 +9,15 @@ import sys
 from datetime import date
 
 from racing_edge.domain.form import bottler, improving
-from racing_edge.domain.intent import first_time_headgear, form_franked, stable_in_form
-from racing_edge.domain.models import PastRun, Race, Runner
+from racing_edge.domain.intent import (
+    first_time_headgear,
+    form_franked,
+    jockey_intent,
+    jockey_trainer_combo,
+    market_move,
+    stable_in_form,
+)
+from racing_edge.domain.models import Odds, PastRun, Race, Runner
 from racing_edge.domain.profile import (
     claimer_allowance,
     class_ceiling,
@@ -154,6 +161,43 @@ def test_first_time_headgear() -> None:
 def test_form_franked() -> None:
     assert form_franked(2) is not None
     assert form_franked(0) is None
+
+
+def _yard_race(*runners: Runner) -> Race:
+    return Race(race_id="R", course="Naas", off_time="15:00", date=date(2026, 1, 15),
+                race_type="Handicap Hurdle", race_class=3, runners=runners)
+
+
+def test_jockey_intent_second_string() -> None:
+    # Trainer T1 runs two; stable jockey A is on the LONGER one (the message).
+    fav = Runner(horse_id="F", horse="Fav", trainer_id="T1", jockey_id="B",
+                 odds=Odds(consensus=2.5))
+    second = Runner(horse_id="S", horse="Second", trainer_id="T1", jockey_id="A",
+                    odds=Odds(consensus=6.0))
+    race = _yard_race(fav, second)
+    sig = jockey_intent(second, race, frozenset({"A"}))
+    assert sig is not None and sig.name == "jockey_intent" and sig.weight == 4.0
+    # the favourite ridden by the lesser jockey is flagged the lesser
+    lesser = jockey_intent(fav, race, frozenset({"A"}))
+    assert lesser is not None and lesser.weight < 0
+
+
+def test_jockey_single_runner_no_intent() -> None:
+    only = Runner(horse_id="H", horse="X", trainer_id="T1", jockey_id="A", odds=Odds(consensus=4.0))
+    assert jockey_intent(only, _yard_race(only), frozenset({"A"})) is None
+
+
+def test_jockey_trainer_combo() -> None:
+    assert jockey_trainer_combo(50, 12) is not None    # 24%
+    assert jockey_trainer_combo(50, 4) is None         # 8%
+    assert jockey_trainer_combo(10, 5) is None         # too few
+
+
+def test_market_move() -> None:
+    assert market_move(Odds(morning=6.0, late=4.0)).name == "steamer"
+    assert market_move(Odds(morning=4.0, late=6.0)).name == "drifter"
+    assert market_move(Odds(morning=4.0, late=4.1)) is None     # no real move
+    assert market_move(Odds(morning=None, late=4.0)) is None
 
 
 def _main() -> int:
