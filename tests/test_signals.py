@@ -193,6 +193,16 @@ def test_jockey_trainer_combo() -> None:
     assert jockey_trainer_combo(10, 5) is None         # too few
 
 
+def test_market_stance() -> None:
+    from racing_edge.domain.market import is_favourite, market_stance
+    fav = Runner(horse_id="F", horse="Fav", odds=Odds(consensus=2.5))
+    other = Runner(horse_id="O", horse="Other", odds=Odds(consensus=6.0))
+    race = _yard_race(fav, other)
+    assert is_favourite(fav, race) is True
+    assert "WITH the market" in market_stance(fav, race)
+    assert "AGAINST the market" in market_stance(other, race)
+
+
 def test_market_move() -> None:
     assert market_move(Odds(morning=6.0, late=4.0)).name == "steamer"
     assert market_move(Odds(morning=4.0, late=6.0)).name == "drifter"

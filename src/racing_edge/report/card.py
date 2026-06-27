@@ -58,6 +58,8 @@ def render_card(card: DayCard) -> str:
             f"\n  {r.course} {r.off_time}  —  {hcap}{r.race_type} ({cls}, {r.going_band})"
         )
         lines.append(f"    {str(c.runner.horse).upper()}   {_price_str(cp.price)}")
+        if c.stance:
+            lines.append(f"    [{c.stance}]")
         if cp.bet:
             ew = " each-way" if cp.bet.each_way else " win"
             lines.append(f"    >> VALUE BET: £{cp.bet.stake:.2f}{ew} single (take the best/early price)")

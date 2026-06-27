@@ -20,6 +20,7 @@ from racing_edge.domain.intent import (
     market_move,
     stable_in_form,
 )
+from racing_edge.domain.market import market_stance
 from racing_edge.domain.models import PastRun, Race, Runner
 from racing_edge.domain.profile import (
     claimer_allowance,
@@ -57,6 +58,7 @@ class Case:
     signals: tuple[Signal, ...]
     score: float
     vetoed: bool
+    stance: str = ""        # Benter: are we WITH or AGAINST the market here?
 
     @property
     def reasons(self) -> list[str]:
@@ -84,4 +86,5 @@ def assess(ev: RunnerEvidence, race: Race) -> Case:
     has_let_off = any(s.name in _LET_OFFS for s in signals)
     vetoed = any(s.veto for s in signals) and not has_let_off
     score = round(sum(s.weight for s in signals), 1)
-    return Case(runner=r, signals=signals, score=score, vetoed=vetoed)
+    return Case(runner=r, signals=signals, score=score, vetoed=vetoed,
+                stance=market_stance(r, race))
