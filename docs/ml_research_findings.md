@@ -1,5 +1,52 @@
 # ML research findings — verified, salvaged from the deep-research run
 
+## KEYSTONE — Wilkens (2026), now obtained and read in full
+
+Sascha Wilkens, *"Predictability and Value Betting in UK Horse Racing"*, 1 June 2026.
+This is the single most relevant study we have: **our exact market (UK flat + jumps,
+2016–2025)** and **the blueprint's exact architecture** — a Plackett–Luce rank-ordered
+model on full finishing orders; covariates = market-implied prob (SP) + official
+ratings + runner characteristics + form; **LLM-extracted trouble-in-running** signals
+(via the Anthropic API / Claude Haiku 4.5) from post-race commentary; **isotonic**
+calibration; strict **rolling walk-forward**. Three variants: market-only, fundamental,
+augmented. It is, in effect, the experiment we were about to run — done rigorously.
+
+**Its findings (precise):**
+- **Fundamentals do NOT beat the market on accuracy.** Market, fundamental and
+  augmented variants are *statistically indistinguishable* out-of-sample. SP already
+  aggregates most public information. (Some features have in-sample signal that does
+  not survive OOS.)
+- **The LLM trouble-in-running features add NO measurable predictive accuracy** —
+  "subsumed by market prices or too diffuse." This is the blueprint's flagship novel
+  idea, and it is empirically a dud.
+- **Non-linear (gradient-boosted) models improve accuracy but NOT betting returns.**
+- **The betting edge is marginal and threshold-tuned.** Backing the single highest-EV
+  runner per race, filtered by grid-searched thresholds (EVmin, SPmax, Δpmin; SPmin
+  2.0): ROI-optimised = **139 bets over 10 years**, 40% win, **+22.2% ROI**,
+  per-bet Sharpe **0.12**. One-sided t-tests: **p = 0.17 / 0.05 / 0.07** — significant
+  only at the 10% level, on ~14 bets/year. Fractional Kelly (f=0.10) amplifies P&L,
+  not ROI, with larger drawdown.
+- **Benchmarks lose:** SP-favourite −7.1% ROI, random −23.4% (≈16% overround).
+- **No closing-line value tested**, and the analysis **explicitly abstracts from
+  account restrictions (gubbing) and SP slippage** — the very frictions that erode a
+  thin edge in practice. The author flags these as needed for "a more conservative
+  bound." So 20–22% is an **upper bound**, pre-friction.
+- Author's verdict: *"a market that is broadly efficient but measurably miscalibrated
+  in a narrow segment,"* quoting Hausch: *"The market is not perfectly efficient, but
+  it is hard to beat."*
+
+**What this means for our build:**
+- It **kills the expensive layers** before we build them: LLM agent edge (no), XGBoost
+  ensemble for returns (no), fundamentals beating the market on accuracy (no).
+- It **confirms the lean path**: PL / conditional-logit + market + isotonic calibration
+  + strict value thresholds (SP ≥ 2.0, real edge gate) + fractional Kelly, with **NO
+  BET as the default**. Selectivity is the whole game (~14 bets/year, not daily).
+- It **adds one discipline the paper lacks**: judge our selections by **CLV**. If our
+  value picks don't beat the de-vigged close, even this marginal edge isn't present.
+- Go in expecting **marginal-at-best, possibly friction-negative** — not a system.
+
+---
+
 The deep-research pass ran 106 agents over ~50 min, fetched and read the sources,
 and adversarially verified ~75 claims (8 refuted, 67 survived). The final
 synthesis step crashed, so this is reconstructed from the verified claim set. It
