@@ -56,7 +56,10 @@ PRESS_ENABLED = False
 PRESS_FACTOR = 1.5               # modest, capped; NOT a 3x vote-count multiplier
 VALUE_PRICE = 4.5                # decimal odds at/above which the EACH-WAY place part earns its keep
 SHORT_PRICE = 3.5                # at/below which a leg is a "banker" and EW is dead money
-MIN_ODDS, MAX_ODDS = 2.0, 11.0   # bettable band for a multiple leg (wider than singles: value needs price)
+# Narrowed to the method's proven sweet spot (see method_pick.py / edge_tracker):
+# the 2.0-4.0 band is where the edge lives. Legs above 4.0 bled -24.7% live, so
+# they don't belong in a money bet — even in a multiple.
+MIN_ODDS, MAX_ODDS = 2.0, 4.0
 
 # combo sizes that define each named bet (n = number of selections it consumes)
 STRUCTURES = {
