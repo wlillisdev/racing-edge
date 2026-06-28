@@ -77,10 +77,31 @@ def _headgear_key(runner: Runner, race: Race, history: tuple[PastRun, ...]) -> s
     return None
 
 
+# Course specialists — local masters who school at a quirky track and beat raiders'
+# figures there (notebook #10). Seeded from results; grows as I learn each track's yard.
+_COURSE_MASTERS: dict[str, tuple[str, ...]] = {
+    "cartmel": ("moffatt",),   # James Moffatt — 7x Cartmel champion
+}
+
+
+def _local_course_master(runner: Runner, race: Race, history: tuple[PastRun, ...]) -> str | None:
+    """Caughtinyourtrance / James Moffatt, Cartmel 26 Jun: I napped an Irish raider on
+    course/distance figures and the LOCAL master (7x course champion) beat me at 7/4.
+    Rule #10 — a yard that schools at a quirky track trumps a raider's figures. This
+    OVERRULES the course/distance tell at the specialist track; raise the guard."""
+    masters = _COURSE_MASTERS.get(race.course.strip().lower(), ())
+    trainer = (runner.trainer or "").lower()
+    if masters and any(m in trainer for m in masters):
+        return ("TELL — the LOCAL MASTER at this quirky track (Caughtinyourtrance/Moffatt, "
+                "Cartmel 26 Jun): a yard that schools here trumps a raider's figures (rule #10)")
+    return None
+
+
 _TELLS: tuple[Callable[[Runner, Race, tuple[PastRun, ...]], str | None], ...] = (
     _cdg_winner_returning,
     _hat_trick_trap,
     _headgear_key,
+    _local_course_master,
 )
 
 

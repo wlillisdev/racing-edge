@@ -58,6 +58,18 @@ def test_headgear_key_needs_first_time_gear_and_an_in_form_yard() -> None:
     assert not match_tells(no_gear, _race(), ())
 
 
+def test_local_course_master_fires_only_at_the_right_track() -> None:
+    moffatt = Runner(horse_id="c", horse="Caughtinyourtrance", trainer="James Moffatt",
+                     odds=Odds(consensus=1.75))
+    assert any("LOCAL MASTER" in t for t in match_tells(moffatt, _race(course="Cartmel"), ()))
+    # the same master at a different track -> not his patch, no tell
+    assert not match_tells(moffatt, _race(course="Ayr"), ())
+    # a raider at Cartmel -> no tell (that's the horse I wrongly napped)
+    raider = Runner(horse_id="l", horse="Loch Cuan", trainer="Gordon Elliott",
+                    odds=Odds(consensus=2.5))
+    assert not match_tells(raider, _race(course="Cartmel"), ())
+
+
 def _main() -> int:
     fns = [v for k, v in sorted(globals().items()) if k.startswith("test_")]
     for fn in fns:

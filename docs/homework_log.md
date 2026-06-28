@@ -120,3 +120,28 @@ break ties between close horses — a **strongly-franked, course-proven, backed 
 should be able to overrule a higher-scored "improving figures" horse.** The fix is in
 the *selection weighting* (lift franked + course/distance/going + market over surface
 improvement), not just the tiebreaker. Kingofthegame is the evidence to build it on.
+
+## 2026-06-26 — Friday retro-nap test (reviewed 28 Jun): I napped, I lost, here's why
+
+**The test.** Applied the new learning to Friday's Cartmel card *blind to the result*.
+Race selection first: binned the 15:18 Novices' Handicap Chase (unexposed — not our
+race); kept the 15:50 Lakes Luxury Loo's Handicap Chase (Class 4, 3m1f, good, 6 ran).
+**My nap: Loch Cuan** — course-and-distance winner last month, lightly-raced improver,
+6/4. I read the trap tell as NOT firing (one win, young, ahead of the handicapper) and
+leaned on the course/distance-winner tell.
+
+**The result.** BEATEN. Won by **Caughtinyourtrance, 7/4 fav — trained by James Moffatt,
+ridden by Brian Hughes** (a neck from Le Grand Vert).
+
+**Why I lost — a rule I already had and didn't apply.** Moffatt is the LOCAL CARTMEL
+MASTER, 7x course champion — notebook rule #10: *the trainer who schools at a quirky
+track outtrumps a raider's figures.* I fixated on Loch Cuan's course/distance figures
+(an Irish raider, Gordon Elliott) and never asked the first question at Cartmel: *does
+Moffatt have one, and is it fancied?* He did — favourite, top jockey booked. The market
+and rule #10 both pointed at the winner; I walked past both chasing a tell.
+
+**Lesson banked.** At a quirky specialist track, **the local master's fancied runner
+OVERRULES the course/distance-figure tell.** The Kingofthegame tell is real but must
+yield to rule #10 at Cartmel. New tell added: `tells._local_course_master` (seeded
+Cartmel → Moffatt), so the next time the local champion saddles one, the card says so
+and I don't chase the raider's figures past him.
