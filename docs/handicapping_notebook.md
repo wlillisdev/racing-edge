@@ -90,6 +90,10 @@ numbers. The edge isn't a model; it's the eye, compounding.
    28 Jun 2026. The established handicap (15:02) — our read won at 5/1. The NOVICES'
    handicap (14:27), which I wrongly selected — a 14/1 won going away, every
    form-pick beaten. Filter `is_handicap and not is_novice`.)*
+   **Both codes count** — a FLAT handicap reads the same as a jumps one (exposed
+   form, a trustworthy mark); it's *handicap + exposed* that matters, not flat-vs-
+   jumps. Don't restrict the hunt to jumps. (On the flat, weight the DRAW and pace
+   more than over jumps.)
 
 ## The learning loop — how the notebook bites on selections
 
