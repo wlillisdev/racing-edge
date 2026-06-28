@@ -22,6 +22,7 @@ from racing_edge.study.postmortem import study_card
 def main() -> int:
     ap = argparse.ArgumentParser(description="Study the whole card and bank the lessons.")
     ap.add_argument("--day", default="yesterday", help="today | yesterday | YYYY-MM-DD")
+    ap.add_argument("--frank", action="store_true", help="also frank winners (slow)")
     args = ap.parse_args()
 
     day = resolve_date(args.day)
@@ -29,7 +30,7 @@ def main() -> int:
     picks_by_race = {p.race_id: p.horse for p in open_ledger().settled_picks()
                      if p.system == "method" and p.date == day}
 
-    races, our, race_ids = collect_day(get_client(), day, picks_by_race)
+    races, our, race_ids = collect_day(get_client(), day, picks_by_race, frank=args.frank)
     if not races:
         print(f"No results available yet for {day} — nothing to study.")
         return 0

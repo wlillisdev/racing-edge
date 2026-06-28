@@ -149,7 +149,9 @@ def runner_result_from_raw(raw: dict) -> RunnerResult:
         status=status,
         sp_dec=_float(raw.get("sp_dec") or raw.get("sp")),
         bsp=_float(raw.get("bsp")),
-        beaten_lengths=_float(raw.get("btn") or raw.get("beaten_lengths")),
+        # ovr_btn = total lengths behind the WINNER (cumulative); btn = to the horse
+        # in front (incremental). For "how close was the finish" we want cumulative.
+        beaten_lengths=_float(raw.get("ovr_btn") or raw.get("btn") or raw.get("beaten_lengths")),
         horse=_str(raw.get("horse")),
         comment=_str(raw.get("comment") or raw.get("in_running_comment")),
     )
@@ -170,19 +172,28 @@ def results_from_raw(doc: dict) -> list[RaceResult]:
 # --------------------------------------------------------------------------- #
 # a horse's past runs (from get_horse_results) -> PastRun, for the proven reads
 # --------------------------------------------------------------------------- #
-def past_runs_from_raw(rows: list[dict]) -> tuple[PastRun, ...]:
+def past_runs_from_raw(rows: list[dict], horse_id: str = "") -> tuple[PastRun, ...]:
+    """horse_results rows are RACE objects with a nested `runners` list — the
+    horse's own position/weight live in there, keyed by horse_id. Pass horse_id to
+    dig them out. (Falls back to flat top-level fields when there's no runners list,
+    so older/test shapes still parse.)"""
     out: list[PastRun] = []
     for r in rows or []:
-        pos, _status = _position(r.get("position"))
+        runners = r.get("runners")
+        me = next((x for x in runners if _str(x.get("horse_id")) == horse_id), {}) \
+            if (horse_id and isinstance(runners, list)) else r
+        pos, _status = _position(me.get("position"))
         out.append(PastRun(
             date=_date(r.get("date")) or date.today(),
             position=pos,
             race_class=_int(r.get("class") or r.get("race_class")),
             going=_str(r.get("going")),
             distance_f=_float(r.get("dist_f") or r.get("distance_f")),
-            weight_lbs=_int(r.get("weight_lbs") or r.get("lbs")),
+            weight_lbs=_int(me.get("weight_lbs") or me.get("lbs")),
             course=_str(r.get("course")),
             race_type=_str(r.get("type")),
-            field_size=_int(r.get("ran") or r.get("field_size")),
+            field_size=_int(r.get("ran") or r.get("field_size"))
+            or (len(runners) if isinstance(runners, list) else None),
+            race_id=_str(r.get("race_id")),
         ))
     return tuple(out)

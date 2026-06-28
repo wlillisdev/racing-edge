@@ -8,11 +8,13 @@ study_card. This is the one study module that touches the network.
 
 from __future__ import annotations
 
+from dataclasses import replace
 from datetime import date
 from typing import Protocol
 
 from racing_edge.data.normalise import past_runs_from_raw, racecards_from_raw, results_from_raw
 from racing_edge.study.enrich import enrich_from_card, enrich_from_history
+from racing_edge.study.frank import frank_form
 from racing_edge.study.postmortem import StudiedRunner
 
 
@@ -23,6 +25,7 @@ class _Fetcher(Protocol):
 
 
 def collect_day(client: _Fetcher, day: date, picks_by_race: dict[str, str],
+                frank: bool = False,
                 ) -> tuple[list[list[StudiedRunner]], list[str | None], list[str]]:
     ds = day.isoformat()
     results = results_from_raw(client.results_by_date(ds))
@@ -32,23 +35,30 @@ def collect_day(client: _Fetcher, day: date, picks_by_race: dict[str, str],
     our: list[str | None] = []
     ids: list[str] = []
     for res in results:
+        card = cards.get(res.race_id)
+        if card is None:
+            continue          # context filter: only races we have a card for (our regions)
+
         base = [StudiedRunner(name=r.horse, horse_id=r.horse_id, finish_pos=r.position,
                               sp_dec=r.sp_dec, comment=r.comment, beaten_lengths=r.beaten_lengths)
                 for r in res.runners]
-        card = cards.get(res.race_id)
-        if card is not None:
-            base = enrich_from_card(base, card)
+        base = enrich_from_card(base, card)
 
         pick_name = picks_by_race.get(res.race_id)
         winner = next((r for r in res.runners if r.position == 1), None)
-        key_ids = {r.horse_id for r in (winner,) if r} | {
-            r.horse_id for r in res.runners if pick_name and r.horse == pick_name}
-        if card is not None and key_ids:
+        key_ids = {r.horse_id for r in (winner,) if r and r.horse_id} | {
+            r.horse_id for r in res.runners if pick_name and r.horse == pick_name and r.horse_id}
+        if key_ids:
             enriched: list[StudiedRunner] = []
             for sr in base:
                 if sr.horse_id in key_ids:
-                    hist = past_runs_from_raw(client.horse_results(sr.horse_id))
+                    hist = past_runs_from_raw(client.horse_results(sr.horse_id), sr.horse_id)
+                    # point-in-time: the form it brought INTO today, not today's run
+                    # itself (else course-form is circular and franking franks today).
+                    hist = tuple(h for h in hist if h.date < day)
                     sr = enrich_from_history(sr, hist, card)
+                    if frank:        # the heavy fetch — only for the deep dig, not the mass audit
+                        sr = replace(sr, frank_note=frank_form(client, sr.horse_id, hist).note)
                 enriched.append(sr)
             base = enriched
 
