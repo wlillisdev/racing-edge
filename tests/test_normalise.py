@@ -102,6 +102,23 @@ def test_past_runs_normalise() -> None:
     assert runs[1].position is None and runs[1].won is False
 
 
+def test_past_runs_normalise_nested_runners() -> None:
+    # horse_results rows are RACE objects with a nested runners list — the horse's
+    # own position/weight live in there. This was the bug that broke franking.
+    rows = [{
+        "race_id": "rac_9", "date": "2026-01-10", "class": "3", "going": "Good",
+        "dist_f": "8.0", "course": "Ascot", "type": "Flat",
+        "runners": [
+            {"horse_id": "ours", "position": "1", "weight_lbs": "133"},
+            {"horse_id": "other", "position": "2", "weight_lbs": "130"},
+        ],
+    }]
+    runs = past_runs_from_raw(rows, "ours")
+    assert len(runs) == 1 and runs[0].won is True           # dug out of the nested runner
+    assert runs[0].weight_lbs == 133 and runs[0].field_size == 2
+    assert runs[0].course == "Ascot" and runs[0].race_id == "rac_9"
+
+
 def _main() -> int:
     fns = [v for k, v in sorted(globals().items()) if k.startswith("test_")]
     for fn in fns:

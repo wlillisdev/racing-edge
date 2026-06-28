@@ -56,7 +56,7 @@ def frank_form(client: _Fetcher, horse_id: str, history: tuple[PastRun, ...],
         return Franking(last.date, 0, 0, "last race not found in results")
     rivals = [rr.horse_id for rr in field.runners if rr.horse_id and rr.horse_id != horse_id][:cap]
     franked = sum(1 for rid in rivals
-                  if _scored_since(past_runs_from_raw(client.horse_results(rid)), last.date))
+                  if _scored_since(past_runs_from_raw(client.horse_results(rid), rid), last.date))
     if not rivals:
         return Franking(last.date, 0, 0, "no rivals to check")
     verdict = "FRANKED" if franked >= 2 else "thin"

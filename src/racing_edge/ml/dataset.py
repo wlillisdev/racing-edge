@@ -91,7 +91,8 @@ def assemble(client: _Fetcher, start: date, end: date, code: str = "jump",
             hist_by_horse: dict[str, tuple[PastRun, ...]] = {}
             for r in race.runners:
                 if r.horse_id not in cache:
-                    cache[r.horse_id] = past_runs_from_raw(client.horse_results(r.horse_id))
+                    rows = client.horse_results(r.horse_id)
+                    cache[r.horse_id] = past_runs_from_raw(rows, r.horse_id)
                 hist_by_horse[r.horse_id] = point_in_time(cache[r.horse_id], race.date)
             X = design_matrix(race, hist_by_horse)
             winner_idx = -1

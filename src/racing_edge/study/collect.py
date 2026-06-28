@@ -52,7 +52,7 @@ def collect_day(client: _Fetcher, day: date, picks_by_race: dict[str, str],
             enriched: list[StudiedRunner] = []
             for sr in base:
                 if sr.horse_id in key_ids:
-                    hist = past_runs_from_raw(client.horse_results(sr.horse_id))
+                    hist = past_runs_from_raw(client.horse_results(sr.horse_id), sr.horse_id)
                     sr = enrich_from_history(sr, hist, card)
                     if frank:        # the heavy fetch — only for the deep dig, not the mass audit
                         sr = replace(sr, frank_note=frank_form(client, sr.horse_id, hist).note)

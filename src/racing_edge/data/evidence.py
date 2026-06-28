@@ -87,7 +87,7 @@ def build_evidence(race: Race, client: _Fetcher, as_of: date | None = None) -> l
     cache: dict[str, tuple[frozenset[str], float | None, int]] = {}
     evidence: list[RunnerEvidence] = []
     for r in race.runners:
-        history = past_runs_from_raw(client.horse_results(r.horse_id))
+        history = past_runs_from_raw(client.horse_results(r.horse_id), r.horse_id)
         if as_of is not None:
             history = tuple(h for h in history if h.date < as_of)
         if backtest:
