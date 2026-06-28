@@ -81,6 +81,30 @@ def test_study_race_asks_the_full_questionnaire() -> None:
     assert any("caught by the handicapper" in g for g in s.gaps)
 
 
+def test_scramble_rule_is_strict() -> None:
+    def field(third_btn: float) -> list[StudiedRunner]:
+        def btn(i: int) -> float | None:
+            return None if i == 1 else (third_btn if i == 3 else float(i))
+        return [StudiedRunner(f"h{i}", i, 2.0 + i, beaten_lengths=btn(i)) for i in range(1, 9)]
+    assert any("real scramble" in line for line in study_race(field(1.0)).lessons)
+    assert not any("scramble" in line for line in study_race(field(3.0)).lessons)
+    # and a tight finish in a SMALL field is not a scramble
+    small = [StudiedRunner("a", 1, 2.0), StudiedRunner("b", 2, 3.0, beaten_lengths=0.5),
+             StudiedRunner("c", 3, 4.0, beaten_lengths=1.0)]
+    assert not any("scramble" in line for line in study_race(small).lessons)
+
+
+def test_owed_only_when_not_checked() -> None:
+    # checked (history fetched) but not a course winner -> NOT owed, just silently not a factor
+    checked = study_race([StudiedRunner("W", 1, 3.0, "won well", enriched=True)])
+    assert not any("course form" in g for g in checked.gaps)
+    assert not any("FRANK" in g for g in checked.gaps)
+    # never checked -> genuinely owed
+    owed = study_race([StudiedRunner("W", 1, 3.0, "won well", enriched=False)])
+    assert any("course form" in g for g in owed.gaps)
+    assert any("FRANK" in g for g in owed.gaps)
+
+
 def test_study_race_excuses_unlucky_pick() -> None:
     runners = [
         StudiedRunner("Ours", 2, 3.0, "denied a clear run when staying on"),

@@ -57,4 +57,4 @@ def enrich_from_history(sr: StudiedRunner, history: tuple[PastRun, ...],
             trip = True
         if band and h.going and going_band(h.going) == band:
             going = True
-    return replace(sr, course_winner=course, trip_proven=trip, going_proven=going)
+    return replace(sr, course_winner=course, trip_proven=trip, going_proven=going, enriched=True)

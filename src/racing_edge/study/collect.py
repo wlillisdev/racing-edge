@@ -34,18 +34,20 @@ def collect_day(client: _Fetcher, day: date, picks_by_race: dict[str, str],
     our: list[str | None] = []
     ids: list[str] = []
     for res in results:
+        card = cards.get(res.race_id)
+        if card is None:
+            continue          # context filter: only races we have a card for (our regions)
+
         base = [StudiedRunner(name=r.horse, horse_id=r.horse_id, finish_pos=r.position,
                               sp_dec=r.sp_dec, comment=r.comment, beaten_lengths=r.beaten_lengths)
                 for r in res.runners]
-        card = cards.get(res.race_id)
-        if card is not None:
-            base = enrich_from_card(base, card)
+        base = enrich_from_card(base, card)
 
         pick_name = picks_by_race.get(res.race_id)
         winner = next((r for r in res.runners if r.position == 1), None)
-        key_ids = {r.horse_id for r in (winner,) if r} | {
-            r.horse_id for r in res.runners if pick_name and r.horse == pick_name}
-        if card is not None and key_ids:
+        key_ids = {r.horse_id for r in (winner,) if r and r.horse_id} | {
+            r.horse_id for r in res.runners if pick_name and r.horse == pick_name and r.horse_id}
+        if key_ids:
             enriched: list[StudiedRunner] = []
             for sr in base:
                 if sr.horse_id in key_ids:

@@ -34,6 +34,7 @@ class StudiedRunner:
     claim_lbs: int = 0                  # claiming-jockey relief
     headgear_change: bool = False       # first-time headgear / wind-op angle
     frank_note: str = ""                # franking verdict on its last race (if checked)
+    enriched: bool = False              # did we actually fetch its history? (checked vs owed)
 
 
 @dataclass(frozen=True)
@@ -100,11 +101,11 @@ def study_race(runners: Sequence[StudiedRunner], our_pick: str | None = None) ->
             gaps.append("winner's running comment (read the finish)")
         if winner.course_winner:
             lessons.append("  course: a course winner — proven here (key at quirky tracks)")
-        else:
+        elif not winner.enriched:                    # owed only if we never checked
             gaps.append("winner's course form (was it proven here?)")
         if winner.trip_proven and winner.going_proven:
             lessons.append("  conditions: proven over trip AND going")
-        elif not (winner.trip_proven or winner.going_proven):
+        elif not winner.enriched:
             gaps.append("winner's trip/going suitability")
         if winner.trainer_in_form:
             lessons.append("  yard: trainer in form")
@@ -114,7 +115,7 @@ def study_race(runners: Sequence[StudiedRunner], our_pick: str | None = None) ->
             lessons.append("  angle: headgear/wind change — trainer found the key")
         if winner.frank_note:
             lessons.append(f"  frank: {winner.frank_note}")
-        else:
+        elif not winner.enriched:
             gaps.append(f"FRANK the winner: did the form behind {winner.name} produce winners?")
 
     # ---- OUR PICK: why did it lose, what did we miss? ----------------------- #
@@ -138,9 +139,11 @@ def study_race(runners: Sequence[StudiedRunner], our_pick: str | None = None) ->
         gaps.append(f"the mark: were we caught by the handicapper vs {pick.name}'s last win?")
 
     # ---- the RACE: should we have been here at all? ------------------------ #
-    margins = [r.beaten_lengths for r in runners if r.beaten_lengths and r.beaten_lengths > 0]
-    if len([m for m in margins if m <= 1.5]) >= 3:
-        lessons.append("RACE: blanket finish (3+ within 1.5l) — a scramble, marginal NAP (rule #3)")
+    # A genuine scramble is RARE: the first three covered by ~a length in a full
+    # field. (The old "3 within 1.5l" fired on almost every competitive finish.)
+    third = next((r.beaten_lengths for r in runners if r.finish_pos == 3), None)
+    if len(runners) >= 8 and third is not None and third <= 1.25:
+        lessons.append("RACE: blanket top-3 (within ~1¼l), full field — a real scramble (rule #3)")
 
     return RaceStudy(
         winner=winner.name if winner else None, winner_market_rank=w_rank,
