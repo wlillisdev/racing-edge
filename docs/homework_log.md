@@ -8,6 +8,15 @@ The grunt work is automated: `python -m racing_edge.cli.homework` mines every
 studied race in the study DB and prints the forensic read. This log is where I
 write down what it (and the post-mortems) taught.
 
+**My own nuance lives in code, too.** Beyond the master's rules (the notebook),
+`domain/tells.py` is the library of patterns I earn MYSELF from results — "a horse
+like X in a race like Y did Z, so next time expect Z." Each tell is dated to the
+race that taught it and fires on a live runner on the card (marked `★`). It's a
+lead, not a law; as the sample grows we test which tells actually hold. Started
+28 Jun with two: the Kingofthegame tell (back the course/distance/going winner over
+a flashy improver) and the Halfway House Lad trap (distrust the short-priced
+double-winner on a rising mark).
+
 ---
 
 ## 2026-06-28 — first forensic dig (Cartmel & Uttoxeter, summer jumps)

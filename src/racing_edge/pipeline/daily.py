@@ -12,6 +12,7 @@ from racing_edge.betting.bet import make_bet
 from racing_edge.betting.policy import BettingPolicy
 from racing_edge.data.evidence import build_evidence
 from racing_edge.data.normalise import past_runs_from_raw, racecards_from_raw
+from racing_edge.domain.tells import match_tells
 from racing_edge.report.card import CardPick, DayCard
 from racing_edge.selection.case import Case
 from racing_edge.selection.select import pick_race
@@ -78,11 +79,15 @@ def run_day(client: _Client, policy: BettingPolicy | None = None,
         franking = None
         if frank and len(result.ranked) >= 2:
             case, franking = frank_tiebreak(client, result.ranked)
+        # my learned nuances — does this runner, in this race, trip a tell I've earned?
+        pick_hist = past_runs_from_raw(client.horse_results(case.runner.horse_id),
+                                       case.runner.horse_id)
+        tells = match_tells(case.runner, race, pick_hist)
         price = case.runner.odds.consensus
         narrative = tuple(read_narrative(case.runner, completer)) if completer else ()
         picks.append(CardPick(race=race, case=case, price=price,
                               bet=make_bet(case, price, policy), narrative=narrative,
-                              frank=franking))
+                              frank=franking, tells=tells))
 
     card_date = races[0].date if races else date.today()
     return DayCard(day=card_date, code=code, picks=tuple(picks))

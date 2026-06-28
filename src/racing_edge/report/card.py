@@ -29,6 +29,7 @@ class CardPick:
     bet: Bet | None                          # None = the method's pick, but not a value bet today
     narrative: tuple[NarrativeRead, ...] = ()  # optional AI reads of the comment (advisory, cited)
     frank: Franking | None = None            # the pipeline's franking of the pick's last form line
+    tells: tuple[str, ...] = ()              # my learned nuances this runner trips (domain.tells)
 
 
 @dataclass(frozen=True)
@@ -67,6 +68,8 @@ def render_card(card: DayCard) -> str:
         lines.append(f"    {str(c.runner.horse).upper()}   {_price_str(cp.price)}")
         if c.stance:
             lines.append(f"    [{c.stance}]")
+        for tell in cp.tells:               # my own learned nuances — what this horse reminds me of
+            lines.append(f"    ★ {tell}")
         # franking — shown only when it was used to DECIDE a close call (a real split)
         if cp.frank is not None and cp.frank.note:
             lines.append(f"    frank (tiebreaker): {cp.frank.note}")
