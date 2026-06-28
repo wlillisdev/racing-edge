@@ -55,3 +55,33 @@ rule-#2 rate. Directional, not proven.
 studied races, and compare the full-sample distribution against today's directional
 reads — does "the money knew" still lead at 100+ races? Does rule #2 hold near 37%?
 That's the real test of these leads.
+
+### Same evening — mined the full DB (101 races)
+
+| Question | Today (9) | Full DB (101) | Verdict |
+|---|---|---|---|
+| Market backed ("the money knew") on winner | 56% | **42%** | **confirmed — the dominant clue at scale** |
+| Rule #2 (2nd/3rd fav won) | 44% | **37%** | holds |
+| Winner came from 4th+ in market | 22% | **29%** | the market is informative, NOT deterministic |
+| Trainer in form on winner | 33% | 24% | real secondary clue |
+| Franking ran on the winner at all | — | **only 19% (81% "not checked")** | **coverage gap, not a finding** |
+| Course winner flagged | 22% | 2% | **under-measured (enrichment didn't run), not "course form is useless"** |
+| Our recorded picks won / placed | — | **0/8 / 0/8** | sobering, but n=8 (old score-method picks) |
+
+**Banked from the full sample:**
+
+1. **The money knows — confirmed at 101 races (42%).** The market move is the most
+   predictive single clue we have. It earns its place as the primary tiebreaker.
+2. **Rule #2 holds (~37%), but the field is open** — favs 34%, 2nd/3rd 37%, and a
+   surprising **29% of winners from 4th+ in the market**. Don't just follow rank;
+   follow the *move*.
+3. **We cannot yet judge franking or course/trip/going form** — 81% of winners were
+   never franked and most were never enriched. That's the real finding: the data is
+   too shallow. The fix is live — the scheduled nightly `study --frank` franks every
+   winner from now on, so the next mine will actually have the evidence.
+4. **The old score-method's picks went 0/8** in the studied set — consistent with the
+   CLV verdict (behind the favourite), too small to conclude, but not encouraging.
+
+**Next homework.** Let the nightly `study --frank` run for a couple of weeks so the
+franking/enrichment coverage fills in, then re-mine — *then* we can finally test
+whether the legwork (franking, course form) separates winners, instead of guessing.
