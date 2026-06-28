@@ -95,6 +95,16 @@ numbers. The edge isn't a model; it's the eye, compounding.
    jumps. Don't restrict the hunt to jumps. (On the flat, weight the DRAW and pace
    more than over jumps.)
 
+14. **All-weather is a dodgy place — read it with one eye on the gate.** AW (Poly /
+   Tapeta / Fibresand) has two hazards the form can't show: (a) **integrity** —
+   races get "foxed", horses not fully off, non-triers; and (b) the **kickback** —
+   a slow start buries a horse in the sand and ruins its chance regardless of
+   ability, so the run-style and a clean break matter enormously. So on AW: favour
+   horses that break and lie handy/prominent (off the kickback), distrust a flashy
+   figure from a horse that needs to come from behind, and be wary of a market that
+   doesn't add up. *(Flagged in code as `Race.is_all_weather`; it's a caution to the
+   read, not a hard gate.)*
+
 ## The learning loop — how the notebook bites on selections
 
 A notebook that just sits here is useless. This is the closed loop that makes it
