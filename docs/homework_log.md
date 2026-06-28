@@ -85,3 +85,29 @@ That's the real test of these leads.
 **Next homework.** Let the nightly `study --frank` run for a couple of weeks so the
 franking/enrichment coverage fills in, then re-mine — *then* we can finally test
 whether the legwork (franking, course form) separates winners, instead of guessing.
+
+### Same night — forensic franking of the winners (the case, not the count)
+
+The aggregate ("67% of winners thin → franking doesn't separate") was a lazy read.
+Going winner-by-winner tells the real story: **when franking actually RAN today, all
+three FRANKED winners WON.**
+
+| Winner | Frank | Market | Conditions | Us |
+|---|---|---|---|---|
+| Kingofthegame (4:55) | **FRANKED 5/6** (strongest on the card) | 2nd fav | course+distance+going winner | **MISSED — we ran Star Turn (2nd)** |
+| Fort Randall (5:28) | **FRANKED 3/3** | 2nd fav | back chasing, in form | backed, WON |
+| Breizh River (4:15) | **FRANKED 2/5** | fav | course winner | backed, WON |
+
+**The miss — Kingofthegame — and why.** Every premium signal aligned: franked 5/6,
+won over Cartmel 3m1f good (today's exact conditions), 2nd fav, "kept on". The most
+findable winner on the card. We put up Star Turn instead (8/1, "improving 022",
+stable in form), which ran 2nd. The franking tiebreaker couldn't rescue it because
+the two weren't *close* in score — the score over-rewards **improving figures** and
+under-rewards the **franked / course-proven / backed** triad that actually wins.
+
+**Lesson — sharpens rule #15.** "Thin" is mostly *too-soon* noise, NOT a negative.
+But **FRANKED is a strong POSITIVE** (3/3 winners today). So franking shouldn't only
+break ties between close horses — a **strongly-franked, course-proven, backed horse
+should be able to overrule a higher-scored "improving figures" horse.** The fix is in
+the *selection weighting* (lift franked + course/distance/going + market over surface
+improvement), not just the tiebreaker. Kingofthegame is the evidence to build it on.
