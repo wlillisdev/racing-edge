@@ -28,7 +28,10 @@ def run_day(client: _Client, policy: BettingPolicy | None = None,
     one transparent pick per race the method stands up in."""
     policy = policy or BettingPolicy()
     completer = get_completer()              # None without ANTHROPIC_API_KEY -> no AI reads
-    races = [r for r in racecards_from_raw(client.racecards(day)) if r.code == code]
+    # RACE SELECTION FIRST: only readable handicaps — never a novice/maiden/bumper,
+    # where the form doesn't stack up. The gate that stops a NAP out of a lottery.
+    races = [r for r in racecards_from_raw(client.racecards(day))
+             if r.code == code and r.is_readable_handicap]
 
     picks: list[CardPick] = []
     for race in races:
