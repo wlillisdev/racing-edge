@@ -33,6 +33,7 @@ class StudiedRunner:
     trainer_in_form: bool | None = None
     claim_lbs: int = 0                  # claiming-jockey relief
     headgear_change: bool = False       # first-time headgear / wind-op angle
+    frank_note: str = ""                # franking verdict on its last race (if checked)
 
 
 @dataclass(frozen=True)
@@ -111,7 +112,10 @@ def study_race(runners: Sequence[StudiedRunner], our_pick: str | None = None) ->
             lessons.append(f"  weight: {winner.claim_lbs}lb claimer's relief — ahead of the mark")
         if winner.headgear_change:
             lessons.append("  angle: headgear/wind change — trainer found the key")
-        gaps.append(f"FRANK the winner: did the form behind {winner.name} produce winners since?")
+        if winner.frank_note:
+            lessons.append(f"  frank: {winner.frank_note}")
+        else:
+            gaps.append(f"FRANK the winner: did the form behind {winner.name} produce winners?")
 
     # ---- OUR PICK: why did it lose, what did we miss? ----------------------- #
     if pick and pick.finish_pos != 1:

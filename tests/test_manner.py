@@ -136,6 +136,39 @@ def test_enrich_from_card_and_history() -> None:
     assert h.course_winner and h.trip_proven and h.going_proven
 
 
+def test_frank_form_counts_rivals_scored_since() -> None:
+    from racing_edge.domain.models import PastRun
+    from racing_edge.study.frank import frank_form
+
+    class _C:
+        def results_by_date(self, ds: str) -> dict:
+            if ds == "2026-06-01":
+                return {"results": [{"race_id": "last1", "date": "2026-06-01", "runners": [
+                    {"horse_id": "W"}, {"horse_id": "R1"},
+                    {"horse_id": "R2"}, {"horse_id": "R3"}]}]}
+            return {"results": []}
+
+        def horse_results(self, hid: str, limit: int = 12) -> list[dict]:
+            return {
+                "R1": [{"date": "2026-06-15", "position": "1"}],   # won since -> franked
+                "R2": [{"date": "2026-06-20", "position": "3"}],   # placed since -> franked
+                "R3": [{"date": "2026-06-18", "position": "8"}],   # ran poorly -> not
+            }.get(hid, [])
+
+    history = (PastRun(date=date(2026, 6, 1), position=1, race_id="last1"),)
+    f = frank_form(_C(), "W", history)
+    assert f.rivals_checked == 3 and f.rivals_franked == 2 and f.is_franked is True
+    assert "FRANKED" in f.note
+
+
+def test_study_race_reports_franking_when_present() -> None:
+    runners = [StudiedRunner("Gem", 1, 4.0, "won well",
+                             frank_note="last race FRANKED: 3/5 rivals won/placed since")]
+    s = study_race(runners)
+    assert any("frank:" in line and "FRANKED" in line for line in s.lessons)
+    assert not any("FRANK the winner" in g for g in s.gaps)   # finding replaces the gap
+
+
 def test_paper_test_summary_scores_rule2() -> None:
     from racing_edge.study.papertest import summarise_review
     race_a = [StudiedRunner("A", 1, 4.0), StudiedRunner("B", 2, 2.5)]   # 2nd fav won

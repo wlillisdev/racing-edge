@@ -91,12 +91,14 @@ def test_results_normalise_captures_name_and_comment() -> None:
 def test_past_runs_normalise() -> None:
     rows = [
         {"date": "2025-12-01", "position": "1", "class": "2", "going": "Heavy",
-         "dist_f": "24.0", "lbs": "158", "course": "Ayr", "type": "Chase", "ran": "10"},
+         "dist_f": "24.0", "lbs": "158", "course": "Ayr", "type": "Chase", "ran": "10",
+         "race_id": "rac_x"},
         {"date": "2025-11-01", "position": "U", "class": "3", "going": "Soft"},  # unseated
     ]
     runs = past_runs_from_raw(rows)
     assert len(runs) == 2
     assert runs[0].won is True and runs[0].race_class == 2 and runs[0].field_size == 10
+    assert runs[0].race_id == "rac_x"        # captured so we can frank the form
     assert runs[1].position is None and runs[1].won is False
 
 

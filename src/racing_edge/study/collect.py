@@ -8,11 +8,13 @@ study_card. This is the one study module that touches the network.
 
 from __future__ import annotations
 
+from dataclasses import replace
 from datetime import date
 from typing import Protocol
 
 from racing_edge.data.normalise import past_runs_from_raw, racecards_from_raw, results_from_raw
 from racing_edge.study.enrich import enrich_from_card, enrich_from_history
+from racing_edge.study.frank import frank_form
 from racing_edge.study.postmortem import StudiedRunner
 
 
@@ -49,6 +51,7 @@ def collect_day(client: _Fetcher, day: date, picks_by_race: dict[str, str],
                 if sr.horse_id in key_ids:
                     hist = past_runs_from_raw(client.horse_results(sr.horse_id))
                     sr = enrich_from_history(sr, hist, card)
+                    sr = replace(sr, frank_note=frank_form(client, sr.horse_id, hist).note)
                 enriched.append(sr)
             base = enriched
 

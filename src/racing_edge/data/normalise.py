@@ -184,5 +184,6 @@ def past_runs_from_raw(rows: list[dict]) -> tuple[PastRun, ...]:
             course=_str(r.get("course")),
             race_type=_str(r.get("type")),
             field_size=_int(r.get("ran") or r.get("field_size")),
+            race_id=_str(r.get("race_id")),
         ))
     return tuple(out)
