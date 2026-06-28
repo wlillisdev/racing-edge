@@ -44,6 +44,20 @@ def test_hat_trick_trap_fires_on_short_priced_double_winner() -> None:
     assert not match_tells(short, _race(), one)
 
 
+def test_headgear_key_needs_first_time_gear_and_an_in_form_yard() -> None:
+    gear_inform = Runner(horse_id="e", horse="King Of Earth", odds=Odds(consensus=3.0),
+                         headgear_first_time=True, trainer_14d_runs=6, trainer_14d_wins=2)
+    assert any("first-time headgear" in t for t in match_tells(gear_inform, _race(), ()))
+    # first-time gear but a COLD yard -> no tell (the yard's form is the point)
+    gear_cold = Runner(horse_id="e", horse="X", odds=Odds(consensus=3.0),
+                       headgear_first_time=True, trainer_14d_runs=8, trainer_14d_wins=0)
+    assert not match_tells(gear_cold, _race(), ())
+    # in-form yard but no headgear change -> no tell
+    no_gear = Runner(horse_id="e", horse="Y", odds=Odds(consensus=3.0),
+                     trainer_14d_runs=6, trainer_14d_wins=2)
+    assert not match_tells(no_gear, _race(), ())
+
+
 def _main() -> int:
     fns = [v for k, v in sorted(globals().items()) if k.startswith("test_")]
     for fn in fns:

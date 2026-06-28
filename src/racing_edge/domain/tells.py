@@ -63,9 +63,23 @@ def _hat_trick_trap(runner: Runner, race: Race, history: tuple[PastRun, ...]) ->
     return None
 
 
+def _headgear_key(runner: Runner, race: Race, history: tuple[PastRun, ...]) -> str | None:
+    """King Of Earth, 28 Jun — and 10% of winners across the 101-race study DB: a
+    first-time-headgear runner from a yard in form. The trainer has found the key and
+    is making the change for a reason; respect it. (A real prior, not a one-day fluke.)"""
+    runs = runner.trainer_14d_runs or 0
+    wins = runner.trainer_14d_wins or 0
+    in_form = runs >= 4 and (wins / runs) >= 0.15
+    if runner.headgear_first_time and in_form:
+        return ("TELL — first-time headgear from an in-form yard (King Of Earth, 28 Jun): "
+                "the trainer's found the key — respect the change")
+    return None
+
+
 _TELLS: tuple[Callable[[Runner, Race, tuple[PastRun, ...]], str | None], ...] = (
     _cdg_winner_returning,
     _hat_trick_trap,
+    _headgear_key,
 )
 
 
