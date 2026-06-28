@@ -151,6 +151,24 @@ numbers. The edge isn't a model; it's the eye, compounding.
    backed-outsiders. Until it does, treat it as the crowd AND the smart money mixed
    together — the outsider-backed share is the part that matters.)*
 
+18. **Reading a gamble — steady money is the tell, and the gems hide where the bookie
+   isn't looking.** A **steady, constant** gamble — money that keeps coming, a price
+   grinding shorter through the day — is a genuine positive; sustained support is real
+   confidence, not a flash (a single lump can be a trial balloon or a stable flushing
+   the price). **Some yards are known for landing a touch** — a backed horse from a
+   gambling stable is worth more than the same move from a yard that never has a go;
+   who's behind the money matters as much as the move. BUT — **not all gambles win.**
+   Horses get fired in and beaten; a gamble is a strong *lead*, never a certainty, and
+   the form read still has to stack up. Where the edge actually lives: the **bookie is
+   happy to take on the favourite** (the public over-backs the jolly, so the layer
+   profits when it loses) — and while the bookie and the crowd fight over the favourite,
+   they **overlook the gems**: the well-handicapped, well-read horses at bigger prices
+   that we find by reading the form. **Don't fish where everyone's piling on the
+   favourite — fish where no one's looking, the overlooked horse we've read.** That,
+   not out-reading the jolly, is the whole job. *(Design notes: a STEADY gamble needs
+   the odds over TIME, not one snapshot — another reason for the live-odds feed; a
+   "gambling stable" tell needs a trainer's gamble reputation we don't yet track.)*
+
 ## The learning loop — how the notebook bites on selections
 
 A notebook that just sits here is useless. This is the closed loop that makes it
