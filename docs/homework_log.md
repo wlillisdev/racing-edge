@@ -145,3 +145,29 @@ OVERRULES the course/distance-figure tell.** The Kingofthegame tell is real but 
 yield to rule #10 at Cartmel. New tell added: `tells._local_course_master` (seeded
 Cartmel → Moffatt), so the next time the local champion saddles one, the card says so
 and I don't chase the raider's figures past him.
+
+### Why Caughtinyourtrance *really* won — it wasn't just the trainer
+
+Pushed to read the winner's form properly, not stop at "Moffatt trains it". Six tells,
+and at least two were MINE, read on the wrong horse:
+
+1. **A course-and-distance winner itself — and a FACILE/REPEAT one** ("hammered useful
+   opponents over c/d", multiple Cartmel wins). My own Kingofthegame tell — fitting the
+   winner far better than Loch Cuan, who'd merely "got off the mark" over c/d once.
+2. **Well-handicapped — "on a mark it's capable of winning off"** (placed over c/d,
+   thrown in). On the MARK — the master's decisive lens — the winner was well-in while
+   my nap carried a 7lb PENALTY (going up). I never compared the two on the mark.
+3. **Running into form / "knocking on the door" / finishing well** — manner (rule #1).
+4. **Brian Hughes** (champion jockey) booked — intent, not coincidence.
+5. **7/4 favourite** — money down, the market knew (rule #19, the most likely winner).
+6. **Local master Moffatt** (rule #10) — the one I *did* spot, and stopped at.
+
+**Refinements banked:**
+- The c/d tell is NOT a yes/no — weigh **DEPTH of course form** (a facile/repeat course
+  winner beats a one-time one). `tells._cdg_winner_returning` now labels PROVEN/repeat
+  vs one-time.
+- Always put the contenders **side by side on the MARK** (well-in vs a penalty) — the
+  decisive handicap lens. Automating it needs the mark each horse last won off vs today's
+  mark; the data doesn't carry it cleanly yet (owed, like the rule #1 manner gap).
+- The real failure wasn't missing one tell — it was reading "won over c/d" as binary and
+  never stacking the two horses against each other on depth AND mark.

@@ -42,13 +42,19 @@ def _same_trip(h: PastRun, race: Race) -> bool:
 # --------------------------------------------------------------------------- #
 def _cdg_winner_returning(runner: Runner, race: Race, history: tuple[PastRun, ...]) -> str | None:
     """Kingofthegame, 28 Jun: a course-AND-distance-AND-going winner, back at those
-    exact conditions, beat a flashier 'improver' we'd wrongly preferred. When the
-    proof is on the exact conditions, trust it over pretty recent figures."""
-    if any(_won(h) and _same_course(h, race) and _same_going(h, race) and _same_trip(h, race)
-           for h in history):
-        return ("TELL — course/distance/going winner back at today's exact conditions "
-                "(Kingofthegame, 28 Jun): prefer it to a flashier 'improver'")
-    return None
+    exact conditions, beat a flashier 'improver'. Refined by the Friday miss
+    (Caughtinyourtrance, 26 Jun): "won over c/d" is NOT a yes/no — DEPTH matters. A
+    facile/repeat course winner beats a one-time one, and I read the tell on a raider
+    that had merely got off the mark while a PROVEN course specialist beat us. Also
+    weigh the MARK (well-in beats a penalty) — a check the data can't fully do yet."""
+    cdg = any(_won(h) and _same_course(h, race) and _same_going(h, race) and _same_trip(h, race)
+              for h in history)
+    if not cdg:
+        return None
+    course_wins = sum(1 for h in history if _won(h) and _same_course(h, race))
+    depth = "PROVEN/repeat" if course_wins >= 2 else "one-time"
+    return (f"TELL — course/distance/going winner ({depth}) back at today's exact conditions "
+            "(Kingofthegame): prefer it to an improver — weigh DEPTH of course form and the MARK")
 
 
 def _hat_trick_trap(runner: Runner, race: Race, history: tuple[PastRun, ...]) -> str | None:
