@@ -105,6 +105,21 @@ numbers. The edge isn't a model; it's the eye, compounding.
    doesn't add up. *(Flagged in code as `Race.is_all_weather`; it's a caution to the
    read, not a hard gate.)*
 
+15. **Franking is a tiebreaker between a few — never a filter on the card, never a
+   veto.** Earned the hard way: I built franking as a per-pick guillotine and on
+   28 Jun it stood down **four winners** (Breizh River, Fort Randall, Edelak,
+   Dream's Ka) while backing the one horse it *couldn't* frank. Two errors in one:
+   (a) franking is a **within-race decider** — you narrow a race to two or three
+   live contenders on form/market, *then* frank those against each other and lean
+   to the one whose form has been franked; a horse on its own is never "vetoed by
+   franking". (b) You **cannot judge franking early in a season** — there's barely
+   any "since" results yet, so most reads come back *too soon*; that's the calendar,
+   not a verdict, and it fills in as the season builds. The market move stays the
+   primary read (it's already in the score); franking sits underneath as the legwork
+   tiebreaker. *(In code: `daily.frank_tiebreak` — only fires when the top
+   contenders are within `_CLOSE` of each other, prefers the franked one, never
+   removes a horse or kills a bet.)*
+
 ## The learning loop — how the notebook bites on selections
 
 A notebook that just sits here is useless. This is the closed loop that makes it
@@ -113,8 +128,9 @@ change the picks, and makes the results change the notebook:
 1. **Before the pick** — every rule above is a check the NAP must pass. The big one
    first: read each candidate's recent in-running comments; an *"out-battled late /
    finds little"* horse is **downgraded from NAP to place-only**. Race-shape (no
-   blanket lotteries) and the franking check gate the NAP too. The pick consumes the
-   *detective reads*, not just the surface numbers — that's the whole fix.
+   blanket lotteries) gates the NAP; franking is the *tiebreaker between close
+   contenders*, not a gate (rule #15). The pick consumes the *detective reads*, not
+   just the surface numbers — that's the whole fix.
 2. **After the result** — the evening audit stops being a scoreboard. For every
    losing NAP it asks: did a notebook rule already cover this (we should've caught
    it)? Or is it a *new* pattern (a new rule)? And: was the winner a 2nd/3rd fav we

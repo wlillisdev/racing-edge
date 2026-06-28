@@ -62,6 +62,17 @@ def test_all_weather_flagged() -> None:
     assert aw.is_all_weather is True and turf.is_all_weather is False
 
 
+def test_race_class_robust_to_shape() -> None:
+    # the bug: a 'Class 4' string parsed to None -> the card printed 'Class ?'
+    def cls(raw: dict) -> int | None:
+        return race_from_raw(raw, date(2026, 6, 28)).race_class
+    assert cls({"class": "4"}) == 4
+    assert cls({"class": "Class 4"}) == 4
+    assert cls({"race_class": "(C5)"}) == 5
+    assert cls({"race_name": "Class 5 Handicap Hurdle"}) == 5   # dug from the name
+    assert cls({"race_name": "Maiden Hurdle"}) is None          # genuinely no class
+
+
 def test_race_normalise() -> None:
     race = race_from_raw(_RAW_RACE, date(2026, 1, 15))
     assert race.code == "jump"          # Chase

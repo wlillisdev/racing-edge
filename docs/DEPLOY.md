@@ -48,18 +48,31 @@ venv/bin/python -m racing_edge.cli.settle --day today
 venv/bin/python -m racing_edge.cli.report
 ```
 
-Flags: `--flat` (flat instead of jumps), `--day tomorrow|YYYY-MM-DD`,
-`--bank 500` (stake sizing), `--no-record` (print without banking).
+Flags: `--flat` (flat instead of jumps), `--both` (jumps AND flat handicaps in one
+run, banked per code), `--day tomorrow|YYYY-MM-DD`, `--bank 500` (stake sizing),
+`--no-record` (print without banking).
 
 ## 5. Schedule it (PythonAnywhere → Tasks)
 
+Each Task runs one command line; the task log captures the output. (These use
+`PYTHONPATH=src` so they work whether or not the package is `pip install -e .`'d.)
+
 | Time | Command |
 |---|---|
-| 07:00 | `~/racing_edge/venv/bin/python -m racing_edge.cli.daily` |
-| 20:00 | `~/racing_edge/venv/bin/python -m racing_edge.cli.settle --day today` |
+| 07:00 | `cd ~/racing_edge && PYTHONPATH=src venv/bin/python -m racing_edge.cli.daily --day today --both` |
+| 20:00 | `cd ~/racing_edge && PYTHONPATH=src venv/bin/python -m racing_edge.cli.settle --day today` |
+| 21:00 | `cd ~/racing_edge && PYTHONPATH=src venv/bin/python -m racing_edge.cli.study --day today --frank` |
 
-The task log captures the output. (Email is an easy add-on — say the word and
-it sends the card to your inbox; for now it prints to the task log.)
+- **07:00 — the card.** `--both` covers jumps AND flat handicaps; the franking
+  tiebreaker is on by default. This is the live, blind morning run (real prices).
+- **20:00 — settle.** Marks the day's picks against results; updates the CLV ledger.
+- **21:00 — study.** Post-mortems the readable handicaps and banks the lessons.
+
+To deploy new code, `git pull origin claude/rebuild-v5` by hand (the Tasks do NOT
+auto-pull, so an untested push never goes live on its own).
+
+(Email is an easy add-on — say the word and it sends the card to your inbox; for
+now it prints to the task log.)
 
 ## 6. Sanity check
 

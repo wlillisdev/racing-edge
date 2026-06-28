@@ -22,19 +22,27 @@ def main() -> int:
     ap = argparse.ArgumentParser(description="The owner's daily card — method picks with reasons.")
     ap.add_argument("--day", default="today", help="today | tomorrow | YYYY-MM-DD")
     ap.add_argument("--flat", action="store_true", help="flat racing instead of jumps")
+    ap.add_argument("--both", action="store_true",
+                    help="cover BOTH codes — jumps and flat handicaps — in one run")
     ap.add_argument("--bank", type=float, default=1000.0)
-    ap.add_argument("--no-record", action="store_true", help="don't bank the picks to the CLV ledger")
+    ap.add_argument("--no-record", action="store_true",
+                    help="don't bank the picks to the CLV ledger")
     ap.add_argument("--no-frank", action="store_true",
-                    help="skip franking the picks (faster, but no form-stacks-up gate)")
+                    help="skip the franking tiebreaker (faster; close calls aren't decided)")
     args = ap.parse_args()
 
     policy = BettingPolicy(bank=args.bank)
-    card = run_day(get_client(), policy, day=args.day,
-                   code=("flat" if args.flat else "jump"), frank=not args.no_frank)
-    print(render_card(card))
-    if not args.no_record and card.picks:
-        n = record_day(card, open_ledger())
-        print(f"\n  banked {n} rows (picks + favourite benchmarks) to the CLV ledger")
+    client = get_client()
+    ledger = None if args.no_record else open_ledger()
+    # --both runs jumps AND flat; each code is built and BANKED separately so the
+    # ledger never blurs the two seasons together (they're never blended).
+    codes = ["jump", "flat"] if args.both else ["flat" if args.flat else "jump"]
+    for code in codes:
+        card = run_day(client, policy, day=args.day, code=code, frank=not args.no_frank)
+        print(render_card(card))
+        if ledger is not None and card.picks:
+            n = record_day(card, ledger)
+            print(f"\n  banked {n} rows ({code}: picks + favourite benchmarks) to the CLV ledger")
     return 0
 
 

@@ -76,6 +76,14 @@ class StudyStore:
             "SELECT COUNT(*) FROM race_study WHERE winner_market_rank IS NOT NULL").fetchone()[0]
         return int(hits), int(total)
 
+    def all_studies(self) -> list[dict]:
+        """Every studied race, oldest first — the body the homework miner reads."""
+        rows = self._conn.execute(
+            "SELECT date, race_id, course, winner, winner_market_rank, winner_manner, "
+            "field_size, our_pick, our_pick_pos, our_pick_manner, lessons, gaps "
+            "FROM race_study ORDER BY date").fetchall()
+        return [dict(r) for r in rows]
+
     def lessons_log(self, limit: int = 50) -> list[tuple[str, str]]:
         """Recent (date, lesson) lines — the running record of what the card taught."""
         rows = self._conn.execute(

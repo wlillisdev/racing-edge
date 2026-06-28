@@ -10,10 +10,13 @@ Pure: dict in, dataclass out. No network, no DB.
 
 from __future__ import annotations
 
+import re
 from datetime import date, datetime
 from typing import Any
 
 from racing_edge.domain.models import Odds, PastRun, Race, RaceResult, Runner, RunnerResult
+
+_CLASS_RE = re.compile(r"class\s*(\d)", re.IGNORECASE)
 
 
 # --------------------------------------------------------------------------- #
@@ -21,6 +24,23 @@ from racing_edge.domain.models import Odds, PastRun, Race, RaceResult, Runner, R
 # --------------------------------------------------------------------------- #
 def _str(v: Any, default: str = "") -> str:
     return str(v).strip() if v is not None else default
+
+
+def _class(raw: dict) -> int | None:
+    """Race class, robust to the shapes the API actually sends: a plain number, a
+    'Class 4' / 'C4' string, or — failing that — dug out of the race name. The old
+    `_int(raw.get('class'))` returned None on 'Class 4', so the card showed 'Class ?'."""
+    for key in ("class", "race_class"):
+        v = raw.get(key)
+        n = _int(v)
+        if n:
+            return n
+        if isinstance(v, str):
+            m = re.search(r"\d+", v)
+            if m:
+                return int(m.group())
+    m = _CLASS_RE.search(_str(raw.get("race_name")))
+    return int(m.group(1)) if m else None
 
 
 def _int(v: Any) -> int | None:
@@ -125,7 +145,7 @@ def race_from_raw(raw: dict, race_date: date) -> Race:
         is_handicap=any(k in name for k in ("handicap", "hcap", "h'cap", "nursery")),
         is_novice=any(k in name for k in ("novice", "maiden", "nh flat", "bumper", "junior")),
         is_all_weather=all_weather,
-        race_class=_int(raw.get("class") or raw.get("race_class")),
+        race_class=_class(raw),
         distance_f=_float(raw.get("distance_f") or raw.get("dist_f")),
         going=_str(raw.get("going")),
         going_detailed=_str(raw.get("going_detailed")),
@@ -191,7 +211,7 @@ def past_runs_from_raw(rows: list[dict], horse_id: str = "") -> tuple[PastRun, .
         out.append(PastRun(
             date=_date(r.get("date")) or date.today(),
             position=pos,
-            race_class=_int(r.get("class") or r.get("race_class")),
+            race_class=_class(r),
             going=_str(r.get("going")),
             distance_f=_float(r.get("dist_f") or r.get("distance_f")),
             weight_lbs=_int(me.get("weight_lbs") or me.get("lbs")),

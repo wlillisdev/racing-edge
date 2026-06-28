@@ -15,13 +15,25 @@ from datetime import date
 
 
 def racing_season(d: date) -> str:
-    """'nh_winter' | 'flat_summer' | 'shoulder' from the month."""
+    """'nh_winter' | 'flat_summer' | 'shoulder' from the month (calendar only)."""
     m = d.month
     if m in (11, 12, 1, 2, 3):
         return "nh_winter"
     if m in (5, 6, 7, 8, 9):
         return "flat_summer"
     return "shoulder"  # April, October
+
+
+def season_label(d: date, code: str) -> str:
+    """The season label for a PICK — calendar AND code, so truth is never blended.
+    A jumps race in the summer is 'summer_jumps' (the weak NH season), NOT
+    'flat_summer'; a flat race in winter is 'winter_flat' (mostly All-Weather)."""
+    base = racing_season(d)
+    if code == "jump":
+        return "summer_jumps" if base == "flat_summer" else base
+    if code == "flat":
+        return "winter_flat" if base == "nh_winter" else base
+    return base
 
 
 def prime_code(d: date) -> str:
