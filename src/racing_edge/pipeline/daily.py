@@ -6,6 +6,8 @@ from __future__ import annotations
 
 from datetime import date
 
+from racing_edge.ai.llm import get_completer
+from racing_edge.ai.narrative import read_narrative
 from racing_edge.betting.bet import make_bet
 from racing_edge.betting.policy import BettingPolicy
 from racing_edge.data.evidence import build_evidence
@@ -25,6 +27,7 @@ def run_day(client: _Client, policy: BettingPolicy | None = None,
     """Fetch the day's card, keep the chosen code (jumps by default), and produce
     one transparent pick per race the method stands up in."""
     policy = policy or BettingPolicy()
+    completer = get_completer()              # None without ANTHROPIC_API_KEY -> no AI reads
     races = [r for r in racecards_from_raw(client.racecards(day)) if r.code == code]
 
     picks: list[CardPick] = []
@@ -34,8 +37,9 @@ def run_day(client: _Client, policy: BettingPolicy | None = None,
             continue
         case = result.pick
         price = case.runner.odds.consensus
+        narrative = tuple(read_narrative(case.runner, completer)) if completer else ()
         picks.append(CardPick(race=race, case=case, price=price,
-                              bet=make_bet(case, price, policy)))
+                              bet=make_bet(case, price, policy), narrative=narrative))
 
     card_date = races[0].date if races else date.today()
     return DayCard(day=card_date, code=code, picks=tuple(picks))

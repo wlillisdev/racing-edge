@@ -7,12 +7,19 @@ from pathlib import Path
 
 from racing_edge.config import get_config
 from racing_edge.measurement.store import Ledger
+from racing_edge.study.store import StudyStore
 
 
 def open_ledger() -> Ledger:
     p = Path(get_config().project_dir) / "data" / "ledger.db"
     p.parent.mkdir(parents=True, exist_ok=True)
     return Ledger(p)
+
+
+def open_study_store() -> StudyStore:
+    p = Path(get_config().project_dir) / "data" / "study.db"
+    p.parent.mkdir(parents=True, exist_ok=True)
+    return StudyStore(p)
 
 
 def resolve_date(s: str) -> date:

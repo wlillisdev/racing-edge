@@ -1,0 +1,162 @@
+# ML research findings — verified, salvaged from the deep-research run
+
+## KEYSTONE — Wilkens (2026), now obtained and read in full
+
+Sascha Wilkens, *"Predictability and Value Betting in UK Horse Racing"*, 1 June 2026.
+This is the single most relevant study we have: **our exact market (UK flat + jumps,
+2016–2025)** and **the blueprint's exact architecture** — a Plackett–Luce rank-ordered
+model on full finishing orders; covariates = market-implied prob (SP) + official
+ratings + runner characteristics + form; **LLM-extracted trouble-in-running** signals
+(via the Anthropic API / Claude Haiku 4.5) from post-race commentary; **isotonic**
+calibration; strict **rolling walk-forward**. Three variants: market-only, fundamental,
+augmented. It is, in effect, the experiment we were about to run — done rigorously.
+
+**Its findings (precise):**
+- **Fundamentals do NOT beat the market on accuracy.** Market, fundamental and
+  augmented variants are *statistically indistinguishable* out-of-sample. SP already
+  aggregates most public information. (Some features have in-sample signal that does
+  not survive OOS.)
+- **The LLM trouble-in-running features add NO measurable predictive accuracy** —
+  "subsumed by market prices or too diffuse." This is the blueprint's flagship novel
+  idea, and it is empirically a dud.
+- **Non-linear (gradient-boosted) models improve accuracy but NOT betting returns.**
+- **The betting edge is marginal and threshold-tuned.** Backing the single highest-EV
+  runner per race, filtered by grid-searched thresholds (EVmin, SPmax, Δpmin; SPmin
+  2.0): ROI-optimised = **139 bets over 10 years**, 40% win, **+22.2% ROI**,
+  per-bet Sharpe **0.12**. One-sided t-tests: **p = 0.17 / 0.05 / 0.07** — significant
+  only at the 10% level, on ~14 bets/year. Fractional Kelly (f=0.10) amplifies P&L,
+  not ROI, with larger drawdown.
+- **Benchmarks lose:** SP-favourite −7.1% ROI, random −23.4% (≈16% overround).
+- **No closing-line value tested**, and the analysis **explicitly abstracts from
+  account restrictions (gubbing) and SP slippage** — the very frictions that erode a
+  thin edge in practice. The author flags these as needed for "a more conservative
+  bound." So 20–22% is an **upper bound**, pre-friction.
+- Author's verdict: *"a market that is broadly efficient but measurably miscalibrated
+  in a narrow segment,"* quoting Hausch: *"The market is not perfectly efficient, but
+  it is hard to beat."*
+
+**What this means for our build:**
+- It **kills the expensive layers** before we build them: LLM agent edge (no), XGBoost
+  ensemble for returns (no), fundamentals beating the market on accuracy (no).
+- It **confirms the lean path**: PL / conditional-logit + market + isotonic calibration
+  + strict value thresholds (SP ≥ 2.0, real edge gate) + fractional Kelly, with **NO
+  BET as the default**. Selectivity is the whole game (~14 bets/year, not daily).
+- It **adds one discipline the paper lacks**: judge our selections by **CLV**. If our
+  value picks don't beat the de-vigged close, even this marginal edge isn't present.
+- Go in expecting **marginal-at-best, possibly friction-negative** — not a system.
+
+---
+
+The deep-research pass ran 106 agents over ~50 min, fetched and read the sources,
+and adversarially verified ~75 claims (8 refuted, 67 survived). The final
+synthesis step crashed, so this is reconstructed from the verified claim set. It
+goes deeper than the original 8 links — it pulled the foundational Benter /
+Bolton-Chapman papers, the CLV-validation literature, the leakage paper, the
+Betfair-efficiency study, and the staking literature.
+
+## Source-by-source: what's PROVEN vs merely engineered
+
+### Conditional logit (Benter / Bolton–Chapman) — the genuinely proven base
+- Bolton & Chapman (1986), Benter (1994): a **multinomial / conditional logit**
+  produces win probabilities that **sum to 1 within each race** from fundamental
+  factors. This is the canonical, transparent, within-race base. **Verified across
+  multiple primary sources.**
+- **The edge was in COMBINING with the market, not replacing it.** Benter's winning
+  method is *two-stage*: stage 1 estimates strength from fundamentals; stage 2 is a
+  second clogit whose two inputs are the stage-1 probability **and the public's
+  implied probability**. Benter explicitly treats public odds as a powerful baseline
+  to refine, and emphasises **calibration** (estimated prob should match observed
+  win frequency) as the quality criterion. **This is the single most important
+  finding for us.**
+
+### chris-alex-p/german-horse-racing — real, transparent, but a *tiny, fragile* edge
+- It is a **single-stage** clogit with race strata (softmax over runners), odds
+  excluded during stepwise-AIC selection then **added back as one term** — NOT the
+  true Benter two-stage blend (the "mirrors Benter" framing was **refuted**).
+- Readable coefficients confirmed (market odds −0.0835 p<0.001; recent speed
+  +0.006; amateur jockey −0.561). **Transparency advantage is real.**
+- **The market carries information nothing else replaces:** concordance rises
+  **0.682 → 0.738** only when odds are added. The fundamentals add *modestly* on
+  top of the market.
+- Profit is **weak and not credible for us**: €54.9 over 914 flat €1 bets vs a
+  €137 expected loss under 15% takeout, bootstrap p=0.02, **no CLV, no slippage**,
+  author concedes it's **fitted to one narrow segment** (Ausgleich IV turf) and
+  large bets move the price.
+
+### gmalbert/horse-racing-predictions — best engineering reference; honest about itself
+- Stacked **XGBoost/LightGBM/ExtraTrees + Platt calibration**, strict temporal
+  walk-forward, UK 2015–2025, ~75 features. **Verified.**
+- The "88.5% accuracy" is the **class-imbalance trap**; the honest number is
+  **ROC-AUC ~0.671 base / 0.689 ensemble** — modest discrimination.
+- **Value-betting / ROI is deliberately disabled** because no real odds are joined:
+  the repo makes **no profitability claim**. (Intellectually honest.)
+- Leakage protection (`.shift(1)`) is **real but NOT universal** — its OWN
+  `DATA_LEAKAGE_AUDIT.md` flags **six sire/pedigree features as leaking** (the
+  "shifts ALL features" claim was **refuted**). **Lesson: pedigree features are
+  high-leakage-risk even in a careful repo.**
+
+### Ransaka/LTR-with-LightGBM — NOT a horse-racing project
+- **It is a LambdaRank tutorial on an anime-recommendation dataset.** No racing
+  data, features, or results. The **mechanism transfers** (group=race, item=runner,
+  relevance=finishing position; needs the LightGBM `group` param and graded-int
+  relevance) but it **proves nothing about racing**.
+- Evaluated only on ranking metrics (MAP@1 0.888 / NDCG@1 0.876); **raw LambdaRank
+  scores are NOT calibrated probabilities** — a separate calibration stage is
+  mandatory before any value read.
+
+### SSRN Plackett–Luce UK paper (6860338, "June 2026") — COULD NOT be verified
+- The research run did **not** surface or confirm this paper. The "strongest design"
+  is **unconfirmed** — treat Plackett–Luce as an interesting *optional research*
+  direction, **not** a committed build, until the actual paper is in hand.
+
+### Silverman & Suchard (2013) regularised clogit + frailty, "36.73% ROI"
+- Numbers are real (3,681 HK races) but **refuted as adoptable for us**: a 2013
+  paper, train/test framing conflated (hold-out year vs 10-fold CV), **ROI not CLV**,
+  HK pari-mutuel. The interesting idea — **optimise for profit, not likelihood, via
+  LASSO** — is unproven out-of-sample for our context.
+
+### dickreuter/betfair-horse-racing — feature ideas only, no proven edge
+- NN whose loss optimises **back/lay payoff incl. commission**; features are
+  **Betfair price-time-series stats** (mean/min/max/median/std/skew/kurtosis,
+  last-traded snapshots) from 60 min out. **No metrics reported** — only cumulative
+  P&L plots; one specific feature detail was **refuted as fabricated**. Use for
+  feature *concepts* only.
+
+### tarb/betfair_data — real, fast ETL tool
+- Rust+Python parser for Betfair historical files, **~10× faster** than
+  betfairlightweight (~70 vs ~6 markets/sec). Pure parsing — **no model**. Useful
+  only when/if we build the market-movement layer.
+
+### BBE XGBoost (SSRN 4691617) — simulation only, in-play, later-phase
+- XGBoost learns **in-play dynamic wagering** by imitating profitable sim-agents and
+  generalises to beat them **within the Bristol Betting Exchange simulation** — **no
+  real-market, obtainable-price, or CLV validation.** Relevant only to a much later
+  in-play/trade-timing phase.
+
+## Cross-cutting, well-supported principles
+
+- **CLV is a valid, fast edge judge.** Buchdahl's ~20,000-bet system: 4.0% CLV-
+  implied edge vs 3.4% realised ROI — empirically consistent. CLV can reach
+  significance in **~50 bets** vs thousands for raw P&L. **Caveat:** only meaningful
+  against a properly **de-vigged** sharp closing line.
+- **Random train/test splits leak and inflate performance** (Quantitative Finance
+  2022, demonstrated experimentally). **Walk-forward / forward-chained only** — even
+  for a simple model.
+- **The market is a hard benchmark** — but the Betfair-efficiency paper does **NOT**
+  prove it's unbeatable (that inference was **refuted**); it only shows price-return
+  series are statistically efficient with **mean-reversion** (so price-momentum
+  features are unlikely to carry durable signal).
+- **Staking matters: fractional / adaptive Kelly** beats flat staking; drawdown-
+  constrained Kelly ≈ plain fractional Kelly (so keep it simple).
+
+## What this means for us (the honest bottom line)
+
+Every robust, transparent, historically-real edge in this literature is **Benter's
+shape**: a conditional-logit win-probability model **blended with the market**,
+judged by **calibration + CLV**, under **strict walk-forward**. The fundamentals add
+only **modestly** on top of the market (0.682 → 0.738). The big profits required
+either **scale + rebates** (Benter HK) or were **tiny and segment-overfit** (German
+turf, €54.9/914 bets, no CLV). For a small operation, the realistic expectation is:
+the blend may **modestly beat fundamentals**, may **roughly match the market**, and
+any real money lives in **execution / price-capture (CLV) and disciplined staking** —
+exactly what our CLV harness already measures.

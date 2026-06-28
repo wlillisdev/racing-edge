@@ -41,7 +41,7 @@ def test_runner_normalise() -> None:
     assert r.weight_lbs == 152 and r.official_rating == 138 and r.rpr == 150
     assert r.claim_lbs == 5
     assert r.headgear == "b" and r.headgear_first_time is True
-    assert r.odds.consensus == 4.0     # median of 3.5/4.0/4.5
+    assert r.odds.consensus == 4.5     # best (max) of 3.5/4.0/4.5 — the price taken
 
 
 def test_race_normalise() -> None:
@@ -76,6 +76,16 @@ def test_results_normalise_with_nonfinishers() -> None:
     assert c is not None and c.status == "PU"
     assert d is not None and d.placed(3) is True and d.beaten_lengths == 2.5
     assert res.favourite is not None and res.favourite.horse_id == "A"   # shortest SP
+
+
+def test_results_normalise_captures_name_and_comment() -> None:
+    doc = {"results": [{"race_id": "rac_1", "date": "2026-01-15", "runners": [
+        {"horse_id": "A", "horse": "Front Runner", "position": "2", "sp_dec": "3.0",
+         "comment": "led, headed final 100yds, no extra"},
+    ]}]}
+    a = results_from_raw(doc)[0].of("A")
+    assert a is not None and a.horse == "Front Runner"
+    assert a.comment == "led, headed final 100yds, no extra"   # for the study to read the finish
 
 
 def test_past_runs_normalise() -> None:

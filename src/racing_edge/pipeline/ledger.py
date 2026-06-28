@@ -22,7 +22,8 @@ def record_day(card: DayCard, ledger: Ledger) -> int:
         race, case = cp.race, cp.case
         ledger.record(day=card.day, race_id=race.race_id, horse_id=case.runner.horse_id,
                       horse=case.runner.horse, system="method", season=race.season,
-                      code=race.code, price_taken=cp.price)
+                      code=race.code, price_taken=cp.price,
+                      score=case.score, signals=",".join(s.name for s in case.signals))
         n += 1
         fav = favourite(race)
         if fav is not None and fav.horse_id != case.runner.horse_id:

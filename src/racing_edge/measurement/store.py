@@ -22,6 +22,8 @@ CREATE TABLE IF NOT EXISTS picks (
     season      TEXT NOT NULL,
     code        TEXT NOT NULL,        -- 'jump' | 'flat'
     price_taken REAL,                 -- the price available when picked
+    score       REAL,                 -- the method's conviction (sum of signal weights)
+    signals     TEXT DEFAULT '',      -- the signal names that fired (for ablation analysis)
     sp          REAL,                 -- settled price (filled at settle)
     position    INTEGER,              -- finishing position (filled at settle)
     settled     INTEGER NOT NULL DEFAULT 0,
@@ -36,16 +38,23 @@ class Ledger:
         self._conn = sqlite3.connect(self._path)
         self._conn.row_factory = sqlite3.Row
         self._conn.executescript(_SCHEMA)
+        # migrate older ledgers that pre-date the score/signals columns
+        cols = {r[1] for r in self._conn.execute("PRAGMA table_info(picks)")}
+        for col, decl in (("score", "REAL"), ("signals", "TEXT DEFAULT ''")):
+            if col not in cols:
+                self._conn.execute(f"ALTER TABLE picks ADD COLUMN {col} {decl}")
         self._conn.commit()
 
     def record(self, *, day: date, race_id: str, horse_id: str, horse: str, system: str,
-               season: str, code: str, price_taken: float | None) -> None:
+               season: str, code: str, price_taken: float | None,
+               score: float | None = None, signals: str = "") -> None:
         """Write a pending pick. Idempotent — never double-logs the same key."""
         self._conn.execute(
             "INSERT OR IGNORE INTO picks "
-            "(date, race_id, horse_id, horse, system, season, code, price_taken) "
-            "VALUES (?,?,?,?,?,?,?,?)",
-            (day.isoformat(), race_id, horse_id, horse, system, season, code, price_taken),
+            "(date, race_id, horse_id, horse, system, season, code, price_taken, score, signals) "
+            "VALUES (?,?,?,?,?,?,?,?,?,?)",
+            (day.isoformat(), race_id, horse_id, horse, system, season, code,
+             price_taken, score, signals),
         )
         self._conn.commit()
 
@@ -67,12 +76,17 @@ class Ledger:
                 race_id=r["race_id"], horse_id=r["horse_id"], horse=r["horse"],
                 system=r["system"], season=r["season"], code=r["code"],
                 price_taken=r["price_taken"], sp=r["sp"], position=r["position"],
+                score=r["score"], signals=r["signals"] or "",
             )
             for r in rows
         ]
 
     def pending_count(self) -> int:
         return int(self._conn.execute("SELECT COUNT(*) FROM picks WHERE settled=0").fetchone()[0])
+
+    def recorded_dates(self) -> set[str]:
+        """Dates that already have picks — so a backtest can resume, not restart."""
+        return {r[0] for r in self._conn.execute("SELECT DISTINCT date FROM picks")}
 
     def close(self) -> None:
         self._conn.close()

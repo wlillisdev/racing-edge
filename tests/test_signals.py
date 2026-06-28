@@ -122,6 +122,16 @@ def test_trip_and_course() -> None:
     assert course_proven(race, (_run(1, course="Ayr"),)) is None
 
 
+def test_well_handicapped() -> None:
+    from racing_edge.domain.profile import well_handicapped
+    h = _race(cls=3)  # is_handicap True
+    assert well_handicapped(Runner(horse_id="H", horse="X", rpr=148, official_rating=138), h) is not None
+    assert well_handicapped(Runner(horse_id="H", horse="X", rpr=141, official_rating=138), h) is None
+    nonh = Race(race_id="R", course="Ayr", off_time="15:00", date=date(2026, 1, 15),
+                race_type="Chase", is_handicap=False, race_class=3)
+    assert well_handicapped(Runner(horse_id="H", horse="X", rpr=148, official_rating=138), nonh) is None
+
+
 def test_weight_relief() -> None:
     runner = Runner(horse_id="H", horse="X", weight_lbs=150)
     assert weight_relief(runner, (_run(5, wt=156),)) is not None   # 6lb relief
@@ -133,6 +143,17 @@ def test_claimer_allowance() -> None:
     assert claimer_allowance(Runner(horse_id="H", horse="X", claim_lbs=3)).weight == 1.5
     assert claimer_allowance(Runner(horse_id="H", horse="X", claim_lbs=0)) is None
     assert claimer_allowance(Runner(horse_id="H", horse="X")) is None
+
+
+def test_consistency_prb() -> None:
+    from racing_edge.domain.profile import consistency_prb
+    strong = tuple(PastRun(date=date(2025, 12, i), position=p, field_size=f)
+                   for i, (p, f) in enumerate([(5, 24), (3, 20), (2, 16), (6, 18)], 1))
+    assert consistency_prb(strong).name == "consistent"          # ~0.84
+    weak = tuple(PastRun(date=date(2025, 12, i), position=p, field_size=f)
+                 for i, (p, f) in enumerate([(9, 10), (7, 8), (8, 9), (6, 7)], 1))
+    assert consistency_prb(weak).name == "modest_merit"          # ~0.14
+    assert consistency_prb((PastRun(date=date(2025, 12, 1), position=2, field_size=10),)) is None  # too few
 
 
 def test_quality_of_win() -> None:
