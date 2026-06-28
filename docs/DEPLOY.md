@@ -48,8 +48,9 @@ venv/bin/python -m racing_edge.cli.settle --day today
 venv/bin/python -m racing_edge.cli.report
 ```
 
-Flags: `--flat` (flat instead of jumps), `--day tomorrow|YYYY-MM-DD`,
-`--bank 500` (stake sizing), `--no-record` (print without banking).
+Flags: `--flat` (flat instead of jumps), `--both` (jumps AND flat handicaps in one
+run, banked per code), `--day tomorrow|YYYY-MM-DD`, `--bank 500` (stake sizing),
+`--no-record` (print without banking).
 
 ## 5. Schedule it (PythonAnywhere → Tasks)
 

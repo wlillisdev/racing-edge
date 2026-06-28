@@ -61,6 +61,9 @@ def render_card(card: DayCard) -> str:
         lines.append(
             f"\n  {r.course} {r.off_time}  —  {hcap}{r.race_type} ({cls}, {r.going_band})"
         )
+        if r.is_all_weather:                 # flagged, not blocked — but put the guard up (#14)
+            lines.append("    ⚠ all-weather (rule #14) — guard up: integrity & kickback risk, "
+                         "favour a clean break")
         lines.append(f"    {str(c.runner.horse).upper()}   {_price_str(cp.price)}")
         if c.stance:
             lines.append(f"    [{c.stance}]")
