@@ -60,7 +60,9 @@ Each Task runs one command line; the task log captures the output. (These use
 | Time | Command |
 |---|---|
 | 07:00 | `cd ~/racing_edge && PYTHONPATH=src venv/bin/python -m racing_edge.cli.daily --day today --both` |
+| 07:05 | `cd ~/racing_edge && PYTHONPATH=src venv/bin/python -m racing_edge.cli.nap --day today --both` |
 | 20:00 | `cd ~/racing_edge && PYTHONPATH=src venv/bin/python -m racing_edge.cli.settle --day today` |
+| 20:05 | `cd ~/racing_edge && PYTHONPATH=src venv/bin/python -m racing_edge.cli.nap --settle today` |
 | 21:00 | `cd ~/racing_edge && PYTHONPATH=src venv/bin/python -m racing_edge.cli.study --day today --frank` |
 
 - **07:00 — the card.** `--both` covers jumps AND flat handicaps; the franking
