@@ -2,8 +2,11 @@
 
 from __future__ import annotations
 
+from datetime import date
+
 from racing_edge.domain.manner import nap_verdict, read_manner
 from racing_edge.study.postmortem import StudiedRunner, study_card, study_race
+from racing_edge.study.store import StudyStore
 
 
 # --------------------------------------------------------------------------- #
@@ -75,3 +78,20 @@ def test_study_card_aggregates_rule2_rate() -> None:
     assert card.n_races == 2
     assert card.winner_was_2nd_or_3rd_fav == 1 and card.winner_was_fav == 1
     assert card.rule2_rate == 0.5
+
+
+# --------------------------------------------------------------------------- #
+# the study store — the detective work persists and stays queryable
+# --------------------------------------------------------------------------- #
+def test_study_store_persists_and_queries() -> None:
+    store = StudyStore(":memory:")
+    s1 = study_race([StudiedRunner("A", 1, 4.0), StudiedRunner("B", 2, 2.5)])  # 2nd fav won
+    s2 = study_race([StudiedRunner("C", 1, 2.0), StudiedRunner("D", 2, 5.0)])  # fav won
+    store.record(day=date(2026, 6, 27), race_id="r1", course="Kelso", study=s1)
+    store.record(day=date(2026, 6, 27), race_id="r2", course="Ayr", study=s2)
+    assert store.count() == 2
+    assert store.rule2_rate() == (1, 2)         # rule #2 held in 1 of 2
+    # idempotent — re-recording the same race replaces, not duplicates
+    store.record(day=date(2026, 6, 27), race_id="r1", course="Kelso", study=s1)
+    assert store.count() == 2
+    store.close()
