@@ -4,6 +4,10 @@ Fetches the results AND the morning card for the day, joins them, and pulls the
 history of just the winner and our pick (so the study can answer course/trip/going
 without a fetch per runner). Returns the enriched StudiedRunner races ready for
 study_card. This is the one study module that touches the network.
+
+It studies ONLY readable handicaps (Race.is_readable_handicap) — the races where
+the form actually stacks up. Novices, maidens and bumpers are dropped: a post-
+mortem there teaches nothing transferable, so it would just be noise in the loop.
 """
 
 from __future__ import annotations
@@ -36,8 +40,11 @@ def collect_day(client: _Fetcher, day: date, picks_by_race: dict[str, str],
     ids: list[str] = []
     for res in results:
         card = cards.get(res.race_id)
-        if card is None:
-            continue          # context filter: only races we have a card for (our regions)
+        # study ONLY readable handicaps — where the form actually stacks up. A
+        # post-mortem on a novice/maiden/bumper teaches nothing transferable
+        # (no exposed form to have read), so it's noise in the learning loop.
+        if card is None or not card.is_readable_handicap:
+            continue
 
         base = [StudiedRunner(name=r.horse, horse_id=r.horse_id, finish_pos=r.position,
                               sp_dec=r.sp_dec, comment=r.comment, beaten_lengths=r.beaten_lengths)

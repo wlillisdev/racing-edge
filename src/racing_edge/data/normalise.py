@@ -113,6 +113,9 @@ def runner_from_raw(raw: dict) -> Runner:
 
 def race_from_raw(raw: dict, race_date: date) -> Race:
     name = f"{raw.get('race_name', '')} {raw.get('type', '')}".lower()
+    surface = f"{_str(raw.get('surface'))} {_str(raw.get('going'))}".lower()
+    _aw = ("polytrack", "tapeta", "fibresand", "all weather", "all-weather", "standard")
+    all_weather = any(k in surface for k in _aw)
     return Race(
         race_id=_str(raw.get("race_id")),
         course=_str(raw.get("course")),
@@ -121,6 +124,7 @@ def race_from_raw(raw: dict, race_date: date) -> Race:
         race_type=_str(raw.get("type")),
         is_handicap=any(k in name for k in ("handicap", "hcap", "h'cap", "nursery")),
         is_novice=any(k in name for k in ("novice", "maiden", "nh flat", "bumper", "junior")),
+        is_all_weather=all_weather,
         race_class=_int(raw.get("class") or raw.get("race_class")),
         distance_f=_float(raw.get("distance_f") or raw.get("dist_f")),
         going=_str(raw.get("going")),

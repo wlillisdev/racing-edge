@@ -24,10 +24,13 @@ def main() -> int:
     ap.add_argument("--flat", action="store_true", help="flat racing instead of jumps")
     ap.add_argument("--bank", type=float, default=1000.0)
     ap.add_argument("--no-record", action="store_true", help="don't bank the picks to the CLV ledger")
+    ap.add_argument("--no-frank", action="store_true",
+                    help="skip franking the picks (faster, but no form-stacks-up gate)")
     args = ap.parse_args()
 
     policy = BettingPolicy(bank=args.bank)
-    card = run_day(get_client(), policy, day=args.day, code=("flat" if args.flat else "jump"))
+    card = run_day(get_client(), policy, day=args.day,
+                   code=("flat" if args.flat else "jump"), frank=not args.no_frank)
     print(render_card(card))
     if not args.no_record and card.picks:
         n = record_day(card, open_ledger())

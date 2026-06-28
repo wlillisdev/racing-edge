@@ -19,10 +19,12 @@ def get_completer() -> Callable[[str], str] | None:
         return None
     try:
         import anthropic
-    except ImportError:
+        client = anthropic.Anthropic(api_key=key)
+    except Exception:
+        # Missing SDK, or an SDK/httpx version clash (e.g. the removed `proxies`
+        # arg) — the narrative is advisory, so degrade to no reads rather than
+        # crash the whole pipeline. The docstring's promise: never block a pick.
         return None
-
-    client = anthropic.Anthropic(api_key=key)
 
     def complete(prompt: str) -> str:
         msg = client.messages.create(

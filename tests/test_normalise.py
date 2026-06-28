@@ -51,6 +51,15 @@ def test_novice_race_flagged() -> None:
     est = race_from_raw({"race_name": "Campbell & Rowley Handicap Hurdle", "type": "Hurdle"},
                         date(2026, 6, 28))
     assert est.is_handicap is True and est.is_novice is False  # established — readable
+    assert nov.is_readable_handicap is False and est.is_readable_handicap is True   # the gate
+
+
+def test_all_weather_flagged() -> None:
+    aw = race_from_raw({"race_name": "Betway Handicap", "type": "Flat",
+                        "surface": "Polytrack", "going": "Standard"}, date(2026, 1, 5))
+    turf = race_from_raw({"race_name": "Betway Handicap", "type": "Flat",
+                          "surface": "Turf", "going": "Good"}, date(2026, 6, 5))
+    assert aw.is_all_weather is True and turf.is_all_weather is False
 
 
 def test_race_normalise() -> None:

@@ -16,6 +16,7 @@ from racing_edge.betting.bet import Bet
 from racing_edge.domain.models import Race
 from racing_edge.domain.units import format_odds
 from racing_edge.selection.case import Case
+from racing_edge.study.frank import Franking
 
 _RULE = "=" * 70
 
@@ -27,6 +28,7 @@ class CardPick:
     price: float | None
     bet: Bet | None                          # None = the method's pick, but not a value bet today
     narrative: tuple[NarrativeRead, ...] = ()  # optional AI reads of the comment (advisory, cited)
+    frank: Franking | None = None            # the pipeline's franking of the pick's last form line
 
 
 @dataclass(frozen=True)
@@ -62,11 +64,18 @@ def render_card(card: DayCard) -> str:
         lines.append(f"    {str(c.runner.horse).upper()}   {_price_str(cp.price)}")
         if c.stance:
             lines.append(f"    [{c.stance}]")
+        # franking — the pipeline's own grunt work, shown when it ran
+        if cp.frank is not None and cp.frank.note:
+            lines.append(f"    frank: {cp.frank.note}")
         if cp.bet:
             ew = " each-way" if cp.bet.each_way else " win"
-            lines.append(f"    >> VALUE BET: £{cp.bet.stake:.2f}{ew} single (take the best/early price)")
+            lines.append(f"    >> VALUE BET: £{cp.bet.stake:.2f}{ew} single "
+                         "(take the best/early price)")
+        elif cp.frank is not None and cp.frank.is_thin:
+            lines.append("    (stood down — UNFRANKED: rivals it beat have flopped since)")
         elif cp.price is not None:
-            lines.append("    (the method's pick, but the price is out of the value range — no bet)")
+            lines.append("    (the method's pick, but the price is out of "
+                         "the value range — no bet)")
         for reason in c.reasons:
             lines.append(f"       - {reason}")
         if cp.narrative:

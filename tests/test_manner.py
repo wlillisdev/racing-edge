@@ -193,6 +193,35 @@ def test_study_race_reports_franking_when_present() -> None:
     assert not any("FRANK the winner" in g for g in s.gaps)   # finding replaces the gap
 
 
+def test_collect_day_studies_only_readable_handicaps() -> None:
+    from racing_edge.study.collect import collect_day
+
+    class _C:
+        def racecards(self, day: str = "today") -> dict:
+            return {"racecards": [
+                {"race_id": "rac_h", "date": "2026-06-28", "course": "Ayr", "off_time": "14:00",
+                 "race_name": "Class 4 Handicap Hurdle", "type": "Hurdle",
+                 "runners": [{"horse_id": "a", "horse": "A"}, {"horse_id": "b", "horse": "B"}]},
+                {"race_id": "rac_n", "date": "2026-06-28", "course": "Ayr", "off_time": "14:30",
+                 "race_name": "Novices' Hurdle", "type": "Hurdle",
+                 "runners": [{"horse_id": "c", "horse": "C"}, {"horse_id": "d", "horse": "D"}]},
+            ]}
+
+        def results_by_date(self, ds: str) -> dict:
+            return {"results": [
+                {"race_id": "rac_h", "date": "2026-06-28", "runners": [
+                    {"horse_id": "a", "horse": "A", "position": "1", "sp_dec": "3.0"}]},
+                {"race_id": "rac_n", "date": "2026-06-28", "runners": [
+                    {"horse_id": "c", "horse": "C", "position": "1", "sp_dec": "5.0"}]},
+            ]}
+
+        def horse_results(self, hid: str, limit: int = 12) -> list[dict]:
+            return []
+
+    _races, _our, ids = collect_day(_C(), date(2026, 6, 28), {})
+    assert ids == ["rac_h"]      # novice race dropped — only the readable handicap studied
+
+
 def test_paper_test_summary_scores_rule2() -> None:
     from racing_edge.study.papertest import summarise_review
     race_a = [StudiedRunner("A", 1, 4.0), StudiedRunner("B", 2, 2.5)]   # 2nd fav won

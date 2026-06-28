@@ -72,7 +72,8 @@ def backtest(client: _Client, start: date, end: date, ledger,
         if ds in done:                       # already in the ledger — don't re-fetch
             day += timedelta(days=1)
             continue
-        races = [r for r in racecards_from_raw(client.racecards(ds)) if r.code == code]
+        races = [r for r in racecards_from_raw(client.racecards(ds))
+                 if r.code == code and r.is_readable_handicap]   # readable handicaps only
         card_picks: list[CardPick] = []
         for race in races:
             result = pick_race(race, build_evidence(race, client, as_of=race.date))
