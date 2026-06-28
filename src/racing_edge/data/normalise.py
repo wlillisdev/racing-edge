@@ -149,7 +149,9 @@ def runner_result_from_raw(raw: dict) -> RunnerResult:
         status=status,
         sp_dec=_float(raw.get("sp_dec") or raw.get("sp")),
         bsp=_float(raw.get("bsp")),
-        beaten_lengths=_float(raw.get("btn") or raw.get("beaten_lengths")),
+        # ovr_btn = total lengths behind the WINNER (cumulative); btn = to the horse
+        # in front (incremental). For "how close was the finish" we want cumulative.
+        beaten_lengths=_float(raw.get("ovr_btn") or raw.get("btn") or raw.get("beaten_lengths")),
         horse=_str(raw.get("horse")),
         comment=_str(raw.get("comment") or raw.get("in_running_comment")),
     )
