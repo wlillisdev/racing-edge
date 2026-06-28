@@ -69,6 +69,16 @@ def test_season() -> None:
     assert racing_season(date(2026, 1, 15)) == "nh_winter"
     assert racing_season(date(2026, 7, 1)) == "flat_summer"
     assert racing_season(date(2026, 4, 10)) == "shoulder"
+
+
+def test_season_label_is_code_aware() -> None:
+    from racing_edge.domain.season import season_label
+    # a summer JUMPS pick is its own (weak) season, never blended into flat_summer
+    assert season_label(date(2026, 6, 28), "jump") == "summer_jumps"
+    assert season_label(date(2026, 6, 28), "flat") == "flat_summer"
+    # winter flat is mostly all-weather — kept apart from nh_winter jumps
+    assert season_label(date(2026, 1, 15), "jump") == "nh_winter"
+    assert season_label(date(2026, 1, 15), "flat") == "winter_flat"
     assert prime_code(date(2026, 1, 15)) == "jump"
     assert prime_code(date(2026, 7, 1)) == "flat"
     # winter: jumps are prime, flat is not; shoulder: both live

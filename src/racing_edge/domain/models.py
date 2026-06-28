@@ -12,7 +12,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from datetime import date
 
-from racing_edge.domain.season import racing_season
+from racing_edge.domain.season import season_label
 from racing_edge.domain.units import going_band, race_code
 
 
@@ -113,8 +113,9 @@ class Race:
 
     @property
     def season(self) -> str:
-        """'nh_winter' | 'flat_summer' | 'shoulder' — for season-stratified truth."""
-        return racing_season(self.date)
+        """Season label for this race — calendar AND code, so a summer JUMPS pick is
+        'summer_jumps', never blended into 'flat_summer'. For season-stratified truth."""
+        return season_label(self.date, self.code)
 
     @property
     def field_size(self) -> int:
