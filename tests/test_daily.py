@@ -1,24 +1,75 @@
-"""Tests for the daily pipeline — and the franking GATE that stands a pick down.
+"""Tests for the daily pipeline and franking as a WITHIN-RACE tiebreaker.
 
-The method's order is: shortlist readable handicaps -> pick -> FRANK the pick. A
-pick whose last form line comes up unfranked (rivals checked, none went on to
-win/place) is no bet. This is the grunt work done before the card is published.
+The lesson the master drilled in: franking is not a card-wide filter and never a
+veto. It's the decider when the top contenders are CLOSE — narrow the race to a
+few, then let the franked form break the tie. A clear leader needs no franking;
+an unfranked-but-top-scored horse is still backed (early-season, little has been
+franked yet — that's the calendar, not a mark against the horse).
 """
 
 from __future__ import annotations
 
 import sys
 
-from racing_edge.pipeline.daily import run_day
+from racing_edge.domain.models import Odds, Runner
+from racing_edge.pipeline.daily import frank_tiebreak, run_day
+from racing_edge.selection.case import Case
 
 
-class _FrankClient:
-    """A card with one pick-able readable handicap. `mode` sets how the pick's
-    last-race rivals have fared SINCE: 'franked' (re-ran and placed), 'thin'
-    (re-ran and flopped), or 'too_soon' (haven't run again at all)."""
+def _case(hid: str, score: float) -> Case:
+    return Case(runner=Runner(horse_id=hid, horse=hid.upper(), odds=Odds(consensus=4.0)),
+                signals=(), score=score, vetoed=False)
 
-    def __init__(self, mode: str) -> None:
-        self.mode = mode
+
+class _C:
+    """Drives frank_form: R's last race franks (rivals re-ran and placed); L's and
+    M's are 'too soon' (their rivals haven't run again)."""
+
+    def horse_results(self, hid: str, limit: int = 12) -> list[dict]:
+        return {
+            "L": [{"date": "2026-06-21", "race_id": "last_L", "position": "1"}],
+            "M": [{"date": "2026-06-20", "race_id": "last_M", "position": "1"}],
+            "R": [{"date": "2026-05-01", "race_id": "last_R", "position": "1"}],
+            "RA": [{"date": "2026-06-01", "position": "1"}],   # re-ran AND won -> franks
+            "RB": [{"date": "2026-06-02", "position": "2"}],   # re-ran AND placed -> franks
+        }.get(hid, [])                                          # LA/LB/MA/MB -> [] (too soon)
+
+    def results_by_date(self, ds: str) -> dict:
+        fields = {
+            "2026-06-21": ("last_L", ["L", "LA", "LB"]),
+            "2026-06-20": ("last_M", ["M", "MA", "MB"]),
+            "2026-05-01": ("last_R", ["R", "RA", "RB"]),
+        }
+        if ds in fields:
+            rid, ids = fields[ds]
+            return {"results": [{"race_id": rid, "date": ds,
+                                 "runners": [{"horse_id": h} for h in ids]}]}
+        return {"results": []}
+
+
+def test_franking_breaks_a_close_tie_toward_the_franked_horse() -> None:
+    # leader L (10) vs rival R (9) — close (9 >= 10*0.85); R is franked, L too-soon
+    chosen, f = frank_tiebreak(_C(), (_case("L", 10.0), _case("R", 9.0)))
+    assert chosen.runner.horse_id == "R"       # the franked form wins the split
+    assert f is not None and f.is_franked
+
+
+def test_clear_leader_needs_no_franking() -> None:
+    # rival far below threshold (5 < 10*0.85) -> not a split -> franking has no say
+    chosen, f = frank_tiebreak(_C(), (_case("L", 10.0), _case("R", 5.0)))
+    assert chosen.runner.horse_id == "L" and f is None
+
+
+def test_close_but_none_franked_keeps_the_top_scored_horse() -> None:
+    # both too-soon (early season) -> leader stands, but its read is still shown
+    chosen, f = frank_tiebreak(_C(), (_case("L", 10.0), _case("M", 9.0)))
+    assert chosen.runner.horse_id == "L"
+    assert f is not None and not f.is_franked   # no veto — it just couldn't decide
+
+
+class _CardClient:
+    """One readable handicap; the pick's form is 'too soon' to frank. Proves the
+    pipeline still backs it — franking never kills a bet."""
 
     def racecards(self, day: str = "today") -> dict:
         return {"racecards": [{
@@ -32,51 +83,23 @@ class _FrankClient:
             ]}]}
 
     def results_by_date(self, ds: str) -> dict:
-        # the field of the pick's most recent prior race (what frank_form looks up)
-        return {"results": [{"race_id": "last_OURS", "date": "2025-12-01", "runners": [
-            {"horse_id": "OURS"}, {"horse_id": "R1A"}, {"horse_id": "R1B"}]}]}
+        return {"results": [{"race_id": "last_OURS", "date": "2026-06-21", "runners": [
+            {"horse_id": "OURS"}, {"horse_id": "X1"}, {"horse_id": "X2"}]}]}
 
     def horse_results(self, hid: str, limit: int = 12) -> list[dict]:
         if hid == "OURS":
-            return [{"date": "2025-12-01", "race_id": "last_OURS", "position": "1",
+            return [{"date": "2026-06-21", "race_id": "last_OURS", "position": "1",
                      "class": "3", "going": "Soft", "dist_f": "20.0", "lbs": "154",
                      "course": "Kelso", "ran": "12"}]
-        if hid in ("R1A", "R1B"):
-            if self.mode == "franked":
-                return [{"date": "2026-02-01", "position": "1"}]   # re-ran AND won -> franks
-            if self.mode == "thin":
-                return [{"date": "2026-02-01", "position": "9"}]   # re-ran but flopped -> thin
-        return []                                                 # too_soon: never re-ran
+        return []                                  # rivals haven't re-run -> too soon
 
     def trainer_jockeys(self, tid: str) -> list[dict]:
         return []
 
 
-def test_frank_gate_stands_down_only_genuinely_thin_form() -> None:
-    franked = run_day(_FrankClient("franked"), day="today", code="jump").picks[0]
-    thin = run_day(_FrankClient("thin"), day="today", code="jump").picks[0]
-    too_soon = run_day(_FrankClient("too_soon"), day="today", code="jump").picks[0]
-    assert franked.case.runner.horse == thin.case.runner.horse == "Bishopton"
-
-    # solid form -> bet stands, franking recorded
-    assert franked.frank is not None and franked.frank.is_franked
-    assert franked.bet is not None
-
-    # rivals re-ran and flopped -> genuinely thin -> stood down
-    assert thin.frank is not None and thin.frank.is_thin
-    assert thin.bet is None
-
-    # rivals haven't run again yet -> "too soon", NOT thin -> NOT vetoed (the bug we fixed)
-    assert too_soon.frank is not None
-    assert not too_soon.frank.is_thin and not too_soon.frank.is_franked
-    assert too_soon.bet is not None
-
-
-def test_frank_can_be_skipped() -> None:
-    # --no-frank path: no franking ran, so nothing is stood down on form grounds
-    cp = run_day(_FrankClient("thin"), day="today", code="jump", frank=False).picks[0]
-    assert cp.frank is None
-    assert cp.bet is not None      # would have been vetoed had franking run
+def test_pipeline_never_vetoes_on_franking() -> None:
+    cp = run_day(_CardClient(), day="today", code="jump").picks[0]
+    assert cp.bet is not None       # unfranked / too-soon form is NOT stood down
 
 
 def _main() -> int:
