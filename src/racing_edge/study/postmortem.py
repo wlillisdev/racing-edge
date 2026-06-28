@@ -97,8 +97,8 @@ def study_race(runners: Sequence[StudiedRunner], our_pick: str | None = None) ->
             lessons.append(f"  finish: won like a winner ({read_manner(winner.comment)[1]!r})")
         elif w_manner == "non_finisher":
             lessons.append("  finish: scrambled home — a soft race? worth a look")
-        elif not winner.comment:
-            gaps.append("winner's running comment (read the finish)")
+        # NB: the API carries no in-running comment, so we don't flag it as "owed" —
+        # the manner read is sourced from the form paste in the deep dig.
         if winner.course_winner:
             lessons.append("  course: a course winner — proven here (key at quirky tracks)")
         elif not winner.enriched:                    # owed only if we never checked
