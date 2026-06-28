@@ -55,6 +55,28 @@ numbers. The edge isn't a model; it's the eye, compounding.
 
 ---
 
+## The learning loop — how the notebook bites on selections
+
+A notebook that just sits here is useless. This is the closed loop that makes it
+change the picks, and makes the results change the notebook:
+
+1. **Before the pick** — every rule above is a check the NAP must pass. The big one
+   first: read each candidate's recent in-running comments; an *"out-battled late /
+   finds little"* horse is **downgraded from NAP to place-only**. Race-shape (no
+   blanket lotteries) and the franking check gate the NAP too. The pick consumes the
+   *detective reads*, not just the surface numbers — that's the whole fix.
+2. **After the result** — the evening audit stops being a scoreboard. For every
+   losing NAP it asks: did a notebook rule already cover this (we should've caught
+   it)? Or is it a *new* pattern (a new rule)? And: was the winner a 2nd/3rd fav we
+   passed — what did its comment and frank say?
+3. **Bank the lesson** — a new pattern becomes a new numbered rule above, and from
+   that moment a new check at step 1.
+4. **The master marks the hard ones** — when he explains why a NAP lost, that
+   explanation becomes a rule directly, no guessing.
+
+Closed loop: rules shape picks → results test rules → results refine rules.
+Transparent (rules, not weights), human-decided, and it compounds week on week.
+
 ## The system's core fault I'm trying to fix
 
 It naps **"nearly types"** — close but not winning — because it weights *surface
