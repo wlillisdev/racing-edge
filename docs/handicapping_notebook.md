@@ -133,6 +133,24 @@ numbers. The edge isn't a model; it's the eye, compounding.
    it on the card; the fuller read — spotting "raced freely / hung right" in the prior
    running — waits on a comment source, the same manner blind spot as rule #1.)*
 
+17. **The market is MANIPULATED — read the smart money, not the crowd.** The odds are
+   not a clean probability. Two forces bend them: (a) the **bookies** shape prices for
+   their own book — shorten to lure money or cover a liability, ease to tempt you in;
+   the price is a business decision. (b) **Religious favourite-backers** pile on the
+   jolly regardless, so favourites are *systematically over-bet* — a short price is
+   often mug money, not knowledge. The consequences for reading the market: a
+   shortening **favourite** tells you little (crowd + book). The real tell is money for
+   a **non-favourite** — an outsider tightening *against the grain*, a horse backed
+   when it "shouldn't" be. That's where someone knows something. So: **read the MOVE,
+   not the rank, and weight a backed outsider far above a backed favourite.** This is
+   why the system records a WITH/AGAINST-market stance — AGAINST-market support (a
+   non-fav being backed) is the gold; WITH-market (a short fav) is suspect. Ties to
+   #12 (the horse doesn't know its odds): judge the horse on merit first, then let the
+   *smart* move break the tie — never the crowd's. *(Caveat for my own homework: my
+   "the money knew = 42% of winners" stat does NOT yet split backed-favourites from
+   backed-outsiders. Until it does, treat it as the crowd AND the smart money mixed
+   together — the outsider-backed share is the part that matters.)*
+
 ## The learning loop — how the notebook bites on selections
 
 A notebook that just sits here is useless. This is the closed loop that makes it
