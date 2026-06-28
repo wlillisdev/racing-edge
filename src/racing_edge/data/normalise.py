@@ -150,6 +150,8 @@ def runner_result_from_raw(raw: dict) -> RunnerResult:
         sp_dec=_float(raw.get("sp_dec") or raw.get("sp")),
         bsp=_float(raw.get("bsp")),
         beaten_lengths=_float(raw.get("btn") or raw.get("beaten_lengths")),
+        horse=_str(raw.get("horse")),
+        comment=_str(raw.get("comment") or raw.get("in_running_comment")),
     )
 
 

@@ -126,6 +126,8 @@ class RunnerResult:
     sp_dec: float | None = None
     bsp: float | None = None
     beaten_lengths: float | None = None
+    horse: str = ""             # name — for the study/post-mortem
+    comment: str = ""           # in-running comment — read the FINISH, not the figures
 
     @property
     def won(self) -> bool:

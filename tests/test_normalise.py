@@ -78,6 +78,16 @@ def test_results_normalise_with_nonfinishers() -> None:
     assert res.favourite is not None and res.favourite.horse_id == "A"   # shortest SP
 
 
+def test_results_normalise_captures_name_and_comment() -> None:
+    doc = {"results": [{"race_id": "rac_1", "date": "2026-01-15", "runners": [
+        {"horse_id": "A", "horse": "Front Runner", "position": "2", "sp_dec": "3.0",
+         "comment": "led, headed final 100yds, no extra"},
+    ]}]}
+    a = results_from_raw(doc)[0].of("A")
+    assert a is not None and a.horse == "Front Runner"
+    assert a.comment == "led, headed final 100yds, no extra"   # for the study to read the finish
+
+
 def test_past_runs_normalise() -> None:
     rows = [
         {"date": "2025-12-01", "position": "1", "class": "2", "going": "Heavy",
