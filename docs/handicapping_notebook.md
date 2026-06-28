@@ -120,6 +120,68 @@ numbers. The edge isn't a model; it's the eye, compounding.
    contenders are within `_CLOSE` of each other, prefers the franked one, never
    removes a horse or kills a bet.)*
 
+16. **Headgear is about FOCUS — read the reason, not just the flag.** (The master told
+   me this for ages before the data agreed — headgear/wind angle showed on 10% of
+   winners over 101 races.) A horse that races too freely, gets distracted, hangs or
+   jumps to one side is burning energy and concentration and finding little. Put
+   first-time headgear on (blinkers / hood / cheekpieces / visor) and it can settle,
+   focus, run straighter and improve — sometimes sharply. So a first-time-headgear
+   change is a positive ANGLE, strongest when (a) the yard is in form (making the
+   change for a reason and ready to land it) and (b) the prior form shows the trait
+   it fixes — pulled too hard, hung, jumped right, "found little". The change tells
+   you the trainer thinks he's found the key. *(In code: `tells._headgear_key` flags
+   it on the card; the fuller read — spotting "raced freely / hung right" in the prior
+   running — waits on a comment source, the same manner blind spot as rule #1.)*
+
+17. **The market is MANIPULATED — read the smart money, not the crowd.** The odds are
+   not a clean probability. Two forces bend them: (a) the **bookies** shape prices for
+   their own book — shorten to lure money or cover a liability, ease to tempt you in;
+   the price is a business decision. (b) **Religious favourite-backers** pile on the
+   jolly regardless, so favourites are *systematically over-bet* — a short price is
+   often mug money, not knowledge. The consequences for reading the market: a
+   shortening **favourite** tells you little (crowd + book). The real tell is money for
+   a **non-favourite** — an outsider tightening *against the grain*, a horse backed
+   when it "shouldn't" be. That's where someone knows something. So: **read the MOVE,
+   not the rank, and weight a backed outsider far above a backed favourite.** This is
+   why the system records a WITH/AGAINST-market stance — AGAINST-market support (a
+   non-fav being backed) is the gold; WITH-market (a short fav) is suspect. Ties to
+   #12 (the horse doesn't know its odds): judge the horse on merit first, then let the
+   *smart* move break the tie — never the crowd's. *(Caveat for my own homework: my
+   "the money knew = 42% of winners" stat does NOT yet split backed-favourites from
+   backed-outsiders. Until it does, treat it as the crowd AND the smart money mixed
+   together — the outsider-backed share is the part that matters.)*
+
+18. **Reading a gamble — steady money is the tell, and the gems hide where the bookie
+   isn't looking.** A **steady, constant** gamble — money that keeps coming, a price
+   grinding shorter through the day — is a genuine positive; sustained support is real
+   confidence, not a flash (a single lump can be a trial balloon or a stable flushing
+   the price). **Some yards are known for landing a touch** — a backed horse from a
+   gambling stable is worth more than the same move from a yard that never has a go;
+   who's behind the money matters as much as the move. BUT — **not all gambles win.**
+   Horses get fired in and beaten; a gamble is a strong *lead*, never a certainty, and
+   the form read still has to stack up. Where the edge actually lives: the **bookie is
+   happy to take on the favourite** (the public over-backs the jolly, so the layer
+   profits when it loses) — and while the bookie and the crowd fight over the favourite,
+   they **overlook the gems**: the well-handicapped, well-read horses at bigger prices
+   that we find by reading the form. **Don't fish where everyone's piling on the
+   favourite — fish where no one's looking, the overlooked horse we've read.** That,
+   not out-reading the jolly, is the whole job. *(Design notes: a STEADY gamble needs
+   the odds over TIME, not one snapshot — another reason for the live-odds feed; a
+   "gambling stable" tell needs a trainer's gamble reputation we don't yet track.)*
+
+19. **Don't be afraid to back the favourite — pick the WINNER, not the price.** The
+   goal is the horse most likely to win the race, whether it's odds-on or 12/1. The
+   price is not the question. Rules #17–#18 (market manipulated, favourites over-bet,
+   gems overlooked) are about VALUE and where the edge lives — they are NOT a reason to
+   oppose a favourite that is genuinely the best horse. Keep the two jobs separate:
+   **SELECTION** picks the most likely winner regardless of price (a short price never
+   disqualifies the best horse); **BETTING** then decides if that price is worth backing.
+   So pick fearlessly first; the value question comes after, never before. A favourite is
+   often favourite because it IS the best — back it when it is. *(The engine already works
+   this way: selection ignores price, betting handles value — ties to #12, the horse
+   doesn't know its odds. The "fish where no one's looking" of #18 is about VALUE/edge,
+   not a ban on the jolly.)*
+
 ## The learning loop — how the notebook bites on selections
 
 A notebook that just sits here is useless. This is the closed loop that makes it

@@ -215,6 +215,7 @@ def past_runs_from_raw(rows: list[dict], horse_id: str = "") -> tuple[PastRun, .
             going=_str(r.get("going")),
             distance_f=_float(r.get("dist_f") or r.get("distance_f")),
             weight_lbs=_int(me.get("weight_lbs") or me.get("lbs")),
+            official_rating=_int(me.get("or") or me.get("ofr") or me.get("official_rating")),
             course=_str(r.get("course")),
             race_type=_str(r.get("type")),
             field_size=_int(r.get("ran") or r.get("field_size"))
