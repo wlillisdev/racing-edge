@@ -93,6 +93,7 @@ class Race:
     date: date
     race_type: str = ""              # Hurdle / Chase / NH Flat / Flat ...
     is_handicap: bool = False
+    is_novice: bool = False          # novice/maiden = UNEXPOSED horses, form unreliable — avoid
     race_class: int | None = None
     distance_f: float | None = None
     going: str = ""

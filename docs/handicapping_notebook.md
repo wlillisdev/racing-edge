@@ -82,6 +82,15 @@ numbers. The edge isn't a model; it's the eye, compounding.
    studied. *(The master learned to pick by making thousands of them. We're at #1 —
    the notebook just makes sure each one actually teaches.)*
 
+13. **Avoid novice / maiden handicaps — the form book doesn't apply.** A NOVICES'
+   (or maiden) handicap is full of *unexposed* horses that can improve past their
+   figures overnight, so there's no reliable exposed form to read — the read you'd
+   trust in an established handicap is worthless here. **Race selection comes first,
+   and "established handicap, exposed horses" is the gate.** *(Earned hard: Cartmel,
+   28 Jun 2026. The established handicap (15:02) — our read won at 5/1. The NOVICES'
+   handicap (14:27), which I wrongly selected — a 14/1 won going away, every
+   form-pick beaten. Filter `is_handicap and not is_novice`.)*
+
 ## The learning loop — how the notebook bites on selections
 
 A notebook that just sits here is useless. This is the closed loop that makes it

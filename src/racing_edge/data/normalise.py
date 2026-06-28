@@ -120,6 +120,7 @@ def race_from_raw(raw: dict, race_date: date) -> Race:
         date=race_date,
         race_type=_str(raw.get("type")),
         is_handicap=any(k in name for k in ("handicap", "hcap", "h'cap", "nursery")),
+        is_novice=any(k in name for k in ("novice", "maiden", "nh flat", "bumper", "junior")),
         race_class=_int(raw.get("class") or raw.get("race_class")),
         distance_f=_float(raw.get("distance_f") or raw.get("dist_f")),
         going=_str(raw.get("going")),
