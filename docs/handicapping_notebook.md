@@ -55,6 +55,24 @@ numbers. The edge isn't a model; it's the eye, compounding.
 
 ---
 
+10. **The local master who schools there outtrumps the figures.** At a
+   course-specialist track (Cartmel's half-mile run-in is the type), a horse from
+   the *local* trainer who **schools his string round that very track** is a danger
+   that can beat even the well-in, top-rated rival on the card. Course-craft and a
+   horse *prepared for this exact place* don't show in a strike rate or a handicap
+   mark — so don't write the yard off on an 8% season. *(Earned: Cartmel, 28 Jun
+   2026. I had Imperial Rule on the 4lb-well-in figure; the master's call was
+   Masterminding — Moffatt, 7× Cartmel champion, schools there, and being backed.
+   Result pending — STUDY it and confirm/refine.)*
+
+11. **Stop ruling horses out early — that is why we place, not win.** Exhaust every
+   avenue on *every* live one (mark last won off, weights, current form, franking,
+   the market move) BEFORE cutting the list. Premature elimination on a single
+   figure is the system's core fault — it throws out the winner. And the way the eye
+   is built is the **hindsight post-mortem**: after it runs, *"oh yeah, the winner
+   did this, this and this, and ours only did that."* That read is the lesson that
+   sticks.
+
 ## The learning loop — how the notebook bites on selections
 
 A notebook that just sits here is useless. This is the closed loop that makes it
