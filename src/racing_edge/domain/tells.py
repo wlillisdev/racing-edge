@@ -15,6 +15,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 
+from racing_edge.domain.mark import mark_read
 from racing_edge.domain.models import PastRun, Race, Runner
 from racing_edge.domain.units import going_band
 
@@ -62,11 +63,18 @@ def _hat_trick_trap(runner: Runner, race: Race, history: tuple[PastRun, ...]) ->
     pulled up in a chase. Peak-form + no value + completion risk = a trap, not a NAP."""
     won_last_two = len(history) >= 2 and _won(history[0]) and _won(history[1])
     price = runner.odds.consensus
-    if won_last_two and price and price <= 3.0:
-        risk = " in a chase (completion risk)" if "chase" in race.race_type.lower() else ""
-        return (f"TELL — won its last two off a rising mark at a short price{risk} "
-                "(Halfway House Lad, 28 Jun): peak-form, no value — distrust as a banker")
-    return None
+    if not (won_last_two and price and price <= 3.0):
+        return None
+    # the trap is an EXPOSED horse RAISED by the handicapper. If the mark shows it's
+    # actually WELL-IN (won twice but still off no higher a mark), it's ahead of the
+    # assessor, NOT a trap — spare it. (The Friday lesson, now with the data to apply it.)
+    mr = mark_read(runner.official_rating, history)
+    if mr.delta is not None and mr.delta <= 0:
+        return None
+    risk = " in a chase (completion risk)" if "chase" in race.race_type.lower() else ""
+    up = f" (mark {mr.verdict})" if mr.delta is not None else ""
+    return (f"TELL — won its last two off a rising mark{up} at a short price{risk} "
+            "(Halfway House Lad, 28 Jun): peak-form, no value — distrust as a banker")
 
 
 def _headgear_key(runner: Runner, race: Race, history: tuple[PastRun, ...]) -> str | None:
@@ -103,11 +111,24 @@ def _local_course_master(runner: Runner, race: Race, history: tuple[PastRun, ...
     return None
 
 
+def _well_in(runner: Runner, race: Race, history: tuple[PastRun, ...]) -> str | None:
+    """Caughtinyourtrance, 26 Jun: "on a mark it's capable of winning off". A horse
+    running off the SAME or a LOWER mark than when it last won is well-in — the
+    handicapper hasn't caught it. The positive mirror of the rising-mark trap, and the
+    decisive lens I failed to compare on Friday."""
+    mr = mark_read(runner.official_rating, history)
+    if mr.delta is not None and mr.delta <= 0:
+        return (f"TELL — WELL-IN ({mr.verdict}): running off no higher a mark than when it last "
+                "won — the handicapper hasn't caught it (Caughtinyourtrance, 26 Jun)")
+    return None
+
+
 _TELLS: tuple[Callable[[Runner, Race, tuple[PastRun, ...]], str | None], ...] = (
     _cdg_winner_returning,
     _hat_trick_trap,
     _headgear_key,
     _local_course_master,
+    _well_in,
 )
 
 

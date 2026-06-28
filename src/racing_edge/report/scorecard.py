@@ -12,6 +12,7 @@ from __future__ import annotations
 from collections.abc import Callable
 from dataclasses import dataclass
 
+from racing_edge.domain.mark import mark_read
 from racing_edge.domain.models import PastRun, Race
 from racing_edge.domain.tells import match_tells
 from racing_edge.domain.units import going_band
@@ -73,10 +74,12 @@ def _same_going(h: PastRun, race: Race) -> bool:
 
 # each lens: (RunnerEvidence, Race) -> Cell. owed=True means "go and get it".
 def _mark(ev: RunnerEvidence, race: Race) -> Cell:
-    orr = ev.runner.official_rating
-    # today's mark is known; the MARK IT LAST WON OFF is not in the data — so the
-    # decisive well-in-vs-penalty comparison is always OWED for now.
-    return Cell(f"OR{orr}" if orr else "OR?", owed=True)
+    mr = mark_read(ev.runner.official_rating, ev.history)
+    if mr.today is None:
+        return Cell("OR?", owed=True)                       # no mark on the card
+    if mr.last_won is None:
+        return Cell(f"OR{mr.today}", owed=True)             # no prior win to judge it against
+    return Cell(f"OR{mr.today} {mr.verdict}")               # WELL-IN / +Nlb — the decisive read
 
 
 def _course(ev: RunnerEvidence, race: Race) -> Cell:

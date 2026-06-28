@@ -39,6 +39,7 @@ class PastRun:
     going: str = ""
     distance_f: float | None = None
     weight_lbs: int | None = None
+    official_rating: int | None = None  # the OR it ran off THIS day — for the mark-it-last-won-off read
     course: str = ""
     race_type: str = ""
     field_size: int | None = None    # how competitive the race was — quality of a win
