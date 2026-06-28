@@ -15,8 +15,8 @@ import argparse
 
 from racing_edge.cli._common import open_ledger, open_study_store, resolve_date
 from racing_edge.data.client import get_client
-from racing_edge.data.normalise import results_from_raw
-from racing_edge.study.postmortem import StudiedRunner, study_card
+from racing_edge.study.collect import collect_day
+from racing_edge.study.postmortem import study_card
 
 
 def main() -> int:
@@ -25,24 +25,14 @@ def main() -> int:
     args = ap.parse_args()
 
     day = resolve_date(args.day)
-    results = results_from_raw(get_client().results_by_date(day.isoformat()))
-    if not results:
-        print(f"No results available yet for {day} — nothing to study.")
-        return 0
-
     # our method picks for the day (race_id -> horse), so the study can flag our losses
     picks_by_race = {p.race_id: p.horse for p in open_ledger().settled_picks()
                      if p.system == "method" and p.date == day}
 
-    races: list[list[StudiedRunner]] = []
-    our: list[str | None] = []
-    race_ids: list[str] = []
-    for res in results:
-        races.append([StudiedRunner(name=r.horse, finish_pos=r.position, sp_dec=r.sp_dec,
-                                    comment=r.comment, beaten_lengths=r.beaten_lengths)
-                      for r in res.runners])
-        our.append(picks_by_race.get(res.race_id))
-        race_ids.append(res.race_id)
+    races, our, race_ids = collect_day(get_client(), day, picks_by_race)
+    if not races:
+        print(f"No results available yet for {day} — nothing to study.")
+        return 0
 
     card = study_card(races, our)
     store = open_study_store()

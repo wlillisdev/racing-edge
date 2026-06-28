@@ -16,7 +16,7 @@ from datetime import timedelta
 
 from racing_edge.cli._common import open_ledger, resolve_date
 from racing_edge.data.client import get_client
-from racing_edge.data.normalise import results_from_raw
+from racing_edge.study.collect import collect_day
 from racing_edge.study.papertest import summarise_review
 from racing_edge.study.postmortem import StudiedRunner, study_card
 
@@ -35,11 +35,9 @@ def main() -> int:
     our: list[str | None] = []
     day = start
     while day <= end:
-        for res in results_from_raw(client.results_by_date(day.isoformat())):
-            races.append([StudiedRunner(name=r.horse, finish_pos=r.position, sp_dec=r.sp_dec,
-                                        comment=r.comment, beaten_lengths=r.beaten_lengths)
-                          for r in res.runners])
-            our.append(picks.get(res.race_id))
+        d_races, d_our, _ = collect_day(client, day, picks)
+        races.extend(d_races)
+        our.extend(d_our)
         day += timedelta(days=1)
 
     if not races:

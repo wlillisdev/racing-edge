@@ -116,6 +116,26 @@ def test_study_store_persists_and_queries() -> None:
     store.close()
 
 
+def test_enrich_from_card_and_history() -> None:
+    from racing_edge.domain.models import Odds, PastRun, Race, Runner
+    from racing_edge.study.enrich import enrich_from_card, enrich_from_history
+    race = Race(race_id="r1", course="Kelso", off_time="14:00", date=date(2026, 2, 1),
+                race_type="Chase", distance_f=20.0, going="Soft",
+                runners=(Runner(horse_id="a", horse="A", odds=Odds(consensus=6.0),
+                                trainer_14d_runs=10, trainer_14d_wins=2, claim_lbs=5,
+                                headgear_first_time=True),))
+    base = [StudiedRunner(name="A", horse_id="a", finish_pos=1, sp_dec=4.5)]
+    e = enrich_from_card(base, race)[0]
+    assert e.morning_dec == 6.0          # the move: backed 6.0 -> 4.5
+    assert e.trainer_in_form is True     # 2/10 = 0.20 strike
+    assert e.claim_lbs == 5 and e.headgear_change is True
+
+    hist = (PastRun(date=date(2026, 1, 1), position=1, going="Soft",
+                    distance_f=20.0, course="Kelso"),)
+    h = enrich_from_history(e, hist, race)
+    assert h.course_winner and h.trip_proven and h.going_proven
+
+
 def test_paper_test_summary_scores_rule2() -> None:
     from racing_edge.study.papertest import summarise_review
     race_a = [StudiedRunner("A", 1, 4.0), StudiedRunner("B", 2, 2.5)]   # 2nd fav won

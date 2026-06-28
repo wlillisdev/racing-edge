@@ -23,6 +23,7 @@ class StudiedRunner:
     finish_pos: int | None              # 1 = won; None = did not complete
     sp_dec: float | None                # starting price (decimal)
     comment: str = ""                   # in-running / closing comment
+    horse_id: str = ""                  # to join the morning card to the result
     beaten_lengths: float | None = None # margin — cruel photo vs clear miss
     morning_dec: float | None = None    # morning price — for the market move vs SP
     official_rating: int | None = None  # today's mark
