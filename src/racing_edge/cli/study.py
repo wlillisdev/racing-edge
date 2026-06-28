@@ -38,8 +38,9 @@ def main() -> int:
     our: list[str | None] = []
     race_ids: list[str] = []
     for res in results:
-        races.append([StudiedRunner(name=r.horse, finish_pos=r.position,
-                                    sp_dec=r.sp_dec, comment=r.comment) for r in res.runners])
+        races.append([StudiedRunner(name=r.horse, finish_pos=r.position, sp_dec=r.sp_dec,
+                                    comment=r.comment, beaten_lengths=r.beaten_lengths)
+                      for r in res.runners])
         our.append(picks_by_race.get(res.race_id))
         race_ids.append(res.race_id)
 
@@ -55,8 +56,13 @@ def main() -> int:
     fresh = [lesson for s in card.studies for lesson in s.lessons]
     if fresh:
         print("\n  what the card taught:")
-        for lesson in fresh[:20]:
+        for lesson in fresh[:30]:
             print(f"    • {lesson}")
+    owed = [g for s in card.studies for g in s.gaps]
+    if owed:
+        print(f"\n  grunt work still owed ({len(owed)} checks the card data couldn't answer):")
+        for g in owed[:15]:
+            print(f"    ⚠ {g}")
     store.close()
     return 0
 

@@ -62,6 +62,25 @@ def test_study_race_flags_rule2_and_rule1() -> None:
     assert any("NON-FINISHER" in lesson for lesson in s.lessons)
 
 
+def test_study_race_asks_the_full_questionnaire() -> None:
+    # a richly-clued winner: backed, finished well, course winner, claimer relief
+    runners = [
+        StudiedRunner("Gem", 1, 4.0, "stayed on strongly to win", morning_dec=8.0,
+                      course_winner=True, trip_proven=True, going_proven=True,
+                      trainer_in_form=True, claim_lbs=5),
+        StudiedRunner("Fav", 3, 2.5, "every chance, no extra", beaten_lengths=1.0),
+    ]
+    s = study_race(runners, our_pick="Fav")
+    joined = " | ".join(s.lessons)
+    assert "BACKED into it" in joined           # market move read
+    assert "won like a winner" in joined        # the finish
+    assert "course winner" in joined            # course form
+    assert "claimer's relief" in joined         # the weight nuance
+    # and it owns the grunt work it could not do from the result alone
+    assert any("FRANK the winner" in g for g in s.gaps)
+    assert any("caught by the handicapper" in g for g in s.gaps)
+
+
 def test_study_race_excuses_unlucky_pick() -> None:
     runners = [
         StudiedRunner("Ours", 2, 3.0, "denied a clear run when staying on"),

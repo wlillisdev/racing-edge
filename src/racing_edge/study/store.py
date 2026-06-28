@@ -30,7 +30,8 @@ CREATE TABLE IF NOT EXISTS race_study (
     our_pick           TEXT,
     our_pick_pos       INTEGER,
     our_pick_manner    TEXT,
-    lessons            TEXT DEFAULT '', -- newline-joined lesson candidates
+    lessons            TEXT DEFAULT '', -- newline-joined findings
+    gaps               TEXT DEFAULT '', -- grunt work still owed (franking, the mark, ...)
     PRIMARY KEY (date, race_id)
 );
 """
@@ -41,6 +42,9 @@ class StudyStore:
         self._conn = sqlite3.connect(str(path))
         self._conn.row_factory = sqlite3.Row
         self._conn.executescript(_SCHEMA)
+        cols = {r[1] for r in self._conn.execute("PRAGMA table_info(race_study)")}
+        if "gaps" not in cols:                       # migrate older study DBs
+            self._conn.execute("ALTER TABLE race_study ADD COLUMN gaps TEXT DEFAULT ''")
         self._conn.commit()
 
     def record(self, *, day: date, race_id: str, course: str, study: RaceStudy) -> None:
@@ -48,10 +52,10 @@ class StudyStore:
         self._conn.execute(
             "INSERT OR REPLACE INTO race_study (date, race_id, course, winner, "
             "winner_market_rank, winner_manner, field_size, our_pick, our_pick_pos, "
-            "our_pick_manner, lessons) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+            "our_pick_manner, lessons, gaps) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
             (day.isoformat(), race_id, course, study.winner, study.winner_market_rank,
              study.winner_manner, study.field_size, study.our_pick, study.our_pick_pos,
-             study.our_pick_manner, "\n".join(study.lessons)),
+             study.our_pick_manner, "\n".join(study.lessons), "\n".join(study.gaps)),
         )
         self._conn.commit()
 
