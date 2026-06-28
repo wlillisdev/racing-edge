@@ -73,6 +73,15 @@ numbers. The edge isn't a model; it's the eye, compounding.
    did this, this and this, and ours only did that."* That read is the lesson that
    sticks.
 
+12. **The horse doesn't know what odds it is.** The price is a label *humans* put on
+   it; the horse runs on its own merits — form, fitness, trip, the trainer's craft.
+   So don't be talked *off* a genuinely well-merited horse because it's a big price,
+   nor *onto* a flimsy one because it's short. The market carries information (#6),
+   AND the horse's real chance is intrinsic — hold both, and learn over thousands of
+   races when each one rules. There is no shortcut to that balance but mistakes,
+   studied. *(The master learned to pick by making thousands of them. We're at #1 —
+   the notebook just makes sure each one actually teaches.)*
+
 ## The learning loop — how the notebook bites on selections
 
 A notebook that just sits here is useless. This is the closed loop that makes it
