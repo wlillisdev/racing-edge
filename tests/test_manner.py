@@ -114,3 +114,12 @@ def test_study_store_persists_and_queries() -> None:
     store.record(day=date(2026, 6, 27), race_id="r1", course="Kelso", study=s1)
     assert store.count() == 2
     store.close()
+
+
+def test_paper_test_summary_scores_rule2() -> None:
+    from racing_edge.study.papertest import summarise_review
+    race_a = [StudiedRunner("A", 1, 4.0), StudiedRunner("B", 2, 2.5)]   # 2nd fav won
+    race_b = [StudiedRunner("C", 1, 2.0), StudiedRunner("D", 2, 5.0)]   # fav won
+    r = summarise_review(study_card([race_a, race_b]))
+    assert r.n_races == 2 and r.rule2_held == 1 and r.rule2_total == 2
+    assert r.rule2_pct == 50.0
