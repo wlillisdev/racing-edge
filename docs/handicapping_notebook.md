@@ -55,6 +55,42 @@ numbers. The edge isn't a model; it's the eye, compounding.
 
 ---
 
+10. **The local master who schools there outtrumps the figures.** At a
+   course-specialist track (Cartmel's half-mile run-in is the type), a horse from
+   the *local* trainer who **schools his string round that very track** is a danger
+   that can beat even the well-in, top-rated rival on the card. Course-craft and a
+   horse *prepared for this exact place* don't show in a strike rate or a handicap
+   mark — so don't write the yard off on an 8% season. *(Earned: Cartmel, 28 Jun
+   2026. I had Imperial Rule on the 4lb-well-in figure; the master's call was
+   Masterminding — Moffatt, 7× Cartmel champion, schools there, and being backed.
+   Result pending — STUDY it and confirm/refine.)*
+
+11. **Stop ruling horses out early — that is why we place, not win.** Exhaust every
+   avenue on *every* live one (mark last won off, weights, current form, franking,
+   the market move) BEFORE cutting the list. Premature elimination on a single
+   figure is the system's core fault — it throws out the winner. And the way the eye
+   is built is the **hindsight post-mortem**: after it runs, *"oh yeah, the winner
+   did this, this and this, and ours only did that."* That read is the lesson that
+   sticks.
+
+12. **The horse doesn't know what odds it is.** The price is a label *humans* put on
+   it; the horse runs on its own merits — form, fitness, trip, the trainer's craft.
+   So don't be talked *off* a genuinely well-merited horse because it's a big price,
+   nor *onto* a flimsy one because it's short. The market carries information (#6),
+   AND the horse's real chance is intrinsic — hold both, and learn over thousands of
+   races when each one rules. There is no shortcut to that balance but mistakes,
+   studied. *(The master learned to pick by making thousands of them. We're at #1 —
+   the notebook just makes sure each one actually teaches.)*
+
+13. **Avoid novice / maiden handicaps — the form book doesn't apply.** A NOVICES'
+   (or maiden) handicap is full of *unexposed* horses that can improve past their
+   figures overnight, so there's no reliable exposed form to read — the read you'd
+   trust in an established handicap is worthless here. **Race selection comes first,
+   and "established handicap, exposed horses" is the gate.** *(Earned hard: Cartmel,
+   28 Jun 2026. The established handicap (15:02) — our read won at 5/1. The NOVICES'
+   handicap (14:27), which I wrongly selected — a 14/1 won going away, every
+   form-pick beaten. Filter `is_handicap and not is_novice`.)*
+
 ## The learning loop — how the notebook bites on selections
 
 A notebook that just sits here is useless. This is the closed loop that makes it

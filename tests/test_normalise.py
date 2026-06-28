@@ -44,6 +44,15 @@ def test_runner_normalise() -> None:
     assert r.odds.consensus == 4.5     # best (max) of 3.5/4.0/4.5 — the price taken
 
 
+def test_novice_race_flagged() -> None:
+    nov = race_from_raw({"race_name": "Burlington Stone Novices' Limited Handicap Hurdle",
+                         "type": "Hurdle"}, date(2026, 6, 28))
+    assert nov.is_handicap is True and nov.is_novice is True   # avoid: unexposed horses
+    est = race_from_raw({"race_name": "Campbell & Rowley Handicap Hurdle", "type": "Hurdle"},
+                        date(2026, 6, 28))
+    assert est.is_handicap is True and est.is_novice is False  # established — readable
+
+
 def test_race_normalise() -> None:
     race = race_from_raw(_RAW_RACE, date(2026, 1, 15))
     assert race.code == "jump"          # Chase
