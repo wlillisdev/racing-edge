@@ -64,17 +64,15 @@ def render_card(card: DayCard) -> str:
         lines.append(f"    {str(c.runner.horse).upper()}   {_price_str(cp.price)}")
         if c.stance:
             lines.append(f"    [{c.stance}]")
-        # franking — the pipeline's own grunt work, shown when it actually ran
-        if cp.frank is not None and cp.frank.rivals_checked > 0:
-            tag = "FRANKED" if cp.frank.is_franked else "UNFRANKED"
-            lines.append(f"    frank: {tag} — {cp.frank.rivals_franked}/{cp.frank.rivals_checked} "
-                         "rivals from its last race won/placed since")
+        # franking — the pipeline's own grunt work, shown when it ran
+        if cp.frank is not None and cp.frank.note:
+            lines.append(f"    frank: {cp.frank.note}")
         if cp.bet:
             ew = " each-way" if cp.bet.each_way else " win"
             lines.append(f"    >> VALUE BET: £{cp.bet.stake:.2f}{ew} single "
                          "(take the best/early price)")
-        elif cp.frank is not None and cp.frank.rivals_checked > 0 and not cp.frank.is_franked:
-            lines.append("    (pick stood down — last race UNFRANKED, the form doesn't stack up)")
+        elif cp.frank is not None and cp.frank.is_thin:
+            lines.append("    (stood down — UNFRANKED: rivals it beat have flopped since)")
         elif cp.price is not None:
             lines.append("    (the method's pick, but the price is out of "
                          "the value range — no bet)")

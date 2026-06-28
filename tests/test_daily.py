@@ -13,11 +13,12 @@ from racing_edge.pipeline.daily import run_day
 
 
 class _FrankClient:
-    """A card with one pick-able readable handicap. `franked` toggles whether the
-    pick's last-race rivals have won/placed since (solid form) or not (hollow)."""
+    """A card with one pick-able readable handicap. `mode` sets how the pick's
+    last-race rivals have fared SINCE: 'franked' (re-ran and placed), 'thin'
+    (re-ran and flopped), or 'too_soon' (haven't run again at all)."""
 
-    def __init__(self, franked: bool) -> None:
-        self.franked = franked
+    def __init__(self, mode: str) -> None:
+        self.mode = mode
 
     def racecards(self, day: str = "today") -> dict:
         return {"racecards": [{
@@ -40,33 +41,40 @@ class _FrankClient:
             return [{"date": "2025-12-01", "race_id": "last_OURS", "position": "1",
                      "class": "3", "going": "Soft", "dist_f": "20.0", "lbs": "154",
                      "course": "Kelso", "ran": "12"}]
-        if self.franked and hid in ("R1A", "R1B"):
-            return [{"date": "2026-02-01", "position": "1"}]   # won since -> franks the form
-        return []                                              # ran nowhere -> form is hollow
+        if hid in ("R1A", "R1B"):
+            if self.mode == "franked":
+                return [{"date": "2026-02-01", "position": "1"}]   # re-ran AND won -> franks
+            if self.mode == "thin":
+                return [{"date": "2026-02-01", "position": "9"}]   # re-ran but flopped -> thin
+        return []                                                 # too_soon: never re-ran
 
     def trainer_jockeys(self, tid: str) -> list[dict]:
         return []
 
 
-def test_frank_gate_stands_down_an_unfranked_pick() -> None:
-    # the SAME pick, same price — only the franking differs, so it isolates the gate
-    franked = run_day(_FrankClient(True), day="today", code="jump").picks[0]
-    thin = run_day(_FrankClient(False), day="today", code="jump").picks[0]
+def test_frank_gate_stands_down_only_genuinely_thin_form() -> None:
+    franked = run_day(_FrankClient("franked"), day="today", code="jump").picks[0]
+    thin = run_day(_FrankClient("thin"), day="today", code="jump").picks[0]
+    too_soon = run_day(_FrankClient("too_soon"), day="today", code="jump").picks[0]
     assert franked.case.runner.horse == thin.case.runner.horse == "Bishopton"
 
-    # solid form -> the bet stands, and the franking is recorded on the pick
+    # solid form -> bet stands, franking recorded
     assert franked.frank is not None and franked.frank.is_franked
     assert franked.bet is not None
 
-    # hollow form -> we checked the rivals and they came up empty -> stood down, no bet
-    assert thin.frank is not None and not thin.frank.is_franked
-    assert thin.frank.rivals_checked > 0
+    # rivals re-ran and flopped -> genuinely thin -> stood down
+    assert thin.frank is not None and thin.frank.is_thin
     assert thin.bet is None
+
+    # rivals haven't run again yet -> "too soon", NOT thin -> NOT vetoed (the bug we fixed)
+    assert too_soon.frank is not None
+    assert not too_soon.frank.is_thin and not too_soon.frank.is_franked
+    assert too_soon.bet is not None
 
 
 def test_frank_can_be_skipped() -> None:
     # --no-frank path: no franking ran, so nothing is stood down on form grounds
-    cp = run_day(_FrankClient(False), day="today", code="jump", frank=False).picks[0]
+    cp = run_day(_FrankClient("thin"), day="today", code="jump", frank=False).picks[0]
     assert cp.frank is None
     assert cp.bet is not None      # would have been vetoed had franking run
 

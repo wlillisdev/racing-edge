@@ -50,15 +50,15 @@ def run_day(client: _Client, policy: BettingPolicy | None = None,
         price = case.runner.odds.consensus
         bet = make_bet(case, price, policy)
         # FRANK THE PICK — frank the form it brings in before backing it. Only veto
-        # when franking actually RAN and came up thin; a missing/unfindable last
-        # race can't be held against it (don't penalise absent data).
+        # when franking had a FAIR SAMPLE (rivals re-ran) and the form came up thin.
+        # "Too soon to frank" (nobody's run again yet) is never held against it.
         franking = None
         if frank:
             hist = past_runs_from_raw(client.horse_results(case.runner.horse_id),
                                       case.runner.horse_id)
             franking = frank_form(client, case.runner.horse_id, hist)
-            if franking.rivals_checked > 0 and not franking.is_franked:
-                bet = None       # checked and thin — stand the bet down, the form is hollow
+            if franking.is_thin:
+                bet = None       # rivals re-ran and flopped — the form is hollow, stand it down
         narrative = tuple(read_narrative(case.runner, completer)) if completer else ()
         picks.append(CardPick(race=race, case=case, price=price,
                               bet=bet, narrative=narrative, frank=franking))
