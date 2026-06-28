@@ -72,7 +72,8 @@ def _headgear_key(runner: Runner, race: Race, history: tuple[PastRun, ...]) -> s
     in_form = runs >= 4 and (wins / runs) >= 0.15
     if runner.headgear_first_time and in_form:
         return ("TELL — first-time headgear from an in-form yard (King Of Earth, 28 Jun): "
-                "the trainer's found the key — respect the change")
+                "gear focuses a horse that raced too freely / hung / jumped right — "
+                "expect it to settle, run straighter and find more")
     return None
 
 

@@ -120,6 +120,19 @@ numbers. The edge isn't a model; it's the eye, compounding.
    contenders are within `_CLOSE` of each other, prefers the franked one, never
    removes a horse or kills a bet.)*
 
+16. **Headgear is about FOCUS — read the reason, not just the flag.** (The master told
+   me this for ages before the data agreed — headgear/wind angle showed on 10% of
+   winners over 101 races.) A horse that races too freely, gets distracted, hangs or
+   jumps to one side is burning energy and concentration and finding little. Put
+   first-time headgear on (blinkers / hood / cheekpieces / visor) and it can settle,
+   focus, run straighter and improve — sometimes sharply. So a first-time-headgear
+   change is a positive ANGLE, strongest when (a) the yard is in form (making the
+   change for a reason and ready to land it) and (b) the prior form shows the trait
+   it fixes — pulled too hard, hung, jumped right, "found little". The change tells
+   you the trainer thinks he's found the key. *(In code: `tells._headgear_key` flags
+   it on the card; the fuller read — spotting "raced freely / hung right" in the prior
+   running — waits on a comment source, the same manner blind spot as rule #1.)*
+
 ## The learning loop — how the notebook bites on selections
 
 A notebook that just sits here is useless. This is the closed loop that makes it
