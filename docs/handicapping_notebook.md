@@ -169,6 +169,19 @@ numbers. The edge isn't a model; it's the eye, compounding.
    the odds over TIME, not one snapshot — another reason for the live-odds feed; a
    "gambling stable" tell needs a trainer's gamble reputation we don't yet track.)*
 
+19. **Don't be afraid to back the favourite — pick the WINNER, not the price.** The
+   goal is the horse most likely to win the race, whether it's odds-on or 12/1. The
+   price is not the question. Rules #17–#18 (market manipulated, favourites over-bet,
+   gems overlooked) are about VALUE and where the edge lives — they are NOT a reason to
+   oppose a favourite that is genuinely the best horse. Keep the two jobs separate:
+   **SELECTION** picks the most likely winner regardless of price (a short price never
+   disqualifies the best horse); **BETTING** then decides if that price is worth backing.
+   So pick fearlessly first; the value question comes after, never before. A favourite is
+   often favourite because it IS the best — back it when it is. *(The engine already works
+   this way: selection ignores price, betting handles value — ties to #12, the horse
+   doesn't know its odds. The "fish where no one's looking" of #18 is about VALUE/edge,
+   not a ban on the jolly.)*
+
 ## The learning loop — how the notebook bites on selections
 
 A notebook that just sits here is useless. This is the closed loop that makes it
