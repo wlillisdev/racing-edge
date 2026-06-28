@@ -25,6 +25,8 @@ def main() -> int:
     ap = argparse.ArgumentParser(description="Paper-test the reads against real results.")
     ap.add_argument("--start", required=True, help="YYYY-MM-DD")
     ap.add_argument("--end", required=True, help="YYYY-MM-DD")
+    ap.add_argument("--frank", action="store_true",
+                    help="also frank each winner (slow — heavy fetches; for deep digs)")
     args = ap.parse_args()
 
     start, end = resolve_date(args.start), resolve_date(args.end)
@@ -35,7 +37,7 @@ def main() -> int:
     our: list[str | None] = []
     day = start
     while day <= end:
-        d_races, d_our, _ = collect_day(client, day, picks)
+        d_races, d_our, _ = collect_day(client, day, picks, frank=args.frank)
         races.extend(d_races)
         our.extend(d_our)
         day += timedelta(days=1)

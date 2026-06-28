@@ -25,6 +25,7 @@ class _Fetcher(Protocol):
 
 
 def collect_day(client: _Fetcher, day: date, picks_by_race: dict[str, str],
+                frank: bool = False,
                 ) -> tuple[list[list[StudiedRunner]], list[str | None], list[str]]:
     ds = day.isoformat()
     results = results_from_raw(client.results_by_date(ds))
@@ -53,7 +54,8 @@ def collect_day(client: _Fetcher, day: date, picks_by_race: dict[str, str],
                 if sr.horse_id in key_ids:
                     hist = past_runs_from_raw(client.horse_results(sr.horse_id))
                     sr = enrich_from_history(sr, hist, card)
-                    sr = replace(sr, frank_note=frank_form(client, sr.horse_id, hist).note)
+                    if frank:        # the heavy fetch — only for the deep dig, not the mass audit
+                        sr = replace(sr, frank_note=frank_form(client, sr.horse_id, hist).note)
                 enriched.append(sr)
             base = enriched
 
