@@ -144,6 +144,7 @@ def race_from_raw(raw: dict, race_date: date) -> Race:
         race_type=_str(raw.get("type")),
         is_handicap=any(k in name for k in ("handicap", "hcap", "h'cap", "nursery")),
         is_novice=any(k in name for k in ("novice", "maiden", "nh flat", "bumper", "junior")),
+        is_amateur="amateur" in name,   # inexperienced riders — anything can happen, avoid
         is_all_weather=all_weather,
         race_class=_class(raw),
         distance_f=_float(raw.get("distance_f") or raw.get("dist_f")),

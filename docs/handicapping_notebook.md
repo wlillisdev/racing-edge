@@ -214,6 +214,15 @@ of the assembled dots — it has failed at the one job it's for.
    `manner` cell the brief leaves OWED — which is exactly why the comments feed is the
    next door to open: this whole result was invisible without the words.
 
+21. **Avoid amateur jockeys' races — the saddle is the variable.** Same logic as
+   novices (#13), but it's the *riders*, not the horses: amateurs are inexperienced, so
+   even a well-read race can be undone by a bad ride — gone too soon, shuffled back, no
+   reaction when the gap comes. The fractions go wrong and **anything can happen.** The
+   form doesn't play out reliably, so there's no edge to have. (Pontefract, 29 Jun: a
+   17-runner Class-5 *Amateur Jockeys'* Handicap — a well-handicapped C/D horse in it,
+   but the race type alone said *pass*.) *(In code: `Race.is_amateur` — detected from
+   the race name and excluded by `is_readable_handicap`, the same hard gate as novices.)*
+
 ## The learning loop — how the notebook bites on selections
 
 A notebook that just sits here is useless. This is the closed loop that makes it

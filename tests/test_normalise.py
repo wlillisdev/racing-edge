@@ -54,6 +54,16 @@ def test_novice_race_flagged() -> None:
     assert nov.is_readable_handicap is False and est.is_readable_handicap is True   # the gate
 
 
+def test_amateur_race_excluded_from_readable_handicaps() -> None:
+    am = race_from_raw({"race_name": "Racing TV Amateur Jockeys' Handicap", "type": "Flat"},
+                       date(2026, 6, 29))
+    assert am.is_handicap is True and am.is_amateur is True
+    assert am.is_readable_handicap is False        # the saddle's the variable — avoid (rule #21)
+    pro = race_from_raw({"race_name": "Napoleons Casino Bradford Handicap", "type": "Flat"},
+                        date(2026, 6, 29))
+    assert pro.is_amateur is False and pro.is_readable_handicap is True
+
+
 def test_all_weather_flagged() -> None:
     aw = race_from_raw({"race_name": "Betway Handicap", "type": "Flat",
                         "surface": "Polytrack", "going": "Standard"}, date(2026, 1, 5))
