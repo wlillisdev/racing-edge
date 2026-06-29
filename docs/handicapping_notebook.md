@@ -247,6 +247,19 @@ of the assembled dots — it has failed at the one job it's for.
    (Pontefract, 29 Jun: Queen Sana ticked every box, went off 3/1 not 5/4 — exposed
    nearly-type, unplaced; Betweenthesticks 10/1 was the value a proper study finds.)
 
+23. **The bookies get beaten too — read the market, don't worship it.** Rules #17–#22
+   say the market is information: manipulated, the lay is a tell, the price is a map. But
+   don't over-rotate into "the bookies are always right / the favourite is always a
+   trap" (the same fixation as fearing the favourite, just flipped). **The bookies get
+   beaten too** — good favourites bolt up, gambles land, the layers lose. The ENTIRE
+   edge depends on them being beatable: if the market were always right there'd be no
+   value and no reason to study a single form line. Over the distance, a good handicapper
+   beats the book — that's the whole premise. So the price is a strong clue, **never
+   gospel**; the craft is spotting *when the market is wrong* (that's where the value is),
+   not assuming it never is. The balance: don't fear the favourite (#19), and don't kneel
+   to the bookies either — read them, weigh them, and back your own study when it says
+   they've got one wrong.
+
 ## The learning loop — how the notebook bites on selections
 
 A notebook that just sits here is useless. This is the closed loop that makes it
