@@ -9,6 +9,26 @@ assemble every clue, watch the market on the shortlist, study every result). The
 human makes the call. I study **my picks against the results** — never crunch old
 numbers. The edge isn't a model; it's the eye, compounding.
 
+## What it's all for — join the dots, read the nuances
+
+This is the whole thing, and everything below serves it. Handicapping is **not**
+scoring a horse on a grid of lenses and summing the column. It is **joining the dots**
+— taking every clue, down to the smallest nuance, and connecting them into one moving
+picture of *how the race will be run*. The dots don't decide it; the **lines between
+them** do. A rising mark is harmless until you join it to a front-running style and
+another horse who wants the lead — then it's fatal. "Won last time" means nothing until
+you join it to *how* (going away, or all-out) and to the mark it cost him. You don't
+read eight horses; you read the **race**, and the nuances — *led but pestered*, the
+little *p* for a penalty, *edged right*, a jockey switch — are what tip it.
+
+So the split is clear: **the system COLLECTS the dots; the eye CONNECTS them.** The AI's
+job is to lay out *every* clue, tirelessly and honestly, including the tiny ones (which
+is why the running comments matter — that's where the nuances live), and to name the
+ones it couldn't get. The **joining** — the read, the nuance-weighing, the picture — is
+the craft, human-led, learned one race at a time. The machine is the eyes and the legs.
+It is **not** the brain. The day it tries to be the brain — to hand you a number instead
+of the assembled dots — it has failed at the one job it's for.
+
 ---
 
 ## The lessons (so far)
