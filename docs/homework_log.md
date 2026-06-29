@@ -218,3 +218,31 @@ front-end duel that collapsed:
 and I'd have seen it pre-race from the run-styles. Notebook rule #20 added. This is the
 single strongest case yet that the comments/`manner` feed is priority #1: the whole
 result was invisible to the brief without the words.
+
+## 2026-06-29 — Monday study #2: the well-in favourite that doesn't WIN (Pontefract 16:00)
+
+**The race.** Napoleons Casino Bradford Handicap. 1st **Betweenthesticks (10/1)**;
+**Queen Sana, the 3/1 favourite — UNPLACED.**
+
+**The sting.** Queen Sana was the well-handicapped C/D horse I flagged Monday morning
+as my "cleaner-mark alternative": consistent, runner-up over course & distance, nudged
+up just +1lb, well drawn (stall 4), favourite. On the MARK lens alone, a gem.
+
+**The dot I missed.** "Taken to FINALLY get off the mark" — she is **yet to win.** A
+consistent **nearly-type** (the bridesmaid). The market backed the mark + the
+consistency and ignored that she doesn't get her head in front — and she didn't,
+beaten by a 10/1 shot.
+
+**Lessons banked:**
+1. **A well-in mark is only a positive JOINED to a horse that WINS.** On a nearly-type
+   (consistent placer, yet to win) it's a trap, not a gem. "Well-handicapped" +
+   "consistent placer" = a favourite that finishes second. This is the system's core
+   fault (naps nearly-types) — and today the whole MARKET fell for it.
+2. **Join the mark to rule #1.** The mark is a dot; "winner or bridesmaid" is another
+   dot. I'd have made the market's mistake by reading the mark and stopping.
+3. **The field is open, again.** 10/1 winner over the fancied nearly-type fav — the gem
+   outside the front of the market (same shape as King Of Light, Windsor).
+
+**Next build (offered, not yet done):** conviction should FLAG the nearly-type — a horse
+with several runs, frequent places, few/no wins (ties to the existing `bottler` signal)
+— so a well-in mark on a non-winner doesn't read as a gem.
