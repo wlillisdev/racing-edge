@@ -233,6 +233,20 @@ of the assembled dots — it has failed at the one job it's for.
    but the race type alone said *pass*.) *(In code: `Race.is_amateur` — detected from
    the race name and excluded by `is_readable_handicap`, the same hard gate as novices.)*
 
+22. **Read the favourite's PRICE against how good it LOOKS — the gap is a map.** If a
+   horse ticks every box and is still only **3/1 (not 5/4 or odds-on)**, the market is
+   telling you what the form won't: it's **EXPOSED** — a known quantity whose ceiling
+   the layers have measured (often a nearly-type) — and the race is **OPEN.** The market
+   will never let a true banker trade at 3/1; so a box-ticker priced that big isn't a
+   gem the crowd missed, it's a horse the crowd has rated *right* and you've over-rated.
+   And a weak/vulnerable favourite isn't a horse to back — it's the **green light to
+   study the FIELD**, because the doubt in its price means the value (the winner) is in
+   there to be found by proper work. Don't ask "does the fav tick the boxes?" — ask **"if
+   it ticks the boxes, why isn't it 5/4?"** The wider the gap between *looks-a-banker* and
+   *trades-beatable*, the louder the market is saying *dig, the winner's in the field.*
+   (Pontefract, 29 Jun: Queen Sana ticked every box, went off 3/1 not 5/4 — exposed
+   nearly-type, unplaced; Betweenthesticks 10/1 was the value a proper study finds.)
+
 ## The learning loop — how the notebook bites on selections
 
 A notebook that just sits here is useless. This is the closed loop that makes it
