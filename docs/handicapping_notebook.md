@@ -185,7 +185,17 @@ of the assembled dots — it has failed at the one job it's for.
    they **overlook the gems**: the well-handicapped, well-read horses at bigger prices
    that we find by reading the form. **Don't fish where everyone's piling on the
    favourite — fish where no one's looking, the overlooked horse we've read.** That,
-   not out-reading the jolly, is the whole job. *(Design notes: a STEADY gamble needs
+   not out-reading the jolly, is the whole job. **And WHICH favourites do they lay? The
+   good-LOOKING ones with a flaw they've read and the punters haven't** — a nearly-type,
+   a wrong pace, a rising mark. The obvious appeal (well-handicapped, consistent, C/D) is
+   what sucks the public in and shortens the price; the layers are happy to take it
+   because they've seen what the appeal hides. So a heavily-backed "good favourite" isn't
+   *safe* — it's the most dangerous thing on the card. Don't ask "is this a good
+   favourite?"; ask **"why are the bookies content to lay it?"** If the appeal hides a
+   flaw, be WITH the layers, against the mug money. (Pontefract, 29 Jun: Queen Sana, "in
+   theory a good favourite" — well-handicapped, C/D, consistent — sent off 3/1 and
+   unplaced, because she's a nearly-type that doesn't WIN. The bookies knew; the punters
+   didn't.) *(Design notes: a STEADY gamble needs
    the odds over TIME, not one snapshot — another reason for the live-odds feed; a
    "gambling stable" tell needs a trainer's gamble reputation we don't yet track.)*
 
