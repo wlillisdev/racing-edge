@@ -279,6 +279,21 @@ of the assembled dots — it has failed at the one job it's for.
    every contender's conviction, ranked — so no horse is skipped and the pick has to beat
    a fair reading of the field, not an anchored one.)*
 
+25. **Select by ELIMINATION — cross off what can't win, THEN zero in.** The rookie hunts
+   for a horse to *love*: finds a few ticks, anchors, gets blinded by the odds, and loses
+   sight of the whole race. The master works the other way round — go through the WHOLE
+   field and **cross off the ones that can't win**, each for a concrete reason (wrong
+   trip, out of form, exposed nearly-type, rising-mark front-runner with a presser to
+   take him on, can't act on the ground, badly drawn, improver-fav at a cramped price,
+   amateur/lottery race), and **zero in on what survives.** The survivors are the real
+   shortlist; only THEN do you read deeply to choose between them. This is why studying
+   *why each horse LOST* matters so much: **every losing-reason is a cross-off rule, and
+   the elimination toolkit IS the accumulated "why they lost."** Elimination can't be
+   blinded by the odds (you don't start from the favourite) and can't anchor (you must
+   weigh every horse to knock it out) — so it *forces* the fair evaluation of #24. Cross
+   off, then zero in — never love-at-first-tick. *(In code: the nap CLI now splits the
+   field into CROSSED OFF (with the flaw) and SURVIVORS, and zeroes in on the survivors.)*
+
 ## The learning loop — how the notebook bites on selections
 
 A notebook that just sits here is useless. This is the closed loop that makes it

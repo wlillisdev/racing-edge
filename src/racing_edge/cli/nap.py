@@ -64,18 +64,27 @@ def main() -> int:
         print("No nap — nothing readable stands up today. Discipline is a position.")
         return 0
 
-    # FAIR EVALUATION (rule #24): show EVERY contender's read before the pick, so the nap
-    # has to beat an even reading of the field — never an anchored one.
-    print("  the field, fairly evaluated (every contender, strongest first):")
-    for p in field:
+    # SELECT BY ELIMINATION (rule #25): cross off what can't win FIRST, then zero in on
+    # the survivors — never start from a horse to love. Forces the fair evaluation of #24.
+    crossed = [p for p in field if p.conviction.flags]
+    survivors = [p for p in field if not p.conviction.flags]
+    if crossed:
+        print("  CROSSED OFF — won't win, and why (knock out the no-hopers first):")
+        for p in crossed:
+            print(f"    ✗ {p.runner.horse:22} {p.race.course} {p.race.off_time}  "
+                  f"— {', '.join(p.conviction.flags)}")
+    print("\n  SURVIVORS — zero in on these (strongest first):")
+    for p in survivors:
         c = p.conviction
         mark = "" if c.mark_known else " [mark OWED]"
-        flags = f"  FLAGS: {', '.join(c.flags)}" if c.flags else ""
-        print(f"    {p.runner.horse:22} {p.race.course} {p.race.off_time}  "
-              f"conv {c.score}{mark}: {', '.join(c.aligned) or 'thin'}{flags}")
+        print(f"    • {p.runner.horse:22} {p.race.course} {p.race.off_time}  "
+              f"conv {c.score}{mark}: {', '.join(c.aligned) or 'thin'}")
     print()
 
-    nap = field[0]      # the pick is the top of the field we just evaluated — not re-fetched
+    if not survivors:
+        print("No nap — every contender crossed off. Discipline is a position.")
+        return 0
+    nap = survivors[0]      # zero in on the strongest SURVIVOR, not the top of the raw field
 
     c, r = nap.conviction, nap.race
     tag = "CONFIDENT NAP" if c.confident else "best candidate — NOT confident (declinable)"

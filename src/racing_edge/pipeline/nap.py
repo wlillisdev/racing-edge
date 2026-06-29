@@ -59,6 +59,7 @@ def evaluate_field(client: _Client, day: str = "today",
 
 def nominate_nap(client: _Client, day: str = "today",
                  codes: tuple[str, ...] = ("jump", "flat"), top_n: int = 4) -> NapPick | None:
-    """The day's strongest single selection across the readable handicaps, or None."""
-    field = evaluate_field(client, day, codes, top_n)
-    return field[0] if field else None
+    """The day's nap: zero in on the strongest SURVIVOR after crossing off every horse
+    with a flaw (rule #25 — eliminate first, then pick). None if all are crossed off."""
+    survivors = [p for p in evaluate_field(client, day, codes, top_n) if not p.conviction.flags]
+    return survivors[0] if survivors else None
