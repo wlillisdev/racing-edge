@@ -16,7 +16,7 @@ from racing_edge.cli._common import open_nap_log, resolve_date
 from racing_edge.data.client import get_client
 from racing_edge.data.evidence import build_evidence
 from racing_edge.data.normalise import results_from_raw
-from racing_edge.pipeline.nap import nominate_nap
+from racing_edge.pipeline.nap import evaluate_field
 from racing_edge.report.scorecard import build_scorecard, render_scorecard
 
 
@@ -59,10 +59,23 @@ def main() -> int:
 
     codes = ("jump", "flat") if args.both else (("flat",) if args.flat else ("jump",))
     client = get_client()
-    nap = nominate_nap(client, day=args.day, codes=codes)
-    if nap is None:
+    field = evaluate_field(client, day=args.day, codes=codes)
+    if not field:
         print("No nap — nothing readable stands up today. Discipline is a position.")
         return 0
+
+    # FAIR EVALUATION (rule #24): show EVERY contender's read before the pick, so the nap
+    # has to beat an even reading of the field — never an anchored one.
+    print("  the field, fairly evaluated (every contender, strongest first):")
+    for p in field:
+        c = p.conviction
+        mark = "" if c.mark_known else " [mark OWED]"
+        flags = f"  FLAGS: {', '.join(c.flags)}" if c.flags else ""
+        print(f"    {p.runner.horse:22} {p.race.course} {p.race.off_time}  "
+              f"conv {c.score}{mark}: {', '.join(c.aligned) or 'thin'}{flags}")
+    print()
+
+    nap = field[0]      # the pick is the top of the field we just evaluated — not re-fetched
 
     c, r = nap.conviction, nap.race
     tag = "CONFIDENT NAP" if c.confident else "best candidate — NOT confident (declinable)"

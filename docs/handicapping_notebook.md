@@ -265,6 +265,20 @@ of the assembled dots — it has failed at the one job it's for.
    to the bookies either — read them, weigh them, and back your own study when it says
    they've got one wrong.
 
+24. **Give EVERY horse a fair, equal evaluation — pick LAST, never first.** My deepest,
+   most persistent fault: I find two or three ticks on one runner, get *led* straight to
+   it, and the rest of the field gets a glance instead of a read — so the winner, sitting
+   in a horse I never properly weighed, slips by. (Every winner I've missed — King Of
+   Light, Betweenthesticks, Caughtinyourtrance, Kingofthegame — came from a horse I
+   didn't fairly evaluate because I'd already anchored.) The fix is a forced order of
+   operations: **build the case FOR every runner first** — "what would make *this* one
+   win?" — give each its fair, equal shake, and ONLY THEN compare and choose. The winner
+   always has a case; if you didn't see it, you didn't look. **Evaluate the whole field
+   evenly, then pick — never pick, then confirm.** A couple of ticks on one horse is the
+   start of the work, not the end of it. *(In code: the nap nominator evaluates AND shows
+   every contender's conviction, ranked — so no horse is skipped and the pick has to beat
+   a fair reading of the field, not an anchored one.)*
+
 ## The learning loop — how the notebook bites on selections
 
 A notebook that just sits here is useless. This is the closed loop that makes it

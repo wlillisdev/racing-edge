@@ -6,7 +6,7 @@ import sys
 from datetime import date
 
 from racing_edge.domain.models import Odds, PastRun, Race, Runner
-from racing_edge.pipeline.nap import nominate_nap
+from racing_edge.pipeline.nap import evaluate_field, nominate_nap
 from racing_edge.selection.conviction import conviction
 from racing_edge.study.naplog import NapLog
 
@@ -78,6 +78,15 @@ def test_nominate_nap_picks_the_conviction_horse_not_the_short_fav() -> None:
     assert nap is not None
     assert nap.runner.horse == "Gem"          # the well-in proven horse, not the 2.0 fav
     assert nap.conviction.confident
+
+
+def test_evaluate_field_returns_every_contender_strongest_first() -> None:
+    # rule #24: no horse skipped — both runners evaluated, the conviction horse on top
+    field = evaluate_field(_Client(), day="today", codes=("jump",))
+    assert {p.runner.horse for p in field} == {"Gem", "Shorty"}   # the WHOLE field, not just pick
+    assert field[0].runner.horse == "Gem"                         # strongest first
+    nap = nominate_nap(_Client(), day="today", codes=("jump",))
+    assert nap.runner.horse == field[0].runner.horse             # the nap is the top of the field
 
 
 def test_nap_log_accumulates_a_strike_rate() -> None:
