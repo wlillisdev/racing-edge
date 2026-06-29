@@ -296,3 +296,36 @@ it GUESSES, and crossed off the winner on the two things I'm blind to: the live 
 and the real run-styles. **Cross off on FACTS, not assumptions; where there's no fact,
 respect the OWED — don't fill it with a story.** This loss is the strongest case yet for
 the two shut doors: the market move and the run-style/manner comments.
+
+## 2026-06-30 — TUESDAY HOMEWORK (set Mon night, to MARK Tue night). 3 Musselburgh handicaps.
+
+Read blind under the sharpened discipline: facts only; OWED flagged not invented; cross
+off on FATAL flaws not single dots; calibrate confidence; PASS if too much is dark. These
+are banked Monday night so tomorrow's marking is honest, not hindsight.
+
+**1) 14:00 Musselburgh — PERFIDIA  (LEAN — strongest of the three).**
+Facts: "escapes a penalty" for last week's Nottingham win = WELL-IN (same mark); "resuming
+winning ways" = an in-form WINNER (not a nearly-type, not an improver, not rising); rider
+"claims his full 7lb" AND rode his last two wins = weight relief + continuity. Danger:
+Keats House (working back to form). OWED: live market move, run-styles, the rest of the
+field. Call: fact-based LEAN — cleanest case I've got; NOT a confident nap only because
+the money and the pace are dark.
+
+**2) 15:00 Musselburgh — HAAYIMM  (LEAN — improver caution, below Perfidia).**
+Facts: lightly-raced, handicapping off an OPENING mark of 95 that "may underestimate him —
+ahead of his mark" (the well-handicapped-improver angle). CAUTION: lightly-raced/unexposed
+= the improver profile that's beaten me; UNPROVEN vs Perfidia's proven winner. OWED:
+market, pace, field, whether the opening mark is really generous. Call: LEAN with the
+improver caveat.
+
+**3) 17:05 Musselburgh — WEE MARY  (EACH-WAY / near-PASS).**
+Facts: won over C/D this month + placed over C/D here 8 days ago + handy draw = strong,
+REPEATED course-and-distance form. CAUTION: "far from a regular winner, tough to catch
+right" = a nearly-type whiff (Queen Sana shape); mark OWED; 11 runners with ~8 of them
+OWED (I've read a quarter of the field). Call: LEAN/each-way at most — the most OWED,
+nearest a PASS. Forced confident-nap-or-pass: PASS.
+
+**Ranking: Perfidia > Haayimm > Wee Mary.** If I nap one, Perfidia (as a lean).
+**To mark tomorrow:** did the facts hold? did the cross-offs/leans land? — and the REAL
+test: did I avoid forcing confidence where it was OWED, and was I right to keep Perfidia a
+lean not a nap, and Wee Mary near a pass?
