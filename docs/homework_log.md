@@ -171,3 +171,32 @@ and at least two were MINE, read on the wrong horse:
   mark; the data doesn't carry it cleanly yet (owed, like the rule #1 manner gap).
 - The real failure wasn't missing one tell — it was reading "won over c/d" as binary and
   never stacking the two horses against each other on depth AND mark.
+
+## 2026-06-29 — Monday study: my lean beaten (Windsor 7:00), and what it taught
+
+**The homework.** Read a few Monday handicaps blind. On the Windsor 6f Sprint Series
+Handicap (Class 2) I leaned to **Regal Envoy** (Windsor course specialist, top course
+jockey Murphy) — but flagged him **NOT a confident nap** because he carried a **+6lb
+rise** (raised, not well-in).
+
+**The result.** 1st **King Of Light (17/2)** — held up midfield, "ridden clear,
+readily" (won going away, rule #1). **Regal Envoy 7th** — "led but pestered, headed
+1f out, weakened." The 9/4 favourite (Fandom) also beaten (4th, "no extra").
+
+**Right vs wrong:**
+- RIGHT — the discipline. The mark flag (+6lb) was the exact reason he lost: a raised
+  front-runner, pressured, emptied out. Conviction correctly refused to call him a
+  confident nap.
+- WRONG — my judgment. I *leaned* to him as "most likely winner" AFTER my own system
+  flagged him. **Lesson: when the mark flags a horse, lean AWAY — don't talk back to
+  it.** Respect the conviction verdict.
+
+**Two lessons banked:**
+1. **Run-style matters in a competitive sprint** — a held-up horse who quickens beats
+   an exposed front-runner who gets pressured, and a front-runner ON A RISING MARK is
+   doubly vulnerable. It lives in the words ("led but pestered" vs "midfield, ridden
+   clear") — the OWED `manner` cell. Proof the blank isn't cosmetic: it would have
+   flagged Regal Envoy.
+2. **The field is open — both market leaders lost.** Winner 17/2 from midfield, 2nd
+   6/1, 3rd 25/1; the 9/4 fav and my 5/1 lean both turned over. The "29% from 4th+"
+   stat, live. Don't anchor on the front of the market.
