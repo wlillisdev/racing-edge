@@ -95,8 +95,8 @@ class Race:
     race_type: str = ""              # Hurdle / Chase / NH Flat / Flat ...
     is_handicap: bool = False
     is_novice: bool = False          # novice/maiden = UNEXPOSED horses, form unreliable — avoid
-    is_amateur: bool = False         # amateur jockeys = inexperienced riders, the form can be
-    #                                  undone by the saddle not the horse — avoid (anything happens)
+    is_amateur: bool = False         # amateur jockeys = inexperienced riders; the form can be
+    #                                  undone by the saddle, not the horse — avoid
     is_all_weather: bool = False     # AW = dodgy: non-triers + sand kickback buries slow starts
     race_class: int | None = None
     distance_f: float | None = None
