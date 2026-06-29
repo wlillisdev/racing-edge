@@ -294,6 +294,28 @@ of the assembled dots — it has failed at the one job it's for.
    off, then zero in — never love-at-first-tick. *(In code: the nap CLI now splits the
    field into CROSSED OFF (with the flaw) and SURVIVORS, and zeroes in on the survivors.)*
 
+26. **Cross off (and zero in) on FACTS, not assumptions — a blank is caution, not a
+   licence to invent.** Earned by crossing off the WINNER (Ideal Guest, Pontefract 17:00,
+   29 Jun) on guesses. The elimination method only works on real data; if you don't KNOW
+   a horse's run-style, mark, or the live market move, you do NOT get to invent it to
+   complete a cross-off or a nap. The blank (OWED) **caps your confidence — it doesn't get
+   filled with a story.** Four guards earned that day:
+   - **(a) A forecast price is NOT the live market.** Ideal Guest was a "3/1 weak fav" on
+     the forecast and went off 13/8 *backed* (the money knew); my pick *drifted* 9/1→10/1.
+     Never apply a price-read (#22) to a stale forecast — the MOVE (backed/drifted) is the
+     signal, and if you can't see it, that's OWED, not "weak fav".
+   - **(b) Don't invent run-styles.** I guessed "he kicks too soon / she's a closer" —
+     both fiction (he made all and kept on; she raced prominent, no extra). Run-style is
+     OWED until the comments door opens; don't cross off or zero in on a guessed one.
+   - **(c) Don't over-fit the last race's pattern.** The Windsor pace-collapse didn't
+     apply — a pestered leader can keep on. A pace read needs the FIELD's real run-styles,
+     not a transplant from the race before.
+   - **(d) Don't cross off the favourite to look clever.** Contrarianism is odds-blindness
+     in a clever hat (#19/#23). Sometimes the jolly is the winner — and the money says so.
+   The reflex: reason ONLY from the facts on the brief; everything else is OWED — flag it,
+   respect it, let it cap the call. **When too much is OWED, the honest answer is "I can't
+   read this confidently," not a guessed nap.**
+
 ## The learning loop — how the notebook bites on selections
 
 A notebook that just sits here is useless. This is the closed loop that makes it

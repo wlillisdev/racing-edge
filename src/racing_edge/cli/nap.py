@@ -86,6 +86,12 @@ def main() -> int:
         return 0
     nap = survivors[0]      # zero in on the strongest SURVIVOR, not the top of the raw field
 
+    # standing guard (rule #26): the two decisive facts the brief CAN'T see — never
+    # invent them, never cross off or nap on a guessed run-style or a stale price.
+    print("  ⚠ DECISIVE FACTS OWED — do NOT invent (rule #26):")
+    print("     · live market MOVE (backed/drifted) — a forecast price is not the market")
+    print("     · run-STYLE / manner — who leads, who's held up (the comments door)")
+
     c, r = nap.conviction, nap.race
     tag = "CONFIDENT NAP" if c.confident else "best candidate — NOT confident (declinable)"
     print(f"  {tag}: {nap.runner.horse}  —  {r.course} {r.off_time} ({r.race_type})")
