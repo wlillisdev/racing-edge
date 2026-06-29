@@ -39,7 +39,7 @@ class PastRun:
     going: str = ""
     distance_f: float | None = None
     weight_lbs: int | None = None
-    official_rating: int | None = None  # the OR it ran off THIS day — for the mark-it-last-won-off read
+    official_rating: int | None = None  # OR it ran off that day — for the mark-last-won-off read
     course: str = ""
     race_type: str = ""
     field_size: int | None = None    # how competitive the race was — quality of a win
@@ -95,8 +95,7 @@ class Race:
     race_type: str = ""              # Hurdle / Chase / NH Flat / Flat ...
     is_handicap: bool = False
     is_novice: bool = False          # novice/maiden = UNEXPOSED horses, form unreliable — avoid
-    is_amateur: bool = False         # amateur jockeys = inexperienced riders; the form can be
-    #                                  undone by the saddle, not the horse — avoid
+    is_amateur: bool = False         # amateur riders — form undone by the saddle, avoid
     is_all_weather: bool = False     # AW = dodgy: non-triers + sand kickback buries slow starts
     race_class: int | None = None
     distance_f: float | None = None
