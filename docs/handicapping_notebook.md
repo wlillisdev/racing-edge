@@ -251,10 +251,15 @@ of the assembled dots — it has failed at the one job it's for.
    say the market is information: manipulated, the lay is a tell, the price is a map. But
    don't over-rotate into "the bookies are always right / the favourite is always a
    trap" (the same fixation as fearing the favourite, just flipped). **The bookies get
-   beaten too** — good favourites bolt up, gambles land, the layers lose. The ENTIRE
-   edge depends on them being beatable: if the market were always right there'd be no
-   value and no reason to study a single form line. Over the distance, a good handicapper
-   beats the book — that's the whole premise. So the price is a strong clue, **never
+   beaten too** — good favourites bolt up, gambles land, the layers lose. **If they
+   always won, nobody would bet** — the game only exists because they're beatable. Their
+   edge was never being right; it's the **margin (the over-round) and the volume** — a
+   book balanced to grind a percentage over thousands of bets. They don't need to be
+   right on any single horse, and on plenty they're flat wrong. So you don't beat them
+   every race (you can't, and needn't) — you find the spots where they're wrong by **more
+   than their margin** (the genuine overlay) and leave the rest. Over the distance, that's
+   how the book gets beaten: not by being right more often, but by being right *when the
+   price is wrong.* So the price is a strong clue, **never
    gospel**; the craft is spotting *when the market is wrong* (that's where the value is),
    not assuming it never is. The balance: don't fear the favourite (#19), and don't kneel
    to the bookies either — read them, weigh them, and back your own study when it says
