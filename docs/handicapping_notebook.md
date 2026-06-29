@@ -182,6 +182,18 @@ numbers. The edge isn't a model; it's the eye, compounding.
    doesn't know its odds. The "fish where no one's looking" of #18 is about VALUE/edge,
    not a ban on the jolly.)*
 
+20. **Read the PACE — the shape decides the race, especially in sprints.** Find who
+   NEEDS to lead, who's held up, and who quickens late. If two front-runners/prominent
+   types are set to duel for the lead, the front end **collapses** and the closers
+   sweep up — so a front-runner is vulnerable when another presser is in the field, and
+   doubly so **on a rising mark** (he has to fight for the lead AND defy the weight):
+   that's a lay, not a back. (Windsor, 29 Jun: Regal Envoy *led but pestered* and
+   Fandom *pressed leader* — the two market leaders cooked each other and both emptied;
+   King Of Light won *held up from midfield, ridden clear readily* at 17/2, the first
+   three home all off the pace.) This read lives ENTIRELY in the running comments — the
+   `manner` cell the brief leaves OWED — which is exactly why the comments feed is the
+   next door to open: this whole result was invisible without the words.
+
 ## The learning loop — how the notebook bites on selections
 
 A notebook that just sits here is useless. This is the closed loop that makes it

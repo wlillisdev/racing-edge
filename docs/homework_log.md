@@ -200,3 +200,21 @@ readily" (won going away, rule #1). **Regal Envoy 7th** — "led but pestered, h
 2. **The field is open — both market leaders lost.** Winner 17/2 from midfield, 2nd
    6/1, 3rd 25/1; the 9/4 fav and my 5/1 lean both turned over. The "29% from 4th+"
    stat, live. Don't anchor on the front of the market.
+
+### Same race, read properly — WHY each won and lost (the words tell it all)
+
+Pushed to read the Windsor 7:00 runner-by-runner, not just the result. The race was a
+front-end duel that collapsed:
+- **Regal Envoy** "led but pestered" + **Fandom** (9/4 fav) "pressed leader" — the two
+  MARKET LEADERS took each other on up front and both emptied ("weakened" / "no extra").
+- **King Of Light (17/2)** "midfield, steady headway, led 1f out, ridden clear, readily"
+  — held up OFF the cooked pace, quickened past, won going away. The first three home
+  (King Of Light, Coul Angel 6/1, Baldomero 25/1) were ALL off the pace and "kept on".
+- The other beaten ones: Cindy Lou Who "stumbled start, prominent, edged right,
+  weakened"; Rydale Frosty "never better than midfield"; Invictus Gold "rear throughout".
+
+**The cause was PACE/RUN-STYLE, and it lives entirely in the comments.** A front-runner
+(Regal Envoy) on a +6lb rise, with another presser (Fandom) to take him on, was a lay —
+and I'd have seen it pre-race from the run-styles. Notebook rule #20 added. This is the
+single strongest case yet that the comments/`manner` feed is priority #1: the whole
+result was invisible to the brief without the words.
