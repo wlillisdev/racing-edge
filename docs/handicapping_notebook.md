@@ -291,8 +291,13 @@ of the assembled dots — it has failed at the one job it's for.
    the elimination toolkit IS the accumulated "why they lost."** Elimination can't be
    blinded by the odds (you don't start from the favourite) and can't anchor (you must
    weigh every horse to knock it out) — so it *forces* the fair evaluation of #24. Cross
-   off, then zero in — never love-at-first-tick. *(In code: the nap CLI now splits the
-   field into CROSSED OFF (with the flaw) and SURVIVORS, and zeroes in on the survivors.)*
+   off, then zero in — never love-at-first-tick. **But cross off on a FATAL flaw, not a
+   single dot:** a rising mark or one bad run is not enough on its own. (Pontefract 16:30,
+   29 Jun: I crossed off Dream Deal on a +6lb rise *alone* and she dead-heated for 2nd —
+   a rising mark is a dot, not a verdict.) A cross-off is the same trap as a pick if it
+   rests on one thing — eliminate only what *can't* win, for a reason that's actually
+   fatal. *(In code: the nap CLI now splits the field into CROSSED OFF (with the flaw)
+   and SURVIVORS, and zeroes in on the survivors.)*
 
 26. **Cross off (and zero in) on FACTS, not assumptions — a blank is caution, not a
    licence to invent.** Earned by crossing off the WINNER (Ideal Guest, Pontefract 17:00,

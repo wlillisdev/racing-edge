@@ -219,10 +219,19 @@ and I'd have seen it pre-race from the run-styles. Notebook rule #20 added. This
 single strongest case yet that the comments/`manner` feed is priority #1: the whole
 result was invisible to the brief without the words.
 
-## 2026-06-29 — Monday study #2: the well-in favourite that doesn't WIN (Pontefract 16:00)
+## 2026-06-29 — Monday study #2: the well-in favourite that doesn't WIN (Pontefract 16:30, 5f)
 
-**The race.** Napoleons Casino Bradford Handicap. 1st **Betweenthesticks (10/1)**;
-**Queen Sana, the 3/1 favourite — UNPLACED.**
+**CORRECTION (verified from the result photo).** I first wrote this off a WebSearch
+result that turned out to be WRONG — I said Betweenthesticks won. It did NOT. The real
+result of the Queen Sana race (the 4:30 / 16:30, 5f Class 5): 1st **Hover On The Wind
+(8/1)**, 2nd **Betweenthesticks (10/1)**, dead-heat 2nd **Dream Deal (4/1)**, and
+**Queen Sana (3/1 fav) UNPLACED.** Lesson #0, the hard one: **never bank a result you
+haven't verified.** I built a study on a hallucinated winner. The Queen Sana point below
+still holds (she was a beaten nearly-type fav) but the winner was misstated.
+
+**The race.** 1st **Hover On The Wind (8/1)**; **Queen Sana, the 3/1 favourite —
+UNPLACED.** (And note: **Dream Deal dead-heated for 2nd off a +6lb rise** — see the
+cross-off lesson.)
 
 **The sting.** Queen Sana was the well-handicapped C/D horse I flagged Monday morning
 as my "cleaner-mark alternative": consistent, runner-up over course & distance, nudged
@@ -240,8 +249,16 @@ beaten by a 10/1 shot.
    fault (naps nearly-types) — and today the whole MARKET fell for it.
 2. **Join the mark to rule #1.** The mark is a dot; "winner or bridesmaid" is another
    dot. I'd have made the market's mistake by reading the mark and stopping.
-3. **The field is open, again.** 10/1 winner over the fancied nearly-type fav — the gem
-   outside the front of the market (same shape as King Of Light, Windsor).
+3. **The field is open, again.** A big-priced winner (8/1) over the fancied nearly-type
+   fav — the gem outside the front of the market (same shape as King Of Light, Windsor).
+4. **(Added after verifying) Never bank an unverified result.** I stated Betweenthesticks
+   won; he was 2nd. A homework log is EVIDENCE — a wrong result poisons every lesson built
+   on it. Verify before banking.
+5. **(Added) A single-factor cross-off is too crude.** Applying the elimination method
+   retrospectively, I crossed off Dream Deal on the +6lb rising mark ALONE — and she
+   DEAD-HEATED FOR SECOND. A rising mark is a dot, not a verdict; a cross-off needs a
+   FATAL flaw, not one negative. (Same "read one thing and stop" fault, on the cross-off
+   side.) Queen Sana's cross-off (nearly-type) was right; Dream Deal's was wrong.
 
 **Next build (offered, not yet done):** conviction should FLAG the nearly-type — a horse
 with several runs, frequent places, few/no wins (ties to the existing `bottler` signal)
