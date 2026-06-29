@@ -246,3 +246,36 @@ beaten by a 10/1 shot.
 **Next build (offered, not yet done):** conviction should FLAG the nearly-type — a horse
 with several runs, frequent places, few/no wins (ties to the existing `bottler` signal)
 — so a well-in mark on a non-winner doesn't read as a gem.
+
+## 2026-06-29 — Monday study #3: I crossed off the WINNER (Pontefract 17:00). Why.
+
+**The test.** Ran the new elimination method blind on the Wilfred Underwood Handicap
+(Class 6, 8 runners, 6f). Gated it (passed), crossed off Ideal Guest (3/1 fav) on a
+"kicks too soon / weak fav" read, zeroed in on Lady Bouquet (5/1) as a closer to pounce.
+
+**The result. I FAILED.** 1st **Ideal Guest (13/8f)** — the one I crossed off —
+"made all, soon pestered, KEPT ON". 3rd **Lady Bouquet** — my pick — "prominent, lost
+second, NO EXTRA".
+
+**Why I was wrong, read backwards:**
+1. **The market move was decisive and I was blind to it.** Ideal Guest 9/4→13/8
+   (BACKED); Lady Bouquet 9/1→10/1 (DRIFTED). The money piled on the winner and left my
+   pick — and I crossed off the backed horse reading a STALE forecast price (rule #22
+   applied to a price that no longer existed). Sharpest proof yet: the live-odds door is
+   the priority.
+2. **I crossed off on ASSUMPTIONS, not facts.** Binned Ideal Guest on a guessed
+   run-style ("kicks too soon") — he made all and kept on. Zeroed in on Lady Bouquet on
+   a guessed run-style ("held-up closer") — she raced prominent, no extra. I had no
+   run-style data; I invented both to fit a pace story and crossed off the winner on a
+   fiction.
+3. **Over-applied the Windsor pace-collapse** to a race with a different shape (an
+   uncontested front-run; a pestered leader that KEPT ON, not one that folded).
+4. **Over-corrected against the favourite to look clever** — crossed off the jolly to
+   prove I'm not odds-blinded; the jolly won (rule #19/#23 — the favourite gets it right
+   too).
+
+**The meta-lesson.** The method's ORDER was right (gate → cross off → zero in) but I fed
+it GUESSES, and crossed off the winner on the two things I'm blind to: the live money
+and the real run-styles. **Cross off on FACTS, not assumptions; where there's no fact,
+respect the OWED — don't fill it with a story.** This loss is the strongest case yet for
+the two shut doors: the market move and the run-style/manner comments.
