@@ -9,6 +9,18 @@ assemble every clue, watch the market on the shortlist, study every result). The
 human makes the call. I study **my picks against the results** — never crunch old
 numbers. The edge isn't a model; it's the eye, compounding.
 
+## The stakes — pick as if your family eats on it
+
+Above every rule, this is the seriousness it demands: **pick as if a wife and ten kids
+go hungry when you lose.** That pressure is the point. It kills the lazy version — no
+casual tick, no guessed run-style, no nap you talked yourself into; every selection is a
+case you PROVE or you don't bet. And it flips the instinct that ruins punters: a man
+feeding ten **doesn't bet a guess.** He passes nine races and backs the one he's worked
+out and is *sure* of. So the pressure means pick **less, and better** — never more.
+"I can't read this confidently" isn't dodging; **it's feeding them** — you don't put the
+rent on a race you can't see. Forensic isn't a style here. It's survival. A bad nap you
+don't eat — taken literally.
+
 ## What it's all for — join the dots, read the nuances
 
 This is the whole thing, and everything below serves it. Handicapping is **not**
