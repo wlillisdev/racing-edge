@@ -321,6 +321,25 @@ of the assembled dots — it has failed at the one job it's for.
    respect it, let it cap the call. **When too much is OWED, the honest answer is "I can't
    read this confidently," not a guessed nap.**
 
+27. **Dissect EVERY horse after the result — the running line is a read for NEXT time.**
+   A result isn't the end of a horse, it's information on it going forward. Read the
+   manner (the comment) and turn it into what the horse *wants*:
+   - *"stayed on / kept on / one-paced at the finish"* → finishing fastest = **wants a
+     STEP UP IN TRIP; further will suit.**
+   - *"weakened / no extra / faded late"* → didn't see it out — but **diagnose WHY**: trip
+     too FAR (drop back), too much WEIGHT, wrong GROUND, or needed the run. "Weakened" is
+     the start of the read, not the end — join it to the trip/weight/going.
+   - *"made all / front-ran"* → wants to dominate / a lone lead. *"held up, no room, never
+     got into it"* → needs a clear run / new tactics. *"hung / found little under
+     pressure"* → a headgear/temperament job (#16). *"hampered / unlucky"* → an excuse,
+     mark it UP. *"every chance, no extra"* → a possible nearly-type (bottler).
+   And do it for the WHOLE field, not just the winner: each running line is a forward read
+   (trip, ground, weight, tactics) that becomes tomorrow's cross-off or selection — *"this
+   one stayed on at 6f and it's up to 7f today, it'll suit."* That read only exists because
+   you dissected its last race. **This is why the post-race study matters, and why the
+   comments are the priority door** — the forward reads live in the words, OWED until the
+   feed is in.
+
 ## The learning loop — how the notebook bites on selections
 
 A notebook that just sits here is useless. This is the closed loop that makes it
