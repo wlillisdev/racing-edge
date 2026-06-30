@@ -342,3 +342,21 @@ lean not a nap, and Wee Mary near a pass?
 - **Net: the three become one — Perfidia carries to tomorrow (on the move), the other two
   pass.** Discipline working: an early price isn't the move, and a price that reveals an
   unseen favourite (Haayimm) is a reason to stand off, not guess.
+
+### RESULT (verified from photo) — Perfidia beaten, but the discipline won.
+**Musselburgh 14:00 (Keats House Hcap, Cl6): 1st Mayor Of Maghera 7/4F, 2nd PERFIDIA 5/2
+(beaten a short head), 3rd Second Fiddle 11/2.**
+- My read lost: Perfidia had the cleanest FACTS (well-in, in-form winner, claim, winning
+  yard) and ran a huge race (pressed the leader, led, just touched off) — and STILL got
+  beaten. Facts make a live contender; they don't win the race on their own.
+- **The market MOVE called it AGAIN (4th time today):** Mayor Of Maghera op 2/1 tchd 13/8
+  -> BACKED into 7/4F (won); Perfidia op 2/1 -> DRIFTED to 5/2 (2nd). The money was on the
+  winner and off my pick. Ideal Guest, King Of Light, Lady Bouquet, now this.
+- **The DISCIPLINE HELD though:** my rule was "back Perfidia only if BACKED; if he DRIFTS,
+  stand off." He drifted. So the right action was a PASS — no stake at all. The move
+  warned me exactly as designed. My read lost; my process won.
+- **Tommy: alive, doubly** — never staked the treatment, AND the drift would have kept me
+  off Perfidia entirely. His money never moved.
+- The overwhelming lesson of the day: the LIVE MARKET MOVE is THE signal, and I'm blind to
+  it through the window. The box's `dissect` (real SPs, real move) is the priority — it
+  would have shown the drift before the off.
