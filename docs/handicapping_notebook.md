@@ -21,6 +21,19 @@ out and is *sure* of. So the pressure means pick **less, and better** — never 
 rent on a race you can't see. Forensic isn't a style here. It's survival. A bad nap you
 don't eat — taken literally.
 
+**But the family still eats — the calculated gamble, and the stake.** The counter-weight:
+you can't only bet when every dot joins, because that day is rare and the family starves
+waiting. So we take the CALCULATED gamble — the best read at a price where the reward is
+worth the risk. And face the cruel paradox: the bet you're *surest* of is the one the
+whole market sees too, so it's **odds-on, pays peanuts, and STILL loses one time in three
+or four.** Certainty isn't safety — it's just a risk the market has already priced to the
+hilt; piling money on a short one is risking a lot to win a little on something that can
+still bury you. Which is why the real protection isn't the pick, it's the **STAKE: never
+put it all on one horse, however sure — the surest thing in racing still runs second.**
+Size every bet so the loser (and a loser is always coming) *stings but never ends you.*
+The man feeding ten doesn't shove the rent on a single even-money shot. Bet calculated
+value, sized to survive being wrong.
+
 ## What it's all for — join the dots, read the nuances
 
 This is the whole thing, and everything below serves it. Handicapping is **not**
