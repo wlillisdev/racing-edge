@@ -329,3 +329,16 @@ nearest a PASS. Forced confident-nap-or-pass: PASS.
 **To mark tomorrow:** did the facts hold? did the cross-offs/leans land? — and the REAL
 test: did I avoid forcing confidence where it was OWED, and was I right to keep Perfidia a
 lean not a nap, and Wee Mary near a pass?
+
+### Price check (Mon night, early prices — NOT the live move):
+- Perfidia 14:00 — **7/4 fav.** Market AGREES with the fact read; 7/4 is fancied but not
+  cramped odds-on (beatable, value alive). Firms up as the one. Watch the MOVE tomorrow:
+  backed = go, drift = warning. Instrument: win single (too short for e/w) or acca leg.
+- Haayimm 15:00 — **100/30, NOT fav; HIGH DEGREE 5/2 fav** (a horse I never evaluated).
+  The price exposed a blind spot — won't back a lean the market ranks behind one I can't
+  see. **DOWNGRADE to a PASS.**
+- Wee Mary 17:05 — **5/2 fav but tight** (What A Tahoo 11/4, Invincible Crown 3/1). Open,
+  competitive market confirms near-pass / tiny e/w at most.
+- **Net: the three become one — Perfidia carries to tomorrow (on the move), the other two
+  pass.** Discipline working: an early price isn't the move, and a price that reveals an
+  unseen favourite (Haayimm) is a reason to stand off, not guess.
