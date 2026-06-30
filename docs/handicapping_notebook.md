@@ -365,6 +365,23 @@ of the assembled dots — it has failed at the one job it's for.
    comments are the priority door** — the forward reads live in the words, OWED until the
    feed is in.
 
+28. **Match the BET to the situation — the instrument is half the calculation.** It's not
+   just *which* horse, it's *how* you back it:
+   - **A value horse with a genuine chance → EACH-WAY.** The calculated bet: *safety with
+     the option of max return.* The place part is the net (cash back if it makes the
+     frame, you're not skint); the win part is the payday. Works best on a **bigger
+     price** you fancy — the place return alone is worth having and the win is a proper
+     result. How you take a value shot without needing it to win outright to survive.
+   - **An odds-on "good thing" → don't bet it single, COMPOUND it.** A heavy single on an
+     odds-on shot is the worst bet going — big outlay, scraps back, and it still gets beat.
+     The money is in a **double or treble** of short-priced bankers: small outlay, a return
+     actually worth collecting. The trade: **every leg must win** — one runs second and the
+     lot's gone, and each added leg multiplies the risk (more chances for the bookie).
+   - **Never a fat single on odds-on.** Match the instrument to the price: value with a
+     squeak → e/w (protected, big upside); short certainties → accumulate (max return,
+     small stake, multiplied risk). *(In code: the Bet model already carries `each_way`;
+     the accumulator is a human play on the shortlist.)*
+
 ## The learning loop — how the notebook bites on selections
 
 A notebook that just sits here is useless. This is the closed loop that makes it
