@@ -113,7 +113,15 @@ def main() -> int:
 
     codes = ("jump", "flat") if args.both else (("flat",) if args.flat else ("jump",))
     client = get_client()
-    field = evaluate_field(client, day=args.day, codes=codes)
+    # narrate the (slow) per-horse evidence fetch to stdout so the tool never sits SILENT
+    # while it grinds — the "nothing prints" trap. These lines aren't emit()'d into the
+    # email body; they're live progress only.
+    print("  reading today's card…", flush=True)
+
+    def _progress(line: str) -> None:
+        print(line, flush=True)
+
+    field = evaluate_field(client, day=args.day, codes=codes, progress=_progress)
     if not field:
         emit("No nap — nothing readable stands up today. Discipline is a position.")
         _maybe_email(out, "Nap — no bet today", args.email)

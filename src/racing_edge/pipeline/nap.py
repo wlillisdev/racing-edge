@@ -9,6 +9,7 @@ returned flagged not-confident, and the caller can decline (a bad nap you don't 
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass
 
 from racing_edge.data.evidence import build_evidence
@@ -36,14 +37,23 @@ def _rank_key(p: NapPick) -> tuple[int, int, float]:
 
 
 def evaluate_field(client: _Client, day: str = "today",
-                   codes: tuple[str, ...] = ("jump", "flat"), top_n: int = 4) -> list[NapPick]:
+                   codes: tuple[str, ...] = ("jump", "flat"), top_n: int = 4,
+                   progress: Callable[[str], None] | None = None) -> list[NapPick]:
     """EVERY contender in every readable handicap, each given its own conviction read,
     sorted strongest-first. The fair-evaluation enforcement (rule #24): no horse is
-    skipped, so a pick has to beat an even reading of the whole field, not an anchor."""
+    skipped, so a pick has to beat an even reading of the whole field, not an anchor.
+
+    `progress`, if given, is called with a status line as each race is read — so the
+    caller can NARRATE the (slow, per-horse) evidence fetch instead of sitting silent."""
     races = [r for r in racecards_from_raw(client.racecards(day))
              if r.is_readable_handicap and r.code in codes]
+    if progress:
+        progress(f"  reading the form on {len(races)} readable handicap(s) "
+                 f"(form first, price last — rule #29)…")
     out: list[NapPick] = []
     for race in races:
+        if progress:
+            progress(f"    · {race.course} {race.off_time} — reading {race.field_size} runners")
         evidence = {e.runner.horse_id: e for e in build_evidence(race, client)}
         priced = sorted([r for r in race.runners if r.odds.consensus and r.odds.consensus > 1],
                         key=lambda r: r.odds.consensus)        # type: ignore[arg-type,return-value]
