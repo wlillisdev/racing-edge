@@ -121,6 +121,63 @@ def parse_critique(text: str) -> Critique:
     )
 
 
+REFUTE_SYSTEM = (
+    "You are the SCEPTIC — a second, adversarial pass over an apprentice handicapper's "
+    "self-study. You get the SAME full-form readout and the nuance the apprentice "
+    "proposes. Your one job: try to KILL the nuance using only the readout's facts.\n\n"
+    "Attack it on exactly these grounds:\n"
+    "1. FACT CHECK — does every claim it rests on actually appear in the readout, "
+    "verbatim? (e.g. calling a horse WELL-IN when its own cited marks show it RAISED.)\n"
+    "2. CONTRADICTION — does other readout evidence cut against it?\n"
+    "3. ARTIFACT — is it built on a data gap (blank/OWED fields, missing coverage) "
+    "rather than a racing fact?\n"
+    "4. TRIVIALITY — is it just restating an obvious known rule with no new edge?\n"
+    "Do NOT introduce outside facts. If the nuance survives all four, say so honestly — "
+    "you are a sceptic, not a cynic.\n"
+    'Answer ONLY a JSON object: {"refuted": true|false, "ground": "fact|contradiction|'
+    'artifact|triviality|none", "reason": "one or two sentences citing the readout"}'
+)
+
+
+@dataclass(frozen=True)
+class Refutation:
+    refuted: bool = False
+    ground: str = ""
+    reason: str = ""
+    raw: str = ""
+
+    @property
+    def answered(self) -> bool:
+        return bool(self.reason or self.ground)
+
+
+def build_refute_prompt(readout: str, critique: Critique) -> str:
+    return (
+        f"THE APPRENTICE'S NUANCE (attack this):\n{critique.nuance}\n\n"
+        f"It claims to rest on: {' | '.join(critique.cite) or '(nothing cited)'}\n"
+        f"What it says was missed: {critique.what_i_missed}\n\n"
+        f"FULL-FORM READOUT (the only admissible evidence):\n"
+        f"-----------------------------------------------\n{readout}\n"
+        f"-----------------------------------------------\n\n"
+        f"Try to kill it. JSON only."
+    )
+
+
+def parse_refutation(text: str) -> Refutation:
+    if not text:
+        return Refutation(raw="")
+    m = re.search(r"\{.*\}", text, re.DOTALL)
+    if not m:
+        return Refutation(raw=text)
+    try:
+        d = json.loads(m.group())
+    except (ValueError, TypeError):
+        return Refutation(raw=text)
+    return Refutation(refuted=bool(d.get("refuted")),
+                      ground=str(d.get("ground", "")).lower().strip(),
+                      reason=str(d.get("reason", "")), raw=text)
+
+
 def render_critique(c: Critique, race_label: str, winner: str) -> str:
     """Human-readable rendering of the self-interrogation for the console/email."""
     if not c.ok:

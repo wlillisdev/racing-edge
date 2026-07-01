@@ -9,9 +9,12 @@ from pathlib import Path
 
 from racing_edge.study.nuances import NuanceLog
 from racing_edge.study.selfcritique import (
+    REFUTE_SYSTEM,
     SYSTEM,
     build_prompt,
+    build_refute_prompt,
     parse_critique,
+    parse_refutation,
     render_critique,
 )
 
@@ -64,6 +67,27 @@ def test_record_fields_feed_the_nuance_ledger_signature() -> None:
                    blind_pick="", **fields)
         assert log.all()[0]["what_missed"] == "well-in, stayed on"
         log.close()
+
+
+def test_the_sceptic_is_adversarial_and_grounded() -> None:
+    # the second pass must attack on the four grounds and stay inside the readout
+    assert "KILL the nuance" in REFUTE_SYSTEM
+    for ground in ("FACT CHECK", "CONTRADICTION", "ARTIFACT", "TRIVIALITY"):
+        assert ground in REFUTE_SYSTEM
+    c = parse_critique('{"nuance": "the claim", "cite": ["WELL-IN at 8.5"], '
+                       '"what_i_missed": "x"}')
+    p = build_refute_prompt("THE-READOUT", c)
+    assert "the claim" in p and "WELL-IN at 8.5" in p and "THE-READOUT" in p
+
+
+def test_parse_refutation_reads_the_verdict_and_survives_prose() -> None:
+    r = parse_refutation('Verdict: {"refuted": true, "ground": "Fact", '
+                         '"reason": "its own marks show +3lb, not well-in"}')
+    assert r.refuted and r.ground == "fact" and "+3lb" in r.reason
+    ok = parse_refutation('{"refuted": false, "ground": "none", "reason": "holds up"}')
+    assert not ok.refuted and ok.answered
+    bad = parse_refutation("no json at all")
+    assert not bad.refuted and not bad.answered      # no verdict -> caller banks + flags
 
 
 def test_parse_critique_survives_a_non_json_reply() -> None:
