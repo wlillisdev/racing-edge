@@ -69,6 +69,29 @@ def test_record_fields_feed_the_nuance_ledger_signature() -> None:
         log.close()
 
 
+def test_each_task_gets_the_right_brain_never_haiku() -> None:
+    """Per-task model selection — the master's ruling after Haiku wrecked the reads.
+    The sceptic must be at least as sharp as the proposer; nothing defaults small."""
+    import os
+
+    from racing_edge.ai.reason import resolve_model
+    for var in ("ANTHROPIC_MODEL", "ANTHROPIC_MODEL_STUDY", "ANTHROPIC_MODEL_SCEPTIC"):
+        os.environ.pop(var, None)
+    assert resolve_model("study") == "claude-sonnet-5"
+    assert resolve_model("sceptic") == "claude-fable-5"
+    assert resolve_model("synthesis") == "claude-fable-5"
+    for task in ("study", "sceptic", "synthesis"):
+        assert "haiku" not in resolve_model(task)
+    # override order: per-task beats global beats table
+    os.environ["ANTHROPIC_MODEL"] = "claude-fable-5"
+    assert resolve_model("study") == "claude-fable-5"
+    os.environ["ANTHROPIC_MODEL_STUDY"] = "claude-opus-4-8"
+    assert resolve_model("study") == "claude-opus-4-8"
+    assert resolve_model("sceptic") == "claude-fable-5"
+    for var in ("ANTHROPIC_MODEL", "ANTHROPIC_MODEL_STUDY"):
+        os.environ.pop(var, None)
+
+
 def test_the_sceptic_is_adversarial_and_grounded() -> None:
     # the second pass must attack on the four grounds and stay inside the readout
     assert "KILL the nuance" in REFUTE_SYSTEM

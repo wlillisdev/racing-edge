@@ -25,7 +25,7 @@ from __future__ import annotations
 
 import argparse
 
-from racing_edge.ai.reason import get_reasoner
+from racing_edge.ai.reason import get_reasoner, resolve_model
 from racing_edge.cli._common import open_nap_log, open_nuance_log, resolve_date
 from racing_edge.data.client import get_client
 from racing_edge.pipeline.restudy import Restudy, gather
@@ -91,18 +91,19 @@ def _rule(nuance_id: int, status: str) -> int:
     return 0
 
 
-def _learn_one(st: Restudy, reason, day_iso: str) -> str:
+def _learn_one(st: Restudy, study, sceptic, day_iso: str) -> str:
     readout = render_restudy(st.race, st.result, st.histories)
     label = f"{st.race.course} {st.race.off_time}"
     blind = _blind_pick_for(day_iso, st.race.race_id)
-    text = reason(SYSTEM, build_prompt(readout, st.winner, blind))
+    text = study(SYSTEM, build_prompt(readout, st.winner, blind))
     crit = parse_critique(text)
     if not crit.ok:
         return render_critique(crit, label, st.winner)
 
-    # THE SCEPTIC — a second, adversarial pass tries to KILL the nuance against the same
-    # readout before it's banked (would have caught the WELL-IN/+3lb crack unaided).
-    ref = parse_refutation(reason(REFUTE_SYSTEM, build_refute_prompt(readout, crit)))
+    # THE SCEPTIC — a second, adversarial pass on a SHARPER model tries to KILL the
+    # nuance against the same readout before it's banked (per-task models: the kill-pass
+    # must out-think the proposer — Haiku proposing AND checking wrecked the reads).
+    ref = parse_refutation(sceptic(REFUTE_SYSTEM, build_refute_prompt(readout, crit)))
     out = render_critique(crit, label, st.winner)
     if ref.refuted:
         return (out + f"\n    ✗ REFUTED by the sceptic ({ref.ground or '?'}) — NOT banked:"
@@ -193,13 +194,17 @@ def main() -> int:
     # env, and without this it would run before get_client()'s load_dotenv and see no key.
     from racing_edge.config import get_config
     get_config()
-    reason = get_reasoner()
-    if reason is None:
-        print("  The model is OFF — set ANTHROPIC_API_KEY (and ANTHROPIC_MODEL for depth) "
-              "to self-interrogate. Banking nothing rather than inventing.")
+    # per-task brains (ai.reason picks each task's model — Haiku wrecked the reads)
+    study = get_reasoner("study")
+    if study is None:
+        print("  The model is OFF — set ANTHROPIC_API_KEY to self-interrogate. "
+              "Banking nothing rather than inventing.")
         return 0
     if args.synthesise:
-        return _synthesise(reason, args.email)
+        return _synthesise(get_reasoner("synthesis", max_tokens=2500), args.email)
+    sceptic = get_reasoner("sceptic")
+    print(f"  models: study={resolve_model('study')}  sceptic={resolve_model('sceptic')}",
+          flush=True)
 
     client = get_client()
     ds = resolve_date(args.day).isoformat()
@@ -215,7 +220,7 @@ def main() -> int:
     out: list[str] = []
     for st in studies:
         print(f"    · thinking about {st.race.course} {st.race.off_time}…", flush=True)
-        block = _learn_one(st, reason, ds)
+        block = _learn_one(st, study, sceptic, ds)
         print(block, flush=True)
         print(flush=True)
         out.append(block)
