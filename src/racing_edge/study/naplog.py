@@ -64,5 +64,10 @@ class NapLog:
         rows = self._conn.execute("SELECT * FROM nap WHERE won IS NULL ORDER BY date").fetchall()
         return [dict(r) for r in rows]
 
+    def history(self) -> list[dict]:
+        """Every nap ever banked, oldest first — the readable record (settled + pending)."""
+        rows = self._conn.execute("SELECT * FROM nap ORDER BY date").fetchall()
+        return [dict(r) for r in rows]
+
     def close(self) -> None:
         self._conn.close()

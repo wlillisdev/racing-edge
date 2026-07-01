@@ -24,6 +24,11 @@ def configured() -> bool:
     return all(os.environ.get(k) for k in _REQUIRED)
 
 
+def recipient() -> str:
+    """The address mail will go to — so the CLI can show it (check it's really yours)."""
+    return os.environ.get("EMAIL_RECIPIENT", "")
+
+
 def send(subject: str, body: str, title: str = "", subtitle: str = "") -> bool:
     """Send `body` (plain text) to EMAIL_RECIPIENT over SMTP/TLS, with a styled HTML
     part when email_render is importable. Never raises; returns True on success."""
