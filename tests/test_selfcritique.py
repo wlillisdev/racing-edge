@@ -47,6 +47,25 @@ def test_parse_critique_extracts_json_even_with_prose_around_it() -> None:
     assert "well-in" in render_critique(c, "Epsom 18:57", "Timber Twelve").lower()
 
 
+def test_record_fields_feed_the_nuance_ledger_signature() -> None:
+    """The Critique->store mapping must match NuanceLog.record's kwargs exactly — this
+    is the guard for the what_missed/what_i_missed field-name drift that crashed the box."""
+    from datetime import date
+
+    c = parse_critique('{"what_i_missed": "well-in, stayed on", "nuance": "trust it", '
+                       '"cite": ["a", "b"], "owed": "the move", "confidence": "high"}')
+    fields = c.record_fields()
+    assert fields["what_missed"] == "well-in, stayed on"     # mapped, not what_i_missed
+    assert fields["cite"] == "a | b"
+    with tempfile.TemporaryDirectory() as d:
+        log = NuanceLog(Path(d) / "n.db")
+        # the real call shape from cli.learn — must not raise on unknown/missing kwargs
+        log.record(day=date(2026, 7, 1), race_id="r", course="Epsom", winner="W",
+                   blind_pick="", **fields)
+        assert log.all()[0]["what_missed"] == "well-in, stayed on"
+        log.close()
+
+
 def test_parse_critique_survives_a_non_json_reply() -> None:
     c = parse_critique("the model rambled with no json")
     assert not c.ok

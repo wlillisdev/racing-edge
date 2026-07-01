@@ -67,9 +67,7 @@ def _learn_one(st: Restudy, reason, day_iso: str) -> str:
     if crit.ok:
         log = open_nuance_log()
         log.record(day=st.race.date, race_id=st.race.race_id, course=st.race.course,
-                   winner=st.winner, blind_pick=blind or "", nuance=crit.nuance,
-                   what_missed=crit.what_missed, cite=" | ".join(crit.cite),
-                   owed=crit.owed, confidence=crit.confidence)
+                   winner=st.winner, blind_pick=blind or "", **crit.record_fields())
         log.close()
     return render_critique(crit, label, st.winner)
 

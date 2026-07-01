@@ -67,6 +67,17 @@ class Critique:
     def ok(self) -> bool:
         return bool(self.nuance or self.what_i_missed)
 
+    def record_fields(self) -> dict[str, str]:
+        """The subset the nuance ledger stores — one source of truth for the field
+        names, so a caller can't drift (e.g. what_missed vs what_i_missed)."""
+        return {
+            "nuance": self.nuance,
+            "what_missed": self.what_i_missed,
+            "cite": " | ".join(self.cite),
+            "owed": self.owed,
+            "confidence": self.confidence,
+        }
+
 
 def build_prompt(readout: str, winner: str, blind_pick: str | None = None) -> str:
     """The self-prompt: the real readout + the master's questions + the output shape."""
