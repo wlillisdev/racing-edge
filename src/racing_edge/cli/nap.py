@@ -1,7 +1,8 @@
 """The nap — one bet a day, nominated BLIND off the morning card, logged for a record.
 
-    python -m racing_edge.cli.nap --day today --both     # nominate + bank today's nap
-    python -m racing_edge.cli.nap --settle yesterday     # settle it, show the strike rate
+    python -m racing_edge.cli.nap --day today --both            # nominate + bank
+    python -m racing_edge.cli.nap --day today --both --email     # ...and email it to you
+    python -m racing_edge.cli.nap --settle yesterday [--email]   # settle + strike rate
 
 Fixes the three honest holes in a hand-picked nap: it nominates from the racecard
 (blind, no results), it only calls a nap CONFIDENT when the mark was actually read, and
@@ -20,8 +21,26 @@ from racing_edge.pipeline.nap import evaluate_field
 from racing_edge.report.scorecard import build_scorecard, render_scorecard
 
 
-def _settle(day_str: str) -> int:
+def _maybe_email(buf: list[str], subject: str, email: bool) -> None:
+    """Email the buffered output if --email was set. Never crashes the run."""
+    if not email:
+        return
+    from racing_edge.report.mail import configured, send
+    if not configured():
+        print("  (--email set, but EMAIL_SENDER/PASSWORD/RECIPIENT aren't in the env — not sent)")
+        return
+    ok = send(subject, "\n".join(buf), title=subject, subtitle="racing-edge form trial")
+    print(f"  email: {'sent to your inbox' if ok else 'FAILED — check the SMTP env vars'}")
+
+
+def _settle(day_str: str, email: bool) -> int:
     day = resolve_date(day_str)
+    out: list[str] = []
+
+    def emit(s: str = "") -> None:
+        print(s)
+        out.append(s)
+
     log = open_nap_log()
     nap = next((n for n in log.pending() if n["date"] == day.isoformat()), None)
     if nap is None:
@@ -40,10 +59,11 @@ def _settle(day_str: str) -> int:
     w, n = log.strike_rate()
     cw, cn = log.strike_rate(confident_only=True)
     flag = "WON" if won else f"unplaced ({me.position or me.status})"
-    print(f"  {day}: nap {nap['horse']} — {flag} at SP {me.sp_dec or '?'}")
-    print(f"  nap record: {w}/{n} won ({100 * w / n:.0f}%) overall; "
-          f"{cw}/{cn} on CONFIDENT naps." if n else "  nap record: none settled yet.")
+    emit(f"  {day}: nap {nap['horse']} — {flag} at SP {me.sp_dec or '?'}")
+    emit(f"  nap record: {w}/{n} won ({100 * w / n:.0f}%) overall; "
+         f"{cw}/{cn} on CONFIDENT naps." if n else "  nap record: none settled yet.")
     log.close()
+    _maybe_email(out, f"Nap settled — {nap['horse']} {flag} ({day})", email)
     return 0
 
 
@@ -53,15 +73,23 @@ def main() -> int:
     ap.add_argument("--flat", action="store_true", help="flat only")
     ap.add_argument("--both", action="store_true", help="both codes")
     ap.add_argument("--settle", metavar="DAY", help="settle a banked nap against results")
+    ap.add_argument("--email", action="store_true", help="email the output (uses SMTP env vars)")
     args = ap.parse_args()
     if args.settle:
-        return _settle(args.settle)
+        return _settle(args.settle, args.email)
+
+    out: list[str] = []
+
+    def emit(s: str = "") -> None:
+        print(s)
+        out.append(s)
 
     codes = ("jump", "flat") if args.both else (("flat",) if args.flat else ("jump",))
     client = get_client()
     field = evaluate_field(client, day=args.day, codes=codes)
     if not field:
-        print("No nap — nothing readable stands up today. Discipline is a position.")
+        emit("No nap — nothing readable stands up today. Discipline is a position.")
+        _maybe_email(out, "Nap — no bet today", args.email)
         return 0
 
     # SELECT BY ELIMINATION (rule #25): cross off what can't win FIRST, then zero in on
@@ -69,39 +97,40 @@ def main() -> int:
     crossed = [p for p in field if p.conviction.flags]
     survivors = [p for p in field if not p.conviction.flags]
     if crossed:
-        print("  CROSSED OFF — won't win, and why (knock out the no-hopers first):")
+        emit("  CROSSED OFF — won't win, and why (knock out the no-hopers first):")
         for p in crossed:
-            print(f"    ✗ {p.runner.horse:22} {p.race.course} {p.race.off_time}  "
-                  f"— {', '.join(p.conviction.flags)}")
-    print("\n  SURVIVORS — zero in on these (strongest first):")
+            emit(f"    ✗ {p.runner.horse:22} {p.race.course} {p.race.off_time}  "
+                 f"— {', '.join(p.conviction.flags)}")
+    emit("\n  SURVIVORS — zero in on these (strongest first):")
     for p in survivors:
         c = p.conviction
         mark = "" if c.mark_known else " [mark OWED]"
-        print(f"    • {p.runner.horse:22} {p.race.course} {p.race.off_time}  "
-              f"conv {c.score}{mark}: {', '.join(c.aligned) or 'thin'}")
-    print()
+        emit(f"    • {p.runner.horse:22} {p.race.course} {p.race.off_time}  "
+             f"conv {c.score}{mark}: {', '.join(c.aligned) or 'thin'}")
+    emit("")
 
     if not survivors:
-        print("No nap — every contender crossed off. Discipline is a position.")
+        emit("No nap — every contender crossed off. Discipline is a position.")
+        _maybe_email(out, "Nap — no bet today", args.email)
         return 0
     nap = survivors[0]      # zero in on the strongest SURVIVOR, not the top of the raw field
 
     # standing guard (rule #26): the two decisive facts the brief CAN'T see — never
     # invent them, never cross off or nap on a guessed run-style or a stale price.
-    print("  ⚠ DECISIVE FACTS OWED — do NOT invent (rule #26):")
-    print("     · live market MOVE (backed/drifted) — a forecast price is not the market")
-    print("     · run-STYLE / manner — who leads, who's held up (the comments door)")
+    emit("  ⚠ DECISIVE FACTS OWED — do NOT invent (rule #26):")
+    emit("     · live market MOVE (backed/drifted) — a forecast price is not the market")
+    emit("     · run-STYLE / manner — who leads, who's held up (the comments door)")
 
     c, r = nap.conviction, nap.race
     tag = "CONFIDENT NAP" if c.confident else "best candidate — NOT confident (declinable)"
-    print(f"  {tag}: {nap.runner.horse}  —  {r.course} {r.off_time} ({r.race_type})")
-    print(f"  conviction {c.score}: {', '.join(c.aligned) or 'thin'}")
+    emit(f"  {tag}: {nap.runner.horse}  —  {r.course} {r.off_time} ({r.race_type})")
+    emit(f"  conviction {c.score}: {', '.join(c.aligned) or 'thin'}")
     if c.flags:
-        print(f"  FLAGS: {', '.join(c.flags)}")
+        emit(f"  FLAGS: {', '.join(c.flags)}")
     if not c.mark_known:
-        print("  ⚠ the MARK was not readable — never a confident nap without it.")
+        emit("  ⚠ the MARK was not readable — never a confident nap without it.")
     evidence = build_evidence(r, client)
-    print("\n" + render_scorecard(build_scorecard(r, evidence)))
+    emit("\n" + render_scorecard(build_scorecard(r, evidence)))
 
     day = nap.race.date
     log = open_nap_log()
@@ -109,7 +138,8 @@ def main() -> int:
                horse_id=nap.runner.horse_id, price=nap.price, score=c.score,
                confident=c.confident)
     log.close()
-    print(f"\n  banked the nap for {day} — settle it tomorrow with --settle {day}.")
+    emit(f"\n  banked the nap for {day} — settle it tomorrow with --settle {day}.")
+    _maybe_email(out, f"{tag}: {nap.runner.horse} — {r.course} {r.off_time} ({day})", args.email)
     return 0
 
 
