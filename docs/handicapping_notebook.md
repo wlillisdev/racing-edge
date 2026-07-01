@@ -382,6 +382,25 @@ of the assembled dots — it has failed at the one job it's for.
      small stake, multiplied risk). *(In code: the Bet model already carries `each_way`;
      the accumulator is a human play on the shortlist.)*
 
+29. **FORM FIRST, ODDS LAST — pick the best horse on merit, THEN look at the price.**
+   The master's own order, and the one I keep getting backwards. Read every race with an
+   OPEN MIND and find the best horse *before you have seen a single price.* "Best" is not
+   one thing — it's the **jigsaw, dots joined** (#24, this is where #29 and #24 meet):
+   - the **mark / well-in** (#22) — has the handicapper let it in;
+   - **how it ran**, not just where (#1, #27) — stayed on, unlucky, hung, no gap;
+   - **course / distance / ground / trip fit** (#4, #10) — does it suit *today's* test;
+   - **yard + intent** (#5, #16) — form yard, laid out, the signs they mean it today.
+   Assemble those into one picture, land on the horse — and ONLY THEN turn over the price.
+   The odds are a **check, never the picker**: the market AGREES (backed) → green light;
+   the market DISAGREES (drifting) → warning, think again — but you must own an opinion
+   FIRST or you're just following money like a mug. That is exactly how a smashed short
+   favourite gets everyone beaten: it was only ever "best" because the price *said* so.
+   *(2026-07-01: caught leading a whole study off the market moves — tail wagging the dog.
+   The price-first read is the lazy read; the merit-first read is the graft. Do the graft.)*
+   *(In code: this is why `nap` builds conviction from the FORM — mark, course, tells —
+   and only then reports the market rank; `dissect` is price-first BY NATURE, so it's a
+   post-mortem tool, never the picker.)*
+
 ## The learning loop — how the notebook bites on selections
 
 A notebook that just sits here is useless. This is the closed loop that makes it
