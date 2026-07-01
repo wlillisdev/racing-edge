@@ -3,6 +3,8 @@
     python -m racing_edge.cli.learn --day today --time 16:10      # self-study ONE race
     python -m racing_edge.cli.learn --day yesterday               # every finished handicap
     python -m racing_edge.cli.learn --show                        # read the banked nuances
+    python -m racing_edge.cli.learn --promote 3                   # master: rule #3 REAL
+    python -m racing_edge.cli.learn --bin 1                       # master: rule #1 rubbish
 
 This is the piece the master kept asking for: not just laying the form out (that's
 cli.restudy), but THINKING about it — the AI asking itself *"why did you pick that horse?
@@ -48,13 +50,36 @@ def _show() -> int:
         print("  No nuances banked yet. Run: python -m racing_edge.cli.learn --day yesterday")
         log.close()
         return 0
-    print("  SELF-TAUGHT NUANCES (proposals until the record/master promotes them):")
+    print("  SELF-TAUGHT NUANCES (proposals until the record/master rules — "
+          "--promote N / --bin N):")
     for r in rows:
-        print(f"    [{r['status']:9}] {r['date']}  {r['course']} — winner {r['winner']}")
+        print(f"    #{r['id']:<3} [{r['status']:9}] {r['date']}  "
+              f"{r['course']} — winner {r['winner']}")
         print(f"       nuance: {r['nuance']}")
         if r["owed"]:
             print(f"       OWED:   {r['owed']}   (confidence {r['confidence'] or '?'})")
     log.close()
+    return 0
+
+
+def _rule(nuance_id: int, status: str) -> int:
+    """The master's ruling — promote a nuance to validated, or bin it as rejected.
+    This is the human half of the loop: the model proposes, the record/master decide."""
+    log = open_nuance_log()
+    row = next((r for r in log.all() if r["id"] == nuance_id), None)
+    if row is None:
+        print(f"  No nuance #{nuance_id}. See them with --show.")
+        log.close()
+        return 1
+    log.set_status(nuance_id, status)
+    log.close()
+    verdict = "PROMOTED — earned its place" if status == "validated" \
+        else "BINNED — built on a crack"
+    print(f"  #{nuance_id} {verdict}:")
+    print(f"    {row['nuance']}")
+    if status == "validated":
+        print("  (now write it into the notebook/tells so it bites on picks — "
+              "a validated nuance that stays in the DB teaches nothing.)")
     return 0
 
 
@@ -78,10 +103,18 @@ def main() -> int:
     ap.add_argument("--course", help="only this course (substring)")
     ap.add_argument("--time", help="only this off-time, e.g. 16:10 — focus ONE race")
     ap.add_argument("--show", action="store_true", help="print the banked nuances and exit")
+    ap.add_argument("--promote", type=int, metavar="N",
+                    help="rule nuance #N VALIDATED (the master's promote)")
+    ap.add_argument("--bin", type=int, metavar="N", dest="bin_id",
+                    help="rule nuance #N REJECTED (the master's bin)")
     ap.add_argument("--email", action="store_true", help="email the self-study (SMTP env)")
     args = ap.parse_args()
     if args.show:
         return _show()
+    if args.promote is not None:
+        return _rule(args.promote, "validated")
+    if args.bin_id is not None:
+        return _rule(args.bin_id, "rejected")
 
     # load .env FIRST (it carries ANTHROPIC_API_KEY on the box) — get_reasoner reads the
     # env, and without this it would run before get_client()'s load_dotenv and see no key.

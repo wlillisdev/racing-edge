@@ -73,6 +73,20 @@ def test_parse_critique_survives_a_non_json_reply() -> None:
     assert "no reasoning available" in render_critique(c, "x", "y")
 
 
+def test_nuance_rows_carry_an_id_for_the_ruling_cli() -> None:
+    """--promote N / --bin N address nuances by id — the rows must expose it."""
+    with tempfile.TemporaryDirectory() as d:
+        log = NuanceLog(Path(d) / "n.db")
+        log.record(day=date(2026, 7, 1), race_id="r1", course="Epsom", winner="W",
+                   blind_pick="", nuance="n1", what_missed="", cite="", owed="",
+                   confidence="low")
+        row = log.all()[0]
+        assert isinstance(row["id"], int)
+        log.set_status(row["id"], "rejected")           # the master bins it
+        assert log.all()[0]["status"] == "rejected"
+        log.close()
+
+
 def test_nuance_log_banks_proposed_and_is_idempotent() -> None:
     with tempfile.TemporaryDirectory() as d:
         log = NuanceLog(Path(d) / "nuances.db")
