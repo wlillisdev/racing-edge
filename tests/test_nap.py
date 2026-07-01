@@ -39,6 +39,30 @@ def test_conviction_flags_the_improver_favourite() -> None:
     assert any("improver-favourite" in f for f in c.flags)
 
 
+def test_conviction_reads_the_manner_from_history_comments() -> None:
+    """Rule #1 finally wired to live data: the comments now on PastRun feed nap_verdict.
+    A repeated out-battled profile FLAGS (placer, not a nap); a finisher aligns."""
+    r = Runner(horse_id="w", horse="Gem", official_rating=120, odds=Odds(consensus=3.0))
+    placer_hist = (
+        PastRun(date=date(2026, 6, 1), position=2, official_rating=120,
+                comment="every chance, found little"),
+        PastRun(date=date(2026, 5, 1), position=2, comment="one paced final furlong"),
+        PastRun(date=date(2026, 4, 1), position=1, official_rating=120),
+    )
+    c = conviction(r, _race(), placer_hist, market_rank=2, field_size=8)
+    assert any("placer, not a nap" in f for f in c.flags)
+    assert not c.confident                                   # flagged -> never confident
+
+    finisher_hist = (
+        PastRun(date=date(2026, 6, 1), position=1, official_rating=120,
+                comment="stayed on strongly to lead near the line"),
+        PastRun(date=date(2026, 5, 1), position=1, official_rating=116,
+                comment="quickened clear, readily"),
+    )
+    c2 = conviction(r, _race(), finisher_hist, market_rank=2, field_size=8)
+    assert any("finisher" in a for a in c2.aligned)
+
+
 def test_conviction_needs_the_mark_to_be_confident() -> None:
     # everything aligns but the OR isn't on the card -> mark unknown -> never confident
     r = Runner(horse_id="w", horse="Gem", odds=Odds(consensus=3.0))   # no official_rating

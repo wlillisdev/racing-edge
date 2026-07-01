@@ -360,3 +360,46 @@ lean not a nap, and Wee Mary near a pass?
 - The overwhelming lesson of the day: the LIVE MARKET MOVE is THE signal, and I'm blind to
   it through the window. The box's `dissect` (real SPs, real move) is the priority — it
   would have shown the drift before the off.
+
+---
+
+## 2026-07-01 (Wed) — a full card's worth of real market moves: the smashed short fav kept losing
+
+Studied the whole day's readable handicaps off the box's real `dissect` (real SPs, real
+morning→SP move). No WebSearch, no invented prices — this is the money, read straight.
+
+### The thread of the day: hammered short favourites got turned over in the DEEP fields
+| Race | Beaten fav (move) | Winner (move) | Margin |
+|---|---|---|---|
+| Epsom 6:22 | Amazing Journey 2.5 BACKED 3.1→2.5 | Sir Garfield 8.5 **steady** | nose |
+| Worcester 3:55 | Phantom Gold 2.2 BACKED 3.2→2.2 | Mojo Ego 13 **drifted** 11→13 | nose |
+| Epsom 6:57 | Alma Latina 2.6 steady | Timber Twelve 29 BACKED 44→29 | — |
+| Thirsk 3:40 | York Tower 3.0 BACKED 3.6→3.0 | Parisian Scholar 10 BACKED 12.5→10 | York Tower 5th, btn 10.5 |
+
+Four competitive handicaps, four well-fancied sub-3.0 horses beaten — three of them
+actively BACKED and STILL beaten, twice by a steady/drifting rival. In deep fields the
+frantic money on the short one was the FALSE signal, not the green light (#17, #18, #22).
+
+### The honest other half: the gamble LANDED when it stopped at a FAIR price
+Indian Run 5.5 (6.2→5.5), Farandaway 5.5 (7.4→5.5), Saucy Jane 6.5 (7.4→6.5),
+Knightsbridge 2.9 (3.6→2.9), Reality Queen 2.8 (5-runner) — all backed, all won. So the
+lesson is NOT "oppose favourites." It's the **zone and the field depth**:
+- **Small field / fair-priced fav backed to 5/2–6/1** → respect it (it kept winning).
+- **Deep, competitive field / fav SMASHED into sub-3.0** → oppose the hype; the winner
+  came from mid-market (today: 8.5, 10, 15, 21, 29). This sharpens #22 and #2's
+  sweet-spot: value clustered at 2nd/3rd-fav prices, not at the crammed top of the market.
+
+### The two jumps DRIFTERS that won (small note)
+Mojo Ego 11→13 and Axel Bleue 4.5→5.0 both drifted AND won, each beating a backed rival —
+the market plainly wrong twice. n=2, jumps only; a flag to watch, not a pattern yet.
+
+### What I could NOT read (stated honestly, #26)
+I read the MONEY (real). I did NOT see WHY any of these won — no running comments, no
+marks, no headgear (all OWED). This is a read of the market shape, not a claim I'd have
+found the winners on form. The market story is real; the form story is owed to the eye.
+
+### The banked lesson (a HYPOTHESIS for the trial, not a law — n=1 day, samples lie)
+> In a DEEP handicap, a favourite smashed into a short price (sub-3.0) is a lay-the-hype
+> spot, not a follow; the winner tends to come from the fair-value mid-market. In a SMALL
+> field, a fair-priced backed fav is to be respected. Test across the trial: does
+> "oppose the smashed short fav in a deep field" beat backing it, over hundreds of races?

@@ -222,5 +222,10 @@ def past_runs_from_raw(rows: list[dict], horse_id: str = "") -> tuple[PastRun, .
             field_size=_int(r.get("ran") or r.get("field_size"))
             or (len(runners) if isinstance(runners, list) else None),
             race_id=_str(r.get("race_id")),
+            # HOW it ran — the in-running comment lives on the horse's own row (nested
+            # runners) or the race row. The single richest 'what did I miss' signal;
+            # the old normaliser dropped it. Empty stays empty (OWED), never invented.
+            comment=_str(me.get("comment") or me.get("in_running_comment")
+                         or r.get("comment")),
         ))
     return tuple(out)

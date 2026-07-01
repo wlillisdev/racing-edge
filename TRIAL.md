@@ -61,3 +61,22 @@ two biggest lenses are OWED. This trial answers, verifiably: do the rules-off-re
 do any better than the favourite — and is it worth opening the market-move and comments
 doors to finish the job? The record will say. That's the whole point of trialling it
 instead of arguing about it.
+
+## Schedule it (so it runs itself)
+
+Add these on PythonAnywhere → Tasks (each is one command; `trial.sh` pulls the branch,
+runs, banks, and emails):
+
+| Time  | Command |
+|-------|---------|
+| 07:30 | `~/racing_edge/trial.sh nap` |
+| 08:00 | `~/racing_edge/trial.sh dissect` |
+| 22:00 | `~/racing_edge/trial.sh settle` |
+
+- **07:30 nap** — reads today's real card, bins the novices/raised/lotteries, banks one
+  pick (or "no bet"), emails it.
+- **22:00 settle** — settles the banked pick against the result, updates the strike rate.
+
+The pick it produces is deterministic — the same rules on the same card give the same
+nap every time. It is NOT a promise of a winner; it's the method's selection, banked and
+checkable. The record (`nap --record`) is the only judge.

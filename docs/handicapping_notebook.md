@@ -382,6 +382,25 @@ of the assembled dots — it has failed at the one job it's for.
      small stake, multiplied risk). *(In code: the Bet model already carries `each_way`;
      the accumulator is a human play on the shortlist.)*
 
+29. **FORM FIRST, ODDS LAST — pick the best horse on merit, THEN look at the price.**
+   The master's own order, and the one I keep getting backwards. Read every race with an
+   OPEN MIND and find the best horse *before you have seen a single price.* "Best" is not
+   one thing — it's the **jigsaw, dots joined** (#24, this is where #29 and #24 meet):
+   - the **mark / well-in** (#22) — has the handicapper let it in;
+   - **how it ran**, not just where (#1, #27) — stayed on, unlucky, hung, no gap;
+   - **course / distance / ground / trip fit** (#4, #10) — does it suit *today's* test;
+   - **yard + intent** (#5, #16) — form yard, laid out, the signs they mean it today.
+   Assemble those into one picture, land on the horse — and ONLY THEN turn over the price.
+   The odds are a **check, never the picker**: the market AGREES (backed) → green light;
+   the market DISAGREES (drifting) → warning, think again — but you must own an opinion
+   FIRST or you're just following money like a mug. That is exactly how a smashed short
+   favourite gets everyone beaten: it was only ever "best" because the price *said* so.
+   *(2026-07-01: caught leading a whole study off the market moves — tail wagging the dog.
+   The price-first read is the lazy read; the merit-first read is the graft. Do the graft.)*
+   *(In code: this is why `nap` builds conviction from the FORM — mark, course, tells —
+   and only then reports the market rank; `dissect` is price-first BY NATURE, so it's a
+   post-mortem tool, never the picker.)*
+
 ## The learning loop — how the notebook bites on selections
 
 A notebook that just sits here is useless. This is the closed loop that makes it
@@ -404,6 +423,32 @@ change the picks, and makes the results change the notebook:
 
 Closed loop: rules shape picks → results test rules → results refine rules.
 Transparent (rules, not weights), human-decided, and it compounds week on week.
+
+**The re-study — the master's actual loop, made honest (`cli.restudy`, #27/#29).** For
+years the real learning was this: *when a result comes in, go BACK to the full form and
+study the whole race again, knowing who won, to see what you missed.* The apprentice was
+NOT doing this — it read a thin slice (SP + market move) off `dissect` and called it study.
+That is price-first, backwards (#29), and it is why there was no real learning loop. The
+fix pulls the FULL form through the window (the box's real API) and lays every runner out
+against the result: the **mark** (well-in vs raised), the **form figures**, the **OR**, the
+**spotlight**, and each horse's **last runs WITH their in-running comments** — the how-it-ran
+door the old code literally dropped on the floor. Then the read is form-FIRST: what said the
+winner *before* the price or the result did? Bank the clue you missed as a tell or a rule.
+Honest by construction — every line is what the API returned; a blank prints **OWED**, never
+a guess. Going through the window without lying.
+
+**The self-interrogation — the AI teaches ITSELF (`cli.learn`, #27/#29).** Laying the form
+out isn't learning; *thinking* about it is. `learn` turns the master's own teaching move —
+*"why did you pick that horse? the winner was in the form — why did you miss it? what's the
+nuance?"* — into a self-prompt the model answers OVER the real readout (form-first, cite the
+fact, OWED stays unknown). Each lesson it teaches itself is banked in `data/nuances.db` as a
+**proposal**, dated to the race that taught it, with the facts it rests on and what's OWED to
+confirm it — and it stays a proposal until the **trial record** or the **master** promotes it
+to a tell or a rule. The model reasons over the facts; it never writes the notebook on its own
+word, and it never invents one (the two guardrails against the trust-break). Needs the model
+ON — `ANTHROPIC_API_KEY` set — and uses a direct-HTTP reasoner, not the SDK that crashes the
+box. That is the deep loop: pick blind → result → interrogate yourself → bank the nuance →
+test it over the record.
 
 ## The system's core fault I'm trying to fix
 

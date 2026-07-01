@@ -12,6 +12,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from racing_edge.domain.manner import nap_verdict
 from racing_edge.domain.mark import mark_read
 from racing_edge.domain.models import PastRun, Race, Runner
 from racing_edge.domain.tells import match_tells
@@ -49,6 +50,18 @@ def conviction(runner: Runner, race: Race, history: tuple[PastRun, ...],
             aligned.append(f"well-in ({mr.verdict})")
         else:
             flags.append(f"raised {mr.verdict} since last win")
+
+    # THE MANNER (rule #1 — read the finish, not the figures). The reader was built
+    # months ago but starved: PastRun carried no comment until the window opened. Now
+    # each recent run's in-running comment feeds it. A repeated out-battled/found-little
+    # profile is a FLAG (a placer, not a nap); a proven finisher is a lens FOR it.
+    mv = nap_verdict([h.comment for h in history[:4]])
+    if mv.recommendation == "win_positive":
+        aligned.append(f"finisher ({mv.finisher_runs} strong finish(es) in comments)")
+    elif mv.recommendation == "place_only":
+        flags.append("manner: out-battled/found little repeatedly — placer, not a nap (#1)")
+    elif mv.recommendation == "excuse_upgrade":
+        aligned.append("excuse last time (trouble in running) — form understates it")
 
     course_wins = sum(1 for h in history if h.position == 1 and _same_course(h, race))
     if course_wins >= 2:
