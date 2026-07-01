@@ -16,7 +16,7 @@ from racing_edge.cli._common import open_nap_log, resolve_date
 from racing_edge.data.client import get_client
 from racing_edge.data.evidence import build_evidence
 from racing_edge.data.normalise import results_from_raw
-from racing_edge.pipeline.nap import nominate_nap
+from racing_edge.pipeline.nap import evaluate_field
 from racing_edge.report.scorecard import build_scorecard, render_scorecard
 
 
@@ -59,10 +59,38 @@ def main() -> int:
 
     codes = ("jump", "flat") if args.both else (("flat",) if args.flat else ("jump",))
     client = get_client()
-    nap = nominate_nap(client, day=args.day, codes=codes)
-    if nap is None:
+    field = evaluate_field(client, day=args.day, codes=codes)
+    if not field:
         print("No nap — nothing readable stands up today. Discipline is a position.")
         return 0
+
+    # SELECT BY ELIMINATION (rule #25): cross off what can't win FIRST, then zero in on
+    # the survivors — never start from a horse to love. Forces the fair evaluation of #24.
+    crossed = [p for p in field if p.conviction.flags]
+    survivors = [p for p in field if not p.conviction.flags]
+    if crossed:
+        print("  CROSSED OFF — won't win, and why (knock out the no-hopers first):")
+        for p in crossed:
+            print(f"    ✗ {p.runner.horse:22} {p.race.course} {p.race.off_time}  "
+                  f"— {', '.join(p.conviction.flags)}")
+    print("\n  SURVIVORS — zero in on these (strongest first):")
+    for p in survivors:
+        c = p.conviction
+        mark = "" if c.mark_known else " [mark OWED]"
+        print(f"    • {p.runner.horse:22} {p.race.course} {p.race.off_time}  "
+              f"conv {c.score}{mark}: {', '.join(c.aligned) or 'thin'}")
+    print()
+
+    if not survivors:
+        print("No nap — every contender crossed off. Discipline is a position.")
+        return 0
+    nap = survivors[0]      # zero in on the strongest SURVIVOR, not the top of the raw field
+
+    # standing guard (rule #26): the two decisive facts the brief CAN'T see — never
+    # invent them, never cross off or nap on a guessed run-style or a stale price.
+    print("  ⚠ DECISIVE FACTS OWED — do NOT invent (rule #26):")
+    print("     · live market MOVE (backed/drifted) — a forecast price is not the market")
+    print("     · run-STYLE / manner — who leads, who's held up (the comments door)")
 
     c, r = nap.conviction, nap.race
     tag = "CONFIDENT NAP" if c.confident else "best candidate — NOT confident (declinable)"

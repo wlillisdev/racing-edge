@@ -9,6 +9,51 @@ assemble every clue, watch the market on the shortlist, study every result). The
 human makes the call. I study **my picks against the results** — never crunch old
 numbers. The edge isn't a model; it's the eye, compounding.
 
+## The stakes — pick as if your family eats on it
+
+Above every rule, this is the seriousness it demands: **pick as if a wife and ten kids
+go hungry when you lose.** That pressure is the point. It kills the lazy version — no
+casual tick, no guessed run-style, no nap you talked yourself into; every selection is a
+case you PROVE or you don't bet. And it flips the instinct that ruins punters: a man
+feeding ten **doesn't bet a guess.** He passes nine races and backs the one he's worked
+out and is *sure* of. So the pressure means pick **less, and better** — never more.
+"I can't read this confidently" isn't dodging; **it's feeding them** — you don't put the
+rent on a race you can't see. Forensic isn't a style here. It's survival. A bad nap you
+don't eat — taken literally.
+
+**But the family still eats — the calculated gamble, and the stake.** The counter-weight:
+you can't only bet when every dot joins, because that day is rare and the family starves
+waiting. So we take the CALCULATED gamble — the best read at a price where the reward is
+worth the risk. And face the cruel paradox: the bet you're *surest* of is the one the
+whole market sees too, so it's **odds-on, pays peanuts, and STILL loses one time in three
+or four.** Certainty isn't safety — it's just a risk the market has already priced to the
+hilt; piling money on a short one is risking a lot to win a little on something that can
+still bury you. Which is why the real protection isn't the pick, it's the **STAKE: never
+put it all on one horse, however sure — the surest thing in racing still runs second.**
+Size every bet so the loser (and a loser is always coming) *stings but never ends you.*
+The man feeding ten doesn't shove the rent on a single even-money shot. Bet calculated
+value, sized to survive being wrong.
+
+## What it's all for — join the dots, read the nuances
+
+This is the whole thing, and everything below serves it. Handicapping is **not**
+scoring a horse on a grid of lenses and summing the column. It is **joining the dots**
+— taking every clue, down to the smallest nuance, and connecting them into one moving
+picture of *how the race will be run*. The dots don't decide it; the **lines between
+them** do. A rising mark is harmless until you join it to a front-running style and
+another horse who wants the lead — then it's fatal. "Won last time" means nothing until
+you join it to *how* (going away, or all-out) and to the mark it cost him. You don't
+read eight horses; you read the **race**, and the nuances — *led but pestered*, the
+little *p* for a penalty, *edged right*, a jockey switch — are what tip it.
+
+So the split is clear: **the system COLLECTS the dots; the eye CONNECTS them.** The AI's
+job is to lay out *every* clue, tirelessly and honestly, including the tiny ones (which
+is why the running comments matter — that's where the nuances live), and to name the
+ones it couldn't get. The **joining** — the read, the nuance-weighing, the picture — is
+the craft, human-led, learned one race at a time. The machine is the eyes and the legs.
+It is **not** the brain. The day it tries to be the brain — to hand you a number instead
+of the assembled dots — it has failed at the one job it's for.
+
 ---
 
 ## The lessons (so far)
@@ -165,7 +210,17 @@ numbers. The edge isn't a model; it's the eye, compounding.
    they **overlook the gems**: the well-handicapped, well-read horses at bigger prices
    that we find by reading the form. **Don't fish where everyone's piling on the
    favourite — fish where no one's looking, the overlooked horse we've read.** That,
-   not out-reading the jolly, is the whole job. *(Design notes: a STEADY gamble needs
+   not out-reading the jolly, is the whole job. **And WHICH favourites do they lay? The
+   good-LOOKING ones with a flaw they've read and the punters haven't** — a nearly-type,
+   a wrong pace, a rising mark. The obvious appeal (well-handicapped, consistent, C/D) is
+   what sucks the public in and shortens the price; the layers are happy to take it
+   because they've seen what the appeal hides. So a heavily-backed "good favourite" isn't
+   *safe* — it's the most dangerous thing on the card. Don't ask "is this a good
+   favourite?"; ask **"why are the bookies content to lay it?"** If the appeal hides a
+   flaw, be WITH the layers, against the mug money. (Pontefract, 29 Jun: Queen Sana, "in
+   theory a good favourite" — well-handicapped, C/D, consistent — sent off 3/1 and
+   unplaced, because she's a nearly-type that doesn't WIN. The bookies knew; the punters
+   didn't.) *(Design notes: a STEADY gamble needs
    the odds over TIME, not one snapshot — another reason for the live-odds feed; a
    "gambling stable" tell needs a trainer's gamble reputation we don't yet track.)*
 
@@ -181,6 +236,151 @@ numbers. The edge isn't a model; it's the eye, compounding.
    this way: selection ignores price, betting handles value — ties to #12, the horse
    doesn't know its odds. The "fish where no one's looking" of #18 is about VALUE/edge,
    not a ban on the jolly.)*
+
+20. **Read the PACE — the shape decides the race, especially in sprints.** Find who
+   NEEDS to lead, who's held up, and who quickens late. If two front-runners/prominent
+   types are set to duel for the lead, the front end **collapses** and the closers
+   sweep up — so a front-runner is vulnerable when another presser is in the field, and
+   doubly so **on a rising mark** (he has to fight for the lead AND defy the weight):
+   that's a lay, not a back. (Windsor, 29 Jun: Regal Envoy *led but pestered* and
+   Fandom *pressed leader* — the two market leaders cooked each other and both emptied;
+   King Of Light won *held up from midfield, ridden clear readily* at 17/2, the first
+   three home all off the pace.) This read lives ENTIRELY in the running comments — the
+   `manner` cell the brief leaves OWED — which is exactly why the comments feed is the
+   next door to open: this whole result was invisible without the words.
+
+21. **Avoid amateur jockeys' races — the saddle is the variable.** Same logic as
+   novices (#13), but it's the *riders*, not the horses: amateurs are inexperienced, so
+   even a well-read race can be undone by a bad ride — gone too soon, shuffled back, no
+   reaction when the gap comes. The fractions go wrong and **anything can happen.** The
+   form doesn't play out reliably, so there's no edge to have. (Pontefract, 29 Jun: a
+   17-runner Class-5 *Amateur Jockeys'* Handicap — a well-handicapped C/D horse in it,
+   but the race type alone said *pass*.) *(In code: `Race.is_amateur` — detected from
+   the race name and excluded by `is_readable_handicap`, the same hard gate as novices.)*
+
+22. **Read the favourite's PRICE against how good it LOOKS — the gap is a map.** If a
+   horse ticks every box and is still only **3/1 (not 5/4 or odds-on)**, the market is
+   telling you what the form won't: it's **EXPOSED** — a known quantity whose ceiling
+   the layers have measured (often a nearly-type) — and the race is **OPEN.** The market
+   will never let a true banker trade at 3/1; so a box-ticker priced that big isn't a
+   gem the crowd missed, it's a horse the crowd has rated *right* and you've over-rated.
+   And a weak/vulnerable favourite isn't a horse to back — it's the **green light to
+   study the FIELD**, because the doubt in its price means the value (the winner) is in
+   there to be found by proper work. Don't ask "does the fav tick the boxes?" — ask **"if
+   it ticks the boxes, why isn't it 5/4?"** The wider the gap between *looks-a-banker* and
+   *trades-beatable*, the louder the market is saying *dig, the winner's in the field.*
+   (Pontefract, 29 Jun: Queen Sana ticked every box, went off 3/1 not 5/4 — exposed
+   nearly-type, unplaced; Betweenthesticks 10/1 was the value a proper study finds.)
+
+23. **The bookies get beaten too — read the market, don't worship it.** Rules #17–#22
+   say the market is information: manipulated, the lay is a tell, the price is a map. But
+   don't over-rotate into "the bookies are always right / the favourite is always a
+   trap" (the same fixation as fearing the favourite, just flipped). **The bookies get
+   beaten too** — good favourites bolt up, gambles land, the layers lose. **If they
+   always won, nobody would bet** — the game only exists because they're beatable. Their
+   edge was never being right; it's the **margin (the over-round) and the volume** — a
+   book balanced to grind a percentage over thousands of bets. They don't need to be
+   right on any single horse, and on plenty they're flat wrong. So you don't beat them
+   every race (you can't, and needn't) — you find the spots where they're wrong by **more
+   than their margin** (the genuine overlay) and leave the rest. Over the distance, that's
+   how the book gets beaten: not by being right more often, but by being right *when the
+   price is wrong.* So the price is a strong clue, **never
+   gospel**; the craft is spotting *when the market is wrong* (that's where the value is),
+   not assuming it never is. The balance: don't fear the favourite (#19), and don't kneel
+   to the bookies either — read them, weigh them, and back your own study when it says
+   they've got one wrong.
+
+24. **Give EVERY horse a fair, equal evaluation — pick LAST, never first.** My deepest,
+   most persistent fault: I find two or three ticks on one runner, get *led* straight to
+   it, and the rest of the field gets a glance instead of a read — so the winner, sitting
+   in a horse I never properly weighed, slips by. (Every winner I've missed — King Of
+   Light, Betweenthesticks, Caughtinyourtrance, Kingofthegame — came from a horse I
+   didn't fairly evaluate because I'd already anchored.) The fix is a forced order of
+   operations: **build the case FOR every runner first** — "what would make *this* one
+   win?" — give each its fair, equal shake, and ONLY THEN compare and choose. The winner
+   always has a case; if you didn't see it, you didn't look. **Evaluate the whole field
+   evenly, then pick — never pick, then confirm.** A couple of ticks on one horse is the
+   start of the work, not the end of it. *(In code: the nap nominator evaluates AND shows
+   every contender's conviction, ranked — so no horse is skipped and the pick has to beat
+   a fair reading of the field, not an anchored one.)*
+
+25. **Select by ELIMINATION — cross off what can't win, THEN zero in.** The rookie hunts
+   for a horse to *love*: finds a few ticks, anchors, gets blinded by the odds, and loses
+   sight of the whole race. The master works the other way round — go through the WHOLE
+   field and **cross off the ones that can't win**, each for a concrete reason (wrong
+   trip, out of form, exposed nearly-type, rising-mark front-runner with a presser to
+   take him on, can't act on the ground, badly drawn, improver-fav at a cramped price,
+   amateur/lottery race), and **zero in on what survives.** The survivors are the real
+   shortlist; only THEN do you read deeply to choose between them. This is why studying
+   *why each horse LOST* matters so much: **every losing-reason is a cross-off rule, and
+   the elimination toolkit IS the accumulated "why they lost."** Elimination can't be
+   blinded by the odds (you don't start from the favourite) and can't anchor (you must
+   weigh every horse to knock it out) — so it *forces* the fair evaluation of #24. Cross
+   off, then zero in — never love-at-first-tick. **But cross off on a FATAL flaw, not a
+   single dot:** a rising mark or one bad run is not enough on its own. (Pontefract 16:30,
+   29 Jun: I crossed off Dream Deal on a +6lb rise *alone* and she dead-heated for 2nd —
+   a rising mark is a dot, not a verdict.) A cross-off is the same trap as a pick if it
+   rests on one thing — eliminate only what *can't* win, for a reason that's actually
+   fatal. *(In code: the nap CLI now splits the field into CROSSED OFF (with the flaw)
+   and SURVIVORS, and zeroes in on the survivors.)*
+
+26. **Cross off (and zero in) on FACTS, not assumptions — a blank is caution, not a
+   licence to invent.** Earned by crossing off the WINNER (Ideal Guest, Pontefract 17:00,
+   29 Jun) on guesses. The elimination method only works on real data; if you don't KNOW
+   a horse's run-style, mark, or the live market move, you do NOT get to invent it to
+   complete a cross-off or a nap. The blank (OWED) **caps your confidence — it doesn't get
+   filled with a story.** Four guards earned that day:
+   - **(a) A forecast price is NOT the live market.** Ideal Guest was a "3/1 weak fav" on
+     the forecast and went off 13/8 *backed* (the money knew); my pick *drifted* 9/1→10/1.
+     Never apply a price-read (#22) to a stale forecast — the MOVE (backed/drifted) is the
+     signal, and if you can't see it, that's OWED, not "weak fav".
+   - **(b) Don't invent run-styles.** I guessed "he kicks too soon / she's a closer" —
+     both fiction (he made all and kept on; she raced prominent, no extra). Run-style is
+     OWED until the comments door opens; don't cross off or zero in on a guessed one.
+   - **(c) Don't over-fit the last race's pattern.** The Windsor pace-collapse didn't
+     apply — a pestered leader can keep on. A pace read needs the FIELD's real run-styles,
+     not a transplant from the race before.
+   - **(d) Don't cross off the favourite to look clever.** Contrarianism is odds-blindness
+     in a clever hat (#19/#23). Sometimes the jolly is the winner — and the money says so.
+   The reflex: reason ONLY from the facts on the brief; everything else is OWED — flag it,
+   respect it, let it cap the call. **When too much is OWED, the honest answer is "I can't
+   read this confidently," not a guessed nap.**
+
+27. **Dissect EVERY horse after the result — the running line is a read for NEXT time.**
+   A result isn't the end of a horse, it's information on it going forward. Read the
+   manner (the comment) and turn it into what the horse *wants*:
+   - *"stayed on / kept on / one-paced at the finish"* → finishing fastest = **wants a
+     STEP UP IN TRIP; further will suit.**
+   - *"weakened / no extra / faded late"* → didn't see it out — but **diagnose WHY**: trip
+     too FAR (drop back), too much WEIGHT, wrong GROUND, or needed the run. "Weakened" is
+     the start of the read, not the end — join it to the trip/weight/going.
+   - *"made all / front-ran"* → wants to dominate / a lone lead. *"held up, no room, never
+     got into it"* → needs a clear run / new tactics. *"hung / found little under
+     pressure"* → a headgear/temperament job (#16). *"hampered / unlucky"* → an excuse,
+     mark it UP. *"every chance, no extra"* → a possible nearly-type (bottler).
+   And do it for the WHOLE field, not just the winner: each running line is a forward read
+   (trip, ground, weight, tactics) that becomes tomorrow's cross-off or selection — *"this
+   one stayed on at 6f and it's up to 7f today, it'll suit."* That read only exists because
+   you dissected its last race. **This is why the post-race study matters, and why the
+   comments are the priority door** — the forward reads live in the words, OWED until the
+   feed is in.
+
+28. **Match the BET to the situation — the instrument is half the calculation.** It's not
+   just *which* horse, it's *how* you back it:
+   - **A value horse with a genuine chance → EACH-WAY.** The calculated bet: *safety with
+     the option of max return.* The place part is the net (cash back if it makes the
+     frame, you're not skint); the win part is the payday. Works best on a **bigger
+     price** you fancy — the place return alone is worth having and the win is a proper
+     result. How you take a value shot without needing it to win outright to survive.
+   - **An odds-on "good thing" → don't bet it single, COMPOUND it.** A heavy single on an
+     odds-on shot is the worst bet going — big outlay, scraps back, and it still gets beat.
+     The money is in a **double or treble** of short-priced bankers: small outlay, a return
+     actually worth collecting. The trade: **every leg must win** — one runs second and the
+     lot's gone, and each added leg multiplies the risk (more chances for the bookie).
+   - **Never a fat single on odds-on.** Match the instrument to the price: value with a
+     squeak → e/w (protected, big upside); short certainties → accumulate (max return,
+     small stake, multiplied risk). *(In code: the Bet model already carries `each_way`;
+     the accumulator is a human play on the shortlist.)*
 
 ## The learning loop — how the notebook bites on selections
 

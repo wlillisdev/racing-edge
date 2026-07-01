@@ -31,22 +31,18 @@ class NapPick:
     conviction: Conviction
 
 
-def _better(a: NapPick, b: NapPick | None) -> bool:
-    if b is None:
-        return True
-    if a.conviction.confident != b.conviction.confident:
-        return a.conviction.confident                 # a confident nap beats a flagged one
-    if a.conviction.score != b.conviction.score:
-        return a.conviction.score > b.conviction.score
-    return (a.price or 999.0) < (b.price or 999.0)     # tie-break: the more fancied
+def _rank_key(p: NapPick) -> tuple[int, int, float]:
+    return (int(p.conviction.confident), p.conviction.score, -(p.price or 999.0))
 
 
-def nominate_nap(client: _Client, day: str = "today",
-                 codes: tuple[str, ...] = ("jump", "flat"), top_n: int = 4) -> NapPick | None:
-    """The day's strongest single selection across the readable handicaps, or None."""
+def evaluate_field(client: _Client, day: str = "today",
+                   codes: tuple[str, ...] = ("jump", "flat"), top_n: int = 4) -> list[NapPick]:
+    """EVERY contender in every readable handicap, each given its own conviction read,
+    sorted strongest-first. The fair-evaluation enforcement (rule #24): no horse is
+    skipped, so a pick has to beat an even reading of the whole field, not an anchor."""
     races = [r for r in racecards_from_raw(client.racecards(day))
              if r.is_readable_handicap and r.code in codes]
-    best: NapPick | None = None
+    out: list[NapPick] = []
     for race in races:
         evidence = {e.runner.horse_id: e for e in build_evidence(race, client)}
         priced = sorted([r for r in race.runners if r.odds.consensus and r.odds.consensus > 1],
@@ -56,7 +52,14 @@ def nominate_nap(client: _Client, day: str = "today",
             ev = evidence.get(r.horse_id)
             hist = ev.history if ev else ()
             c = conviction(r, race, hist, ranks.get(r.horse_id, 99), race.field_size)
-            cand = NapPick(race=race, runner=r, price=r.odds.consensus, conviction=c)
-            if _better(cand, best):
-                best = cand
-    return best
+            out.append(NapPick(race=race, runner=r, price=r.odds.consensus, conviction=c))
+    out.sort(key=_rank_key, reverse=True)
+    return out
+
+
+def nominate_nap(client: _Client, day: str = "today",
+                 codes: tuple[str, ...] = ("jump", "flat"), top_n: int = 4) -> NapPick | None:
+    """The day's nap: zero in on the strongest SURVIVOR after crossing off every horse
+    with a flaw (rule #25 — eliminate first, then pick). None if all are crossed off."""
+    survivors = [p for p in evaluate_field(client, day, codes, top_n) if not p.conviction.flags]
+    return survivors[0] if survivors else None

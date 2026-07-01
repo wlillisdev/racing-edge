@@ -171,3 +171,192 @@ and at least two were MINE, read on the wrong horse:
   mark; the data doesn't carry it cleanly yet (owed, like the rule #1 manner gap).
 - The real failure wasn't missing one tell — it was reading "won over c/d" as binary and
   never stacking the two horses against each other on depth AND mark.
+
+## 2026-06-29 — Monday study: my lean beaten (Windsor 7:00), and what it taught
+
+**The homework.** Read a few Monday handicaps blind. On the Windsor 6f Sprint Series
+Handicap (Class 2) I leaned to **Regal Envoy** (Windsor course specialist, top course
+jockey Murphy) — but flagged him **NOT a confident nap** because he carried a **+6lb
+rise** (raised, not well-in).
+
+**The result.** 1st **King Of Light (17/2)** — held up midfield, "ridden clear,
+readily" (won going away, rule #1). **Regal Envoy 7th** — "led but pestered, headed
+1f out, weakened." The 9/4 favourite (Fandom) also beaten (4th, "no extra").
+
+**Right vs wrong:**
+- RIGHT — the discipline. The mark flag (+6lb) was the exact reason he lost: a raised
+  front-runner, pressured, emptied out. Conviction correctly refused to call him a
+  confident nap.
+- WRONG — my judgment. I *leaned* to him as "most likely winner" AFTER my own system
+  flagged him. **Lesson: when the mark flags a horse, lean AWAY — don't talk back to
+  it.** Respect the conviction verdict.
+
+**Two lessons banked:**
+1. **Run-style matters in a competitive sprint** — a held-up horse who quickens beats
+   an exposed front-runner who gets pressured, and a front-runner ON A RISING MARK is
+   doubly vulnerable. It lives in the words ("led but pestered" vs "midfield, ridden
+   clear") — the OWED `manner` cell. Proof the blank isn't cosmetic: it would have
+   flagged Regal Envoy.
+2. **The field is open — both market leaders lost.** Winner 17/2 from midfield, 2nd
+   6/1, 3rd 25/1; the 9/4 fav and my 5/1 lean both turned over. The "29% from 4th+"
+   stat, live. Don't anchor on the front of the market.
+
+### Same race, read properly — WHY each won and lost (the words tell it all)
+
+Pushed to read the Windsor 7:00 runner-by-runner, not just the result. The race was a
+front-end duel that collapsed:
+- **Regal Envoy** "led but pestered" + **Fandom** (9/4 fav) "pressed leader" — the two
+  MARKET LEADERS took each other on up front and both emptied ("weakened" / "no extra").
+- **King Of Light (17/2)** "midfield, steady headway, led 1f out, ridden clear, readily"
+  — held up OFF the cooked pace, quickened past, won going away. The first three home
+  (King Of Light, Coul Angel 6/1, Baldomero 25/1) were ALL off the pace and "kept on".
+- The other beaten ones: Cindy Lou Who "stumbled start, prominent, edged right,
+  weakened"; Rydale Frosty "never better than midfield"; Invictus Gold "rear throughout".
+
+**The cause was PACE/RUN-STYLE, and it lives entirely in the comments.** A front-runner
+(Regal Envoy) on a +6lb rise, with another presser (Fandom) to take him on, was a lay —
+and I'd have seen it pre-race from the run-styles. Notebook rule #20 added. This is the
+single strongest case yet that the comments/`manner` feed is priority #1: the whole
+result was invisible to the brief without the words.
+
+## 2026-06-29 — Monday study #2: the well-in favourite that doesn't WIN (Pontefract 16:30, 5f)
+
+**CORRECTION (verified from the result photo).** I first wrote this off a WebSearch
+result that turned out to be WRONG — I said Betweenthesticks won. It did NOT. The real
+result of the Queen Sana race (the 4:30 / 16:30, 5f Class 5): 1st **Hover On The Wind
+(8/1)**, 2nd **Betweenthesticks (10/1)**, dead-heat 2nd **Dream Deal (4/1)**, and
+**Queen Sana (3/1 fav) UNPLACED.** Lesson #0, the hard one: **never bank a result you
+haven't verified.** I built a study on a hallucinated winner. The Queen Sana point below
+still holds (she was a beaten nearly-type fav) but the winner was misstated.
+
+**The race.** 1st **Hover On The Wind (8/1)**; **Queen Sana, the 3/1 favourite —
+UNPLACED.** (And note: **Dream Deal dead-heated for 2nd off a +6lb rise** — see the
+cross-off lesson.)
+
+**The sting.** Queen Sana was the well-handicapped C/D horse I flagged Monday morning
+as my "cleaner-mark alternative": consistent, runner-up over course & distance, nudged
+up just +1lb, well drawn (stall 4), favourite. On the MARK lens alone, a gem.
+
+**The dot I missed.** "Taken to FINALLY get off the mark" — she is **yet to win.** A
+consistent **nearly-type** (the bridesmaid). The market backed the mark + the
+consistency and ignored that she doesn't get her head in front — and she didn't,
+beaten by a 10/1 shot.
+
+**Lessons banked:**
+1. **A well-in mark is only a positive JOINED to a horse that WINS.** On a nearly-type
+   (consistent placer, yet to win) it's a trap, not a gem. "Well-handicapped" +
+   "consistent placer" = a favourite that finishes second. This is the system's core
+   fault (naps nearly-types) — and today the whole MARKET fell for it.
+2. **Join the mark to rule #1.** The mark is a dot; "winner or bridesmaid" is another
+   dot. I'd have made the market's mistake by reading the mark and stopping.
+3. **The field is open, again.** A big-priced winner (8/1) over the fancied nearly-type
+   fav — the gem outside the front of the market (same shape as King Of Light, Windsor).
+4. **(Added after verifying) Never bank an unverified result.** I stated Betweenthesticks
+   won; he was 2nd. A homework log is EVIDENCE — a wrong result poisons every lesson built
+   on it. Verify before banking.
+5. **(Added) A single-factor cross-off is too crude.** Applying the elimination method
+   retrospectively, I crossed off Dream Deal on the +6lb rising mark ALONE — and she
+   DEAD-HEATED FOR SECOND. A rising mark is a dot, not a verdict; a cross-off needs a
+   FATAL flaw, not one negative. (Same "read one thing and stop" fault, on the cross-off
+   side.) Queen Sana's cross-off (nearly-type) was right; Dream Deal's was wrong.
+
+**Next build (offered, not yet done):** conviction should FLAG the nearly-type — a horse
+with several runs, frequent places, few/no wins (ties to the existing `bottler` signal)
+— so a well-in mark on a non-winner doesn't read as a gem.
+
+## 2026-06-29 — Monday study #3: I crossed off the WINNER (Pontefract 17:00). Why.
+
+**The test.** Ran the new elimination method blind on the Wilfred Underwood Handicap
+(Class 6, 8 runners, 6f). Gated it (passed), crossed off Ideal Guest (3/1 fav) on a
+"kicks too soon / weak fav" read, zeroed in on Lady Bouquet (5/1) as a closer to pounce.
+
+**The result. I FAILED.** 1st **Ideal Guest (13/8f)** — the one I crossed off —
+"made all, soon pestered, KEPT ON". 3rd **Lady Bouquet** — my pick — "prominent, lost
+second, NO EXTRA".
+
+**Why I was wrong, read backwards:**
+1. **The market move was decisive and I was blind to it.** Ideal Guest 9/4→13/8
+   (BACKED); Lady Bouquet 9/1→10/1 (DRIFTED). The money piled on the winner and left my
+   pick — and I crossed off the backed horse reading a STALE forecast price (rule #22
+   applied to a price that no longer existed). Sharpest proof yet: the live-odds door is
+   the priority.
+2. **I crossed off on ASSUMPTIONS, not facts.** Binned Ideal Guest on a guessed
+   run-style ("kicks too soon") — he made all and kept on. Zeroed in on Lady Bouquet on
+   a guessed run-style ("held-up closer") — she raced prominent, no extra. I had no
+   run-style data; I invented both to fit a pace story and crossed off the winner on a
+   fiction.
+3. **Over-applied the Windsor pace-collapse** to a race with a different shape (an
+   uncontested front-run; a pestered leader that KEPT ON, not one that folded).
+4. **Over-corrected against the favourite to look clever** — crossed off the jolly to
+   prove I'm not odds-blinded; the jolly won (rule #19/#23 — the favourite gets it right
+   too).
+
+**The meta-lesson.** The method's ORDER was right (gate → cross off → zero in) but I fed
+it GUESSES, and crossed off the winner on the two things I'm blind to: the live money
+and the real run-styles. **Cross off on FACTS, not assumptions; where there's no fact,
+respect the OWED — don't fill it with a story.** This loss is the strongest case yet for
+the two shut doors: the market move and the run-style/manner comments.
+
+## 2026-06-30 — TUESDAY HOMEWORK (set Mon night, to MARK Tue night). 3 Musselburgh handicaps.
+
+Read blind under the sharpened discipline: facts only; OWED flagged not invented; cross
+off on FATAL flaws not single dots; calibrate confidence; PASS if too much is dark. These
+are banked Monday night so tomorrow's marking is honest, not hindsight.
+
+**1) 14:00 Musselburgh — PERFIDIA  (LEAN — strongest of the three).**
+Facts: "escapes a penalty" for last week's Nottingham win = WELL-IN (same mark); "resuming
+winning ways" = an in-form WINNER (not a nearly-type, not an improver, not rising); rider
+"claims his full 7lb" AND rode his last two wins = weight relief + continuity. Danger:
+Keats House (working back to form). OWED: live market move, run-styles, the rest of the
+field. Call: fact-based LEAN — cleanest case I've got; NOT a confident nap only because
+the money and the pace are dark.
+
+**2) 15:00 Musselburgh — HAAYIMM  (LEAN — improver caution, below Perfidia).**
+Facts: lightly-raced, handicapping off an OPENING mark of 95 that "may underestimate him —
+ahead of his mark" (the well-handicapped-improver angle). CAUTION: lightly-raced/unexposed
+= the improver profile that's beaten me; UNPROVEN vs Perfidia's proven winner. OWED:
+market, pace, field, whether the opening mark is really generous. Call: LEAN with the
+improver caveat.
+
+**3) 17:05 Musselburgh — WEE MARY  (EACH-WAY / near-PASS).**
+Facts: won over C/D this month + placed over C/D here 8 days ago + handy draw = strong,
+REPEATED course-and-distance form. CAUTION: "far from a regular winner, tough to catch
+right" = a nearly-type whiff (Queen Sana shape); mark OWED; 11 runners with ~8 of them
+OWED (I've read a quarter of the field). Call: LEAN/each-way at most — the most OWED,
+nearest a PASS. Forced confident-nap-or-pass: PASS.
+
+**Ranking: Perfidia > Haayimm > Wee Mary.** If I nap one, Perfidia (as a lean).
+**To mark tomorrow:** did the facts hold? did the cross-offs/leans land? — and the REAL
+test: did I avoid forcing confidence where it was OWED, and was I right to keep Perfidia a
+lean not a nap, and Wee Mary near a pass?
+
+### Price check (Mon night, early prices — NOT the live move):
+- Perfidia 14:00 — **7/4 fav.** Market AGREES with the fact read; 7/4 is fancied but not
+  cramped odds-on (beatable, value alive). Firms up as the one. Watch the MOVE tomorrow:
+  backed = go, drift = warning. Instrument: win single (too short for e/w) or acca leg.
+- Haayimm 15:00 — **100/30, NOT fav; HIGH DEGREE 5/2 fav** (a horse I never evaluated).
+  The price exposed a blind spot — won't back a lean the market ranks behind one I can't
+  see. **DOWNGRADE to a PASS.**
+- Wee Mary 17:05 — **5/2 fav but tight** (What A Tahoo 11/4, Invincible Crown 3/1). Open,
+  competitive market confirms near-pass / tiny e/w at most.
+- **Net: the three become one — Perfidia carries to tomorrow (on the move), the other two
+  pass.** Discipline working: an early price isn't the move, and a price that reveals an
+  unseen favourite (Haayimm) is a reason to stand off, not guess.
+
+### RESULT (verified from photo) — Perfidia beaten, but the discipline won.
+**Musselburgh 14:00 (Keats House Hcap, Cl6): 1st Mayor Of Maghera 7/4F, 2nd PERFIDIA 5/2
+(beaten a short head), 3rd Second Fiddle 11/2.**
+- My read lost: Perfidia had the cleanest FACTS (well-in, in-form winner, claim, winning
+  yard) and ran a huge race (pressed the leader, led, just touched off) — and STILL got
+  beaten. Facts make a live contender; they don't win the race on their own.
+- **The market MOVE called it AGAIN (4th time today):** Mayor Of Maghera op 2/1 tchd 13/8
+  -> BACKED into 7/4F (won); Perfidia op 2/1 -> DRIFTED to 5/2 (2nd). The money was on the
+  winner and off my pick. Ideal Guest, King Of Light, Lady Bouquet, now this.
+- **The DISCIPLINE HELD though:** my rule was "back Perfidia only if BACKED; if he DRIFTS,
+  stand off." He drifted. So the right action was a PASS — no stake at all. The move
+  warned me exactly as designed. My read lost; my process won.
+- **Tommy: alive, doubly** — never staked the treatment, AND the drift would have kept me
+  off Perfidia entirely. His money never moved.
+- The overwhelming lesson of the day: the LIVE MARKET MOVE is THE signal, and I'm blind to
+  it through the window. The box's `dissect` (real SPs, real move) is the priority — it
+  would have shown the drift before the off.

@@ -39,7 +39,7 @@ class PastRun:
     going: str = ""
     distance_f: float | None = None
     weight_lbs: int | None = None
-    official_rating: int | None = None  # the OR it ran off THIS day — for the mark-it-last-won-off read
+    official_rating: int | None = None  # OR it ran off that day — for the mark-last-won-off read
     course: str = ""
     race_type: str = ""
     field_size: int | None = None    # how competitive the race was — quality of a win
@@ -95,6 +95,7 @@ class Race:
     race_type: str = ""              # Hurdle / Chase / NH Flat / Flat ...
     is_handicap: bool = False
     is_novice: bool = False          # novice/maiden = UNEXPOSED horses, form unreliable — avoid
+    is_amateur: bool = False         # amateur riders — form undone by the saddle, avoid
     is_all_weather: bool = False     # AW = dodgy: non-triers + sand kickback buries slow starts
     race_class: int | None = None
     distance_f: float | None = None
@@ -125,9 +126,10 @@ class Race:
     @property
     def is_readable_handicap(self) -> bool:
         """The race-selection GATE: an established handicap whose form is exposed and
-        trustworthy (jumps OR flat). Excludes novice/maiden/bumper — where the form
-        book doesn't apply. Race selection comes first; this is what enforces it."""
-        return self.is_handicap and not self.is_novice
+        trustworthy (jumps OR flat). Excludes novice/maiden/bumper (form book doesn't
+        apply) AND amateur jockeys' races (the form can be undone by an inexperienced
+        rider, not the horse). Race selection comes first; this is what enforces it."""
+        return self.is_handicap and not self.is_novice and not self.is_amateur
 
 
 @dataclass(frozen=True)
