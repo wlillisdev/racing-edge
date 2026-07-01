@@ -62,6 +62,41 @@ def test_render_orders_by_finish_stars_winner_and_marks_owed() -> None:
     assert "readily" in out                                     # H1 past comment surfaced
 
 
+def test_gather_excludes_todays_run_from_history_no_lookahead() -> None:
+    """The leak behind binned nuance #1: the API returns the horse's runs INCLUDING the
+    race being studied, so the winner read WELL-IN off its own win. gather() must cut
+    history strictly BEFORE the race date."""
+    from racing_edge.pipeline.restudy import gather
+
+    class _FakeClient:
+        def racecards(self, day="today"):
+            return {"racecards": [{
+                "race_id": "r1", "course": "Epsom", "off_time": "6:22",
+                "date": "2026-07-01", "type": "Flat", "race_name": "H'cap",
+                "runners": [{"horse_id": "H1", "horse": "Sir Garfield"}],
+            }]}
+
+        def results_by_date(self, ds):
+            return {"results": [{"race_id": "r1", "date": "2026-07-01",
+                                 "runners": [{"horse_id": "H1", "position": "1",
+                                              "sp_dec": "8.5"}]}]}
+
+        def horse_results(self, horse_id, limit=12):
+            return [
+                {"date": "2026-07-01", "race_id": "r1", "runners": [        # TODAY — leak
+                    {"horse_id": "H1", "position": "1", "or": "77"}]},
+                {"date": "2026-04-08", "race_id": "r0", "runners": [        # real past
+                    {"horse_id": "H1", "position": "1", "or": "74"}]},
+            ]
+
+    studies = gather(_FakeClient(), "2026-07-01")
+    hist = studies[0].histories["H1"]
+    assert len(hist) == 1 and hist[0].date.isoformat() == "2026-04-08"
+    # and the mark now reads truthfully: last won off 74, so today off 77 = +3lb raised
+    from racing_edge.domain.mark import mark_read
+    assert mark_read(77, hist).verdict == "+3lb"
+
+
 def _main() -> int:
     fns = [v for k, v in sorted(globals().items()) if k.startswith("test_")]
     for fn in fns:

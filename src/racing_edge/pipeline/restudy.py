@@ -61,8 +61,15 @@ def gather(client: _Client, day_iso: str, course: str | None = None,
         if progress:
             progress(f"    · {race.course} {race.off_time} — pulling "
                      f"{race.field_size} runners' history")
+        # NO LOOK-AHEAD: history stops STRICTLY BEFORE the race being studied. The API
+        # returns the horse's runs INCLUDING today's — leave that in and the winner
+        # always reads WELL-IN off its own win (the leak behind the binned nuance #1).
+        # Re-study must read the form as it stood BEFORE the off.
         histories = {
-            r.horse_id: past_runs_from_raw(client.horse_results(r.horse_id), r.horse_id)
+            r.horse_id: tuple(
+                h for h in past_runs_from_raw(client.horse_results(r.horse_id), r.horse_id)
+                if h.date < race.date
+            )
             for r in race.runners if r.horse_id
         }
         out.append(Restudy(race=race, result=results[race.race_id], histories=histories))
