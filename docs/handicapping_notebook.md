@@ -437,6 +437,19 @@ winner *before* the price or the result did? Bank the clue you missed as a tell 
 Honest by construction — every line is what the API returned; a blank prints **OWED**, never
 a guess. Going through the window without lying.
 
+**The self-interrogation — the AI teaches ITSELF (`cli.learn`, #27/#29).** Laying the form
+out isn't learning; *thinking* about it is. `learn` turns the master's own teaching move —
+*"why did you pick that horse? the winner was in the form — why did you miss it? what's the
+nuance?"* — into a self-prompt the model answers OVER the real readout (form-first, cite the
+fact, OWED stays unknown). Each lesson it teaches itself is banked in `data/nuances.db` as a
+**proposal**, dated to the race that taught it, with the facts it rests on and what's OWED to
+confirm it — and it stays a proposal until the **trial record** or the **master** promotes it
+to a tell or a rule. The model reasons over the facts; it never writes the notebook on its own
+word, and it never invents one (the two guardrails against the trust-break). Needs the model
+ON — `ANTHROPIC_API_KEY` set — and uses a direct-HTTP reasoner, not the SDK that crashes the
+box. That is the deep loop: pick blind → result → interrogate yourself → bank the nuance →
+test it over the record.
+
 ## The system's core fault I'm trying to fix
 
 It naps **"nearly types"** — close but not winning — because it weights *surface

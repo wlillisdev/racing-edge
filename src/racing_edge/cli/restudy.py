@@ -10,6 +10,8 @@ and study the whole race again knowing who won, to find the clue you missed. Run
 box (real API), shows only what the window returns, prints OWED where it's blank. Never
 invents a comment or a price. It's slow by design (it pulls every runner's history), so
 focus with --time when you're studying one race.
+
+To make it THINK about what it reads (self-interrogate + bank a nuance), use cli.learn.
 """
 
 from __future__ import annotations
@@ -18,11 +20,7 @@ import argparse
 
 from racing_edge.cli._common import resolve_date
 from racing_edge.data.client import get_client
-from racing_edge.data.normalise import (
-    past_runs_from_raw,
-    racecards_from_raw,
-    results_from_raw,
-)
+from racing_edge.pipeline.restudy import gather
 from racing_edge.report.restudy import render_restudy
 
 
@@ -37,19 +35,12 @@ def main() -> int:
 
     client = get_client()
     ds = resolve_date(args.day).isoformat()
-    results = {r.race_id: r for r in results_from_raw(client.results_by_date(ds))}
-    cards = racecards_from_raw(client.racecards(ds))
 
-    # pick the readable handicaps that have a result AND match the focus filters
-    def _match(c) -> bool:
-        if not c.is_readable_handicap or c.race_id not in results:
-            return False
-        if args.course and args.course.lower() not in c.course.lower():
-            return False
-        return not (args.time and args.time not in c.off_time)
+    def _progress(line: str) -> None:
+        print(line, flush=True)
 
-    races = [c for c in cards if _match(c)]
-    if not races:
+    studies = gather(client, ds, course=args.course, time=args.time, progress=_progress)
+    if not studies:
         print(f"  Nothing to re-study for {ds} "
               f"(no readable handicap with a result matched your filter).")
         return 0
@@ -60,16 +51,8 @@ def main() -> int:
         print(s, flush=True)
         out.append(s)
 
-    print(f"  re-studying {len(races)} race(s) off the full form — pulling every runner's "
-          f"history (slow; --time focuses one)…", flush=True)
-    for race in races:
-        print(f"    · {race.course} {race.off_time} — reading {race.field_size} "
-              f"runners' full form", flush=True)
-        histories = {
-            r.horse_id: past_runs_from_raw(client.horse_results(r.horse_id), r.horse_id)
-            for r in race.runners if r.horse_id
-        }
-        emit(render_restudy(race, results[race.race_id], histories, past_n=args.past))
+    for st in studies:
+        emit(render_restudy(st.race, st.result, st.histories, past_n=args.past))
         emit("")
 
     if args.email:
