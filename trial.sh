@@ -5,6 +5,9 @@
 #   ./trial.sh nap       MORNING: nominate + BANK today's pick (the new rules on real data)
 #   ./trial.sh dissect   read the whole card's REAL market moves (backed/drifted)
 #   ./trial.sh settle    AFTER RACING: settle the banked pick, update the strike rate
+#   ./trial.sh restudy   THE LEARNING LOOP: re-study finished races off the FULL form
+#                        (mark, figures, each horse's last runs WITH comments) — what did
+#                        we miss? add a time to focus one race, e.g. RESTUDY_TIME=16:10
 #   ./trial.sh all       nap + dissect in one go
 #
 # Every run also EMAILS its output if the SMTP env vars are set (EMAIL_SENDER /
@@ -31,8 +34,9 @@ case "${1:-nap}" in
   nap)     "$PY" -m racing_edge.cli.nap     --day today --both --email ;;
   dissect) "$PY" -m racing_edge.cli.dissect --day today        --email ;;
   settle)  "$PY" -m racing_edge.cli.nap     --settle today      --email ;;
+  restudy) "$PY" -m racing_edge.cli.restudy --day today ${RESTUDY_TIME:+--time "$RESTUDY_TIME"} --email ;;
   all)     "$PY" -m racing_edge.cli.nap     --day today --both --email
            echo
            "$PY" -m racing_edge.cli.dissect --day today         --email ;;
-  *) echo "usage: ./trial.sh [nap|dissect|settle|all]"; exit 1 ;;
+  *) echo "usage: ./trial.sh [nap|dissect|settle|restudy|all]"; exit 1 ;;
 esac

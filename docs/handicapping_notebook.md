@@ -424,6 +424,19 @@ change the picks, and makes the results change the notebook:
 Closed loop: rules shape picks → results test rules → results refine rules.
 Transparent (rules, not weights), human-decided, and it compounds week on week.
 
+**The re-study — the master's actual loop, made honest (`cli.restudy`, #27/#29).** For
+years the real learning was this: *when a result comes in, go BACK to the full form and
+study the whole race again, knowing who won, to see what you missed.* The apprentice was
+NOT doing this — it read a thin slice (SP + market move) off `dissect` and called it study.
+That is price-first, backwards (#29), and it is why there was no real learning loop. The
+fix pulls the FULL form through the window (the box's real API) and lays every runner out
+against the result: the **mark** (well-in vs raised), the **form figures**, the **OR**, the
+**spotlight**, and each horse's **last runs WITH their in-running comments** — the how-it-ran
+door the old code literally dropped on the floor. Then the read is form-FIRST: what said the
+winner *before* the price or the result did? Bank the clue you missed as a tell or a rule.
+Honest by construction — every line is what the API returned; a blank prints **OWED**, never
+a guess. Going through the window without lying.
+
 ## The system's core fault I'm trying to fix
 
 It naps **"nearly types"** — close but not winning — because it weights *surface
