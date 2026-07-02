@@ -15,6 +15,7 @@ Pure: a race (card) + its result + each runner's history in, a readout out.
 
 from __future__ import annotations
 
+from racing_edge.domain.manner import nap_verdict
 from racing_edge.domain.mark import mark_read
 from racing_edge.domain.models import PastRun, Race, RaceResult, RunnerResult
 
@@ -55,6 +56,11 @@ def render_restudy(race: Race, result: RaceResult,
     )
     winner = next((r for r in runners
                    if res_by_id.get(r.horse_id) and res_by_id[r.horse_id].position == 1), None)
+    # market rank off SP — mechanical read done in CODE, not left for the model to
+    # miscount (the "only recent winner" failure was exactly this class of error)
+    priced = sorted([rr for rr in result.runners if rr.sp_dec and rr.sp_dec > 1],
+                    key=lambda rr: rr.sp_dec)          # type: ignore[arg-type,return-value]
+    mkt_rank = {rr.horse_id: i + 1 for i, rr in enumerate(priced)}
     hcap = "Handicap " if race.is_handicap else ""
     head = f"{race.course} {race.off_time} — {hcap}{race.race_type}"
     if race.race_class:
@@ -69,16 +75,23 @@ def render_restudy(race: Race, result: RaceResult,
         pos = (str(rr.position) if rr and rr.position else (rr.status if rr else "—")) or "—"
         sp = rr.sp_dec if rr else None
         star = " ★WON" if (rr and rr.position == 1) else ""
-        mark = mark_read(r.official_rating, histories.get(r.horse_id, ()))
+        hist = histories.get(r.horse_id, ())
+        mark = mark_read(r.official_rating, hist)
         marktxt = mark.verdict or "mark OWED (no prior win / no today mark)"
         btn = f" btn {rr.beaten_lengths}" if rr and rr.beaten_lengths else ""
+        rank = f"  mkt {mkt_rank[r.horse_id]}/{len(priced)}" if r.horse_id in mkt_rank else ""
         lines.append("")
         lines.append(f"  {pos:>3}{star}  {r.horse:22} SP {sp or '?':<6} "
-                     f"{_move(r.odds.morning, sp)}{btn}")
+                     f"{_move(r.odds.morning, sp)}{rank}{btn}")
         gear = f" | headgear {r.headgear}{'(1st time)' if r.headgear_first_time else ''}" \
             if r.headgear else ""
         lines.append(f"        mark: {marktxt}  | form {r.form or '?'} "
                      f"| OR {r.official_rating or '?'} RPR {r.rpr or '?'}{gear}")
+        # the manner read, done in code from the comments (rule #1) — the model reasons
+        # over the verdict instead of re-classifying prose (where it slips)
+        mv = nap_verdict([h.comment for h in hist[:4]])
+        if mv.recommendation != "neutral" or mv.finisher_runs or mv.non_finisher_runs:
+            lines.append(f"        manner read (#1): {mv.recommendation} — {mv.reason}")
         spot = r.spotlight.strip()
         if spot:
             lines.append(f"        spotlight: {spot[:200]}")

@@ -39,6 +39,25 @@ class Restudy:
         named = next((r.horse for r in self.race.runners if r.horse_id == w.horse_id), "")
         return named or w.horse or "?"
 
+    def system_read(self) -> str:
+        """What the RULES said about this field PRE-RACE — the conviction engine run on
+        the same no-look-ahead history and the morning prices. The self-study marks THIS,
+        not just the cold form: did the system's own read find or miss the winner, and
+        which lens was wrong?"""
+        from racing_edge.selection.conviction import conviction
+        priced = sorted([r for r in self.race.runners
+                         if r.odds.consensus and r.odds.consensus > 1],
+                        key=lambda r: r.odds.consensus)  # type: ignore[arg-type,return-value]
+        ranks = {r.horse_id: i + 1 for i, r in enumerate(priced)}
+        lines: list[str] = []
+        for r in self.race.runners:
+            c = conviction(r, self.race, self.histories.get(r.horse_id, ()),
+                           ranks.get(r.horse_id, 99), self.race.field_size)
+            fl = f"  FLAGS: {', '.join(c.flags)}" if c.flags else ""
+            lines.append(f"  {r.horse:22} conv {c.score}: "
+                         f"{', '.join(c.aligned) or 'nothing aligned'}{fl}")
+        return "\n".join(lines)
+
 
 def gather(client: _Client, day_iso: str, course: str | None = None,
            time: str | None = None, progress: Callable[[str], None] | None = None) -> list[Restudy]:

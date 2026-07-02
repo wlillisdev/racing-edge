@@ -36,6 +36,15 @@ SYSTEM = (
     "3. Every claim must cite the exact fact from the readout it rests on.\n"
     "4. A nuance is a PROPOSAL to be tested, not a law. State what is OWED to confirm it "
     "and how confident you are.\n"
+    "5. TEST THE NOTEBOOK: also report which numbered rules this race supported or "
+    "contradicted, citing the fact. The rule index:\n"
+    "   #1 read the finish/manner, not the figures; #2 2nd/3rd-fav sweet spot; "
+    "#14 all-weather caution; #15 franking is a tiebreaker; #17/#18 read the smart "
+    "money/gamble; #19 don't fear a fair-priced fav; #20 pace shapes the race; "
+    "#22 mark vs price gap; #24/#25 evaluate all, eliminate first; #26 facts not "
+    "assumptions; #29 form first, odds last.\n"
+    "If a SYSTEM PRE-RACE READ is supplied, mark it like a teacher: did the rules find "
+    "the winner, and if not, WHICH lens failed or was missing?\n"
     "Answer ONLY with a single JSON object, no prose around it."
 )
 
@@ -48,7 +57,11 @@ _SCHEMA_HINT = (
     '  "nuance": "one transferable sentence — the pattern to watch next time",\n'
     '  "cite": ["the exact readout facts this rests on"],\n'
     '  "owed": "what was blank/OWED that would confirm or kill this",\n'
-    '  "confidence": "low | medium | high"\n'
+    '  "confidence": "low | medium | high",\n'
+    '  "system_verdict": "if a system read was supplied: did the rules find the winner, '
+    'and which lens failed/was missing (or \\"n/a\\")",\n'
+    '  "rule_evidence": [{"rule": "#22", "verdict": "supports|contradicts", '
+    '"note": "the fact"}]\n'
     '}'
 )
 
@@ -61,6 +74,8 @@ class Critique:
     cite: tuple[str, ...] = field(default_factory=tuple)
     owed: str = ""
     confidence: str = ""
+    system_verdict: str = ""                                  # marking the rules' own read
+    rule_evidence: tuple[tuple[str, str, str], ...] = ()      # (rule, verdict, note)
     raw: str = ""            # the model's raw text, kept if parsing fails
 
     @property
@@ -79,16 +94,24 @@ class Critique:
         }
 
 
-def build_prompt(readout: str, winner: str, blind_pick: str | None = None) -> str:
-    """The self-prompt: the real readout + the master's questions + the output shape."""
+def build_prompt(readout: str, winner: str, blind_pick: str | None = None,
+                 system_read: str = "") -> str:
+    """The self-prompt: the real readout + the master's questions + the output shape.
+    `system_read` is what the RULES said pre-race — supplied so the detective marks its
+    OWN homework (did the lenses find the winner?), not just the cold form."""
     pick_line = (
         f"You picked **{blind_pick}** for this race, banked BLIND before the off.\n"
         if blind_pick else
         "You did not bank a pick in this race — study the winner cold.\n"
     )
+    sys_block = (
+        f"\nSYSTEM PRE-RACE READ (what the rules said BEFORE the off — mark it like a "
+        f"teacher):\n{system_read}\n" if system_read else ""
+    )
     return (
         f"{pick_line}"
-        f"The winner was **{winner}**.\n\n"
+        f"The winner was **{winner}**.\n"
+        f"{sys_block}\n"
         f"FULL-FORM READOUT (the only facts you may use):\n"
         f"-----------------------------------------------\n{readout}\n"
         f"-----------------------------------------------\n\n"
@@ -110,6 +133,12 @@ def parse_critique(text: str) -> Critique:
     cite = d.get("cite")
     cites = tuple(str(c) for c in cite) if isinstance(cite, list) else \
         ((str(cite),) if cite else ())
+    rev = d.get("rule_evidence")
+    rules = tuple(
+        (str(e.get("rule", "")), str(e.get("verdict", "")).lower().strip(),
+         str(e.get("note", "")))
+        for e in rev if isinstance(e, dict)
+    ) if isinstance(rev, list) else ()
     return Critique(
         why_i_picked=str(d.get("why_i_picked", "")),
         what_i_missed=str(d.get("what_i_missed", "")),
@@ -117,6 +146,8 @@ def parse_critique(text: str) -> Critique:
         cite=cites,
         owed=str(d.get("owed", "")),
         confidence=str(d.get("confidence", "")).lower().strip(),
+        system_verdict=str(d.get("system_verdict", "")),
+        rule_evidence=rules,
         raw=text,
     )
 
@@ -193,6 +224,11 @@ def render_critique(c: Critique, race_label: str, winner: str) -> str:
         lines.append(f"    rests on:       {' | '.join(c.cite)}")
     if c.owed:
         lines.append(f"    OWED to confirm: {c.owed}")
+    if c.system_verdict and c.system_verdict.lower() != "n/a":
+        lines.append(f"    marking the RULES' read: {c.system_verdict}")
+    for rule, verdict, note in c.rule_evidence:
+        sign = "✓" if verdict == "supports" else "✗"
+        lines.append(f"    {sign} {rule} {verdict}: {note}")
     lines.append(f"    confidence:     {c.confidence or '?'}  "
                  f"(a proposal — the record and the master decide, not the model)")
     return "\n".join(lines)

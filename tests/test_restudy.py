@@ -62,6 +62,45 @@ def test_render_orders_by_finish_stars_winner_and_marks_owed() -> None:
     assert "readily" in out                                     # H1 past comment surfaced
 
 
+def test_render_does_the_grunt_reads_in_code_manner_and_market_rank() -> None:
+    """The model shouldn't re-derive mechanical reads (where it slips): the readout now
+    prints the manner verdict from comments and the market rank off SP."""
+    race = Race(race_id="r1", course="Worcester", off_time="1:50", date=date(2026, 7, 1),
+                race_type="Chase", is_handicap=True,
+                runners=(_runner("H1", "Knightsbridge", 3.6, 90),
+                         _runner("H2", "Culligran", 16.0, 85)))
+    result = RaceResult(race_id="r1", date=date(2026, 7, 1), runners=(
+        RunnerResult(horse_id="H1", position=1, sp_dec=2.9),
+        RunnerResult(horse_id="H2", position=2, sp_dec=12.0, beaten_lengths=3.0),
+    ))
+    histories = {
+        "H1": past_runs_from_raw([{"date": "2026-06-03", "runners": [
+            {"horse_id": "H1", "position": "1", "or": "85",
+             "comment": "challenged at the last - ran on well"}]}], "H1"),
+        "H2": past_runs_from_raw([{"date": "2026-06-06", "runners": [
+            {"horse_id": "H2", "position": "7", "or": "86",
+             "comment": "under pressure and weakened 4 out"}]}], "H2"),
+    }
+    out = render_restudy(race, result, histories)
+    assert "manner read (#1): win_positive" in out          # the finisher, read in code
+    assert "manner read (#1): place_only" not in out         # one bad run isn't a placer
+    assert "mkt 1/2" in out and "mkt 2/2" in out             # market rank off SP
+
+
+def test_system_read_reports_what_the_rules_said_pre_race() -> None:
+    from racing_edge.pipeline.restudy import Restudy
+    race = Race(race_id="r1", course="Cartmel", off_time="3:00", date=date(2026, 7, 1),
+                race_type="Chase", is_handicap=True,
+                runners=(_runner("H1", "Gem", 3.0, 120),))
+    result = RaceResult(race_id="r1", date=date(2026, 7, 1),
+                        runners=(RunnerResult(horse_id="H1", position=1, sp_dec=3.0),))
+    hist = {"H1": past_runs_from_raw([{"date": "2026-05-01", "course": "Cartmel",
+                                       "runners": [{"horse_id": "H1", "position": "1",
+                                                    "or": "120"}]}], "H1")}
+    read = Restudy(race=race, result=result, histories=hist).system_read()
+    assert "Gem" in read and "well-in" in read               # the conviction engine ran
+
+
 def test_gather_excludes_todays_run_from_history_no_lookahead() -> None:
     """The leak behind binned nuance #1: the API returns the horse's runs INCLUDING the
     race being studied, so the winner read WELL-IN off its own win. gather() must cut

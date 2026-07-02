@@ -95,10 +95,22 @@ def _learn_one(st: Restudy, study, sceptic, day_iso: str) -> str:
     readout = render_restudy(st.race, st.result, st.histories)
     label = f"{st.race.course} {st.race.off_time}"
     blind = _blind_pick_for(day_iso, st.race.race_id)
-    text = study(SYSTEM, build_prompt(readout, st.winner, blind))
+    # the detective marks its OWN homework: what the rules said pre-race goes in too
+    text = study(SYSTEM, build_prompt(readout, st.winner, blind,
+                                      system_read=st.system_read()))
     crit = parse_critique(text)
     if not crit.ok:
         return render_critique(crit, label, st.winner)
+
+    # rule evidence banks regardless of the nuance's fate — the notebook gets tested
+    # even on races that teach nothing new
+    if crit.rule_evidence:
+        log = open_nuance_log()
+        for rule, verdict, note in crit.rule_evidence:
+            if rule and verdict in ("supports", "contradicts"):
+                log.record_evidence(day=st.race.date, race_id=st.race.race_id,
+                                    rule=rule, verdict=verdict, note=note)
+        log.close()
 
     # THE SCEPTIC — a second, adversarial pass on a SHARPER model tries to KILL the
     # nuance against the same readout before it's banked (per-task models: the kill-pass
@@ -181,10 +193,25 @@ def main() -> int:
                     help="rule nuance #N REJECTED (the master's bin)")
     ap.add_argument("--synthesise", action="store_true",
                     help="join the dots ACROSS days: nuances + nap record -> patterns")
+    ap.add_argument("--rules", action="store_true",
+                    help="show the rule scoreboard: results FOR vs AGAINST each rule")
     ap.add_argument("--email", action="store_true", help="email the self-study (SMTP env)")
     args = ap.parse_args()
     if args.show:
         return _show()
+    if args.rules:
+        log = open_nuance_log()
+        tally = log.rule_tally()
+        log.close()
+        if not tally:
+            print("  No rule evidence banked yet — it accumulates with every self-study.")
+            return 0
+        print("  THE NOTEBOOK, TESTED — results for vs against each rule:")
+        for t in tally:
+            print(f"    {t['rule']:5} supported {t['supports']:3}   "
+                  f"contradicted {t['contradicts']:3}")
+        print("  (a rule repeatedly contradicted is the master's cue to look at it.)")
+        return 0
     if args.promote is not None:
         return _rule(args.promote, "validated")
     if args.bin_id is not None:

@@ -134,6 +134,42 @@ def test_nuance_rows_carry_an_id_for_the_ruling_cli() -> None:
         log.close()
 
 
+def test_critique_carries_rule_evidence_and_the_system_verdict() -> None:
+    """The improved detective: marks the system's own read + tests the notebook."""
+    c = parse_critique(
+        '{"nuance": "n", "what_i_missed": "m", '
+        '"system_verdict": "the manner lens found the winner; the mark lens flagged it", '
+        '"rule_evidence": [{"rule": "#1", "verdict": "Supports", "note": "asserted"}, '
+        '{"rule": "#22", "verdict": "contradicts", "note": "raised horse won"}]}'
+    )
+    assert c.system_verdict.startswith("the manner lens")
+    assert c.rule_evidence == (("#1", "supports", "asserted"),
+                               ("#22", "contradicts", "raised horse won"))
+    text = render_critique(c, "x", "y")
+    assert "✓ #1 supports" in text and "✗ #22 contradicts" in text
+    # prompt plumbing: the system read block appears only when supplied
+    p = build_prompt("R", "W", None, system_read="Gem conv 3: well-in")
+    assert "SYSTEM PRE-RACE READ" in p and "Gem conv 3" in p
+    assert "SYSTEM PRE-RACE READ" not in build_prompt("R", "W", None)
+
+
+def test_rule_evidence_tally_accumulates_per_rule() -> None:
+    with tempfile.TemporaryDirectory() as d:
+        log = NuanceLog(Path(d) / "n.db")
+        for rid in ("r1", "r2"):
+            log.record_evidence(day=date(2026, 7, 1), race_id=rid, rule="#1",
+                                verdict="supports", note="finisher won")
+        log.record_evidence(day=date(2026, 7, 1), race_id="r1", rule="#22",
+                            verdict="contradicts", note="raised won")
+        # same (date, race, rule, verdict) twice -> one row
+        log.record_evidence(day=date(2026, 7, 1), race_id="r1", rule="#22",
+                            verdict="contradicts", note="dup")
+        tally = {t["rule"]: t for t in log.rule_tally()}
+        assert tally["#1"]["supports"] == 2 and tally["#1"]["contradicts"] == 0
+        assert tally["#22"]["contradicts"] == 1
+        log.close()
+
+
 def test_nuance_log_banks_proposed_and_is_idempotent() -> None:
     with tempfile.TemporaryDirectory() as d:
         log = NuanceLog(Path(d) / "nuances.db")
