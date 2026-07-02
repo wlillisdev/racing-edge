@@ -29,6 +29,27 @@ CREATE TABLE IF NOT EXISTS nuance (
     status      TEXT NOT NULL DEFAULT 'proposed',   -- proposed | validated | rejected
     UNIQUE (date, race_id, nuance)
 );
+CREATE TABLE IF NOT EXISTS rule_evidence (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    date        TEXT NOT NULL,
+    race_id     TEXT NOT NULL DEFAULT '',
+    rule        TEXT NOT NULL,                      -- e.g. '#22'
+    verdict     TEXT NOT NULL,                      -- supports | contradicts
+    note        TEXT NOT NULL DEFAULT '',
+    UNIQUE (date, race_id, rule, verdict)
+);
+CREATE TABLE IF NOT EXISTS tracked (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    date        TEXT NOT NULL,                      -- the race that taught the clue
+    race_id     TEXT NOT NULL DEFAULT '',
+    horse       TEXT NOT NULL,
+    horse_id    TEXT NOT NULL DEFAULT '',
+    angle       TEXT NOT NULL,                      -- follow | oppose
+    note        TEXT NOT NULL DEFAULT '',
+    conditions  TEXT NOT NULL DEFAULT '',
+    status      TEXT NOT NULL DEFAULT 'active',     -- active | done
+    UNIQUE (date, horse, angle)
+);
 """
 
 
@@ -64,6 +85,42 @@ class NuanceLog:
     def set_status(self, nuance_id: int, status: str) -> None:
         self._conn.execute("UPDATE nuance SET status = ? WHERE id = ?", (status, nuance_id))
         self._conn.commit()
+
+    def record_evidence(self, *, day: date, race_id: str, rule: str, verdict: str,
+                        note: str) -> None:
+        """One race's verdict on one notebook rule — the notebook being TESTED."""
+        self._conn.execute(
+            "INSERT OR IGNORE INTO rule_evidence (date, race_id, rule, verdict, note) "
+            "VALUES (?,?,?,?,?)",
+            (day.isoformat(), race_id, rule, verdict, note),
+        )
+        self._conn.commit()
+
+    def track(self, *, day: date, race_id: str, horse: str, horse_id: str,
+              angle: str, note: str, conditions: str) -> None:
+        """Bank a forward clue mined from a result — a horse to follow or oppose
+        NEXT time (#27). Surfaced automatically when the horse reappears on a card."""
+        self._conn.execute(
+            "INSERT OR IGNORE INTO tracked (date, race_id, horse, horse_id, angle, "
+            "note, conditions, status) VALUES (?,?,?,?,?,?,?, 'active')",
+            (day.isoformat(), race_id, horse, horse_id, angle, note, conditions),
+        )
+        self._conn.commit()
+
+    def tracked_active(self) -> list[dict]:
+        rows = self._conn.execute(
+            "SELECT * FROM tracked WHERE status = 'active' ORDER BY date").fetchall()
+        return [dict(r) for r in rows]
+
+    def rule_tally(self) -> list[dict]:
+        """Per-rule evidence counts: how often results supported vs contradicted each
+        notebook rule. The running scoreboard of the method itself."""
+        rows = self._conn.execute(
+            "SELECT rule, "
+            "SUM(CASE WHEN verdict = 'supports' THEN 1 ELSE 0 END) AS supports, "
+            "SUM(CASE WHEN verdict = 'contradicts' THEN 1 ELSE 0 END) AS contradicts "
+            "FROM rule_evidence GROUP BY rule ORDER BY rule").fetchall()
+        return [dict(r) for r in rows]
 
     def close(self) -> None:
         self._conn.close()

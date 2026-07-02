@@ -5,6 +5,11 @@
     python -m racing_edge.cli.learn --show                        # read the banked nuances
     python -m racing_edge.cli.learn --promote 3                   # master: rule #3 REAL
     python -m racing_edge.cli.learn --bin 1                       # master: rule #1 rubbish
+    python -m racing_edge.cli.learn --synthesise [--email]        # join dots ACROSS days
+
+Every nuance now faces THE SCEPTIC before banking — a second, adversarial model pass
+that tries to kill it against the same readout (fact-check, contradiction, data-artifact,
+triviality). Refuted -> shown but NOT banked. Survivor -> banked as a proposal.
 
 This is the piece the master kept asking for: not just laying the form out (that's
 cli.restudy), but THINKING about it — the AI asking itself *"why did you pick that horse?
@@ -20,15 +25,18 @@ from __future__ import annotations
 
 import argparse
 
-from racing_edge.ai.reason import get_reasoner
+from racing_edge.ai.reason import get_investigator, get_reasoner, resolve_model
 from racing_edge.cli._common import open_nap_log, open_nuance_log, resolve_date
 from racing_edge.data.client import get_client
 from racing_edge.pipeline.restudy import Restudy, gather
 from racing_edge.report.restudy import render_restudy
 from racing_edge.study.selfcritique import (
+    REFUTE_SYSTEM,
     SYSTEM,
     build_prompt,
+    build_refute_prompt,
     parse_critique,
+    parse_refutation,
     render_critique,
 )
 
@@ -83,18 +91,104 @@ def _rule(nuance_id: int, status: str) -> int:
     return 0
 
 
-def _learn_one(st: Restudy, reason, day_iso: str) -> str:
+def _learn_one(st: Restudy, study, sceptic, day_iso: str) -> str:
     readout = render_restudy(st.race, st.result, st.histories)
     label = f"{st.race.course} {st.race.off_time}"
     blind = _blind_pick_for(day_iso, st.race.race_id)
-    text = reason(SYSTEM, build_prompt(readout, st.winner, blind))
+    # the detective marks its OWN homework: what the rules said pre-race goes in too
+    prompt = build_prompt(readout, st.winner, blind, system_read=st.system_read())
+    result = study(SYSTEM, prompt)
+    # the investigator returns (text, trail); a plain reasoner returns text
+    text, trail = result if isinstance(result, tuple) else (result, [])
+    for t in trail:
+        print(f"      🔎 {t}", flush=True)
     crit = parse_critique(text)
-    if crit.ok:
+    if not crit.ok:
+        return render_critique(crit, label, st.winner)
+
+    # rule evidence + forward clues bank regardless of the nuance's fate — the notebook
+    # gets tested and the horses-to-follow list grows even on races teaching nothing new
+    if crit.rule_evidence or crit.to_follow:
+        ids = {r.horse.strip().lower(): r.horse_id for r in st.race.runners}
         log = open_nuance_log()
-        log.record(day=st.race.date, race_id=st.race.race_id, course=st.race.course,
-                   winner=st.winner, blind_pick=blind or "", **crit.record_fields())
+        for rule, verdict, note in crit.rule_evidence:
+            if rule and verdict in ("supports", "contradicts"):
+                log.record_evidence(day=st.race.date, race_id=st.race.race_id,
+                                    rule=rule, verdict=verdict, note=note)
+        for horse, angle, note, conditions in crit.to_follow:
+            hid = ids.get(horse.strip().lower(), "")
+            if horse and angle in ("follow", "oppose") and hid:   # only horses ON the card
+                log.track(day=st.race.date, race_id=st.race.race_id, horse=horse,
+                          horse_id=hid, angle=angle, note=note, conditions=conditions)
         log.close()
-    return render_critique(crit, label, st.winner)
+
+    # THE SCEPTIC — a second, adversarial pass on a SHARPER model tries to KILL the
+    # nuance against the same readout before it's banked (per-task models: the kill-pass
+    # must out-think the proposer — Haiku proposing AND checking wrecked the reads).
+    ref = parse_refutation(sceptic(REFUTE_SYSTEM, build_refute_prompt(readout, crit)))
+    out = render_critique(crit, label, st.winner)
+    if ref.refuted:
+        return (out + f"\n    ✗ REFUTED by the sceptic ({ref.ground or '?'}) — NOT banked:"
+                      f"\n      {ref.reason}")
+    log = open_nuance_log()
+    log.record(day=st.race.date, race_id=st.race.race_id, course=st.race.course,
+               winner=st.winner, blind_pick=blind or "", **crit.record_fields())
+    log.close()
+    survived = (f"survived the sceptic ({ref.reason})" if ref.answered
+                else "sceptic gave no verdict — banked anyway, rule with --show")
+    return out + f"\n    ✓ {survived}"
+
+
+_SYNTH_SYSTEM = (
+    "You are a 30-year handicapper's apprentice doing the WEEKLY REVIEW — joining the "
+    "dots ACROSS days, which no single race shows. You get (a) every nuance you have "
+    "taught yourself (with status: the master promoted, binned, or hasn't ruled) and "
+    "(b) the blind nap record (picked before the off, settled after).\n"
+    "Find what single races can't: nuances that REPEAT across days (a pattern), nuances "
+    "that CONTRADICT each other (at most one can be right), what the binned ones have in "
+    "common (your own failure mode), and what the nap record says about which lenses are "
+    "actually winning. Reason ONLY over what is given; blanks are unknown. Be blunt and "
+    "brief — a page the master can read over breakfast, plain text, no JSON."
+)
+
+
+def _synthesise(reason, email: bool) -> int:
+    nlog = open_nuance_log()
+    nuances = nlog.all()
+    nlog.close()
+    plog = open_nap_log()
+    naps = plog.history()
+    plog.close()
+    if not nuances and not naps:
+        print("  Nothing to synthesise yet — no nuances banked, no naps on the record.")
+        return 0
+    nu_lines = [f"- [{n['status']}] {n['date']} {n['course']} (winner {n['winner']}): "
+                f"{n['nuance']}" for n in nuances] or ["(none yet)"]
+    nap_lines = []
+    for n in naps:
+        res = ("WON" if n["won"] == 1 else "lost") if n["won"] is not None else "pending"
+        nap_lines.append(f"- {n['date']} {n['horse']} ({n['course']}) "
+                         f"{'CONFIDENT' if n['confident'] else 'lean'}: {res}"
+                         f"{' @' + str(n['sp_dec']) if n['sp_dec'] else ''}")
+    prompt = ("SELF-TAUGHT NUANCES (status = the master's ruling):\n"
+              + "\n".join(nu_lines)
+              + "\n\nTHE BLIND NAP RECORD:\n" + "\n".join(nap_lines or ["(none yet)"])
+              + "\n\nJoin the dots. What repeats, what contradicts, what do the binned "
+                "ones share, and what is the record saying? End with at most three "
+                "SHARP actions for the coming week.")
+    print("  synthesising across the ledger + the record…", flush=True)
+    text = reason(_SYNTH_SYSTEM, prompt)
+    if not text:
+        print("  no synthesis returned (model error) — nothing invented.")
+        return 1
+    print("\n" + text)
+    if email:
+        from racing_edge.report.mail import configured, send
+        if configured():
+            ok = send("Weekly synthesis — joining the dots", text,
+                      title="Weekly synthesis", subtitle="racing-edge — across-days review")
+            print(f"\n  email: {'sent' if ok else 'FAILED'}")
+    return 0
 
 
 def main() -> int:
@@ -107,10 +201,42 @@ def main() -> int:
                     help="rule nuance #N VALIDATED (the master's promote)")
     ap.add_argument("--bin", type=int, metavar="N", dest="bin_id",
                     help="rule nuance #N REJECTED (the master's bin)")
+    ap.add_argument("--synthesise", action="store_true",
+                    help="join the dots ACROSS days: nuances + nap record -> patterns")
+    ap.add_argument("--rules", action="store_true",
+                    help="show the rule scoreboard: results FOR vs AGAINST each rule")
+    ap.add_argument("--tracked", action="store_true",
+                    help="show the horses-to-follow/oppose list mined from results")
     ap.add_argument("--email", action="store_true", help="email the self-study (SMTP env)")
     args = ap.parse_args()
     if args.show:
         return _show()
+    if args.tracked:
+        log = open_nuance_log()
+        rows = log.tracked_active()
+        log.close()
+        if not rows:
+            print("  No horses tracked yet — the list grows with every self-study (#27).")
+            return 0
+        print("  HORSES TO FOLLOW / OPPOSE (mined from results; auto-flagged on the card):")
+        for r in rows:
+            tag = "FOLLOW" if r["angle"] == "follow" else "OPPOSE"
+            cond = f"  [{r['conditions']}]" if r["conditions"] else ""
+            print(f"    {tag:6} {r['horse']:22} ({r['date']}) {r['note']}{cond}")
+        return 0
+    if args.rules:
+        log = open_nuance_log()
+        tally = log.rule_tally()
+        log.close()
+        if not tally:
+            print("  No rule evidence banked yet — it accumulates with every self-study.")
+            return 0
+        print("  THE NOTEBOOK, TESTED — results for vs against each rule:")
+        for t in tally:
+            print(f"    {t['rule']:5} supported {t['supports']:3}   "
+                  f"contradicted {t['contradicts']:3}")
+        print("  (a rule repeatedly contradicted is the master's cue to look at it.)")
+        return 0
     if args.promote is not None:
         return _rule(args.promote, "validated")
     if args.bin_id is not None:
@@ -120,13 +246,22 @@ def main() -> int:
     # env, and without this it would run before get_client()'s load_dotenv and see no key.
     from racing_edge.config import get_config
     get_config()
-    reason = get_reasoner()
-    if reason is None:
-        print("  The model is OFF — set ANTHROPIC_API_KEY (and ANTHROPIC_MODEL for depth) "
-              "to self-interrogate. Banking nothing rather than inventing.")
+    # per-task brains (ai.reason picks each task's model — Haiku wrecked the reads)
+    study = get_reasoner("study")
+    if study is None:
+        print("  The model is OFF — set ANTHROPIC_API_KEY to self-interrogate. "
+              "Banking nothing rather than inventing.")
         return 0
+    if args.synthesise:
+        return _synthesise(get_reasoner("synthesis", max_tokens=2500), args.email)
+    sceptic = get_reasoner("sceptic")
+    print(f"  models: study={resolve_model('study')}  sceptic={resolve_model('sceptic')}",
+          flush=True)
 
     client = get_client()
+    # upgrade the study pass to an INVESTIGATOR: it can pull threads through the real
+    # API (frank the form, deeper history) instead of answering off the static readout
+    from racing_edge.study.investigate import TOOLS, make_executor
     ds = resolve_date(args.day).isoformat()
 
     def _progress(line: str) -> None:
@@ -140,7 +275,8 @@ def main() -> int:
     out: list[str] = []
     for st in studies:
         print(f"    · thinking about {st.race.course} {st.race.off_time}…", flush=True)
-        block = _learn_one(st, reason, ds)
+        investigator = get_investigator("study", TOOLS, make_executor(client, st.race))
+        block = _learn_one(st, investigator or study, sceptic, ds)
         print(block, flush=True)
         print(flush=True)
         out.append(block)

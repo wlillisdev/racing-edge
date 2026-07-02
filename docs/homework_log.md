@@ -403,3 +403,62 @@ found the winners on form. The market story is real; the form story is owed to t
 > spot, not a follow; the winner tends to come from the fair-value mid-market. In a SMALL
 > field, a fair-priced backed fav is to be respected. Test across the trial: does
 > "oppose the smashed short fav in a deep field" beat backing it, over hundreds of races?
+
+---
+
+## 2026-07-01 (Wed, late) — FIRST full-form re-study with the comments door OPEN
+
+The box's `restudy` delivered what we've owed all along: marks, form lines AND
+in-running comments (rich for Irish runs and recent UK runs; older UK runs still
+blank). Studied Worcester 1:50/2:20/3:55/4:55 + Fairyhouse 5:40/6:10/6:45/7:20/7:55
+form-FIRST (#29), then marked against the winners. What the form said BEFORE the result:
+
+### Where the lenses WORKED (findable winners)
+- **Worcester 1:50 — Knightsbridge 2.9 (BACKED 3.6→2.9).** Last-time-out WINNER, +5lb,
+  and his winning comment read like a winner: *"challenged at the last — ASSERTED on the
+  run-in."* Every fancied rival's comment read beaten: Culligran *"retreated, beaten well
+  out"*, Jullou *"gave out after 12th"*, Majestic Moment *"blundered 3 out, fell away"*
+  (he PU'd today). The manner lens alone found this winner. Rule #1 vindicated on live data.
+- **Fairyhouse 6:10 — Treasure Rose 6.5.** THE TEACHING CASE: she and Glory To Be were
+  BOTH last-time winners raised +3lb — the mark could not split them (our pattern-check
+  correctly calls that a no-bet tie). But the COMMENTS split them: Treasure Rose *"hit the
+  front, pressed late and HELD"* (game finisher) vs Glory To Be *"found NOTHING in the
+  final furlong"* (non-finisher). Winner beat him 0.2L. **When the mark ties, the manner
+  is the tiebreaker** — the #29 jigsaw working exactly as drawn.
+- **Fairyhouse 5:40 — Monastere 21.0 (BACKED 28→21).** Form 000-02 looks nothing, but the
+  last run: 2nd at THIS course 19 days ago, *"drew clear — collared inside final furlong —
+  kept on"*, and runs off the SAME mark (41) today. Nearly won off it, C&D, unchanged
+  mark, market support. Findable at a huge price.
+- **Fairyhouse 7:55 — Pete's Dream 8.0 (BACKED).** Last run: *"moved up to fourth — SHORT
+  OF ROOM — could not sustain."* The excuse lens (trouble-in-running upgrade), at a fair
+  price. Contrast Phantom Gold below — an excuse/eye-catcher is a BET at 8.0 and a TRAP
+  at 2.2: the market had already eaten Phantom Gold's excuse and then some.
+
+### Where the traps fired (findable LOSERS — as valuable)
+- **Worcester 2:20 — Lord Chamberlain, +11lb, smashed 6.0→4.5:** beaten 18.5L. RAISED
+  HARD + BACKED HARD + SHORT = the worst combination on the card.
+- **Worcester 3:55 — Phantom Gold 2.2 (3.2→2.2):** last comment *"finished powerfully —
+  CAUGHT THE EYE."* The eye-catcher gamble, overbet to 2.2 in a deep field — mugged a
+  nose by a DRIFTER (Mojo Ego 11→13). Extends the day nuance: the smashed short fav
+  loses, and an eye-catcher comment is often WHY it got smashed.
+- **Worcester 4:55 — Artiste d'Ainay, +7lb recent winner, DRIFTING 5.0→5.5:** 7th, btn
+  28. Raised winner + drift = stand off (the Perfidia lesson again, in jumps clothing).
+- **Fairyhouse 6:45 (18 ran) & 7:20 (14 ran):** winners (Caitouna 15.0, Kirkland Sioux
+  7.0) had NO findable form story — big-field Irish cavalry charges. Our big-field
+  lottery flag is RIGHT: these are passes, not puzzles to solve.
+
+### Honest misses
+- Worcester 2:20 (Merely A Detail), 3:55 (Mojo Ego), 4:55 (Lacrima): winners' marks OWED
+  (no prior win) and comments blank — NOT findable through tonight's window. Lacrima's
+  thread worth watching: an OR that slid 117→113→105→102 — the handicapper relenting to a
+  winnable mark. A "mark-slide" lead, unproven.
+
+### Banked
+1. Manner lens on live comments FINDS winners and SPLITS mark-ties (Knightsbridge;
+   Treasure Rose). Already wired into conviction — tonight is its evidence.
+2. Raised + backed + short = oppose (Lord Chamberlain, Majestic Moment, Phantom Gold,
+   Artiste d'Ainay — four for four tonight).
+3. The excuse upgrade pays at a PRICE, is a trap when the gamble has eaten it (Pete's
+   Dream 8.0 vs Phantom Gold 2.2).
+4. Big-field Irish handicaps: the flag stands — pass.
+All directional: one card, small sample, the trial record is the judge.

@@ -36,7 +36,29 @@ SYSTEM = (
     "3. Every claim must cite the exact fact from the readout it rests on.\n"
     "4. A nuance is a PROPOSAL to be tested, not a law. State what is OWED to confirm it "
     "and how confident you are.\n"
-    "Answer ONLY with a single JSON object, no prose around it."
+    "5. DISSECT EVERY HORSE, not just the winner (#27) — the running line is a read for "
+    "NEXT time. Mine the beaten horses for forward clues: an EXCUSE (hampered, short of "
+    "room, wrong pace/trip/ground) = one to FOLLOW next start; an eye-catcher finishing "
+    "powerfully = follow (unless the market has already eaten it); an exposed one "
+    "flattered by the run, or repeatedly finding little = one to OPPOSE at short prices. "
+    "Read the race SHAPE too (#20): if the comments show the race was run to suit "
+    "(soft lead, prominent-dominated), say who was flattered and who ran better than "
+    "the bare result.\n"
+    "6. TEST THE NOTEBOOK: also report which numbered rules this race supported or "
+    "contradicted, citing the fact. The rule index:\n"
+    "   #1 read the finish/manner, not the figures; #2 2nd/3rd-fav sweet spot; "
+    "#14 all-weather caution; #15 franking is a tiebreaker; #17/#18 read the smart "
+    "money/gamble; #19 don't fear a fair-priced fav; #20 pace shapes the race; "
+    "#22 mark vs price gap; #24/#25 evaluate all, eliminate first; #26 facts not "
+    "assumptions; #29 form first, odds last.\n"
+    "If a SYSTEM PRE-RACE READ is supplied, mark it like a teacher: did the rules find "
+    "the winner, and if not, WHICH lens failed or was missing?\n"
+    "If lookup TOOLS are available, INVESTIGATE like a detective before answering: pull "
+    "the threads the readout can't show — FRANK the form (#5/#15: fetch a key past race "
+    "via its [race ...] id and check what the horses it beat/lost to did since, via "
+    "their ids), or fetch deeper history on a puzzle horse. Evidence from lookups is "
+    "admissible and citable; spend lookups on the winner's story first. When done "
+    "(or the budget is spent), answer ONLY with the single JSON object, no prose."
 )
 
 _SCHEMA_HINT = (
@@ -48,7 +70,14 @@ _SCHEMA_HINT = (
     '  "nuance": "one transferable sentence — the pattern to watch next time",\n'
     '  "cite": ["the exact readout facts this rests on"],\n'
     '  "owed": "what was blank/OWED that would confirm or kill this",\n'
-    '  "confidence": "low | medium | high"\n'
+    '  "confidence": "low | medium | high",\n'
+    '  "system_verdict": "if a system read was supplied: did the rules find the winner, '
+    'and which lens failed/was missing (or \\"n/a\\")",\n'
+    '  "rule_evidence": [{"rule": "#22", "verdict": "supports|contradicts", '
+    '"note": "the fact"}],\n'
+    '  "to_follow": [{"horse": "name exactly as in the readout", '
+    '"angle": "follow|oppose", "note": "the clue, citing the comment", '
+    '"conditions": "when it applies (trip up / better ground / fair price...)"}]\n'
     '}'
 )
 
@@ -61,6 +90,9 @@ class Critique:
     cite: tuple[str, ...] = field(default_factory=tuple)
     owed: str = ""
     confidence: str = ""
+    system_verdict: str = ""                                  # marking the rules' own read
+    rule_evidence: tuple[tuple[str, str, str], ...] = ()      # (rule, verdict, note)
+    to_follow: tuple[tuple[str, str, str, str], ...] = ()     # (horse, angle, note, conditions)
     raw: str = ""            # the model's raw text, kept if parsing fails
 
     @property
@@ -79,16 +111,24 @@ class Critique:
         }
 
 
-def build_prompt(readout: str, winner: str, blind_pick: str | None = None) -> str:
-    """The self-prompt: the real readout + the master's questions + the output shape."""
+def build_prompt(readout: str, winner: str, blind_pick: str | None = None,
+                 system_read: str = "") -> str:
+    """The self-prompt: the real readout + the master's questions + the output shape.
+    `system_read` is what the RULES said pre-race — supplied so the detective marks its
+    OWN homework (did the lenses find the winner?), not just the cold form."""
     pick_line = (
         f"You picked **{blind_pick}** for this race, banked BLIND before the off.\n"
         if blind_pick else
         "You did not bank a pick in this race — study the winner cold.\n"
     )
+    sys_block = (
+        f"\nSYSTEM PRE-RACE READ (what the rules said BEFORE the off — mark it like a "
+        f"teacher):\n{system_read}\n" if system_read else ""
+    )
     return (
         f"{pick_line}"
-        f"The winner was **{winner}**.\n\n"
+        f"The winner was **{winner}**.\n"
+        f"{sys_block}\n"
         f"FULL-FORM READOUT (the only facts you may use):\n"
         f"-----------------------------------------------\n{readout}\n"
         f"-----------------------------------------------\n\n"
@@ -110,6 +150,18 @@ def parse_critique(text: str) -> Critique:
     cite = d.get("cite")
     cites = tuple(str(c) for c in cite) if isinstance(cite, list) else \
         ((str(cite),) if cite else ())
+    rev = d.get("rule_evidence")
+    rules = tuple(
+        (str(e.get("rule", "")), str(e.get("verdict", "")).lower().strip(),
+         str(e.get("note", "")))
+        for e in rev if isinstance(e, dict)
+    ) if isinstance(rev, list) else ()
+    tf = d.get("to_follow")
+    follows = tuple(
+        (str(e.get("horse", "")), str(e.get("angle", "")).lower().strip(),
+         str(e.get("note", "")), str(e.get("conditions", "")))
+        for e in tf if isinstance(e, dict)
+    ) if isinstance(tf, list) else ()
     return Critique(
         why_i_picked=str(d.get("why_i_picked", "")),
         what_i_missed=str(d.get("what_i_missed", "")),
@@ -117,8 +169,68 @@ def parse_critique(text: str) -> Critique:
         cite=cites,
         owed=str(d.get("owed", "")),
         confidence=str(d.get("confidence", "")).lower().strip(),
+        system_verdict=str(d.get("system_verdict", "")),
+        rule_evidence=rules,
+        to_follow=follows,
         raw=text,
     )
+
+
+REFUTE_SYSTEM = (
+    "You are the SCEPTIC — a second, adversarial pass over an apprentice handicapper's "
+    "self-study. You get the SAME full-form readout and the nuance the apprentice "
+    "proposes. Your one job: try to KILL the nuance using only the readout's facts.\n\n"
+    "Attack it on exactly these grounds:\n"
+    "1. FACT CHECK — does every claim it rests on actually appear in the readout, "
+    "verbatim? (e.g. calling a horse WELL-IN when its own cited marks show it RAISED.)\n"
+    "2. CONTRADICTION — does other readout evidence cut against it?\n"
+    "3. ARTIFACT — is it built on a data gap (blank/OWED fields, missing coverage) "
+    "rather than a racing fact?\n"
+    "4. TRIVIALITY — is it just restating an obvious known rule with no new edge?\n"
+    "Do NOT introduce outside facts. If the nuance survives all four, say so honestly — "
+    "you are a sceptic, not a cynic.\n"
+    'Answer ONLY a JSON object: {"refuted": true|false, "ground": "fact|contradiction|'
+    'artifact|triviality|none", "reason": "one or two sentences citing the readout"}'
+)
+
+
+@dataclass(frozen=True)
+class Refutation:
+    refuted: bool = False
+    ground: str = ""
+    reason: str = ""
+    raw: str = ""
+
+    @property
+    def answered(self) -> bool:
+        return bool(self.reason or self.ground)
+
+
+def build_refute_prompt(readout: str, critique: Critique) -> str:
+    return (
+        f"THE APPRENTICE'S NUANCE (attack this):\n{critique.nuance}\n\n"
+        f"It claims to rest on: {' | '.join(critique.cite) or '(nothing cited)'}\n"
+        f"What it says was missed: {critique.what_i_missed}\n\n"
+        f"FULL-FORM READOUT (the only admissible evidence):\n"
+        f"-----------------------------------------------\n{readout}\n"
+        f"-----------------------------------------------\n\n"
+        f"Try to kill it. JSON only."
+    )
+
+
+def parse_refutation(text: str) -> Refutation:
+    if not text:
+        return Refutation(raw="")
+    m = re.search(r"\{.*\}", text, re.DOTALL)
+    if not m:
+        return Refutation(raw=text)
+    try:
+        d = json.loads(m.group())
+    except (ValueError, TypeError):
+        return Refutation(raw=text)
+    return Refutation(refuted=bool(d.get("refuted")),
+                      ground=str(d.get("ground", "")).lower().strip(),
+                      reason=str(d.get("reason", "")), raw=text)
 
 
 def render_critique(c: Critique, race_label: str, winner: str) -> str:
@@ -136,6 +248,15 @@ def render_critique(c: Critique, race_label: str, winner: str) -> str:
         lines.append(f"    rests on:       {' | '.join(c.cite)}")
     if c.owed:
         lines.append(f"    OWED to confirm: {c.owed}")
+    if c.system_verdict and c.system_verdict.lower() != "n/a":
+        lines.append(f"    marking the RULES' read: {c.system_verdict}")
+    for rule, verdict, note in c.rule_evidence:
+        sign = "✓" if verdict == "supports" else "✗"
+        lines.append(f"    {sign} {rule} {verdict}: {note}")
+    for horse, angle, note, conditions in c.to_follow:
+        arrow = "→ FOLLOW" if angle == "follow" else "→ OPPOSE"
+        cond = f"  [{conditions}]" if conditions else ""
+        lines.append(f"    {arrow} {horse}: {note}{cond}")
     lines.append(f"    confidence:     {c.confidence or '?'}  "
                  f"(a proposal — the record and the master decide, not the model)")
     return "\n".join(lines)

@@ -9,9 +9,12 @@ from pathlib import Path
 
 from racing_edge.study.nuances import NuanceLog
 from racing_edge.study.selfcritique import (
+    REFUTE_SYSTEM,
     SYSTEM,
     build_prompt,
+    build_refute_prompt,
     parse_critique,
+    parse_refutation,
     render_critique,
 )
 
@@ -66,6 +69,50 @@ def test_record_fields_feed_the_nuance_ledger_signature() -> None:
         log.close()
 
 
+def test_each_task_gets_the_right_brain_never_haiku() -> None:
+    """Per-task model selection — the master's ruling after Haiku wrecked the reads.
+    The sceptic must be at least as sharp as the proposer; nothing defaults small."""
+    import os
+
+    from racing_edge.ai.reason import resolve_model
+    for var in ("ANTHROPIC_MODEL", "ANTHROPIC_MODEL_STUDY", "ANTHROPIC_MODEL_SCEPTIC"):
+        os.environ.pop(var, None)
+    assert resolve_model("study") == "claude-sonnet-5"
+    assert resolve_model("sceptic") == "claude-fable-5"
+    assert resolve_model("synthesis") == "claude-fable-5"
+    for task in ("study", "sceptic", "synthesis"):
+        assert "haiku" not in resolve_model(task)
+    # override order: per-task beats global beats table
+    os.environ["ANTHROPIC_MODEL"] = "claude-fable-5"
+    assert resolve_model("study") == "claude-fable-5"
+    os.environ["ANTHROPIC_MODEL_STUDY"] = "claude-opus-4-8"
+    assert resolve_model("study") == "claude-opus-4-8"
+    assert resolve_model("sceptic") == "claude-fable-5"
+    for var in ("ANTHROPIC_MODEL", "ANTHROPIC_MODEL_STUDY"):
+        os.environ.pop(var, None)
+
+
+def test_the_sceptic_is_adversarial_and_grounded() -> None:
+    # the second pass must attack on the four grounds and stay inside the readout
+    assert "KILL the nuance" in REFUTE_SYSTEM
+    for ground in ("FACT CHECK", "CONTRADICTION", "ARTIFACT", "TRIVIALITY"):
+        assert ground in REFUTE_SYSTEM
+    c = parse_critique('{"nuance": "the claim", "cite": ["WELL-IN at 8.5"], '
+                       '"what_i_missed": "x"}')
+    p = build_refute_prompt("THE-READOUT", c)
+    assert "the claim" in p and "WELL-IN at 8.5" in p and "THE-READOUT" in p
+
+
+def test_parse_refutation_reads_the_verdict_and_survives_prose() -> None:
+    r = parse_refutation('Verdict: {"refuted": true, "ground": "Fact", '
+                         '"reason": "its own marks show +3lb, not well-in"}')
+    assert r.refuted and r.ground == "fact" and "+3lb" in r.reason
+    ok = parse_refutation('{"refuted": false, "ground": "none", "reason": "holds up"}')
+    assert not ok.refuted and ok.answered
+    bad = parse_refutation("no json at all")
+    assert not bad.refuted and not bad.answered      # no verdict -> caller banks + flags
+
+
 def test_parse_critique_survives_a_non_json_reply() -> None:
     c = parse_critique("the model rambled with no json")
     assert not c.ok
@@ -84,6 +131,71 @@ def test_nuance_rows_carry_an_id_for_the_ruling_cli() -> None:
         assert isinstance(row["id"], int)
         log.set_status(row["id"], "rejected")           # the master bins it
         assert log.all()[0]["status"] == "rejected"
+        log.close()
+
+
+def test_critique_carries_rule_evidence_and_the_system_verdict() -> None:
+    """The improved detective: marks the system's own read + tests the notebook."""
+    c = parse_critique(
+        '{"nuance": "n", "what_i_missed": "m", '
+        '"system_verdict": "the manner lens found the winner; the mark lens flagged it", '
+        '"rule_evidence": [{"rule": "#1", "verdict": "Supports", "note": "asserted"}, '
+        '{"rule": "#22", "verdict": "contradicts", "note": "raised horse won"}]}'
+    )
+    assert c.system_verdict.startswith("the manner lens")
+    assert c.rule_evidence == (("#1", "supports", "asserted"),
+                               ("#22", "contradicts", "raised horse won"))
+    text = render_critique(c, "x", "y")
+    assert "✓ #1 supports" in text and "✗ #22 contradicts" in text
+    # prompt plumbing: the system read block appears only when supplied
+    p = build_prompt("R", "W", None, system_read="Gem conv 3: well-in")
+    assert "SYSTEM PRE-RACE READ" in p and "Gem conv 3" in p
+    assert "SYSTEM PRE-RACE READ" not in build_prompt("R", "W", None)
+
+
+def test_critique_mines_forward_clues_and_the_tracker_stores_them() -> None:
+    """#27 forward mining: beaten horses with excuses/eye-catches become tracked
+    follow/oppose clues that surface when the horse next runs."""
+    assert "DISSECT EVERY HORSE" in SYSTEM and "FOLLOW" in SYSTEM
+    c = parse_critique(
+        '{"nuance": "n", "what_i_missed": "m", "to_follow": ['
+        '{"horse": "Crackerjack Queen", "angle": "Follow", '
+        '"note": "pressed the winner after making up ground from 12th", '
+        '"conditions": "similar class, decent pace"}, '
+        '{"horse": "Phantom Gold", "angle": "oppose", "note": "eye-catcher overbet", '
+        '"conditions": "short price only"}]}'
+    )
+    assert c.to_follow[0] == ("Crackerjack Queen", "follow",
+                              "pressed the winner after making up ground from 12th",
+                              "similar class, decent pace")
+    text = render_critique(c, "x", "y")
+    assert "→ FOLLOW Crackerjack Queen" in text and "→ OPPOSE Phantom Gold" in text
+    with tempfile.TemporaryDirectory() as d:
+        log = NuanceLog(Path(d) / "n.db")
+        for _ in range(2):     # idempotent on (date, horse, angle)
+            log.track(day=date(2026, 7, 1), race_id="r1", horse="Crackerjack Queen",
+                      horse_id="H9", angle="follow", note="pressed the winner",
+                      conditions="decent pace")
+        rows = log.tracked_active()
+        assert len(rows) == 1 and rows[0]["horse_id"] == "H9"
+        assert rows[0]["status"] == "active"
+        log.close()
+
+
+def test_rule_evidence_tally_accumulates_per_rule() -> None:
+    with tempfile.TemporaryDirectory() as d:
+        log = NuanceLog(Path(d) / "n.db")
+        for rid in ("r1", "r2"):
+            log.record_evidence(day=date(2026, 7, 1), race_id=rid, rule="#1",
+                                verdict="supports", note="finisher won")
+        log.record_evidence(day=date(2026, 7, 1), race_id="r1", rule="#22",
+                            verdict="contradicts", note="raised won")
+        # same (date, race, rule, verdict) twice -> one row
+        log.record_evidence(day=date(2026, 7, 1), race_id="r1", rule="#22",
+                            verdict="contradicts", note="dup")
+        tally = {t["rule"]: t for t in log.rule_tally()}
+        assert tally["#1"]["supports"] == 2 and tally["#1"]["contradicts"] == 0
+        assert tally["#22"]["contradicts"] == 1
         log.close()
 
 
