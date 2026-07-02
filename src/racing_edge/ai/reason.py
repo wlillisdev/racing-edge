@@ -80,7 +80,7 @@ def _post_with_retry(headers: dict, body: dict) -> tuple[dict | None, int]:
 
 def get_investigator(task: str, tools: list[dict],
                      executor: Callable[[str, dict], str], max_steps: int = 6,
-                     max_tokens: int = 2000):
+                     max_tokens: int = 3000):
     """An INVESTIGATING reasoner — the model can call the given tools mid-thought
     (pull a thread, ask for more evidence) instead of answering a questionnaire off a
     static readout. Returns complete(system, prompt) -> (final_text, trail) where trail
@@ -99,8 +99,10 @@ def get_investigator(task: str, tools: list[dict],
         messages: list[dict] = [{"role": "user", "content": prompt}]
         trail: list[str] = []
         steps = 0
-        for _round in range(max_steps + 4):            # hard cap on conversation rounds
-            body = {"model": model, "max_tokens": max_tokens, "system": system,
+        budget = max_tokens
+        bumped = False
+        for _round in range(max_steps + 5):            # hard cap on conversation rounds
+            body = {"model": model, "max_tokens": budget, "system": system,
                     "messages": messages, "tools": tools}
             data, status = _post_with_retry(headers, body)
             if data is None:
@@ -126,8 +128,19 @@ def get_investigator(task: str, tools: list[dict],
                                         "content": out[:6000]})
                 messages.append({"role": "user", "content": results})
                 continue
-            return ("".join(b.get("text", "") for b in content
-                            if isinstance(b, dict)), trail)
+            text = "".join(b.get("text", "") for b in content if isinstance(b, dict))
+            if not text:
+                # NEVER fail silently — say what came back, and if the answer was
+                # truncated (max_tokens), retry the same request once, budget doubled
+                stop = data.get("stop_reason")
+                trail.append(f"empty final (stop={stop}, blocks="
+                             f"{[b.get('type') for b in content if isinstance(b, dict)]})")
+                if stop == "max_tokens" and not bumped:
+                    bumped = True
+                    budget *= 2
+                    trail.append(f"retrying with max_tokens={budget}")
+                    continue
+            return text, trail
         trail.append("round cap hit — no final answer")
         return "", trail
 
