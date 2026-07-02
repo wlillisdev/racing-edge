@@ -129,17 +129,18 @@ def get_investigator(task: str, tools: list[dict],
                 messages.append({"role": "user", "content": results})
                 continue
             text = "".join(b.get("text", "") for b in content if isinstance(b, dict))
-            if not text:
-                # NEVER fail silently — say what came back, and if the answer was
-                # truncated (max_tokens), retry the same request once, budget doubled
-                stop = data.get("stop_reason")
+            stop = data.get("stop_reason")
+            # a TRUNCATED answer (max_tokens) is unusable even when text came back —
+            # the JSON gets cut mid-string. Retry the same request once, budget doubled.
+            if stop == "max_tokens" and not bumped:
+                bumped = True
+                budget *= 2
+                trail.append(f"answer truncated at {budget // 2} tokens — "
+                             f"retrying with max_tokens={budget}")
+                continue
+            if not text:                               # NEVER fail silently
                 trail.append(f"empty final (stop={stop}, blocks="
                              f"{[b.get('type') for b in content if isinstance(b, dict)]})")
-                if stop == "max_tokens" and not bumped:
-                    bumped = True
-                    budget *= 2
-                    trail.append(f"retrying with max_tokens={budget}")
-                    continue
             return text, trail
         trail.append("round cap hit — no final answer")
         return "", trail
