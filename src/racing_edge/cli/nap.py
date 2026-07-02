@@ -122,6 +122,26 @@ def main() -> int:
         print(line, flush=True)
 
     field = evaluate_field(client, day=args.day, codes=codes, progress=_progress)
+
+    # THE FORWARD CLUES (#27): horses mined from past results that reappear TODAY.
+    # This is the result-mining paying off on the card, not sitting in a database.
+    from racing_edge.cli._common import open_nuance_log
+    nlog = open_nuance_log()
+    tracked = {t["horse_id"]: t for t in nlog.tracked_active()}
+    nlog.close()
+    seen: dict[str, tuple] = {}
+    for p in field:
+        if p.runner.horse_id in tracked and p.runner.horse_id not in seen:
+            seen[p.runner.horse_id] = (p, tracked[p.runner.horse_id])
+    if seen:
+        emit("  ★ TRACKED HORSES RUN TODAY (clues mined from past results, #27):")
+        for p, t in seen.values():
+            tag = "FOLLOW" if t["angle"] == "follow" else "OPPOSE"
+            cond = f"  [{t['conditions']}]" if t["conditions"] else ""
+            emit(f"    {tag} {p.runner.horse:22} {p.race.course} {p.race.off_time} "
+                 f"— {t['note']}{cond}")
+        emit("")
+
     if not field:
         emit("No nap — nothing readable stands up today. Discipline is a position.")
         _maybe_email(out, "Nap — no bet today", args.email)

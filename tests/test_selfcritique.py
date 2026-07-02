@@ -153,6 +153,35 @@ def test_critique_carries_rule_evidence_and_the_system_verdict() -> None:
     assert "SYSTEM PRE-RACE READ" not in build_prompt("R", "W", None)
 
 
+def test_critique_mines_forward_clues_and_the_tracker_stores_them() -> None:
+    """#27 forward mining: beaten horses with excuses/eye-catches become tracked
+    follow/oppose clues that surface when the horse next runs."""
+    assert "DISSECT EVERY HORSE" in SYSTEM and "FOLLOW" in SYSTEM
+    c = parse_critique(
+        '{"nuance": "n", "what_i_missed": "m", "to_follow": ['
+        '{"horse": "Crackerjack Queen", "angle": "Follow", '
+        '"note": "pressed the winner after making up ground from 12th", '
+        '"conditions": "similar class, decent pace"}, '
+        '{"horse": "Phantom Gold", "angle": "oppose", "note": "eye-catcher overbet", '
+        '"conditions": "short price only"}]}'
+    )
+    assert c.to_follow[0] == ("Crackerjack Queen", "follow",
+                              "pressed the winner after making up ground from 12th",
+                              "similar class, decent pace")
+    text = render_critique(c, "x", "y")
+    assert "→ FOLLOW Crackerjack Queen" in text and "→ OPPOSE Phantom Gold" in text
+    with tempfile.TemporaryDirectory() as d:
+        log = NuanceLog(Path(d) / "n.db")
+        for _ in range(2):     # idempotent on (date, horse, angle)
+            log.track(day=date(2026, 7, 1), race_id="r1", horse="Crackerjack Queen",
+                      horse_id="H9", angle="follow", note="pressed the winner",
+                      conditions="decent pace")
+        rows = log.tracked_active()
+        assert len(rows) == 1 and rows[0]["horse_id"] == "H9"
+        assert rows[0]["status"] == "active"
+        log.close()
+
+
 def test_rule_evidence_tally_accumulates_per_rule() -> None:
     with tempfile.TemporaryDirectory() as d:
         log = NuanceLog(Path(d) / "n.db")

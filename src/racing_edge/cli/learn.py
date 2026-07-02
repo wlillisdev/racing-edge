@@ -102,14 +102,20 @@ def _learn_one(st: Restudy, study, sceptic, day_iso: str) -> str:
     if not crit.ok:
         return render_critique(crit, label, st.winner)
 
-    # rule evidence banks regardless of the nuance's fate — the notebook gets tested
-    # even on races that teach nothing new
-    if crit.rule_evidence:
+    # rule evidence + forward clues bank regardless of the nuance's fate — the notebook
+    # gets tested and the horses-to-follow list grows even on races teaching nothing new
+    if crit.rule_evidence or crit.to_follow:
+        ids = {r.horse.strip().lower(): r.horse_id for r in st.race.runners}
         log = open_nuance_log()
         for rule, verdict, note in crit.rule_evidence:
             if rule and verdict in ("supports", "contradicts"):
                 log.record_evidence(day=st.race.date, race_id=st.race.race_id,
                                     rule=rule, verdict=verdict, note=note)
+        for horse, angle, note, conditions in crit.to_follow:
+            hid = ids.get(horse.strip().lower(), "")
+            if horse and angle in ("follow", "oppose") and hid:   # only horses ON the card
+                log.track(day=st.race.date, race_id=st.race.race_id, horse=horse,
+                          horse_id=hid, angle=angle, note=note, conditions=conditions)
         log.close()
 
     # THE SCEPTIC — a second, adversarial pass on a SHARPER model tries to KILL the
@@ -195,10 +201,25 @@ def main() -> int:
                     help="join the dots ACROSS days: nuances + nap record -> patterns")
     ap.add_argument("--rules", action="store_true",
                     help="show the rule scoreboard: results FOR vs AGAINST each rule")
+    ap.add_argument("--tracked", action="store_true",
+                    help="show the horses-to-follow/oppose list mined from results")
     ap.add_argument("--email", action="store_true", help="email the self-study (SMTP env)")
     args = ap.parse_args()
     if args.show:
         return _show()
+    if args.tracked:
+        log = open_nuance_log()
+        rows = log.tracked_active()
+        log.close()
+        if not rows:
+            print("  No horses tracked yet — the list grows with every self-study (#27).")
+            return 0
+        print("  HORSES TO FOLLOW / OPPOSE (mined from results; auto-flagged on the card):")
+        for r in rows:
+            tag = "FOLLOW" if r["angle"] == "follow" else "OPPOSE"
+            cond = f"  [{r['conditions']}]" if r["conditions"] else ""
+            print(f"    {tag:6} {r['horse']:22} ({r['date']}) {r['note']}{cond}")
+        return 0
     if args.rules:
         log = open_nuance_log()
         tally = log.rule_tally()

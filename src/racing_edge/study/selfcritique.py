@@ -36,7 +36,15 @@ SYSTEM = (
     "3. Every claim must cite the exact fact from the readout it rests on.\n"
     "4. A nuance is a PROPOSAL to be tested, not a law. State what is OWED to confirm it "
     "and how confident you are.\n"
-    "5. TEST THE NOTEBOOK: also report which numbered rules this race supported or "
+    "5. DISSECT EVERY HORSE, not just the winner (#27) — the running line is a read for "
+    "NEXT time. Mine the beaten horses for forward clues: an EXCUSE (hampered, short of "
+    "room, wrong pace/trip/ground) = one to FOLLOW next start; an eye-catcher finishing "
+    "powerfully = follow (unless the market has already eaten it); an exposed one "
+    "flattered by the run, or repeatedly finding little = one to OPPOSE at short prices. "
+    "Read the race SHAPE too (#20): if the comments show the race was run to suit "
+    "(soft lead, prominent-dominated), say who was flattered and who ran better than "
+    "the bare result.\n"
+    "6. TEST THE NOTEBOOK: also report which numbered rules this race supported or "
     "contradicted, citing the fact. The rule index:\n"
     "   #1 read the finish/manner, not the figures; #2 2nd/3rd-fav sweet spot; "
     "#14 all-weather caution; #15 franking is a tiebreaker; #17/#18 read the smart "
@@ -61,7 +69,10 @@ _SCHEMA_HINT = (
     '  "system_verdict": "if a system read was supplied: did the rules find the winner, '
     'and which lens failed/was missing (or \\"n/a\\")",\n'
     '  "rule_evidence": [{"rule": "#22", "verdict": "supports|contradicts", '
-    '"note": "the fact"}]\n'
+    '"note": "the fact"}],\n'
+    '  "to_follow": [{"horse": "name exactly as in the readout", '
+    '"angle": "follow|oppose", "note": "the clue, citing the comment", '
+    '"conditions": "when it applies (trip up / better ground / fair price...)"}]\n'
     '}'
 )
 
@@ -76,6 +87,7 @@ class Critique:
     confidence: str = ""
     system_verdict: str = ""                                  # marking the rules' own read
     rule_evidence: tuple[tuple[str, str, str], ...] = ()      # (rule, verdict, note)
+    to_follow: tuple[tuple[str, str, str, str], ...] = ()     # (horse, angle, note, conditions)
     raw: str = ""            # the model's raw text, kept if parsing fails
 
     @property
@@ -139,6 +151,12 @@ def parse_critique(text: str) -> Critique:
          str(e.get("note", "")))
         for e in rev if isinstance(e, dict)
     ) if isinstance(rev, list) else ()
+    tf = d.get("to_follow")
+    follows = tuple(
+        (str(e.get("horse", "")), str(e.get("angle", "")).lower().strip(),
+         str(e.get("note", "")), str(e.get("conditions", "")))
+        for e in tf if isinstance(e, dict)
+    ) if isinstance(tf, list) else ()
     return Critique(
         why_i_picked=str(d.get("why_i_picked", "")),
         what_i_missed=str(d.get("what_i_missed", "")),
@@ -148,6 +166,7 @@ def parse_critique(text: str) -> Critique:
         confidence=str(d.get("confidence", "")).lower().strip(),
         system_verdict=str(d.get("system_verdict", "")),
         rule_evidence=rules,
+        to_follow=follows,
         raw=text,
     )
 
@@ -229,6 +248,10 @@ def render_critique(c: Critique, race_label: str, winner: str) -> str:
     for rule, verdict, note in c.rule_evidence:
         sign = "✓" if verdict == "supports" else "✗"
         lines.append(f"    {sign} {rule} {verdict}: {note}")
+    for horse, angle, note, conditions in c.to_follow:
+        arrow = "→ FOLLOW" if angle == "follow" else "→ OPPOSE"
+        cond = f"  [{conditions}]" if conditions else ""
+        lines.append(f"    {arrow} {horse}: {note}{cond}")
     lines.append(f"    confidence:     {c.confidence or '?'}  "
                  f"(a proposal — the record and the master decide, not the model)")
     return "\n".join(lines)
