@@ -39,7 +39,8 @@ def _past_line(h: PastRun) -> str:
     d = f"{h.distance_f:.0f}f" if h.distance_f else "?f"
     where = f"{h.course[:10]} {d} {h.going[:6] or '?'} {cls} {org}".strip()
     comment = h.comment.strip() if h.comment.strip() else "OWED — no comment through the window"
-    return f"        {h.date}  {pos:>2}  {where:<34}  {comment}"
+    rid = f"  [race {h.race_id}]" if h.race_id else ""       # thread id for the investigator
+    return f"        {h.date}  {pos:>2}  {where:<34}  {comment}{rid}"
 
 
 def render_restudy(race: Race, result: RaceResult,
@@ -82,7 +83,7 @@ def render_restudy(race: Race, result: RaceResult,
         rank = f"  mkt {mkt_rank[r.horse_id]}/{len(priced)}" if r.horse_id in mkt_rank else ""
         lines.append("")
         lines.append(f"  {pos:>3}{star}  {r.horse:22} SP {sp or '?':<6} "
-                     f"{_move(r.odds.morning, sp)}{rank}{btn}")
+                     f"{_move(r.odds.morning, sp)}{rank}{btn}  [id {r.horse_id}]")
         gear = f" | headgear {r.headgear}{'(1st time)' if r.headgear_first_time else ''}" \
             if r.headgear else ""
         lines.append(f"        mark: {marktxt}  | form {r.form or '?'} "

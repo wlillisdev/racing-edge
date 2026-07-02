@@ -53,7 +53,12 @@ SYSTEM = (
     "assumptions; #29 form first, odds last.\n"
     "If a SYSTEM PRE-RACE READ is supplied, mark it like a teacher: did the rules find "
     "the winner, and if not, WHICH lens failed or was missing?\n"
-    "Answer ONLY with a single JSON object, no prose around it."
+    "If lookup TOOLS are available, INVESTIGATE like a detective before answering: pull "
+    "the threads the readout can't show — FRANK the form (#5/#15: fetch a key past race "
+    "via its [race ...] id and check what the horses it beat/lost to did since, via "
+    "their ids), or fetch deeper history on a puzzle horse. Evidence from lookups is "
+    "admissible and citable; spend lookups on the winner's story first. When done "
+    "(or the budget is spent), answer ONLY with the single JSON object, no prose."
 )
 
 _SCHEMA_HINT = (

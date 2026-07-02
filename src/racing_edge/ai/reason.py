@@ -52,6 +52,66 @@ def resolve_model(task: str) -> str:
     return _TASK_MODELS.get(task, _FALLBACK)
 
 
+def get_investigator(task: str, tools: list[dict],
+                     executor: Callable[[str, dict], str], max_steps: int = 6,
+                     max_tokens: int = 2000):
+    """An INVESTIGATING reasoner — the model can call the given tools mid-thought
+    (pull a thread, ask for more evidence) instead of answering a questionnaire off a
+    static readout. Returns complete(system, prompt) -> (final_text, trail) where trail
+    lists every lookup made (auditable — no invisible evidence). Tool calls are capped
+    at max_steps; after that the model is told to answer with what it has.
+    None if no ANTHROPIC_API_KEY."""
+    key = os.environ.get("ANTHROPIC_API_KEY")
+    if not key:
+        return None
+    model = resolve_model(task)
+    headers = {"x-api-key": key, "anthropic-version": _VERSION,
+               "content-type": "application/json"}
+
+    def _call(body: dict) -> dict | None:
+        try:
+            resp = requests.post(_URL, headers=headers, json=body, timeout=_TIMEOUT)
+            return resp.json() if resp.status_code == 200 else None
+        except (requests.RequestException, ValueError):
+            return None
+
+    def complete(system: str, prompt: str) -> tuple[str, list[str]]:
+        messages: list[dict] = [{"role": "user", "content": prompt}]
+        trail: list[str] = []
+        steps = 0
+        while True:
+            body = {"model": model, "max_tokens": max_tokens, "system": system,
+                    "messages": messages}
+            if steps < max_steps:
+                body["tools"] = tools
+            data = _call(body)
+            if data is None:
+                return "", trail
+            content = data.get("content") or []
+            if data.get("stop_reason") == "tool_use" and steps < max_steps:
+                messages.append({"role": "assistant", "content": content})
+                results = []
+                for block in content:
+                    if isinstance(block, dict) and block.get("type") == "tool_use":
+                        steps += 1
+                        name, args = block.get("name", ""), block.get("input") or {}
+                        out = executor(name, args)
+                        trail.append(f"{name}({', '.join(str(v) for v in args.values())})")
+                        results.append({"type": "tool_result",
+                                        "tool_use_id": block.get("id", ""),
+                                        "content": out[:6000]})
+                if steps >= max_steps:
+                    results.append({"type": "text",
+                                    "text": "Lookup budget spent — answer NOW with the "
+                                            "JSON, using only evidence already gathered."})
+                messages.append({"role": "user", "content": results})
+                continue
+            return ("".join(b.get("text", "") for b in content
+                            if isinstance(b, dict)), trail)
+
+    return complete
+
+
 def get_reasoner(task: str = "study",
                  max_tokens: int = 1500) -> Callable[[str, str], str] | None:
     """Return complete(system, prompt) -> text for this TASK's model, or None

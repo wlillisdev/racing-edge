@@ -25,7 +25,7 @@ from __future__ import annotations
 
 import argparse
 
-from racing_edge.ai.reason import get_reasoner, resolve_model
+from racing_edge.ai.reason import get_investigator, get_reasoner, resolve_model
 from racing_edge.cli._common import open_nap_log, open_nuance_log, resolve_date
 from racing_edge.data.client import get_client
 from racing_edge.pipeline.restudy import Restudy, gather
@@ -96,8 +96,12 @@ def _learn_one(st: Restudy, study, sceptic, day_iso: str) -> str:
     label = f"{st.race.course} {st.race.off_time}"
     blind = _blind_pick_for(day_iso, st.race.race_id)
     # the detective marks its OWN homework: what the rules said pre-race goes in too
-    text = study(SYSTEM, build_prompt(readout, st.winner, blind,
-                                      system_read=st.system_read()))
+    prompt = build_prompt(readout, st.winner, blind, system_read=st.system_read())
+    result = study(SYSTEM, prompt)
+    # the investigator returns (text, trail); a plain reasoner returns text
+    text, trail = result if isinstance(result, tuple) else (result, [])
+    for t in trail:
+        print(f"      🔎 {t}", flush=True)
     crit = parse_critique(text)
     if not crit.ok:
         return render_critique(crit, label, st.winner)
@@ -255,6 +259,9 @@ def main() -> int:
           flush=True)
 
     client = get_client()
+    # upgrade the study pass to an INVESTIGATOR: it can pull threads through the real
+    # API (frank the form, deeper history) instead of answering off the static readout
+    from racing_edge.study.investigate import TOOLS, make_executor
     ds = resolve_date(args.day).isoformat()
 
     def _progress(line: str) -> None:
@@ -268,7 +275,8 @@ def main() -> int:
     out: list[str] = []
     for st in studies:
         print(f"    · thinking about {st.race.course} {st.race.off_time}…", flush=True)
-        block = _learn_one(st, study, sceptic, ds)
+        investigator = get_investigator("study", TOOLS, make_executor(client, st.race))
+        block = _learn_one(st, investigator or study, sceptic, ds)
         print(block, flush=True)
         print(flush=True)
         out.append(block)

@@ -90,6 +90,13 @@ class RacingAPIClient:
         params = [("start_date", date_str), ("end_date", date_str), ("limit", 100)]
         return self._get("/results", params=params, allow_404=True) or {"results": []}
 
+    def result_by_id(self, race_id: str) -> dict | None:
+        """One past race's full result — the FRANKING door (#5/#15): who else was in
+        it, where they finished, their comments. None if unknown."""
+        if not race_id:
+            return None
+        return self._get(f"/results/{race_id}", allow_404=True)
+
     # ---- per-horse / per-trainer (for the evidence the method needs) --------
     def horse_results(self, horse_id: str, limit: int = 12) -> list[dict]:
         """A horse's past runs — the raw material for the proven-at-level reads."""
