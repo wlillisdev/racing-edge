@@ -1,0 +1,91 @@
+{
+  "meeting": {
+    "track": "Curraheen Park (Cork)",
+    "track_code": "CRK",
+    "country": "IRE",
+    "date": "2026-07-03"
+  },
+  "races": [
+    {
+      "race_no": 6,
+      "time": "21:05",
+      "grade": "A4",
+      "distance": 525,
+      "race_name": "The Thomas James Robinson Memorial Race",
+      "runners": [
+        {
+          "trap": 1,
+          "name": "Boherash Silin",
+          "style": "R",
+          "recent_runs": [
+            {"days_ago": 13, "pos": 6, "trap": 2, "split": 3.56, "calc_time": 29.44, "grade": "A2", "distance": 525, "track": "CRK", "comment": "Blk1,NvShw"},
+            {"days_ago": 21, "pos": 2, "trap": 3, "split": 4.71, "calc_time": 31.00, "grade": "A3", "distance": 550, "track": "CRK", "comment": "CrdRu,StyWl"},
+            {"days_ago": 42, "pos": 2, "trap": 6, "split": 3.46, "calc_time": 29.05, "grade": "A3", "distance": 525, "track": "CRK", "comment": "LckEP,StyWl"},
+            {"days_ago": 90, "pos": 1, "trap": 4, "split": 4.20, "calc_time": 29.43, "grade": "A2", "distance": 525, "track": "YGL", "comment": "EvAw,Ld2"},
+            {"days_ago": 130, "pos": 2, "trap": 2, "split": 4.17, "calc_time": 28.89, "grade": "A2", "distance": 525, "track": "YGL", "comment": "EvAw,Strfin"}
+          ]
+        },
+        {
+          "trap": 2,
+          "name": "Zan",
+          "style": "R",
+          "recent_runs": [
+            {"days_ago": 34, "pos": 5, "trap": 4, "split": 1.33, "calc_time": 29.70, "grade": "A4", "distance": 525, "track": "LMK", "comment": "QAw,Chl1"},
+            {"days_ago": 42, "pos": 6, "trap": 2, "split": 3.46, "calc_time": 29.74, "grade": "A3", "distance": 525, "track": "CRK", "comment": "EvAw,NvShw"},
+            {"days_ago": 62, "pos": 4, "trap": 2, "split": 3.38, "calc_time": 29.28, "grade": "A4", "distance": 525, "track": "CRK", "comment": "EP,RnOn"},
+            {"days_ago": 76, "pos": 1, "trap": 3, "split": 3.42, "calc_time": 29.18, "grade": "A4", "distance": 525, "track": "CRK", "comment": "EP,HldOn"},
+            {"days_ago": 139, "pos": 2, "trap": 1, "split": 4.65, "calc_time": 30.53, "grade": "A3", "distance": 550, "track": "CRK", "comment": "EvAw,StyWl"}
+          ]
+        },
+        {
+          "trap": 3,
+          "name": "Rustys Prince",
+          "style": "R",
+          "recent_runs": [
+            {"days_ago": 21, "pos": 2, "trap": 6, "split": 3.44, "calc_time": 29.55, "grade": "A4", "distance": 525, "track": "CRK", "comment": "Crd1,StyOn"},
+            {"days_ago": 42, "pos": 4, "trap": 2, "split": 3.44, "calc_time": 29.45, "grade": "A3", "distance": 525, "track": "CRK", "comment": "EvAw,AHandy"},
+            {"days_ago": 69, "pos": 5, "trap": 5, "split": 5.92, "calc_time": 32.12, "grade": "A3", "distance": 575, "track": "CRK", "comment": "Bmp1,NvShw"},
+            {"days_ago": 119, "pos": 1, "trap": 1, "split": 3.47, "calc_time": 29.20, "grade": "A4", "distance": 525, "track": "CRK", "comment": "Chl1,Ld2"},
+            {"days_ago": 286, "pos": 3, "trap": 1, "split": 4.75, "calc_time": 30.34, "grade": "A4", "distance": 550, "track": "CRK", "comment": "SlAw,StyOn"}
+          ]
+        },
+        {
+          "trap": 4,
+          "name": "Canadian Coghlan",
+          "style": "R",
+          "recent_runs": [
+            {"days_ago": 21, "pos": 1, "trap": 1, "split": 3.48, "calc_time": 29.35, "grade": "A5", "distance": 525, "track": "CRK", "comment": "EvAw,LdRi"},
+            {"days_ago": 56, "pos": 6, "trap": 2, "split": 3.49, "calc_time": 30.02, "grade": "A4", "distance": 525, "track": "CRK", "comment": "SlAw,NvShw"},
+            {"days_ago": 133, "pos": 3, "trap": 1, "split": 3.45, "calc_time": 29.25, "grade": "A4", "distance": 525, "track": "CRK", "comment": "EvAw,StyOn"},
+            {"days_ago": 203, "pos": 1, "trap": 2, "split": 3.44, "calc_time": 30.07, "grade": "A4", "distance": 525, "track": "CRK", "comment": "BBlk1,LdRi"},
+            {"days_ago": 266, "pos": 2, "trap": 4, "split": 3.37, "calc_time": 29.19, "grade": "A3", "distance": 525, "track": "CRK", "comment": "EP,ChlRi"}
+          ]
+        },
+        {
+          "trap": 5,
+          "name": "Midian Saki",
+          "style": "R",
+          "recent_runs": [
+            {"days_ago": 21, "pos": 1, "trap": 2, "split": 3.39, "calc_time": 29.38, "grade": "A4", "distance": 525, "track": "CRK", "comment": "Ld2,FinWl"},
+            {"days_ago": 28, "pos": 6, "trap": 4, "split": 3.42, "calc_time": 29.89, "grade": "A4", "distance": 525, "track": "CRK", "comment": "QAw,Fd"},
+            {"days_ago": 251, "pos": 5, "trap": 3, "split": 3.46, "calc_time": 29.04, "grade": "A2", "distance": 525, "track": "CRK", "comment": "EvAw,NvShw"},
+            {"days_ago": 321, "pos": 2, "trap": 1, "split": 3.38, "calc_time": 29.17, "grade": "A1", "distance": 525, "track": "CRK", "comment": "Ld3,HdNrL"},
+            {"days_ago": 377, "pos": 1, "trap": 3, "split": 3.45, "calc_time": 28.76, "grade": "A3", "distance": 525, "track": "CRK", "comment": "Ld2,drclr"}
+          ]
+        },
+        {
+          "trap": 6,
+          "name": "Lahana Dash",
+          "style": "M",
+          "recent_runs": [
+            {"days_ago": 21, "pos": 2, "trap": 4, "split": 3.39, "calc_time": 29.37, "grade": "A6", "distance": 525, "track": "CRK", "comment": "FAw,EvCh"},
+            {"days_ago": 28, "pos": 2, "trap": 5, "split": 3.53, "calc_time": 30.05, "grade": "A6", "distance": 525, "track": "CRK", "comment": "Crd1,FinWl"},
+            {"days_ago": 63, "pos": 3, "trap": 4, "split": 3.48, "calc_time": 29.64, "grade": "A5", "distance": 525, "track": "CRK", "comment": "EvAw,ClrRn"},
+            {"days_ago": 231, "pos": 1, "trap": 3, "split": 3.49, "calc_time": 29.40, "grade": "A5", "distance": 525, "track": "CRK", "comment": "Chl3/4,LdRi"},
+            {"days_ago": 665, "pos": 1, "trap": 4, "split": 3.47, "calc_time": 29.00, "grade": "A4", "distance": 525, "track": "CRK", "comment": "Ld1,drclr"}
+          ]
+        }
+      ]
+    }
+  ]
+}

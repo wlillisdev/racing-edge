@@ -1,0 +1,153 @@
+{
+  "meeting": {
+    "track": "Curraheen Park (Cork)",
+    "track_code": "CRK",
+    "country": "IRE",
+    "date": "2026-07-03"
+  },
+  "engine": "greyhound-v0-uncalibrated",
+  "races": [
+    {
+      "race_no": 6,
+      "time": "21:05",
+      "grade": "A4",
+      "distance": 525,
+      "pace_map": {
+        "bend_order": [
+          {
+            "trap": 4,
+            "name": "Canadian Coghlan",
+            "best_split": 3.37
+          },
+          {
+            "trap": 2,
+            "name": "Zan",
+            "best_split": 3.38
+          },
+          {
+            "trap": 5,
+            "name": "Midian Saki",
+            "best_split": 3.38
+          },
+          {
+            "trap": 6,
+            "name": "Lahana Dash",
+            "best_split": 3.39
+          },
+          {
+            "trap": 3,
+            "name": "Rustys Prince",
+            "best_split": 3.44
+          },
+          {
+            "trap": 1,
+            "name": "Boherash Silin",
+            "best_split": 3.46
+          }
+        ],
+        "crowding_risk": true
+      },
+      "no_bet": true,
+      "runners": [
+        {
+          "rank": 1,
+          "trap": 1,
+          "name": "Boherash Silin",
+          "style": "R",
+          "score": 78.4,
+          "components": {
+            "early_pace": 0.0,
+            "time_form": 29.2,
+            "trap_style": 10.0,
+            "grade_edge": 11.2,
+            "recency": 5.0,
+            "consistency": 8.0
+          },
+          "flags": []
+        },
+        {
+          "rank": 2,
+          "trap": 5,
+          "name": "Midian Saki",
+          "style": "R",
+          "score": 78.4,
+          "components": {
+            "early_pace": 24.0,
+            "time_form": 30.0,
+            "trap_style": -6.0,
+            "grade_edge": 9.4,
+            "recency": 0.0,
+            "consistency": 6.0
+          },
+          "flags": []
+        },
+        {
+          "rank": 3,
+          "trap": 4,
+          "name": "Canadian Coghlan",
+          "style": "R",
+          "score": 65.8,
+          "components": {
+            "early_pace": 30.0,
+            "time_form": 18.7,
+            "trap_style": -2.0,
+            "grade_edge": -1.9,
+            "recency": 0.0,
+            "consistency": 6.0
+          },
+          "flags": []
+        },
+        {
+          "rank": 4,
+          "trap": 2,
+          "name": "Zan",
+          "style": "R",
+          "score": 61.4,
+          "components": {
+            "early_pace": 24.0,
+            "time_form": 19.5,
+            "trap_style": 7.0,
+            "grade_edge": 1.9,
+            "recency": -10.0,
+            "consistency": 4.0
+          },
+          "flags": [
+            "absent 34 days"
+          ]
+        },
+        {
+          "rank": 5,
+          "trap": 3,
+          "name": "Rustys Prince",
+          "style": "R",
+          "score": 48.8,
+          "components": {
+            "early_pace": 6.0,
+            "time_form": 18.0,
+            "trap_style": 2.0,
+            "grade_edge": 3.8,
+            "recency": 0.0,
+            "consistency": 4.0
+          },
+          "flags": []
+        },
+        {
+          "rank": 6,
+          "trap": 6,
+          "name": "Lahana Dash",
+          "style": "M",
+          "score": 32.2,
+          "components": {
+            "early_pace": 12.0,
+            "time_form": 5.2,
+            "trap_style": 2.0,
+            "grade_edge": -10.0,
+            "recency": 0.0,
+            "consistency": 8.0
+          },
+          "flags": []
+        }
+      ]
+    }
+  ]
+}

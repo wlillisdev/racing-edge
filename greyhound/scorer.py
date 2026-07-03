@@ -29,6 +29,10 @@ W_CONSISTENCY = 10.0
 
 BASELINE = 15.0  # so a mid-pack dog lands mid-scale, not near zero
 
+# Splits and times are only comparable at the same trip on the same track,
+# and stale form is not current ability.
+MAX_RUN_AGE_DAYS = 365
+
 _GRADE_RE = re.compile(r"^([A-Za-z]+)\s*(\d+)$")
 
 
@@ -44,6 +48,24 @@ def _parse_grade(grade: str | None) -> tuple[str, int] | None:
 def _best(values: list[float]) -> float | None:
     vals = [v for v in values if isinstance(v, (int, float)) and v > 0]
     return min(vals) if vals else None
+
+
+def _comparable(runs: list[dict], distance, track) -> list[dict]:
+    """Runs whose split/time can be compared to tonight's race: same
+    distance, same track (when both sides are known), not older than
+    MAX_RUN_AGE_DAYS."""
+    out = []
+    for r in runs:
+        age = r.get("days_ago")
+        if isinstance(age, (int, float)) and age > MAX_RUN_AGE_DAYS:
+            continue
+        if distance is not None and r.get("distance") not in (None, distance):
+            continue
+        run_track = r.get("track")
+        if track and run_track and str(run_track).upper() != str(track).upper():
+            continue
+        out.append(r)
+    return out
 
 
 class RunnerScore:
@@ -84,9 +106,12 @@ def _validate(card: dict) -> list[str]:
     return problems
 
 
-def _score_early_pace(scores: list[RunnerScore]) -> None:
+def _score_early_pace(scores: list[RunnerScore], distance, track) -> None:
     """Rank best recent split within the field. First to the bend wins races."""
-    best_splits = {s.trap: _best([r.get("split") for r in s.runs]) for s in scores}
+    best_splits = {
+        s.trap: _best([r.get("split") for r in _comparable(s.runs, distance, track)])
+        for s in scores
+    }
     known = sorted(v for v in best_splits.values() if v is not None)
     for s in scores:
         split = best_splits[s.trap]
@@ -100,8 +125,9 @@ def _score_early_pace(scores: list[RunnerScore]) -> None:
         s.components["early_pace"] = round(W_EARLY_PACE * (1 - rank / span), 1)
 
 
-def _score_time_form(scores: list[RunnerScore], distance: float | None) -> None:
-    """Best recent calc time at tonight's distance, relative to field best.
+def _score_time_form(scores: list[RunnerScore], distance, track) -> None:
+    """Best recent calc time at tonight's distance/track, relative to field
+    best.
 
     Roughly 0.08s per length; a dog 5+ lengths slower than the field's best
     recent time scores zero here.
@@ -109,11 +135,7 @@ def _score_time_form(scores: list[RunnerScore], distance: float | None) -> None:
     zero_beyond = 0.40  # seconds
     best_times = {}
     for s in scores:
-        at_trip = [
-            r.get("calc_time")
-            for r in s.runs
-            if distance is None or r.get("distance") == distance
-        ]
+        at_trip = [r.get("calc_time") for r in _comparable(s.runs, distance, track)]
         best_times[s.trap] = _best(at_trip)
     field_best = _best([v for v in best_times.values() if v is not None])
     for s in scores:
@@ -186,11 +208,11 @@ def _score_consistency(scores: list[RunnerScore]) -> None:
         s.components["consistency"] = round(W_CONSISTENCY * placed / max(len(recent), 1), 1)
 
 
-def _pace_map(scores: list[RunnerScore]) -> dict:
+def _pace_map(scores: list[RunnerScore], distance, track) -> dict:
     """Predicted order to the first bend + crowding flag."""
     splits = []
     for s in scores:
-        b = _best([r.get("split") for r in s.runs])
+        b = _best([r.get("split") for r in _comparable(s.runs, distance, track)])
         if b is not None:
             splits.append((b, s.trap, s.name))
     splits.sort()
@@ -208,17 +230,17 @@ def _pace_map(scores: list[RunnerScore]) -> dict:
     return {"bend_order": order, "crowding_risk": adjacent}
 
 
-def score_race(race: dict) -> dict:
+def score_race(race: dict, track=None) -> dict:
     scores = [RunnerScore(r) for r in race.get("runners", [])]
     distance = race.get("distance")
-    _score_early_pace(scores)
-    _score_time_form(scores, distance)
+    _score_early_pace(scores, distance, track)
+    _score_time_form(scores, distance, track)
     _score_trap_style(scores)
     _score_grade_edge(scores, race.get("grade"))
     _score_recency(scores)
     _score_consistency(scores)
     ranked = sorted(scores, key=lambda s: s.total, reverse=True)
-    pace = _pace_map(scores)
+    pace = _pace_map(scores, distance, track)
     return {
         "race_no": race.get("race_no"),
         "time": race.get("time"),
@@ -245,10 +267,11 @@ def score_card(card: dict) -> dict:
     problems = _validate(card)
     if problems:
         raise ValueError("card failed validation:\n  " + "\n  ".join(problems))
+    track = card.get("meeting", {}).get("track_code")
     return {
         "meeting": card.get("meeting", {}),
         "engine": "greyhound-v0-uncalibrated",
-        "races": [score_race(r) for r in card["races"]],
+        "races": [score_race(r, track) for r in card["races"]],
     }
 
 
