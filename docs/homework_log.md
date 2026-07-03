@@ -462,3 +462,35 @@ form-FIRST (#29), then marked against the winners. What the form said BEFORE the
    Dream 8.0 vs Phantom Gold 2.2).
 4. Big-field Irish handicaps: the flag stands — pass.
 All directional: one card, small sample, the trial record is the judge.
+
+---
+
+## 2026-07-03 (Fri) — the nap LOST at Chepstow 17:10: the master's dissection, banked
+
+**Result (from the master's photo):** Green Sky (IRE) 9/1 won readily (6yo, OR67,
+B R Millman — "towards rear, improved 3f out, led approaching 2f, readily drew away");
+Jindri 5/4f 2nd (Oisin Murphy — "led... ridden and headed... no match for winner");
+our nap lost. 5 ran, Class 5 fillies' handicap.
+
+**Why the system picked it (honest):** the well-in lens — won last time out,
+unpenalised. That single alignment carried it. Nothing in the pipeline asked the
+three questions the master asked in ten seconds:
+1. **"Stay away from races with young unexposed horses."** The field was young,
+   lightly raced fillies — a novice in disguise behind a handicap title. The #13 gate
+   reads the TITLE; it never read the FIELD. → fixed: field-exposure gate (#30).
+2. **"It was a bad race he won — what about form franking?"** `frank_form` existed
+   and the nap path never called it. The pick's last win was hollow and checkable.
+   → fixed: the nominee's form is franked before banking; a THIN frank kills confident.
+3. **"The jockey was out of his league... Oisin Murphy dictated the race."** Small
+   tactical field, elite riders, our claimer outgunned — and the winner came from the
+   good stable with the good record. No code lens for jockey class yet — banked here
+   as the master's read; the eye covers it until the record earns a rule.
+
+**The market note:** Jindri was backed off the board AND had the best jockey AND
+dictated — and still got hammered by the exposed older horse. The money and the
+tactics both lost to CLASS-IN-FIELD. In a 5-runner race the smashed fav failing is
+the same lesson as the deep-field version (2026-07-01) wearing different clothes:
+the gamble is not the form.
+
+**Meta:** the loss is banked in nap.db (settle records it) — the record stays honest.
+One pick, one loss, three structural fixes. That is the loop working as built.

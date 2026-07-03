@@ -63,6 +63,35 @@ def test_conviction_reads_the_manner_from_history_comments() -> None:
     assert any("finisher" in a for a in c2.aligned)
 
 
+def test_field_of_young_unexposed_horses_is_flagged_a_novice_in_disguise() -> None:
+    """Chepstow 17:10 (2026-07-03): the race TITLE passed the #13 gate but the field
+    was young unexposed fillies — the form book didn't apply and the nap lost. When
+    half+ of the live contenders are <=4yo with <=4 runs, every pick gets flagged."""
+    class _YoungClient:
+        def racecards(self, day="today"):
+            return {"racecards": [{
+                "race_id": "R1", "course": "Chepstow", "off_time": "17:10",
+                "date": "2026-07-03", "race_name": "Fillies Handicap", "type": "Flat",
+                "class": "5", "runners": [
+                    {"horse_id": "A", "horse": "Baby One", "age": "4", "ofr": "74",
+                     "odds": [{"decimal": "2.25"}]},
+                    {"horse_id": "B", "horse": "Baby Two", "age": "4", "ofr": "58",
+                     "odds": [{"decimal": "3.5"}]},
+                ]}]}
+
+        def horse_results(self, hid, limit=12):
+            return [{"date": "2026-06-01", "runners": [
+                {"horse_id": hid, "position": "1", "or": "70"}]}]   # one run each
+
+        def trainer_jockeys(self, tid):
+            return []
+
+    field = evaluate_field(_YoungClient(), day="today", codes=("flat",))
+    assert field
+    assert all(any("novice in disguise" in f for f in p.conviction.flags) for p in field)
+    assert nominate_nap(_YoungClient(), day="today", codes=("flat",)) is None  # no bet
+
+
 def test_conviction_needs_the_mark_to_be_confident() -> None:
     # everything aligns but the OR isn't on the card -> mark unknown -> never confident
     r = Runner(horse_id="w", horse="Gem", odds=Odds(consensus=3.0))   # no official_rating

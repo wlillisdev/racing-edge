@@ -10,7 +10,7 @@ returned flagged not-confident, and the caller can decline (a bad nap you don't 
 from __future__ import annotations
 
 from collections.abc import Callable
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 
 from racing_edge.data.evidence import build_evidence
 from racing_edge.data.normalise import racecards_from_raw
@@ -58,11 +58,29 @@ def evaluate_field(client: _Client, day: str = "today",
         priced = sorted([r for r in race.runners if r.odds.consensus and r.odds.consensus > 1],
                         key=lambda r: r.odds.consensus)        # type: ignore[arg-type,return-value]
         ranks = {r.horse_id: i + 1 for i, r in enumerate(priced)}
+        race_picks: list[NapPick] = []
+        young_unexposed = 0
         for r in priced[:top_n]:
             ev = evidence.get(r.horse_id)
             hist = ev.history if ev else ()
+            if (r.age or 99) <= 4 and len(hist) <= 4:
+                young_unexposed += 1
             c = conviction(r, race, hist, ranks.get(r.horse_id, 99), race.field_size)
-            out.append(NapPick(race=race, runner=r, price=r.odds.consensus, conviction=c))
+            race_picks.append(NapPick(race=race, runner=r, price=r.odds.consensus,
+                                      conviction=c))
+        # THE FIELD-EXPOSURE GATE (Chepstow 17:10, 2026-07-03): a handicap DOMINATED by
+        # young unexposed horses is a novice race in disguise — the race title passed
+        # the #13 gate but the form book still didn't apply, and the exposed older
+        # horse from the in-form yard hammered the babies. If half or more of the live
+        # contenders are young (<=4yo) AND lightly raced (<=4 runs), flag them ALL.
+        if race_picks and young_unexposed >= 2 and young_unexposed * 2 >= len(race_picks):
+            gate = "young-unexposed field — a novice in disguise (#13/#30)"
+            race_picks = [
+                replace(p, conviction=replace(
+                    p.conviction, flags=(*p.conviction.flags, gate)))
+                for p in race_picks
+            ]
+        out.extend(race_picks)
     out.sort(key=_rank_key, reverse=True)
     return out
 

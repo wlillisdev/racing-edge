@@ -401,6 +401,27 @@ of the assembled dots — it has failed at the one job it's for.
    and only then reports the market rank; `dissect` is price-first BY NATURE, so it's a
    post-mortem tool, never the picker.)*
 
+30. **Read the FIELD's exposure, not the race title — and FRANK the nap's own last win
+   BEFORE banking.** The Chepstow lesson (17:10, 2026-07-03, nap LOST — the master's
+   dissection): *"stay away from races with young unexposed horses."* The race title
+   passed the #13 gate (it said HANDICAP, not novice) but the field was young, lightly
+   raced fillies — **a novice race in disguise**; the form book didn't apply, and the
+   exposed older mare from the in-form yard (Green Sky, 6yo, B R Millman) came off the
+   pace and *readily* hammered them. Three knocks on our pick that were all readable
+   BEFORE the off:
+   - **The field**: young + unexposed contenders = pass, whatever the title says.
+     *(In code: the field-exposure gate in `pipeline/nap.py` — half+ of the live
+     contenders <=4yo with <=4 runs flags the whole race.)*
+   - **The frank**: our filly had won last time unpenalised — the well-in lens loved it —
+     but *"it was a bad race he won."* Franking the win would have said so. A win in a
+     bad race is a mirage. *(In code: `frank_form` now runs on the nominee before
+     banking; a THIN frank — rivals re-ran and did NOT stack up — kills CONFIDENT.)*
+   - **The jockey, the pace, the money**: a claiming/inexperienced rider *"out of his
+     league"* against elite jockeys in a small tactical field is a knock — Oisin Murphy
+     *dictated* the race on the fav that was *"backed off the board"* (and STILL found
+     the winner too good — the strong-yard exposed one beat both the money and the
+     tactics). Small fields are jockey-tactics races; respect the saddle (#21's cousin).
+
 ## The learning loop — how the notebook bites on selections
 
 A notebook that just sits here is useless. This is the closed loop that makes it

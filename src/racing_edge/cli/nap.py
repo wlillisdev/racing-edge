@@ -177,9 +177,25 @@ def main() -> int:
     emit("     · run-STYLE / manner — who leads, who's held up (the comments door)")
 
     c, r = nap.conviction, nap.race
-    tag = "CONFIDENT NAP" if c.confident else "best candidate — NOT confident (declinable)"
+
+    # FRANK THE NAP'S OWN FORM BEFORE BANKING (Chepstow 17:10, 2026-07-03: the pick had
+    # won last time unpenalised — but it was a BAD race, and franking would have said
+    # so. frank_form existed and the nap never called it. A thin frank — rivals re-ran
+    # and did NOT stack up — is the one veto-grade franking verdict: it kills CONFIDENT.)
+    from racing_edge.data.normalise import past_runs_from_raw
+    from racing_edge.study.frank import frank_form
+    nap_hist = past_runs_from_raw(client.horse_results(nap.runner.horse_id),
+                                  nap.runner.horse_id)
+    fr = frank_form(client, nap.runner.horse_id, nap_hist)
+    confident = c.confident and not fr.is_thin
+
+    tag = "CONFIDENT NAP" if confident else "best candidate — NOT confident (declinable)"
     emit(f"  {tag}: {nap.runner.horse}  —  {r.course} {r.off_time} ({r.race_type})")
     emit(f"  conviction {c.score}: {', '.join(c.aligned) or 'thin'}")
+    emit(f"  frank (#5/#15): {fr.note}")
+    if c.confident and fr.is_thin:
+        emit("  ⚠ DOWNGRADED from confident: the form it beat has NOT stacked up since "
+             "— a win in a bad race is a mirage.")
     if c.flags:
         emit(f"  FLAGS: {', '.join(c.flags)}")
     if not c.mark_known:
@@ -191,7 +207,7 @@ def main() -> int:
     log = open_nap_log()
     log.record(day=day, race_id=r.race_id, course=r.course, horse=nap.runner.horse,
                horse_id=nap.runner.horse_id, price=nap.price, score=c.score,
-               confident=c.confident)
+               confident=confident)
     log.close()
     emit(f"\n  banked the nap for {day} — settle it tomorrow with --settle {day}.")
     _maybe_email(out, f"{tag}: {nap.runner.horse} — {r.course} {r.off_time} ({day})", args.email)
