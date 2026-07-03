@@ -30,6 +30,7 @@ W_REMARKS = 8.0       # -8 .. +8, from race comments
 W_RUN_LINE = 8.0      # 0 .. +8, from in-race positions
 W_DRAW_BIAS = 5.0     # -5 .. +5, learned per track+distance from results log
 W_TRIP = 6.0          # -6 .. +6, distance change read with the remarks
+W_TRACK_AFF = 6.0     # 0 .. +6, record at tonight's track / raider intent
 
 # Race-comment tokens (lowercased, spaces stripped before matching)
 _TROUBLE = ("crd", "blk", "bmp", "ck", "imp")          # trouble = excuse
@@ -349,6 +350,33 @@ def _score_trip_change(scores: list[RunnerScore], distance) -> None:
         s.components["trip_change"] = round(max(-W_TRIP, min(W_TRIP, val)), 1)
 
 
+def _score_track_affinity(scores: list[RunnerScore], track) -> None:
+    """The Trk column tells two stories.
+
+    Track lovers: some dogs just go at this track — score their wins and
+    places HERE, not anywhere.
+
+    Raiders: a dog whose recent lines are all at an away track (e.g. a
+    Kerry dog shipped up to Cork) has been travelled on purpose. Nobody
+    puts a dog in the van for a day out — small credit and a loud flag.
+    """
+    for s in scores:
+        if not track:
+            s.components["track_aff"] = 0.0
+            continue
+        tonight = str(track).upper()
+        here = [r for r in s.runs if str(r.get("track") or "").upper() == tonight]
+        away = [r for r in s.runs if r.get("track") and str(r["track"]).upper() != tonight]
+        if not here and away:
+            s.components["track_aff"] = 2.0
+            codes = "/".join(sorted({str(r["track"]).upper() for r in away}))
+            s.flags.append(f"RAIDER from {codes} — travelled with intent")
+            continue
+        wins = sum(1 for r in here if r.get("pos") == 1)
+        places = sum(1 for r in here if r.get("pos") == 2)
+        s.components["track_aff"] = round(min(W_TRACK_AFF, 2.0 * wins + 1.0 * places), 1)
+
+
 def _load_track_bias() -> dict:
     path = Path(__file__).parent / "track_bias.json"
     if path.exists():
@@ -429,6 +457,7 @@ def score_race(race: dict, track=None, bias: dict | None = None) -> dict:
     _score_remarks(scores)
     _score_run_line(scores)
     _score_trip_change(scores, distance)
+    _score_track_affinity(scores, track)
     _score_draw_bias(scores, distance, track, bias if bias is not None else _load_track_bias())
     # Tiebreak on the most predictive components, in order.
     ranked = sorted(
@@ -504,7 +533,8 @@ def _print_report(result: dict) -> None:
                 f" grade {r['components'].get('grade_edge', 0):+.0f}"
                 f" cmnt {r['components'].get('remarks', 0):+.1f}"
                 f" line {r['components'].get('run_line', 0):+.1f}"
-                f" trip {r['components'].get('trip_change', 0):+.1f}){flags}"
+                f" trip {r['components'].get('trip_change', 0):+.1f}"
+                f" trk {r['components'].get('track_aff', 0):+.1f}){flags}"
             )
         bend = ", ".join(f"T{o['trap']}" for o in race["pace_map"]["bend_order"][:3])
         if bend:

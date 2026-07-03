@@ -40,6 +40,7 @@ work unchanged.
 | Running lines (SPi) | 0 to +8 | Half for early position taken, half for ground made through the race. Late passers thrive in trouble races. |
 | Draw bias (learned) | −5 to +5 | Per track+distance trap win-rates from `results_log.csv` via `log_result.py`. Silent until 30+ logged races — never guessed. |
 | Trip change × remarks | −6 to +6 | Dropping back with early dash (esp. after fading at the longer trip) = gets home easily; a stayer dropped back loses its weapon. Stepping up suits proven strong finishers, punishes dogs fading even at the shorter trip. |
+| Track affinity / raiders | 0 to +6 | Wins and places at TONIGHT'S track (some dogs love Cork). A dog with all recent lines at an away track was travelled on purpose — +2 and a RAIDER flag. |
 
 Also emitted per race: a **pace map** (predicted order to the first bend) and
 a **crowding flag** when 3+ early-pace dogs are drawn adjacent — those races
