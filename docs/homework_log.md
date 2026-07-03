@@ -494,3 +494,30 @@ the gamble is not the form.
 
 **Meta:** the loss is banked in nap.db (settle records it) — the record stays honest.
 One pick, one loss, three structural fixes. That is the loop working as built.
+
+---
+
+## 2026-07-03 (Fri evening) — the jigsaw profile wins again, and the clock keeps us honest
+
+**Beverley 7:02 (Cl4, 8 ran): I'M NEXT WON at 2/1F; Emperor Spirit 2nd at 9/2.**
+Read form-first off the pre-race brief (pulled 18:39): WELL-IN + 2 course wins + the
+yard's NUMBER ONE rider up + 17% in-form yard + fair-priced fav (#19). The brief's TWO
+well-in tells in the race finished FIRST and SECOND. This is the Indian Run profile
+winning again — n=2 now for "well-in course specialist, stable's top rider, fair price."
+Still a small sample; the profile is a lead the record keeps testing, not a law.
+
+**The verification lesson (the master's challenge — "did you cheat?"):** the read
+landed in chat after the off, so it is UNVERIFIABLE and counts for NOTHING on the
+record, however right it was. Only picks banked in nap.db with a pre-off timestamp
+count. Right call, wrong channel = no credit. That discipline is the whole trial.
+
+**The brief's blind spot, caught live:** manner printed '·?' on every horse all night
+while the comments were demonstrably flowing — the scorecard's manner lens was
+hard-coded OWED from before the comments door opened (2026-07-01). Fixed tonight:
+the lens now reads FINISHER / placer! / excuse+ from the history comments, OWED only
+when genuinely blank. Tomorrow's brief reads the finish, not just the figures (#1).
+
+**Late calls (pre-off, results unknown at time of writing — settle honestly):**
+Giant Haystacks (Wexford 8:00, well-in -9, calculated gamble, move-dependent) and
+Qazaq e/w (Beverley 8:40, first-time headgear from 29% yard, #16). Mark them either
+way in tomorrow's restudy — no cherry-picking the ones that won.

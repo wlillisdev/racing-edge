@@ -105,8 +105,20 @@ def _going(ev: RunnerEvidence, race: Race) -> Cell:
 
 
 def _manner(ev: RunnerEvidence, race: Race) -> Cell:
-    # the API carries no in-running comment — rule #1 (read the finish) is blind. OWED.
-    return Cell("·", owed=True)
+    # rule #1 read the finish — LIVE since the comments door opened (2026-07-01): the
+    # history carries in-running comments, nap_verdict classifies them. Only OWED when
+    # the runs genuinely came through without comments.
+    from racing_edge.domain.manner import nap_verdict
+    mv = nap_verdict([h.comment for h in ev.history[:4]])
+    if mv.recommendation == "win_positive":
+        return Cell("FINISHER")
+    if mv.recommendation == "place_only":
+        return Cell("placer!")                       # the nearly-type warning, visible
+    if mv.recommendation == "excuse_upgrade":
+        return Cell("excuse+")
+    if any(h.comment.strip() for h in ev.history[:4]):
+        return Cell("—")                             # comments read, nothing decisive
+    return Cell("·", owed=True)                      # no comments through the window
 
 
 def _yard(ev: RunnerEvidence, race: Race) -> Cell:
