@@ -172,6 +172,7 @@ def _going_adjacent(going_a: str, going_b: str) -> bool:
 
 
 def _best_morning_price(runner: dict) -> Optional[float]:
+    """Longest available decimal across books — used for display and staking."""
     odds_list = runner.get("odds") or []
     best: Optional[float] = None
     for entry in odds_list:
@@ -183,6 +184,34 @@ def _best_morning_price(runner: dict) -> Optional[float]:
         except (TypeError, ValueError):
             continue
     return best
+
+
+def _consensus_morning_price(runner: dict) -> Optional[float]:
+    """Median bookmaker decimal — a consensus proxy for SP.
+
+    The odds gate (nap_min_odds/nap_max_odds) and outsider penalties were
+    calibrated on SP in the backtest. Taking the *best available* (max)
+    decimal across ~30 books is biased materially longer than SP, so gating
+    on it wrongly excludes runners whose consensus price sits inside the
+    profitable window. The median restores an SP-comparable basis for those
+    gates; _best_morning_price (max) is kept for display and staking.
+    """
+    decs: list[float] = []
+    for entry in runner.get("odds") or []:
+        try:
+            dec = float(entry.get("decimal") or 0)
+        except (TypeError, ValueError):
+            continue
+        if dec > 1.0:
+            decs.append(dec)
+    if not decs:
+        return None
+    decs.sort()
+    n = len(decs)
+    mid = n // 2
+    if n % 2:
+        return decs[mid]
+    return (decs[mid - 1] + decs[mid]) / 2.0
 
 
 def _ts_rank_score(runner: dict, all_runners: list[dict]) -> tuple[float, list[str]]:
@@ -722,14 +751,18 @@ def compute_market_score(
     reasons: list[str] = []; fatal_flags: list[str] = []; score = 0.0
     horse_id = str(runner.get("horse_id") or "")
     morning_price = _best_morning_price(runner)
+    consensus_price = _consensus_morning_price(runner)
 
     if morning_price is not None:
         reasons.append(f"Morning price: {format_odds(morning_price)}")
-        # No positive scoring for any price band.
-        # Penalty only when market significantly disagrees with our form assessment.
-        if morning_price > 20.0:
+    # No positive scoring for any price band. Penalty only when the market
+    # clearly disagrees — gated on the consensus (median) price, not the
+    # best-available outlier, to match the SP basis these thresholds were
+    # calibrated on.
+    if consensus_price is not None:
+        if consensus_price > 20.0:
             score -= 3.0; reasons.append("Outsider — market significantly disagrees with form assessment")
-        elif morning_price > 12.0:
+        elif consensus_price > 12.0:
             score -= 1.0; reasons.append("Double-figure price — market lukewarm on this runner")
 
     if market_movers and isinstance(market_movers, dict):
@@ -847,6 +880,7 @@ def score_runner(
 
     grade = assign_grade(total)
     morning_price = _best_morning_price(runner)
+    consensus_price = _consensus_morning_price(runner)
     return {
         "horse_id": str(runner.get("horse_id") or ""),
         "horse": str(runner.get("horse") or ""),
@@ -863,6 +897,7 @@ def score_runner(
         "reasons": form_reasons + suit_reasons + ctx_reasons + draw_reasons + trnr_reasons + mkt_reasons + wisdom_reasons + ai_reasons + pace_reasons,
         "warnings": list(fatal_flags),
         "morning_price": morning_price,
+        "consensus_price": consensus_price,
         "form": runner.get("form") or "",
         "trainer": str(runner.get("trainer") or ""),
         "jockey": str(runner.get("jockey") or ""),
@@ -1042,10 +1077,15 @@ def main() -> int:
         # dangerous_drift = only fatal market signal
         if "dangerous_drift" in (top.get("warnings") or []):
             no_bet_races.append(race_id); continue
-        # Odds gates — no value at short prices; 8/1+ is -39.4% ROI
-        if top.get("morning_price") is not None and top["morning_price"] < _min_odds:
+        # Odds gates — no value at short prices; 8/1+ is -39.4% ROI.
+        # Gate on the consensus (median) price, which matches the SP basis the
+        # thresholds were calibrated on; fall back to best-available if absent.
+        _gate_price = top.get("consensus_price")
+        if _gate_price is None:
+            _gate_price = top.get("morning_price")
+        if _gate_price is not None and _gate_price < _min_odds:
             no_bet_races.append(race_id); continue
-        if top.get("morning_price") is not None and top["morning_price"] > _max_odds:
+        if _gate_price is not None and _gate_price > _max_odds:
             no_bet_races.append(race_id); continue
         # Flat going filter — Firm/Heavy excluded; G-F monitored but not excluded
         _is_flat = not any(x in (top.get("race_type") or "").lower() for x in ("chase", "hurdle", "bumper"))
@@ -1173,7 +1213,9 @@ def main() -> int:
         # The jump alternative is presented as a bettable secondary pick, so it
         # must clear the same structural gates as the NAP: priced and inside the
         # odds window, rideable going, and a field small enough to handicap.
-        _jp = top.get("morning_price")
+        _jp = top.get("consensus_price")
+        if _jp is None:
+            _jp = top.get("morning_price")
         if _jp is None or _jp < _min_odds or _jp > _max_odds:
             continue
         if going_normalise(top.get("going") or "") in JUMP_EXCLUDED_GOING:
