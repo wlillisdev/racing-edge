@@ -534,3 +534,20 @@ Discipline note, again: neither goes on the nap ledger (not banked in nap.db pre
 and one evening is noise. But the evening's evidence keeps stacking the same way:
 the mark lens finds live ones, the drift rule keeps us off dead ones, and the record
 — the real one, banked at 07:30 each morning — is the only judge that counts.
+
+### The master's question, answered: "why weren't tonight's two winners in the morning read?"
+Diagnosed against the code, not hand-waved. The evening read used FOUR dots the
+conviction engine structurally could not score:
+1. **No rule #19.** Rank 2/3 earned the market lens; the FAVOURITE earned nothing,
+   ever. I'm Next (2/1F) and Giant Haystacks (7/2F) each lost a lens purely for being
+   #1 — the engine had rule #2 without its counterweight.
+2. **No magnitude.** "Well-in" scored 1 whether the gap was 0lb or -9lb. Giant
+   Haystacks' whole case WAS the -9.
+3. **No intent.** The yard's 14-day form and the stable's-#1-rider booking were
+   collected by evidence and printed on the brief — and never passed to conviction.
+   Half the I'm Next jigsaw couldn't score.
+So the engine napped a filly on well-in + 2nd-fav while two stronger profiles sat
+capped. FIXED same night: #19 fair-priced-fav lens (>=2.5, cramped still earns
+nothing), a heavily-treated lens at -5lb+, and the intent dots wired from evidence
+into conviction. Test pins the exact case: the I'm Next profile now outranks the
+bare sweet-spot profile. Tomorrow's 07:30 pick is the first with the full jigsaw.

@@ -63,6 +63,45 @@ def test_conviction_reads_the_manner_from_history_comments() -> None:
     assert any("finisher" in a for a in c2.aligned)
 
 
+def test_the_im_next_lesson_fair_fav_with_intent_outranks_bare_sweet_spot() -> None:
+    """2026-07-03: the engine napped a filly (well-in + 2nd fav) while I'm Next
+    (well-in + course depth + in-form yard + stable's #1 up, fair-priced FAV) and
+    Giant Haystacks (well-in -9) won elsewhere on the card — favourites earned no
+    market lens (#19 missing), -9lb scored like 0lb, intent couldn't score at all."""
+    race = _race()
+    im_next = Runner(horse_id="IN", horse="ImNext", official_rating=86,
+                     jockey_id="J1", odds=Odds(consensus=3.1))
+    hist = (_won_cdg(date(2026, 6, 1), 86), _won_cdg(date(2026, 4, 1), 82),
+            PastRun(date=date(2026, 3, 1), position=3, official_rating=84))
+    c = conviction(im_next, race, hist, market_rank=1, field_size=8,
+                   stable_strike=0.17, yard_no1=True)
+    assert any("#19" in a for a in c.aligned)            # fair-priced fav now credited
+    assert any("in-form yard" in a for a in c.aligned)
+    assert any("#1 rider" in a for a in c.aligned)
+    # the bare filly profile: well-in + sweet spot only
+    filly = Runner(horse_id="F", horse="Filly", official_rating=58,
+                   odds=Odds(consensus=3.6))
+    cf = conviction(filly, race, (PastRun(date=date(2026, 6, 1), position=1,
+                                          official_rating=58),),
+                    market_rank=2, field_size=5)
+    assert c.score > cf.score                            # the jigsaw now outranks it
+
+    # magnitude: -9lb is its own signal, not the same dot as 0lb
+    gh = Runner(horse_id="GH", horse="GiantHaystacks", official_rating=95,
+                odds=Odds(consensus=4.4))
+    cg = conviction(gh, race, (_won_cdg(date(2026, 5, 1), 104),),
+                    market_rank=1, field_size=8)
+    assert any("heavily treated" in a for a in cg.aligned)
+    assert any("#19" in a for a in cg.aligned)
+    # a CRAMPED fav still earns nothing — #19 is about fair prices, not all favs
+    cramped = conviction(im_next, race, hist, market_rank=1, field_size=8)
+    short = Runner(horse_id="S", horse="Shorty", official_rating=86,
+                   odds=Odds(consensus=1.8))
+    cs = conviction(short, race, hist, market_rank=1, field_size=8)
+    assert not any("#19" in a for a in cs.aligned)
+    assert any("#19" in a for a in cramped.aligned)      # 3.1 is fair
+
+
 def test_field_of_young_unexposed_horses_is_flagged_a_novice_in_disguise() -> None:
     """Chepstow 17:10 (2026-07-03): the race TITLE passed the #13 gate but the field
     was young unexposed fillies — the form book didn't apply and the nap lost. When

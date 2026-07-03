@@ -65,7 +65,13 @@ def evaluate_field(client: _Client, day: str = "today",
             hist = ev.history if ev else ()
             if (r.age or 99) <= 4 and len(hist) <= 4:
                 young_unexposed += 1
-            c = conviction(r, race, hist, ranks.get(r.horse_id, 99), race.field_size)
+            # the INTENT dots (yard form + the stable's #1 booked) — collected here
+            # all along, scored by conviction only since the I'm Next lesson
+            strike = (ev.stable_wins / ev.stable_runs
+                      if ev and ev.stable_runs and ev.stable_runs >= 8 else None)
+            no1 = bool(ev and r.jockey_id and r.jockey_id in ev.stable_jockey_ids)
+            c = conviction(r, race, hist, ranks.get(r.horse_id, 99), race.field_size,
+                           stable_strike=strike, yard_no1=no1)
             race_picks.append(NapPick(race=race, runner=r, price=r.odds.consensus,
                                       conviction=c))
         # THE FIELD-EXPOSURE GATE (Chepstow 17:10, 2026-07-03): a handicap DOMINATED by

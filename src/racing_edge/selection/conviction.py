@@ -40,7 +40,15 @@ def _same_course(h: PastRun, race: Race) -> bool:
 
 
 def conviction(runner: Runner, race: Race, history: tuple[PastRun, ...],
-               market_rank: int, field_size: int = 0) -> Conviction:
+               market_rank: int, field_size: int = 0, *,
+               stable_strike: float | None = None, yard_no1: bool = False) -> Conviction:
+    """`stable_strike` (0..1, the yard's 14-day form) and `yard_no1` (the stable's #1
+    rider is booked) are the INTENT dots — collected by evidence, printed on the brief,
+    and, until 2026-07-03, never scored here. That night the engine napped a filly
+    while two stronger profiles (I'm Next, Giant Haystacks — both won) sat structurally
+    capped: favourites earned nothing (#19 missing), -9lb scored the same as 0lb, and
+    intent couldn't score at all. The master's question — 'why weren't these part of
+    today's read?' — is answered by the three lenses added below."""
     aligned: list[str] = []
     flags: list[str] = []
 
@@ -48,6 +56,10 @@ def conviction(runner: Runner, race: Race, history: tuple[PastRun, ...],
     if mr.delta is not None:
         if mr.delta <= 0:
             aligned.append(f"well-in ({mr.verdict})")
+            if mr.delta <= -5:
+                # MAGNITUDE matters: a 5lb+ gap is its own signal, not the same dot
+                # twice (Giant Haystacks won off -9; it had scored level with a 0lb)
+                aligned.append(f"heavily treated ({mr.delta}lb below last winning mark)")
         else:
             flags.append(f"raised {mr.verdict} since last win")
 
@@ -69,8 +81,21 @@ def conviction(runner: Runner, race: Race, history: tuple[PastRun, ...],
     elif course_wins == 1:
         aligned.append("course winner")
 
+    price = runner.odds.consensus
     if market_rank in (2, 3):
         aligned.append("market sweet spot (2nd/3rd fav)")
+    elif market_rank == 1 and price and price >= 2.5:
+        # rule #19 — don't fear a FAIR-priced fav: pick the winner, not the price.
+        # The engine had #2 without its counterweight, so the strongest profile on
+        # the card scored a lens BEHIND a weaker one sitting 2nd fav (I'm Next, 2/1F).
+        aligned.append("fair-priced favourite (#19 — the winner, not the price)")
+
+    # INTENT (#5) — the yard's form and the booking. Half the winning jigsaw
+    # (I'm Next: 17% yard + stable's #1 up) that conviction could never see.
+    if stable_strike is not None and stable_strike >= 0.15:
+        aligned.append(f"in-form yard ({round(stable_strike * 100)}%)")
+    if yard_no1:
+        aligned.append("stable's #1 rider up (intent)")
 
     for t in match_tells(runner, race, history):
         if "LOCAL MASTER" in t:
@@ -80,7 +105,6 @@ def conviction(runner: Runner, race: Race, history: tuple[PastRun, ...],
         elif "distrust" in t:
             flags.append("rising-mark trap")
 
-    price = runner.odds.consensus
     # the profile that beat me twice — lightly raced, market leader, short price
     if len(history) <= 4 and market_rank == 1 and price and price <= 3.0:
         flags.append("improver-favourite (unexposed, short price)")
