@@ -40,6 +40,29 @@ _SLOW_AWAY = ("slaw", "msdbrk")
 # Recency weighting for per-run evidence: newest run counts most.
 _RUN_WEIGHTS = (1.0, 0.8, 0.6, 0.4, 0.2)
 
+# GRI conversion: one length ≈ 0.07s. EstTm on the card is
+# win_time + 0.07 * lengths_beaten + printed going allowance (signed:
+# "+.20 Fast" adds, "-.30 Slow" subtracts).
+SECS_PER_LENGTH = 0.07
+
+
+def _estimate_time(run: dict) -> float | None:
+    """The card's EstTm formula, for when a card doesn't print it."""
+    win = run.get("win_time")
+    if not isinstance(win, (int, float)) or win <= 0:
+        return None
+    beaten = run.get("beaten_by") or 0.0
+    allowance = run.get("going_allowance") or 0.0
+    return round(win + SECS_PER_LENGTH * float(beaten) + float(allowance), 2)
+
+
+def _calc_time(run: dict) -> float | None:
+    """Prefer the printed estimated time; derive it if absent."""
+    t = run.get("calc_time")
+    if isinstance(t, (int, float)) and t > 0:
+        return t
+    return _estimate_time(run)
+
 BASELINE = 15.0  # so a mid-pack dog lands mid-scale, not near zero
 
 # Splits and times are only comparable at the same trip on the same track,
@@ -148,8 +171,8 @@ def _score_time_form(scores: list[RunnerScore], distance, track) -> None:
     zero_beyond = 0.40  # seconds
     best_times = {}
     for s in scores:
-        at_trip = [r.get("calc_time") for r in _comparable(s.runs, distance, track)]
-        best_times[s.trap] = _best(at_trip)
+        at_trip = [_calc_time(r) for r in _comparable(s.runs, distance, track)]
+        best_times[s.trap] = _best([t for t in at_trip if t is not None])
     field_best = _best([v for v in best_times.values() if v is not None])
     for s in scores:
         t = best_times[s.trap]

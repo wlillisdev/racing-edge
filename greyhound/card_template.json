@@ -43,6 +43,8 @@
     "grade": "letter+number, e.g. A5, S3; lower number = higher grade within a letter",
     "positions": "in-race positions at each call (SPi column), e.g. '6544'",
     "win_time": "the winning time of that race (Win Tm. column)",
+    "beaten_by": "lengths beaten (By column), 0 for the winner — used with win_time + going_allowance to derive calc_time (EstTm = win + 0.07*lengths + allowance) when the card doesn't print one",
+    "going_allowance": "printed signed allowance per run, e.g. 0.20 for '+.20 Fast', -0.30 for '-.30 Slow', 0 for Sand/none",
     "track": "track code of that run (Trk column) — splits/times only compared within same track+distance",
     "minimum": "trap, name, and recent_runs with pos/split/calc_time/grade/days_ago. Everything else optional."
   }
