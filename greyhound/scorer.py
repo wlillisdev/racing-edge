@@ -29,6 +29,7 @@ W_CONSISTENCY = 10.0
 W_REMARKS = 8.0       # -8 .. +8, from race comments
 W_RUN_LINE = 8.0      # 0 .. +8, from in-race positions
 W_DRAW_BIAS = 5.0     # -5 .. +5, learned per track+distance from results log
+W_TRIP = 6.0          # -6 .. +6, distance change read with the remarks
 
 # Race-comment tokens (lowercased, spaces stripped before matching)
 _TROUBLE = ("crd", "blk", "bmp", "ck", "imp")          # trouble = excuse
@@ -291,6 +292,63 @@ def _score_run_line(scores: list[RunnerScore]) -> None:
         s.components["run_line"] = round(early_pts + gain_pts, 1)
 
 
+def _score_trip_change(scores: list[RunnerScore], distance) -> None:
+    """Distance move read together with the remarks.
+
+    Dropping back in trip: a dog with genuine early dash gets first run
+    and no longer has to get home — especially one that was FADING at the
+    longer trip. But a dog that was staying on at the longer trip may find
+    the shorter race over before it warms up.
+
+    Stepping up in trip: strong finishers (RnOn/StyWl/Strfin) are bred
+    for it; dogs already fading at the shorter trip are not.
+    """
+    if distance is None:
+        for s in scores:
+            s.components["trip_change"] = 0.0
+        return
+    for s in scores:
+        recent = s.runs[: len(_RUN_WEIGHTS)]
+        with_dist = [r for r in recent if isinstance(r.get("distance"), (int, float))]
+        if not with_dist:
+            s.components["trip_change"] = 0.0
+            continue
+        longer = [r for r in with_dist if r["distance"] > distance]
+        shorter = [r for r in with_dist if r["distance"] < distance]
+
+        def _has(runs, tokens):
+            return any(
+                t in (r.get("comment") or "").lower().replace(" ", "")
+                for r in runs for t in tokens
+            )
+
+        def _good_early(runs):
+            firsts = [
+                int(str(r.get("positions"))[0])
+                for r in runs
+                if str(r.get("positions") or "")[:1].isdigit()
+            ]
+            quick = _has(runs, _QUICK_AWAY)
+            return quick or (firsts and sum(firsts) / len(firsts) <= 2.5)
+
+        val = 0.0
+        if len(longer) >= len(with_dist) / 2 and longer:
+            # dropping back in trip
+            if _good_early(longer):
+                val += 3.0  # early dash + shorter trip = gets home easily
+            if _has(longer, _FADED):
+                val += 2.0  # wasn't lasting the longer trip; this helps
+            elif _has(longer, _FINISH_STRONG) and not _good_early(longer):
+                val -= 2.0  # a stayer being pulled back to a speed test
+        elif len(shorter) >= len(with_dist) / 2 and shorter:
+            # stepping up in trip
+            if _has(shorter, _FINISH_STRONG):
+                val += 3.0  # was finishing best at the shorter trip
+            if _has(shorter, _FADED):
+                val -= 4.0  # couldn't even last the shorter trip
+        s.components["trip_change"] = round(max(-W_TRIP, min(W_TRIP, val)), 1)
+
+
 def _load_track_bias() -> dict:
     path = Path(__file__).parent / "track_bias.json"
     if path.exists():
@@ -370,6 +428,7 @@ def score_race(race: dict, track=None, bias: dict | None = None) -> dict:
     _score_consistency(scores)
     _score_remarks(scores)
     _score_run_line(scores)
+    _score_trip_change(scores, distance)
     _score_draw_bias(scores, distance, track, bias if bias is not None else _load_track_bias())
     # Tiebreak on the most predictive components, in order.
     ranked = sorted(
@@ -444,7 +503,8 @@ def _print_report(result: dict) -> None:
                 f" trap {r['components'].get('trap_style', 0):+.0f}"
                 f" grade {r['components'].get('grade_edge', 0):+.0f}"
                 f" cmnt {r['components'].get('remarks', 0):+.1f}"
-                f" line {r['components'].get('run_line', 0):+.1f}){flags}"
+                f" line {r['components'].get('run_line', 0):+.1f}"
+                f" trip {r['components'].get('trip_change', 0):+.1f}){flags}"
             )
         bend = ", ".join(f"T{o['trap']}" for o in race["pace_map"]["bend_order"][:3])
         if bend:

@@ -39,6 +39,7 @@ work unchanged.
 | Race comments | −8 to +8 | Trouble (Crd/Blk/Bmp) in a beaten run is an excuse; StyWl/FinWl/RnOn marks a dog that keeps finding; Fd one that empties; QAw/SlAw trap habits. |
 | Running lines (SPi) | 0 to +8 | Half for early position taken, half for ground made through the race. Late passers thrive in trouble races. |
 | Draw bias (learned) | −5 to +5 | Per track+distance trap win-rates from `results_log.csv` via `log_result.py`. Silent until 30+ logged races — never guessed. |
+| Trip change × remarks | −6 to +6 | Dropping back with early dash (esp. after fading at the longer trip) = gets home easily; a stayer dropped back loses its weapon. Stepping up suits proven strong finishers, punishes dogs fading even at the shorter trip. |
 
 Also emitted per race: a **pace map** (predicted order to the first bend) and
 a **crowding flag** when 3+ early-pace dogs are drawn adjacent — those races

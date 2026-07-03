@@ -69,6 +69,7 @@
             "consistency": 8.0,
             "remarks": 3.9,
             "run_line": 3.6,
+            "trip_change": 0.0,
             "draw_bias": 0.0
           },
           "flags": []
@@ -88,6 +89,7 @@
             "consistency": 6.0,
             "remarks": 1.4,
             "run_line": 1.1,
+            "trip_change": 0.0,
             "draw_bias": 0.0
           },
           "flags": []
@@ -107,6 +109,7 @@
             "consistency": 6.0,
             "remarks": 0.1,
             "run_line": 1.6,
+            "trip_change": 0.0,
             "draw_bias": 0.0
           },
           "flags": []
@@ -126,6 +129,7 @@
             "consistency": 4.0,
             "remarks": 2.2,
             "run_line": 0.5,
+            "trip_change": 0.0,
             "draw_bias": 0.0
           },
           "flags": [
@@ -147,6 +151,7 @@
             "consistency": 4.0,
             "remarks": 2.5,
             "run_line": 2.8,
+            "trip_change": 0.0,
             "draw_bias": 0.0
           },
           "flags": []
@@ -166,6 +171,7 @@
             "consistency": 8.0,
             "remarks": 2.5,
             "run_line": 3.0,
+            "trip_change": 0.0,
             "draw_bias": 0.0
           },
           "flags": []
