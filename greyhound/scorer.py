@@ -33,6 +33,7 @@ W_TRIP = 6.0          # -6 .. +6, distance change read with the remarks
 W_TRACK_AFF = 6.0     # 0 .. +6, record at tonight's track / raider intent
 W_DRAW_RECORD = 5.0   # -5 .. +5, the dog's own record from draws like tonight's
 W_NEAR_MISS = 6.0     # 0 .. +6, beaten a short distance = close to winning
+W_HABIT = 3.0         # -3 .. +3, career record: chronic non-winners keep losing
 
 # Draw zones for the per-dog draw record: inside, middle, wide
 _ZONE = {1: "in", 2: "in", 3: "mid", 4: "mid", 5: "wide", 6: "wide"}
@@ -117,6 +118,7 @@ class RunnerScore:
         self.name = runner.get("name", f"Trap {self.trap}")
         self.style = (runner.get("style") or "M").upper()[:1]
         self.runs = runner.get("recent_runs") or []
+        self.career = runner.get("career") or {}
         self.components: dict[str, float] = {}
         self.flags: list[str] = []
 
@@ -382,6 +384,30 @@ def _score_track_affinity(scores: list[RunnerScore], track) -> None:
         s.components["track_aff"] = round(min(W_TRACK_AFF, 2.0 * wins + 1.0 * places), 1)
 
 
+def _score_habit(scores: list[RunnerScore]) -> None:
+    """The Sts/1st/2d/3d columns: winning is a habit, and so is losing.
+
+    A dog with 0 wins from 8+ starts is a proven non-winner — it keeps
+    finding one to beat it. A healthy career strike rate is credited.
+    """
+    for s in scores:
+        starts = s.career.get("starts")
+        wins = s.career.get("wins")
+        if not isinstance(starts, int) or starts <= 0 or not isinstance(wins, int):
+            s.components["habit"] = 0.0
+            continue
+        val = 0.0
+        if starts >= 8 and wins == 0:
+            val = -W_HABIT
+            s.flags.append(f"0 wins in {starts} starts")
+        elif wins / starts >= 0.2:
+            val = 2.0
+        places = (s.career.get("seconds") or 0) + (s.career.get("thirds") or 0)
+        if starts >= 6 and (wins + places) / starts >= 0.5:
+            val = min(W_HABIT, val + 1.0)
+        s.components["habit"] = round(val, 1)
+
+
 def _score_near_miss(scores: list[RunnerScore]) -> None:
     """The By column: how far was he beaten?
 
@@ -537,6 +563,7 @@ def score_race(race: dict, track=None, bias: dict | None = None) -> dict:
     _score_track_affinity(scores, track)
     _score_draw_record(scores)
     _score_near_miss(scores)
+    _score_habit(scores)
     _score_draw_bias(scores, distance, track, bias if bias is not None else _load_track_bias())
     # Tiebreak on the most predictive components, in order.
     ranked = sorted(
@@ -615,7 +642,8 @@ def _print_report(result: dict) -> None:
                 f" trip {r['components'].get('trip_change', 0):+.1f}"
                 f" trk {r['components'].get('track_aff', 0):+.1f}"
                 f" drw {r['components'].get('draw_record', 0):+.1f}"
-                f" miss {r['components'].get('near_miss', 0):+.1f}){flags}"
+                f" miss {r['components'].get('near_miss', 0):+.1f}"
+                f" hab {r['components'].get('habit', 0):+.1f}){flags}"
             )
         bend = ", ".join(f"T{o['trap']}" for o in race["pace_map"]["bend_order"][:3])
         if bend:

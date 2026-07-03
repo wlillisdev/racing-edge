@@ -73,6 +73,7 @@
             "track_aff": 5.0,
             "draw_record": 0.0,
             "near_miss": 0.6,
+            "habit": 0.0,
             "draw_bias": 0.0
           },
           "flags": []
@@ -96,6 +97,7 @@
             "track_aff": 2.0,
             "draw_record": -4.0,
             "near_miss": 2.1,
+            "habit": 0.0,
             "draw_bias": 0.0
           },
           "flags": [
@@ -121,6 +123,7 @@
             "track_aff": 5.0,
             "draw_record": 0.0,
             "near_miss": 0.3,
+            "habit": 0.0,
             "draw_bias": 0.0
           },
           "flags": []
@@ -144,6 +147,7 @@
             "track_aff": 3.0,
             "draw_record": -0.3,
             "near_miss": 0.3,
+            "habit": 0.0,
             "draw_bias": 0.0
           },
           "flags": [
@@ -169,6 +173,7 @@
             "track_aff": 3.0,
             "draw_record": 0.0,
             "near_miss": 0.5,
+            "habit": 0.0,
             "draw_bias": 0.0
           },
           "flags": []
@@ -192,6 +197,7 @@
             "track_aff": 6.0,
             "draw_record": 0.0,
             "near_miss": 3.3,
+            "habit": 0.0,
             "draw_bias": 0.0
           },
           "flags": [
