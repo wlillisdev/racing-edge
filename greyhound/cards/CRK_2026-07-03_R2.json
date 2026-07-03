@@ -1,0 +1,98 @@
+{
+  "meeting": {
+    "track": "Curraheen Park (Cork)",
+    "track_code": "CRK",
+    "country": "IRE",
+    "date": "2026-07-03"
+  },
+  "races": [
+    {
+      "race_no": 2,
+      "time": "20:05",
+      "grade": "A7",
+      "distance": 525,
+      "race_name": "The Irish Retired Greyhound Trust 525",
+      "_grade_note": "race grade not printed in paste; assumed A7 from best-graded runners",
+      "runners": [
+        {
+          "trap": 1,
+          "name": "Klassy Jack",
+          "style": "R",
+          "career": {"starts": 11, "wins": 0, "seconds": 0, "thirds": 0},
+          "recent_runs": [
+            {"days_ago": 21, "pos": 4, "trap": 3, "split": 3.59, "calc_time": 30.11, "grade": "A7", "distance": 525, "track": "CRK", "positions": "4454", "comment": "EvAw,Crd", "win_time": 29.45, "beaten_by": 9.5},
+            {"days_ago": 28, "pos": 5, "trap": 3, "split": 3.53, "calc_time": 29.95, "grade": "A6", "distance": 525, "track": "CRK", "positions": "4446", "comment": "SlAw,NvShw", "win_time": 29.28, "beaten_by": 11.0, "going_allowance": -0.10},
+            {"days_ago": 84, "pos": 5, "trap": 1, "split": 3.50, "calc_time": 29.86, "grade": "A5", "distance": 525, "track": "CRK", "positions": "6665", "comment": "LckEP,NvShw", "win_time": 29.16, "beaten_by": 10.0},
+            {"days_ago": 119, "pos": 6, "trap": 1, "split": 3.65, "calc_time": 29.87, "grade": "A5", "distance": 525, "track": "CRK", "positions": "6666", "comment": "SlAw,NvShw", "win_time": 29.40, "beaten_by": 6.75},
+            {"days_ago": 377, "pos": 2, "trap": 4, "split": 1.43, "calc_time": 29.24, "grade": null, "distance": 525, "track": "LMK", "positions": "", "comment": "Ld1/2,EvCh", "win_time": 28.83, "beaten_by": 4.5, "going_allowance": 0.10}
+          ]
+        },
+        {
+          "trap": 2,
+          "name": "Rosstemple Bowi",
+          "style": "R",
+          "career": {"starts": 5, "wins": 1, "seconds": 1, "thirds": 1},
+          "recent_runs": [
+            {"days_ago": 21, "pos": 4, "trap": 4, "split": 3.41, "calc_time": 30.16, "grade": "A7", "distance": 525, "track": "CRK", "positions": "2244", "comment": "FAw,Crd 1", "win_time": 29.55, "beaten_by": 8.5},
+            {"days_ago": 28, "pos": 1, "trap": 3, "split": 3.54, "calc_time": 30.32, "grade": "A7", "distance": 525, "track": "CRK", "positions": "1111", "comment": "FAw,Crd 1", "win_time": 30.32, "beaten_by": 0},
+            {"days_ago": 56, "pos": 3, "trap": 4, "split": 3.42, "calc_time": 30.44, "grade": "A7", "distance": 525, "track": "CRK", "positions": "1244", "comment": "Ld 1,RnOn", "win_time": 30.00, "beaten_by": 3.5, "going_allowance": 0.20},
+            {"days_ago": 63, "pos": 2, "trap": 1, "split": 3.46, "calc_time": 30.24, "grade": "A9", "distance": 525, "track": "CRK", "positions": "3333", "comment": "QAw,ClrRn", "win_time": 29.93, "beaten_by": 4.5},
+            {"days_ago": 77, "pos": 5, "trap": 4, "split": 3.56, "calc_time": 30.57, "grade": "ON3", "distance": 525, "track": "CRK", "positions": "5555", "comment": "EvAw,NvShw", "win_time": 29.41, "beaten_by": 16.5}
+          ]
+        },
+        {
+          "trap": 3,
+          "name": "Rustys Harry",
+          "style": "R",
+          "career": {"starts": 41, "wins": 2, "seconds": 5, "thirds": 7},
+          "recent_runs": [
+            {"days_ago": 21, "pos": 4, "trap": 4, "split": null, "calc_time": 18.72, "grade": "S6", "distance": 330, "track": "CRK", "positions": "44", "comment": "LckEP,Crd 1", "win_time": 18.36, "beaten_by": 5.0},
+            {"days_ago": 63, "pos": 6, "trap": 4, "split": null, "calc_time": 19.10, "grade": "S6", "distance": 330, "track": "CRK", "positions": "66", "comment": "SlAw,Outp", "win_time": 18.26, "beaten_by": 12.0},
+            {"days_ago": 98, "pos": 4, "trap": 2, "split": 3.64, "calc_time": 30.45, "grade": "A7", "distance": 525, "track": "CRK", "positions": "5444", "comment": "LckEP,RnOn", "win_time": 29.96, "beaten_by": 7.0},
+            {"days_ago": 634, "pos": 1, "trap": 1, "split": null, "calc_time": 29.57, "grade": null, "distance": 525, "track": "CRK", "positions": "", "comment": "", "win_time": 29.57, "beaten_by": 0},
+            {"days_ago": 666, "pos": 1, "trap": 2, "split": 3.64, "calc_time": 30.10, "grade": "A8", "distance": 525, "track": "CRK", "positions": "5531", "comment": "CrdRu,Ld 4", "win_time": 30.10, "beaten_by": 0}
+          ]
+        },
+        {
+          "trap": 4,
+          "name": "Clongeel Swannie",
+          "style": "R",
+          "career": {"starts": 2, "wins": 0, "seconds": 1, "thirds": 0},
+          "recent_runs": [
+            {"days_ago": 42, "pos": 2, "trap": 1, "split": null, "calc_time": 18.71, "grade": "S7", "distance": 330, "track": "CRK", "positions": "43", "comment": "EvAw,EvCh", "win_time": 18.36, "beaten_by": 5.0},
+            {"days_ago": 77, "pos": 6, "trap": 1, "split": 3.50, "calc_time": 30.81, "grade": "ON3", "distance": 525, "track": "CRK", "positions": "4556", "comment": "Blk 1,NvShw", "win_time": 29.60, "beaten_by": 17.0},
+            {"days_ago": 94, "pos": 1, "trap": 3, "split": null, "calc_time": 18.53, "grade": null, "distance": 330, "track": "CRK", "positions": "", "comment": "", "win_time": 18.53, "beaten_by": 0},
+            {"days_ago": 147, "pos": 2, "trap": 4, "split": null, "calc_time": 18.99, "grade": null, "distance": 330, "track": "CRK", "positions": "", "comment": "", "win_time": 18.29, "beaten_by": 10.0},
+            {"days_ago": 157, "pos": 1, "trap": 2, "split": null, "calc_time": 30.66, "grade": null, "distance": 525, "track": "CRK", "positions": "", "comment": "", "win_time": 30.66, "beaten_by": 0}
+          ]
+        },
+        {
+          "trap": 5,
+          "name": "Castleterry Max",
+          "style": "M",
+          "career": {"starts": 4, "wins": 0, "seconds": 0, "thirds": 0},
+          "recent_runs": [
+            {"days_ago": 14, "pos": 4, "trap": 6, "split": 3.62, "calc_time": 29.97, "grade": "A8", "distance": 525, "track": "CRK", "positions": "3433", "comment": "EvAw,RnOn", "win_time": 29.55, "beaten_by": 6.0},
+            {"days_ago": 32, "pos": 6, "trap": 5, "split": 4.34, "calc_time": 31.25, "grade": "A7", "distance": 525, "track": "YGL", "positions": "6666", "comment": "SlAw,W 1", "win_time": 30.04, "beaten_by": 23.0, "going_allowance": -0.40},
+            {"days_ago": 63, "pos": 5, "trap": 5, "split": 3.65, "calc_time": 30.91, "grade": "A9", "distance": 525, "track": "CRK", "positions": "5555", "comment": "Blk 1,Outp", "win_time": 29.93, "beaten_by": 14.0},
+            {"days_ago": 98, "pos": 6, "trap": 2, "split": 1.41, "calc_time": 30.43, "grade": "ON2", "distance": 525, "track": "LMK", "positions": "6666", "comment": "BmpRu,NvShw", "win_time": 29.61, "beaten_by": 11.75},
+            {"days_ago": 119, "pos": 2, "trap": 4, "split": null, "calc_time": 30.66, "grade": null, "distance": 525, "track": "CRK", "positions": "", "comment": "", "win_time": 30.59, "beaten_by": 1.0}
+          ]
+        },
+        {
+          "trap": 6,
+          "name": "Ballysloe Archie",
+          "style": "W",
+          "career": {"starts": 17, "wins": 1, "seconds": 1, "thirds": 6},
+          "recent_runs": [
+            {"days_ago": 28, "pos": 3, "trap": 6, "split": null, "calc_time": 18.44, "grade": "S6", "distance": 330, "track": "CRK", "positions": "22", "comment": "QAw,EvCh", "win_time": 18.23, "beaten_by": 3.0},
+            {"days_ago": 63, "pos": 3, "trap": 6, "split": null, "calc_time": 18.18, "grade": "S5", "distance": 325, "track": "CML", "positions": "53", "comment": "EP,RnOn", "win_time": 17.64, "beaten_by": 7.75},
+            {"days_ago": 377, "pos": 2, "trap": 2, "split": 1.77, "calc_time": 29.43, "grade": "A6", "distance": 525, "track": "THR", "positions": "", "comment": "", "win_time": 29.40, "beaten_by": 0.5},
+            {"days_ago": 391, "pos": 3, "trap": 4, "split": 1.76, "calc_time": 29.61, "grade": "A5", "distance": 525, "track": "THR", "positions": "2222", "comment": "EvAw,EvCh", "win_time": 29.54, "beaten_by": 1.0},
+            {"days_ago": 461, "pos": 1, "trap": 1, "split": null, "calc_time": 30.13, "grade": "A7", "distance": 525, "track": "THR", "positions": "", "comment": "", "win_time": 30.33, "beaten_by": 0, "going_allowance": -0.20}
+          ]
+        }
+      ]
+    }
+  ]
+}

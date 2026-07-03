@@ -1,0 +1,226 @@
+{
+  "meeting": {
+    "track": "Curraheen Park (Cork)",
+    "track_code": "CRK",
+    "country": "IRE",
+    "date": "2026-07-03"
+  },
+  "engine": "greyhound-v0-uncalibrated",
+  "races": [
+    {
+      "race_no": 2,
+      "time": "20:05",
+      "grade": "A7",
+      "distance": 525,
+      "pace_map": {
+        "bend_order": [
+          {
+            "trap": 2,
+            "name": "Rosstemple Bowi",
+            "best_split": 3.41
+          },
+          {
+            "trap": 1,
+            "name": "Klassy Jack",
+            "best_split": 3.5
+          },
+          {
+            "trap": 4,
+            "name": "Clongeel Swannie",
+            "best_split": 3.5
+          },
+          {
+            "trap": 5,
+            "name": "Castleterry Max",
+            "best_split": 3.62
+          },
+          {
+            "trap": 3,
+            "name": "Rustys Harry",
+            "best_split": 3.64
+          }
+        ],
+        "crowding_risk": true
+      },
+      "selection": {
+        "trap": 6,
+        "name": "Ballysloe Archie",
+        "score": 75.6,
+        "confidence": "LOW"
+      },
+      "runners": [
+        {
+          "rank": 1,
+          "trap": 6,
+          "name": "Ballysloe Archie",
+          "style": "W",
+          "score": 75.6,
+          "components": {
+            "early_pace": 18.0,
+            "time_form": 9.0,
+            "trap_style": 10.0,
+            "grade_edge": 11.2,
+            "recency": 0.0,
+            "consistency": 4.0,
+            "remarks": 2.2,
+            "run_line": 0.8,
+            "trip_change": 6.0,
+            "track_aff": 0.0,
+            "draw_record": -3.2,
+            "near_miss": 2.6,
+            "habit": 0.0,
+            "red_flags": 0.0,
+            "market_whisper": 0.0,
+            "draw_bias": 0.0
+          },
+          "flags": [
+            "no split data \u2014 pace inferred from comments/positions",
+            "no time at trip",
+            "sprint-sharpened \u2014 early speed off shorter trips",
+            "poor record from wide draws"
+          ]
+        },
+        {
+          "rank": 2,
+          "trap": 1,
+          "name": "Klassy Jack",
+          "style": "R",
+          "score": 71.3,
+          "components": {
+            "early_pace": 22.5,
+            "time_form": 30.0,
+            "trap_style": 10.0,
+            "grade_edge": 2.3,
+            "recency": 0.0,
+            "consistency": 2.0,
+            "remarks": 1.2,
+            "run_line": 0.0,
+            "trip_change": 0.0,
+            "track_aff": 0.0,
+            "draw_record": -3.7,
+            "near_miss": 0.0,
+            "habit": -3.0,
+            "red_flags": -5.0,
+            "market_whisper": 0.0,
+            "draw_bias": 0.0
+          },
+          "flags": [
+            "dropping through decline, not excuses",
+            "poor record from in draws",
+            "0 wins in 11 starts",
+            "RED FLAGS STACK \u2014 numbers overrate this dog"
+          ]
+        },
+        {
+          "rank": 3,
+          "trap": 2,
+          "name": "Rosstemple Bowi",
+          "style": "R",
+          "score": 71.1,
+          "components": {
+            "early_pace": 30.0,
+            "time_form": 7.5,
+            "trap_style": 7.0,
+            "grade_edge": -3.8,
+            "recency": 0.0,
+            "consistency": 4.0,
+            "remarks": 4.6,
+            "run_line": 1.8,
+            "trip_change": 0.0,
+            "track_aff": 3.0,
+            "draw_record": 0.0,
+            "near_miss": 0.0,
+            "habit": 2.0,
+            "red_flags": 0.0,
+            "market_whisper": 0.0,
+            "draw_bias": 0.0
+          },
+          "flags": []
+        },
+        {
+          "rank": 4,
+          "trap": 5,
+          "name": "Castleterry Max",
+          "style": "M",
+          "score": 47.4,
+          "components": {
+            "early_pace": 7.5,
+            "time_form": 21.8,
+            "trap_style": 3.0,
+            "grade_edge": -7.5,
+            "recency": 5.0,
+            "consistency": 2.0,
+            "remarks": 2.2,
+            "run_line": 0.0,
+            "trip_change": 0.0,
+            "track_aff": 1.0,
+            "draw_record": -2.9,
+            "near_miss": 0.3,
+            "habit": 0.0,
+            "red_flags": 0.0,
+            "market_whisper": 0.0,
+            "draw_bias": 0.0
+          },
+          "flags": []
+        },
+        {
+          "rank": 5,
+          "trap": 4,
+          "name": "Clongeel Swannie",
+          "style": "R",
+          "score": 43.4,
+          "components": {
+            "early_pace": 22.5,
+            "time_form": 0.0,
+            "trap_style": -2.0,
+            "grade_edge": 0.0,
+            "recency": -10.0,
+            "consistency": 8.0,
+            "remarks": 1.2,
+            "run_line": 0.0,
+            "trip_change": 0.0,
+            "track_aff": 6.0,
+            "draw_record": 2.7,
+            "near_miss": 0.0,
+            "habit": 0.0,
+            "red_flags": 0.0,
+            "market_whisper": 0.0,
+            "draw_bias": 0.0
+          },
+          "flags": [
+            "no comparable grade history",
+            "absent 42 days"
+          ]
+        },
+        {
+          "rank": 6,
+          "trap": 3,
+          "name": "Rustys Harry",
+          "style": "R",
+          "score": 25.2,
+          "components": {
+            "early_pace": 0.0,
+            "time_form": 0.0,
+            "trap_style": 2.0,
+            "grade_edge": 0.0,
+            "recency": 0.0,
+            "consistency": 4.0,
+            "remarks": 2.5,
+            "run_line": 2.5,
+            "trip_change": 0.0,
+            "track_aff": 4.0,
+            "draw_record": -4.8,
+            "near_miss": 0.0,
+            "habit": 0.0,
+            "red_flags": 0.0,
+            "market_whisper": 0.0,
+            "draw_bias": 0.0
+          },
+          "flags": [
+            "poor record from mid draws"
+          ]
+        }
+      ]
+    }
+  ]
+}
