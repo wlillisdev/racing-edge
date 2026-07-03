@@ -42,6 +42,7 @@ work unchanged.
 | Trip change × remarks | −6 to +6 | Dropping back with early dash (esp. after fading at the longer trip) = gets home easily; a stayer dropped back loses its weapon. Stepping up suits proven strong finishers, punishes dogs fading even at the shorter trip. |
 | Track affinity / raiders | 0 to +6 | Wins and places at TONIGHT'S track (some dogs love Cork). A dog with all recent lines at an away track was travelled on purpose — +2 and a RAIDER flag. |
 | Draw record (Tp column) | −5 to +5 | The dog's own record from draws like tonight's (inside 1–2 / middle 3–4 / wide 5–6) vs elsewhere — independent of printed seeding. Silent without ≥2 runs in each bucket. |
+| Near miss (By column) | 0 to +6 | Beaten ≤0.5L is a stride from winning (+2.5 weighted), ≤1.5L (+1.5), ≤3L (+0.5); +1 more when the near-miss came from a conceded break (SlAw or ≥4th at the first bend) — a level break turns it around. |
 
 Also emitted per race: a **pace map** (predicted order to the first bend) and
 a **crowding flag** when 3+ early-pace dogs are drawn adjacent — those races

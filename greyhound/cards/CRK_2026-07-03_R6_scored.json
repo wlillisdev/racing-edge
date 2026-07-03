@@ -50,7 +50,7 @@
       "selection": {
         "trap": 5,
         "name": "Midian Saki",
-        "score": 85.9,
+        "score": 86.5,
         "confidence": "LOW"
       },
       "runners": [
@@ -59,7 +59,7 @@
           "trap": 5,
           "name": "Midian Saki",
           "style": "R",
-          "score": 85.9,
+          "score": 86.5,
           "components": {
             "early_pace": 24.0,
             "time_form": 30.0,
@@ -72,6 +72,7 @@
             "trip_change": 0.0,
             "track_aff": 5.0,
             "draw_record": 0.0,
+            "near_miss": 0.6,
             "draw_bias": 0.0
           },
           "flags": []
@@ -81,7 +82,7 @@
           "trap": 1,
           "name": "Boherash Silin",
           "style": "R",
-          "score": 83.9,
+          "score": 86.0,
           "components": {
             "early_pace": 0.0,
             "time_form": 29.2,
@@ -94,6 +95,7 @@
             "trip_change": 0.0,
             "track_aff": 2.0,
             "draw_record": -4.0,
+            "near_miss": 2.1,
             "draw_bias": 0.0
           },
           "flags": [
@@ -105,7 +107,7 @@
           "trap": 4,
           "name": "Canadian Coghlan",
           "style": "R",
-          "score": 72.5,
+          "score": 72.8,
           "components": {
             "early_pace": 30.0,
             "time_form": 18.7,
@@ -118,6 +120,7 @@
             "trip_change": 0.0,
             "track_aff": 5.0,
             "draw_record": 0.0,
+            "near_miss": 0.3,
             "draw_bias": 0.0
           },
           "flags": []
@@ -127,7 +130,7 @@
           "trap": 2,
           "name": "Zan",
           "style": "R",
-          "score": 66.8,
+          "score": 67.1,
           "components": {
             "early_pace": 24.0,
             "time_form": 19.5,
@@ -140,6 +143,7 @@
             "trip_change": 0.0,
             "track_aff": 3.0,
             "draw_record": -0.3,
+            "near_miss": 0.3,
             "draw_bias": 0.0
           },
           "flags": [
@@ -151,7 +155,7 @@
           "trap": 3,
           "name": "Rustys Prince",
           "style": "R",
-          "score": 57.1,
+          "score": 57.6,
           "components": {
             "early_pace": 6.0,
             "time_form": 18.0,
@@ -164,6 +168,7 @@
             "trip_change": 0.0,
             "track_aff": 3.0,
             "draw_record": 0.0,
+            "near_miss": 0.5,
             "draw_bias": 0.0
           },
           "flags": []
@@ -173,7 +178,7 @@
           "trap": 6,
           "name": "Lahana Dash",
           "style": "M",
-          "score": 43.7,
+          "score": 47.0,
           "components": {
             "early_pace": 12.0,
             "time_form": 5.2,
@@ -186,9 +191,12 @@
             "trip_change": 0.0,
             "track_aff": 6.0,
             "draw_record": 0.0,
+            "near_miss": 3.3,
             "draw_bias": 0.0
           },
-          "flags": []
+          "flags": [
+            "near-misser \u2014 a better break wins"
+          ]
         }
       ]
     }

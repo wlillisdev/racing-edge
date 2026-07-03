@@ -32,6 +32,7 @@ W_DRAW_BIAS = 5.0     # -5 .. +5, learned per track+distance from results log
 W_TRIP = 6.0          # -6 .. +6, distance change read with the remarks
 W_TRACK_AFF = 6.0     # 0 .. +6, record at tonight's track / raider intent
 W_DRAW_RECORD = 5.0   # -5 .. +5, the dog's own record from draws like tonight's
+W_NEAR_MISS = 6.0     # 0 .. +6, beaten a short distance = close to winning
 
 # Draw zones for the per-dog draw record: inside, middle, wide
 _ZONE = {1: "in", 2: "in", 3: "mid", 4: "mid", 5: "wide", 6: "wide"}
@@ -381,6 +382,44 @@ def _score_track_affinity(scores: list[RunnerScore], track) -> None:
         s.components["track_aff"] = round(min(W_TRACK_AFF, 2.0 * wins + 1.0 * places), 1)
 
 
+def _score_near_miss(scores: list[RunnerScore]) -> None:
+    """The By column: how far was he beaten?
+
+    A dog touched off by a head or half a length was a stride from
+    winning. Extra credit when the near-miss came from a slow start
+    (SlAw or back of the pack at the first bend) — he conceded the break
+    and still nearly won; a level break today turns it around.
+    """
+    for s in scores:
+        val = 0.0
+        for run, w in zip(s.runs, _RUN_WEIGHTS):
+            pos = run.get("pos")
+            beaten = run.get("beaten_by")
+            if not isinstance(pos, int) or pos < 2:
+                continue
+            if not isinstance(beaten, (int, float)):
+                continue
+            if beaten <= 0.5:
+                credit = 2.5
+            elif beaten <= 1.5:
+                credit = 1.5
+            elif beaten <= 3.0:
+                credit = 0.5
+            else:
+                continue
+            comment = (run.get("comment") or "").lower().replace(" ", "")
+            line = str(run.get("positions") or "")
+            slow_start = any(t in comment for t in _SLOW_AWAY) or (
+                line[:1].isdigit() and int(line[0]) >= 4
+            )
+            if credit >= 1.5 and slow_start:
+                credit += 1.0  # nearly won despite conceding the break
+            val += credit * w
+        s.components["near_miss"] = round(min(W_NEAR_MISS, val), 1)
+        if s.components["near_miss"] >= 3:
+            s.flags.append("near-misser — a better break wins")
+
+
 def _score_draw_record(scores: list[RunnerScore]) -> None:
     """The Tp column: where was he drawn when he ran well?
 
@@ -497,6 +536,7 @@ def score_race(race: dict, track=None, bias: dict | None = None) -> dict:
     _score_trip_change(scores, distance)
     _score_track_affinity(scores, track)
     _score_draw_record(scores)
+    _score_near_miss(scores)
     _score_draw_bias(scores, distance, track, bias if bias is not None else _load_track_bias())
     # Tiebreak on the most predictive components, in order.
     ranked = sorted(
@@ -574,7 +614,8 @@ def _print_report(result: dict) -> None:
                 f" line {r['components'].get('run_line', 0):+.1f}"
                 f" trip {r['components'].get('trip_change', 0):+.1f}"
                 f" trk {r['components'].get('track_aff', 0):+.1f}"
-                f" drw {r['components'].get('draw_record', 0):+.1f}){flags}"
+                f" drw {r['components'].get('draw_record', 0):+.1f}"
+                f" miss {r['components'].get('near_miss', 0):+.1f}){flags}"
             )
         bend = ", ".join(f"T{o['trap']}" for o in race["pace_map"]["bend_order"][:3])
         if bend:

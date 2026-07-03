@@ -29,7 +29,8 @@
               "track": "CRK",
               "comment": "Blk1,NvShw",
               "positions": "6666",
-              "win_time": 28.71
+              "win_time": 28.71,
+              "beaten_by": 10.5
             },
             {
               "days_ago": 21,
@@ -42,7 +43,8 @@
               "track": "CRK",
               "comment": "CrdRu,StyWl",
               "positions": "2221",
-              "win_time": 30.97
+              "win_time": 30.97,
+              "beaten_by": 0.5
             },
             {
               "days_ago": 42,
@@ -55,7 +57,8 @@
               "track": "CRK",
               "comment": "LckEP,StyWl",
               "positions": "5332",
-              "win_time": 28.7
+              "win_time": 28.7,
+              "beaten_by": 5.0
             },
             {
               "days_ago": 90,
@@ -68,7 +71,8 @@
               "track": "YGL",
               "comment": "EvAw,Ld2",
               "positions": "5111",
-              "win_time": 29.73
+              "win_time": 29.73,
+              "beaten_by": 0
             },
             {
               "days_ago": 130,
@@ -81,7 +85,8 @@
               "track": "YGL",
               "comment": "EvAw,Strfin",
               "positions": "4322",
-              "win_time": 29.02
+              "win_time": 29.02,
+              "beaten_by": 2.5
             }
           ]
         },
@@ -101,7 +106,8 @@
               "track": "LMK",
               "comment": "QAw,Chl1",
               "positions": "4446",
-              "win_time": 28.65
+              "win_time": 28.65,
+              "beaten_by": 15.0
             },
             {
               "days_ago": 42,
@@ -114,7 +120,8 @@
               "track": "CRK",
               "comment": "EvAw,NvShw",
               "positions": "4666",
-              "win_time": 28.69
+              "win_time": 28.69,
+              "beaten_by": 15.0
             },
             {
               "days_ago": 62,
@@ -127,7 +134,8 @@
               "track": "CRK",
               "comment": "EP,RnOn",
               "positions": "3444",
-              "win_time": 28.95
+              "win_time": 28.95,
+              "beaten_by": 3.0
             },
             {
               "days_ago": 76,
@@ -140,7 +148,8 @@
               "track": "CRK",
               "comment": "EP,HldOn",
               "positions": "2111",
-              "win_time": 28.98
+              "win_time": 28.98,
+              "beaten_by": 0
             },
             {
               "days_ago": 139,
@@ -153,7 +162,8 @@
               "track": "CRK",
               "comment": "EvAw,StyWl",
               "positions": "3222",
-              "win_time": 30.01
+              "win_time": 30.01,
+              "beaten_by": 7.5
             }
           ]
         },
@@ -173,7 +183,8 @@
               "track": "CRK",
               "comment": "Crd1,StyOn",
               "positions": "6544",
-              "win_time": 29.38
+              "win_time": 29.38,
+              "beaten_by": 2.5
             },
             {
               "days_ago": 42,
@@ -186,7 +197,8 @@
               "track": "CRK",
               "comment": "EvAw,AHandy",
               "positions": "3454",
-              "win_time": 28.7
+              "win_time": 28.7,
+              "beaten_by": 10.5
             },
             {
               "days_ago": 69,
@@ -199,7 +211,8 @@
               "track": "CRK",
               "comment": "Bmp1,NvShw",
               "positions": "5555",
-              "win_time": 31.41
+              "win_time": 31.41,
+              "beaten_by": 8.75
             },
             {
               "days_ago": 119,
@@ -212,7 +225,8 @@
               "track": "CRK",
               "comment": "Chl1,Ld2",
               "positions": "2111",
-              "win_time": 29.2
+              "win_time": 29.2,
+              "beaten_by": 0
             },
             {
               "days_ago": 286,
@@ -225,7 +239,8 @@
               "track": "CRK",
               "comment": "SlAw,StyOn",
               "positions": "6443",
-              "win_time": 29.99
+              "win_time": 29.99,
+              "beaten_by": 5.0
             }
           ]
         },
@@ -245,7 +260,8 @@
               "track": "CRK",
               "comment": "EvAw,LdRi",
               "positions": "2222",
-              "win_time": 29.35
+              "win_time": 29.35,
+              "beaten_by": 0
             },
             {
               "days_ago": 56,
@@ -258,7 +274,8 @@
               "track": "CRK",
               "comment": "SlAw,NvShw",
               "positions": "6445",
-              "win_time": 29.0
+              "win_time": 29.0,
+              "beaten_by": 11.75
             },
             {
               "days_ago": 133,
@@ -271,7 +288,8 @@
               "track": "CRK",
               "comment": "EvAw,StyOn",
               "positions": "3322",
-              "win_time": 28.66
+              "win_time": 28.66,
+              "beaten_by": 8.5
             },
             {
               "days_ago": 203,
@@ -284,7 +302,8 @@
               "track": "CRK",
               "comment": "BBlk1,LdRi",
               "positions": "2543",
-              "win_time": 30.07
+              "win_time": 30.07,
+              "beaten_by": 0
             },
             {
               "days_ago": 266,
@@ -297,7 +316,8 @@
               "track": "CRK",
               "comment": "EP,ChlRi",
               "positions": "2222",
-              "win_time": 29.09
+              "win_time": 29.09,
+              "beaten_by": 1.5
             }
           ]
         },
@@ -317,7 +337,8 @@
               "track": "CRK",
               "comment": "Ld2,FinWl",
               "positions": "2111",
-              "win_time": 29.38
+              "win_time": 29.38,
+              "beaten_by": 0
             },
             {
               "days_ago": 28,
@@ -330,7 +351,8 @@
               "track": "CRK",
               "comment": "QAw,Fd",
               "positions": "2244",
-              "win_time": 29.57
+              "win_time": 29.57,
+              "beaten_by": 7.5
             },
             {
               "days_ago": 251,
@@ -343,7 +365,8 @@
               "track": "CRK",
               "comment": "EvAw,NvShw",
               "positions": "6655",
-              "win_time": 28.1
+              "win_time": 28.1,
+              "beaten_by": 13.5
             },
             {
               "days_ago": 321,
@@ -356,7 +379,8 @@
               "track": "CRK",
               "comment": "Ld3,HdNrL",
               "positions": "2211",
-              "win_time": 28.92
+              "win_time": 28.92,
+              "beaten_by": 0.75
             },
             {
               "days_ago": 377,
@@ -369,7 +393,8 @@
               "track": "CRK",
               "comment": "Ld2,drclr",
               "positions": "2111",
-              "win_time": 28.66
+              "win_time": 28.66,
+              "beaten_by": 0
             }
           ]
         },
@@ -389,7 +414,8 @@
               "track": "CRK",
               "comment": "FAw,EvCh",
               "positions": "1122",
-              "win_time": 29.2
+              "win_time": 29.2,
+              "beaten_by": 2.5
             },
             {
               "days_ago": 28,
@@ -402,7 +428,8 @@
               "track": "CRK",
               "comment": "Crd1,FinWl",
               "positions": "6664",
-              "win_time": 30.02
+              "win_time": 30.02,
+              "beaten_by": 0.5
             },
             {
               "days_ago": 63,
@@ -415,7 +442,8 @@
               "track": "CRK",
               "comment": "EvAw,ClrRn",
               "positions": "3344",
-              "win_time": 29.22
+              "win_time": 29.22,
+              "beaten_by": 6.0
             },
             {
               "days_ago": 231,
@@ -428,7 +456,8 @@
               "track": "CRK",
               "comment": "Chl3/4,LdRi",
               "positions": "2222",
-              "win_time": 29.4
+              "win_time": 29.4,
+              "beaten_by": 1.5
             },
             {
               "days_ago": 665,
@@ -441,7 +470,8 @@
               "track": "CRK",
               "comment": "Ld1,drclr",
               "positions": "1111",
-              "win_time": 29.0
+              "win_time": 29.0,
+              "beaten_by": 0
             }
           ]
         }
