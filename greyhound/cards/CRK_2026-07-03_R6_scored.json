@@ -74,6 +74,8 @@
             "draw_record": 0.0,
             "near_miss": 0.6,
             "habit": 0.0,
+            "red_flags": 0.0,
+            "market_whisper": 0.0,
             "draw_bias": 0.0
           },
           "flags": []
@@ -98,6 +100,8 @@
             "draw_record": -4.0,
             "near_miss": 2.1,
             "habit": 0.0,
+            "red_flags": 0.0,
+            "market_whisper": 0.0,
             "draw_bias": 0.0
           },
           "flags": [
@@ -124,6 +128,8 @@
             "draw_record": 0.0,
             "near_miss": 0.3,
             "habit": 0.0,
+            "red_flags": 0.0,
+            "market_whisper": 0.0,
             "draw_bias": 0.0
           },
           "flags": []
@@ -133,12 +139,12 @@
           "trap": 2,
           "name": "Zan",
           "style": "R",
-          "score": 67.1,
+          "score": 65.7,
           "components": {
             "early_pace": 24.0,
             "time_form": 19.5,
             "trap_style": 7.0,
-            "grade_edge": 1.9,
+            "grade_edge": 0.5,
             "recency": -10.0,
             "consistency": 4.0,
             "remarks": 2.2,
@@ -148,9 +154,12 @@
             "draw_record": -0.3,
             "near_miss": 0.3,
             "habit": 0.0,
+            "red_flags": 0.0,
+            "market_whisper": 0.0,
             "draw_bias": 0.0
           },
           "flags": [
+            "dropping through decline, not excuses",
             "absent 34 days"
           ]
         },
@@ -174,6 +183,8 @@
             "draw_record": 0.0,
             "near_miss": 0.5,
             "habit": 0.0,
+            "red_flags": 0.0,
+            "market_whisper": 0.0,
             "draw_bias": 0.0
           },
           "flags": []
@@ -198,6 +209,8 @@
             "draw_record": 0.0,
             "near_miss": 3.3,
             "habit": 0.0,
+            "red_flags": 0.0,
+            "market_whisper": 0.0,
             "draw_bias": 0.0
           },
           "flags": [

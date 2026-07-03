@@ -119,6 +119,7 @@ class RunnerScore:
         self.style = (runner.get("style") or "M").upper()[:1]
         self.runs = runner.get("recent_runs") or []
         self.career = runner.get("career") or {}
+        self.forecast_odds = runner.get("forecast_odds")
         self.components: dict[str, float] = {}
         self.flags: list[str] = []
 
@@ -161,8 +162,32 @@ def _score_early_pace(scores: list[RunnerScore], distance, track) -> None:
     for s in scores:
         split = best_splits[s.trap]
         if split is None or not known:
-            s.components["early_pace"] = W_EARLY_PACE * 0.3  # unknown ≠ slow
-            s.flags.append("no split data")
+            # No comparable split — but the form lines still whisper.
+            # QAw/FAw/EP comments or front-rank first calls are pace
+            # evidence (Ballysloe Archie lesson: sprint runs print no
+            # split, yet '22' and 'QAw' said he'd lead the bend).
+            recent = s.runs[:3]
+            comments = " ".join(
+                (r.get("comment") or "").lower().replace(" ", "") for r in recent
+            )
+            firsts = [
+                int(str(r.get("positions"))[0])
+                for r in recent
+                if str(r.get("positions") or "")[:1].isdigit()
+            ]
+            quick = any(t in comments for t in _QUICK_AWAY) or "ep," in comments or comments.startswith("ep")
+            front = firsts and sum(firsts) / len(firsts) <= 2.5
+            slow = any(t in comments for t in _SLOW_AWAY)
+            if quick or front:
+                frac = 0.6
+                s.flags.append("no split data — pace inferred from comments/positions")
+            elif slow:
+                frac = 0.15
+                s.flags.append("no split data — slow-away pattern")
+            else:
+                frac = 0.3
+                s.flags.append("no split data")
+            s.components["early_pace"] = round(W_EARLY_PACE * frac, 1)
             continue
         # Linear on rank: field-fastest gets full marks.
         rank = known.index(split)
@@ -224,7 +249,27 @@ def _score_grade_edge(scores: list[RunnerScore], race_grade: str | None) -> None
             continue
         # positive = last runs were in HIGHER grade (lower number) than tonight
         diff = sum(num - g[1] for g in same_code) / len(same_code)
-        s.components["grade_edge"] = round(max(-10.0, min(W_GRADE_MAX, diff * 7.5)), 1)
+        edge = max(-10.0, min(W_GRADE_MAX, diff * 7.5))
+        # A drop is only an opportunity if the beaten runs have excuses.
+        # A dog beaten out of sight repeatedly with no trouble is being
+        # CHASED DOWN the grades by the handicapper — that drop is
+        # decline, not value (Klassy Jack lesson).
+        last_pos = s.runs[0].get("pos") if s.runs else None
+        recent_winner = isinstance(last_pos, int) and last_pos <= 2
+        if edge > 0 and not recent_winner:
+            no_shows = 0
+            for run in s.runs[:4]:
+                pos, beaten = run.get("pos"), run.get("beaten_by")
+                comment = (run.get("comment") or "").lower().replace(" ", "")
+                excused = any(t in comment for t in _TROUBLE)
+                if (isinstance(pos, int) and pos >= 4
+                        and isinstance(beaten, (int, float)) and beaten >= 6
+                        and not excused):
+                    no_shows += 1
+            if no_shows >= 2:
+                edge *= 0.25
+                s.flags.append("dropping through decline, not excuses")
+        s.components["grade_edge"] = round(edge, 1)
 
 
 def _score_recency(scores: list[RunnerScore]) -> None:
@@ -316,8 +361,14 @@ def _score_trip_change(scores: list[RunnerScore], distance) -> None:
             s.components["trip_change"] = 0.0
         return
     for s in scores:
-        recent = s.runs[: len(_RUN_WEIGHTS)]
-        with_dist = [r for r in recent if isinstance(r.get("distance"), (int, float))]
+        # The move that matters is the LAST run or two — stale runs at
+        # other trips dilute it (Ballysloe Archie lesson: two fresh
+        # sprints screamed sharpened speed, three year-old 525s buried
+        # the signal under a majority vote).
+        with_dist = [
+            r for r in s.runs[: len(_RUN_WEIGHTS)]
+            if isinstance(r.get("distance"), (int, float))
+        ][:2]
         if not with_dist:
             s.components["trip_change"] = 0.0
             continue
@@ -340,7 +391,7 @@ def _score_trip_change(scores: list[RunnerScore], distance) -> None:
             return quick or (firsts and sum(firsts) / len(firsts) <= 2.5)
 
         val = 0.0
-        if len(longer) >= len(with_dist) / 2 and longer:
+        if len(longer) == len(with_dist):
             # dropping back in trip
             if _good_early(longer):
                 val += 3.0  # early dash + shorter trip = gets home easily
@@ -348,10 +399,13 @@ def _score_trip_change(scores: list[RunnerScore], distance) -> None:
                 val += 2.0  # wasn't lasting the longer trip; this helps
             elif _has(longer, _FINISH_STRONG) and not _good_early(longer):
                 val -= 2.0  # a stayer being pulled back to a speed test
-        elif len(shorter) >= len(with_dist) / 2 and shorter:
-            # stepping up in trip
+        elif len(shorter) == len(with_dist):
+            # stepping up in trip — off sprints, sharpened speed
+            if _good_early(shorter):
+                val += 4.0
+                s.flags.append("sprint-sharpened — early speed off shorter trips")
             if _has(shorter, _FINISH_STRONG):
-                val += 3.0  # was finishing best at the shorter trip
+                val += 2.0  # finishing strongly even at the shorter trip
             if _has(shorter, _FADED):
                 val -= 4.0  # couldn't even last the shorter trip
         s.components["trip_change"] = round(max(-W_TRIP, min(W_TRIP, val)), 1)
@@ -382,6 +436,45 @@ def _score_track_affinity(scores: list[RunnerScore], track) -> None:
         wins = sum(1 for r in here if r.get("pos") == 1)
         places = sum(1 for r in here if r.get("pos") == 2)
         s.components["track_aff"] = round(min(W_TRACK_AFF, 2.0 * wins + 1.0 * places), 1)
+
+
+def _score_signals_stack(scores: list[RunnerScore]) -> None:
+    """Independent warnings on the same dog multiply, not add.
+
+    Chronic non-winner + poor draw record + decline drop + slow-away
+    habit — any three together mark a dog the numbers overrate
+    (Klassy Jack lesson: three warnings, still top-scored on the clock).
+
+    And the opposite whisper: a SHORT price on a barely-raced dog is
+    stable money — trials don't show in the form book, but the market
+    saw them (Clongeel Swannie lesson: evens SP, 2 career starts, 2nd).
+    """
+    for s in scores:
+        slaw_recent = sum(
+            1 for r in s.runs[:3]
+            if any(t in (r.get("comment") or "").lower().replace(" ", "")
+                   for t in _SLOW_AWAY)
+        )
+        warnings = [
+            s.components.get("habit", 0) <= -2.9,
+            s.components.get("draw_record", 0) <= -3,
+            any("decline" in f for f in s.flags),
+            slaw_recent >= 2,
+        ]
+        if sum(warnings) >= 3:
+            s.components["red_flags"] = -5.0
+            s.flags.append("RED FLAGS STACK — numbers overrate this dog")
+        else:
+            s.components["red_flags"] = 0.0
+
+        starts = s.career.get("starts")
+        if (isinstance(self_odds := s.forecast_odds, (int, float))
+                and self_odds <= 2.5
+                and isinstance(starts, int) and 0 < starts <= 4):
+            s.components["market_whisper"] = 2.0
+            s.flags.append("short price on unexposed dog — stable money")
+        else:
+            s.components["market_whisper"] = 0.0
 
 
 def _score_habit(scores: list[RunnerScore]) -> None:
@@ -564,6 +657,7 @@ def score_race(race: dict, track=None, bias: dict | None = None) -> dict:
     _score_draw_record(scores)
     _score_near_miss(scores)
     _score_habit(scores)
+    _score_signals_stack(scores)  # must run last — reads other components
     _score_draw_bias(scores, distance, track, bias if bias is not None else _load_track_bias())
     # Tiebreak on the most predictive components, in order.
     ranked = sorted(
