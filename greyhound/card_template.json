@@ -1,0 +1,43 @@
+{
+  "meeting": {
+    "track": "Curraheen Park (Cork)",
+    "country": "IRE",
+    "date": "2026-07-03"
+  },
+  "races": [
+    {
+      "race_no": 1,
+      "time": "19:04",
+      "grade": "A5",
+      "distance": 525,
+      "runners": [
+        {
+          "trap": 1,
+          "name": "Example Dog",
+          "style": "R",
+          "forecast_odds": 3.5,
+          "recent_runs": [
+            {
+              "days_ago": 7,
+              "pos": 2,
+              "trap": 1,
+              "split": 4.42,
+              "calc_time": 29.05,
+              "grade": "A5",
+              "distance": 525,
+              "comment": "EP,Crd1"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "_notes": {
+    "distance": "in the meeting's native unit (yards in Ireland, metres in UK) — just be consistent; times are only compared between runs at the SAME distance",
+    "style": "R = rails, M = middle, W = wide (as printed on the card)",
+    "split": "sectional time to first bend in seconds, from the form lines",
+    "calc_time": "calculated/adjusted time if the card shows it, else actual run time",
+    "grade": "letter+number, e.g. A5, S3; lower number = higher grade within a letter",
+    "minimum": "trap, name, and recent_runs with pos/split/calc_time/grade/days_ago. Everything else optional."
+  }
+}
