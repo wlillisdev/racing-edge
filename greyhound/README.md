@@ -41,6 +41,7 @@ work unchanged.
 | Draw bias (learned) | −5 to +5 | Per track+distance trap win-rates from `results_log.csv` via `log_result.py`. Silent until 30+ logged races — never guessed. |
 | Trip change × remarks | −6 to +6 | Dropping back with early dash (esp. after fading at the longer trip) = gets home easily; a stayer dropped back loses its weapon. Stepping up suits proven strong finishers, punishes dogs fading even at the shorter trip. |
 | Track affinity / raiders | 0 to +6 | Wins and places at TONIGHT'S track (some dogs love Cork). A dog with all recent lines at an away track was travelled on purpose — +2 and a RAIDER flag. |
+| Draw record (Tp column) | −5 to +5 | The dog's own record from draws like tonight's (inside 1–2 / middle 3–4 / wide 5–6) vs elsewhere — independent of printed seeding. Silent without ≥2 runs in each bucket. |
 
 Also emitted per race: a **pace map** (predicted order to the first bend) and
 a **crowding flag** when 3+ early-pace dogs are drawn adjacent — those races

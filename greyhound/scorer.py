@@ -31,6 +31,10 @@ W_RUN_LINE = 8.0      # 0 .. +8, from in-race positions
 W_DRAW_BIAS = 5.0     # -5 .. +5, learned per track+distance from results log
 W_TRIP = 6.0          # -6 .. +6, distance change read with the remarks
 W_TRACK_AFF = 6.0     # 0 .. +6, record at tonight's track / raider intent
+W_DRAW_RECORD = 5.0   # -5 .. +5, the dog's own record from draws like tonight's
+
+# Draw zones for the per-dog draw record: inside, middle, wide
+_ZONE = {1: "in", 2: "in", 3: "mid", 4: "mid", 5: "wide", 6: "wide"}
 
 # Race-comment tokens (lowercased, spaces stripped before matching)
 _TROUBLE = ("crd", "blk", "bmp", "ck", "imp")          # trouble = excuse
@@ -377,6 +381,40 @@ def _score_track_affinity(scores: list[RunnerScore], track) -> None:
         s.components["track_aff"] = round(min(W_TRACK_AFF, 2.0 * wins + 1.0 * places), 1)
 
 
+def _score_draw_record(scores: list[RunnerScore]) -> None:
+    """The Tp column: where was he drawn when he ran well?
+
+    Independent of the printed seeding — a dog seeded M may have all his
+    best runs from an inside draw. Compare the dog's record from
+    tonight's draw zone (inside 1-2 / middle 3-4 / wide 5-6) against his
+    record from elsewhere. Needs at least 2 runs in tonight's zone AND
+    2 elsewhere, otherwise stays silent — no evidence, no opinion.
+    """
+    for s in scores:
+        zone_tonight = _ZONE.get(s.trap)
+        if zone_tonight is None:
+            s.components["draw_record"] = 0.0
+            continue
+        in_zone, out_zone = [], []
+        for run in s.runs:
+            trap = run.get("trap")
+            pos = run.get("pos")
+            if not isinstance(trap, int) or not isinstance(pos, int):
+                continue
+            perf = 1.0 if pos <= 2 else (0.4 if pos <= 4 else 0.0)
+            (in_zone if _ZONE.get(trap) == zone_tonight else out_zone).append(perf)
+        if len(in_zone) < 2 or len(out_zone) < 2:
+            s.components["draw_record"] = 0.0
+            continue
+        edge = sum(in_zone) / len(in_zone) - sum(out_zone) / len(out_zone)
+        val = round(max(-W_DRAW_RECORD, min(W_DRAW_RECORD, edge * 8)), 1)
+        s.components["draw_record"] = val
+        if val >= 3:
+            s.flags.append(f"runs well from {zone_tonight} draws")
+        elif val <= -3:
+            s.flags.append(f"poor record from {zone_tonight} draws")
+
+
 def _load_track_bias() -> dict:
     path = Path(__file__).parent / "track_bias.json"
     if path.exists():
@@ -458,6 +496,7 @@ def score_race(race: dict, track=None, bias: dict | None = None) -> dict:
     _score_run_line(scores)
     _score_trip_change(scores, distance)
     _score_track_affinity(scores, track)
+    _score_draw_record(scores)
     _score_draw_bias(scores, distance, track, bias if bias is not None else _load_track_bias())
     # Tiebreak on the most predictive components, in order.
     ranked = sorted(
@@ -534,7 +573,8 @@ def _print_report(result: dict) -> None:
                 f" cmnt {r['components'].get('remarks', 0):+.1f}"
                 f" line {r['components'].get('run_line', 0):+.1f}"
                 f" trip {r['components'].get('trip_change', 0):+.1f}"
-                f" trk {r['components'].get('track_aff', 0):+.1f}){flags}"
+                f" trk {r['components'].get('track_aff', 0):+.1f}"
+                f" drw {r['components'].get('draw_record', 0):+.1f}){flags}"
             )
         bend = ", ".join(f"T{o['trap']}" for o in race["pace_map"]["bend_order"][:3])
         if bend:
