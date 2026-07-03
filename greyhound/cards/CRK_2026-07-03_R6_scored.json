@@ -47,26 +47,15 @@
         ],
         "crowding_risk": true
       },
-      "no_bet": true,
+      "selection": {
+        "trap": 5,
+        "name": "Midian Saki",
+        "score": 78.4,
+        "confidence": "LOW"
+      },
       "runners": [
         {
           "rank": 1,
-          "trap": 1,
-          "name": "Boherash Silin",
-          "style": "R",
-          "score": 78.4,
-          "components": {
-            "early_pace": 0.0,
-            "time_form": 29.2,
-            "trap_style": 10.0,
-            "grade_edge": 11.2,
-            "recency": 5.0,
-            "consistency": 8.0
-          },
-          "flags": []
-        },
-        {
-          "rank": 2,
           "trap": 5,
           "name": "Midian Saki",
           "style": "R",
@@ -78,6 +67,22 @@
             "grade_edge": 9.4,
             "recency": 0.0,
             "consistency": 6.0
+          },
+          "flags": []
+        },
+        {
+          "rank": 2,
+          "trap": 1,
+          "name": "Boherash Silin",
+          "style": "R",
+          "score": 78.4,
+          "components": {
+            "early_pace": 0.0,
+            "time_form": 29.2,
+            "trap_style": 10.0,
+            "grade_edge": 11.2,
+            "recency": 5.0,
+            "consistency": 8.0
           },
           "flags": []
         },

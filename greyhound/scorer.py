@@ -230,6 +230,20 @@ def _pace_map(scores: list[RunnerScore], distance, track) -> dict:
     return {"bend_order": order, "crowding_risk": adjacent}
 
 
+def _confidence(ranked: list[RunnerScore], crowded: bool) -> str:
+    """Every race gets a call; this grades how much to trust it."""
+    margin = ranked[0].total - ranked[1].total if len(ranked) > 1 else 99.0
+    if margin >= 10:
+        level = 2  # HIGH
+    elif margin >= 4:
+        level = 1  # MEDIUM
+    else:
+        level = 0  # LOW
+    if crowded:
+        level = max(0, level - 1)
+    return ["LOW", "MEDIUM", "HIGH"][level]
+
+
 def score_race(race: dict, track=None) -> dict:
     scores = [RunnerScore(r) for r in race.get("runners", [])]
     distance = race.get("distance")
@@ -239,15 +253,31 @@ def score_race(race: dict, track=None) -> dict:
     _score_grade_edge(scores, race.get("grade"))
     _score_recency(scores)
     _score_consistency(scores)
-    ranked = sorted(scores, key=lambda s: s.total, reverse=True)
+    # Tiebreak on the most predictive components, in order.
+    ranked = sorted(
+        scores,
+        key=lambda s: (
+            s.total,
+            s.components.get("time_form", 0),
+            s.components.get("early_pace", 0),
+            s.components.get("consistency", 0),
+        ),
+        reverse=True,
+    )
     pace = _pace_map(scores, distance, track)
+    top = ranked[0]
     return {
         "race_no": race.get("race_no"),
         "time": race.get("time"),
         "grade": race.get("grade"),
         "distance": distance,
         "pace_map": pace,
-        "no_bet": pace["crowding_risk"],
+        "selection": {
+            "trap": top.trap,
+            "name": top.name,
+            "score": top.total,
+            "confidence": _confidence(ranked, pace["crowding_risk"]),
+        },
         "runners": [
             {
                 "rank": i + 1,
@@ -282,8 +312,10 @@ def _print_report(result: dict) -> None:
     for race in result["races"]:
         header = f"Race {race['race_no']} {race.get('time', '')} {race.get('grade', '')} {race.get('distance', '')}"
         print(header.strip())
-        if race["no_bet"]:
-            print("  ⚠ CROWDED EARLY PACE — treat as NO BET")
+        sel = race["selection"]
+        print(f"  ★ SELECTION: T{sel['trap']} {sel['name']} ({sel['score']}) — confidence {sel['confidence']}")
+        if race["pace_map"]["crowding_risk"]:
+            print("  ⚠ crowded early pace — confidence downgraded, expect trouble at the bend")
         for r in race["runners"]:
             flags = f"  [{'; '.join(r['flags'])}]" if r["flags"] else ""
             print(
