@@ -25,6 +25,9 @@
               "calc_time": 29.05,
               "grade": "A5",
               "distance": 525,
+              "track": "CRK",
+              "positions": "2211",
+              "win_time": 28.95,
               "comment": "EP,Crd1"
             }
           ]
@@ -38,6 +41,9 @@
     "split": "sectional time to first bend in seconds, from the form lines",
     "calc_time": "calculated/adjusted time if the card shows it, else actual run time",
     "grade": "letter+number, e.g. A5, S3; lower number = higher grade within a letter",
+    "positions": "in-race positions at each call (SPi column), e.g. '6544'",
+    "win_time": "the winning time of that race (Win Tm. column)",
+    "track": "track code of that run (Trk column) — splits/times only compared within same track+distance",
     "minimum": "trap, name, and recent_runs with pos/split/calc_time/grade/days_ago. Everything else optional."
   }
 }

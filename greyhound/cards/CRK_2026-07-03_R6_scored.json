@@ -48,41 +48,47 @@
         "crowding_risk": true
       },
       "selection": {
-        "trap": 5,
-        "name": "Midian Saki",
-        "score": 78.4,
+        "trap": 1,
+        "name": "Boherash Silin",
+        "score": 85.9,
         "confidence": "LOW"
       },
       "runners": [
         {
           "rank": 1,
-          "trap": 5,
-          "name": "Midian Saki",
-          "style": "R",
-          "score": 78.4,
-          "components": {
-            "early_pace": 24.0,
-            "time_form": 30.0,
-            "trap_style": -6.0,
-            "grade_edge": 9.4,
-            "recency": 0.0,
-            "consistency": 6.0
-          },
-          "flags": []
-        },
-        {
-          "rank": 2,
           "trap": 1,
           "name": "Boherash Silin",
           "style": "R",
-          "score": 78.4,
+          "score": 85.9,
           "components": {
             "early_pace": 0.0,
             "time_form": 29.2,
             "trap_style": 10.0,
             "grade_edge": 11.2,
             "recency": 5.0,
-            "consistency": 8.0
+            "consistency": 8.0,
+            "remarks": 3.9,
+            "run_line": 3.6,
+            "draw_bias": 0.0
+          },
+          "flags": []
+        },
+        {
+          "rank": 2,
+          "trap": 5,
+          "name": "Midian Saki",
+          "style": "R",
+          "score": 80.9,
+          "components": {
+            "early_pace": 24.0,
+            "time_form": 30.0,
+            "trap_style": -6.0,
+            "grade_edge": 9.4,
+            "recency": 0.0,
+            "consistency": 6.0,
+            "remarks": 1.4,
+            "run_line": 1.1,
+            "draw_bias": 0.0
           },
           "flags": []
         },
@@ -91,14 +97,17 @@
           "trap": 4,
           "name": "Canadian Coghlan",
           "style": "R",
-          "score": 65.8,
+          "score": 67.5,
           "components": {
             "early_pace": 30.0,
             "time_form": 18.7,
             "trap_style": -2.0,
             "grade_edge": -1.9,
             "recency": 0.0,
-            "consistency": 6.0
+            "consistency": 6.0,
+            "remarks": 0.1,
+            "run_line": 1.6,
+            "draw_bias": 0.0
           },
           "flags": []
         },
@@ -107,14 +116,17 @@
           "trap": 2,
           "name": "Zan",
           "style": "R",
-          "score": 61.4,
+          "score": 64.1,
           "components": {
             "early_pace": 24.0,
             "time_form": 19.5,
             "trap_style": 7.0,
             "grade_edge": 1.9,
             "recency": -10.0,
-            "consistency": 4.0
+            "consistency": 4.0,
+            "remarks": 2.2,
+            "run_line": 0.5,
+            "draw_bias": 0.0
           },
           "flags": [
             "absent 34 days"
@@ -125,14 +137,17 @@
           "trap": 3,
           "name": "Rustys Prince",
           "style": "R",
-          "score": 48.8,
+          "score": 54.1,
           "components": {
             "early_pace": 6.0,
             "time_form": 18.0,
             "trap_style": 2.0,
             "grade_edge": 3.8,
             "recency": 0.0,
-            "consistency": 4.0
+            "consistency": 4.0,
+            "remarks": 2.5,
+            "run_line": 2.8,
+            "draw_bias": 0.0
           },
           "flags": []
         },
@@ -141,14 +156,17 @@
           "trap": 6,
           "name": "Lahana Dash",
           "style": "M",
-          "score": 32.2,
+          "score": 37.7,
           "components": {
             "early_pace": 12.0,
             "time_form": 5.2,
             "trap_style": 2.0,
             "grade_edge": -10.0,
             "recency": 0.0,
-            "consistency": 8.0
+            "consistency": 8.0,
+            "remarks": 2.5,
+            "run_line": 3.0,
+            "draw_bias": 0.0
           },
           "flags": []
         }

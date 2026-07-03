@@ -26,6 +26,19 @@ W_TRAP_STYLE = 10.0   # -10 .. +10
 W_GRADE_MAX = 15.0    # -10 .. +15
 W_RECENCY_MAX = 5.0   # -10 .. +5
 W_CONSISTENCY = 10.0
+W_REMARKS = 8.0       # -8 .. +8, from race comments
+W_RUN_LINE = 8.0      # 0 .. +8, from in-race positions
+W_DRAW_BIAS = 5.0     # -5 .. +5, learned per track+distance from results log
+
+# Race-comment tokens (lowercased, spaces stripped before matching)
+_TROUBLE = ("crd", "blk", "bmp", "ck", "imp")          # trouble = excuse
+_FINISH_STRONG = ("stywl", "finwl", "rnon", "strfin", "drclr", "styon")
+_FADED = ("fd", "wknd")
+_QUICK_AWAY = ("qaw", "faw")
+_SLOW_AWAY = ("slaw", "msdbrk")
+
+# Recency weighting for per-run evidence: newest run counts most.
+_RUN_WEIGHTS = (1.0, 0.8, 0.6, 0.4, 0.2)
 
 BASELINE = 15.0  # so a mid-pack dog lands mid-scale, not near zero
 
@@ -201,6 +214,85 @@ def _score_recency(scores: list[RunnerScore]) -> None:
         s.components["recency"] = float(val)
 
 
+def _score_remarks(scores: list[RunnerScore]) -> None:
+    """Read the race comments the way a form student does.
+
+    Trouble in running (Crd/Blk/Bmp/Ck) in a beaten run is an EXCUSE — the
+    bare finishing position lies about the dog. Strong-finish comments
+    (StyWl/FinWl/RnOn/DrClr) mark a dog that keeps finding; Fd marks one
+    that empties. QAw/FAw is trap speed the splits sometimes miss.
+    """
+    for s in scores:
+        val = 0.0
+        for run, w in zip(s.runs, _RUN_WEIGHTS):
+            comment = (run.get("comment") or "").lower().replace(" ", "")
+            if not comment:
+                continue
+            pos = run.get("pos")
+            if any(t in comment for t in _TROUBLE) and isinstance(pos, int) and pos >= 3:
+                val += 1.5 * w  # beaten with an excuse — forgive the run
+            if any(t in comment for t in _FINISH_STRONG):
+                val += 1.5 * w
+            if any(t in comment for t in _FADED):
+                val -= 1.5 * w
+            if any(t in comment for t in _QUICK_AWAY):
+                val += 1.0 * w
+            if any(t in comment for t in _SLOW_AWAY):
+                val -= 1.0 * w
+        s.components["remarks"] = round(max(-W_REMARKS, min(W_REMARKS, val)), 1)
+
+
+def _score_run_line(scores: list[RunnerScore]) -> None:
+    """In-race positions (e.g. '6544' finishing 2nd): half for early
+    position taken, half for ground made through the race. A dog that
+    passes dogs late is gold in a race with a messy first bend."""
+    for s in scores:
+        firsts, gains = [], []
+        for run in s.runs[: len(_RUN_WEIGHTS)]:
+            line = str(run.get("positions") or "").strip()
+            if not line or not line[0].isdigit():
+                continue
+            first = int(line[0])
+            firsts.append(first)
+            pos = run.get("pos")
+            if isinstance(pos, int):
+                gains.append(first - pos)
+        if not firsts:
+            s.components["run_line"] = 0.0
+            s.flags.append("no running lines")
+            continue
+        avg_first = sum(firsts) / len(firsts)
+        early_pts = max(0.0, min(4.0, (3.5 - avg_first) / 2.5 * 4))
+        avg_gain = sum(gains) / len(gains) if gains else 0.0
+        gain_pts = max(0.0, min(4.0, avg_gain / 2.0 * 4))
+        s.components["run_line"] = round(early_pts + gain_pts, 1)
+
+
+def _load_track_bias() -> dict:
+    path = Path(__file__).parent / "track_bias.json"
+    if path.exists():
+        try:
+            return json.loads(path.read_text())
+        except (json.JSONDecodeError, OSError):
+            return {}
+    return {}
+
+
+def _score_draw_bias(scores: list[RunnerScore], distance, track, bias: dict) -> None:
+    """Learned trap bias per track+distance from the results log. Silent
+    (zero) until at least 30 logged races — never guess a bias."""
+    stats = (bias.get(str(track or "").upper()) or {}).get(str(distance)) if bias else None
+    n = (stats or {}).get("races", 0)
+    if not stats or n < 30:
+        for s in scores:
+            s.components["draw_bias"] = 0.0
+        return
+    for s in scores:
+        wins = stats.get(str(s.trap), 0)
+        edge = wins / n - 1.0 / 6.0
+        s.components["draw_bias"] = round(max(-W_DRAW_BIAS, min(W_DRAW_BIAS, edge * 30)), 1)
+
+
 def _score_consistency(scores: list[RunnerScore]) -> None:
     for s in scores:
         recent = s.runs[:6]
@@ -244,7 +336,7 @@ def _confidence(ranked: list[RunnerScore], crowded: bool) -> str:
     return ["LOW", "MEDIUM", "HIGH"][level]
 
 
-def score_race(race: dict, track=None) -> dict:
+def score_race(race: dict, track=None, bias: dict | None = None) -> dict:
     scores = [RunnerScore(r) for r in race.get("runners", [])]
     distance = race.get("distance")
     _score_early_pace(scores, distance, track)
@@ -253,6 +345,9 @@ def score_race(race: dict, track=None) -> dict:
     _score_grade_edge(scores, race.get("grade"))
     _score_recency(scores)
     _score_consistency(scores)
+    _score_remarks(scores)
+    _score_run_line(scores)
+    _score_draw_bias(scores, distance, track, bias if bias is not None else _load_track_bias())
     # Tiebreak on the most predictive components, in order.
     ranked = sorted(
         scores,
@@ -298,10 +393,11 @@ def score_card(card: dict) -> dict:
     if problems:
         raise ValueError("card failed validation:\n  " + "\n  ".join(problems))
     track = card.get("meeting", {}).get("track_code")
+    bias = _load_track_bias()
     return {
         "meeting": card.get("meeting", {}),
         "engine": "greyhound-v0-uncalibrated",
-        "races": [score_race(r, track) for r in card["races"]],
+        "races": [score_race(r, track, bias) for r in card["races"]],
     }
 
 
@@ -323,7 +419,9 @@ def _print_report(result: dict) -> None:
                 f"  (pace {r['components'].get('early_pace', 0):.0f}"
                 f" time {r['components'].get('time_form', 0):.0f}"
                 f" trap {r['components'].get('trap_style', 0):+.0f}"
-                f" grade {r['components'].get('grade_edge', 0):+.0f}){flags}"
+                f" grade {r['components'].get('grade_edge', 0):+.0f}"
+                f" cmnt {r['components'].get('remarks', 0):+.1f}"
+                f" line {r['components'].get('run_line', 0):+.1f}){flags}"
             )
         bend = ", ".join(f"T{o['trap']}" for o in race["pace_map"]["bend_order"][:3])
         if bend:

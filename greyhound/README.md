@@ -36,6 +36,9 @@ work unchanged.
 | Grade edge (dropping vs rising in grade) | −10 to +15 | A dog dropping from A3 to A4 meets weaker; grade inflation is the greyhound form franking analogue until we have real franking. |
 | Recency / fitness | −10 to +5 | 4–14 days between runs ideal; 28+ days a negative. |
 | Consistency (top-2 finishes in recent runs) | 0–10 | Graded dogs are creatures of habit. |
+| Race comments | −8 to +8 | Trouble (Crd/Blk/Bmp) in a beaten run is an excuse; StyWl/FinWl/RnOn marks a dog that keeps finding; Fd one that empties; QAw/SlAw trap habits. |
+| Running lines (SPi) | 0 to +8 | Half for early position taken, half for ground made through the race. Late passers thrive in trouble races. |
+| Draw bias (learned) | −5 to +5 | Per track+distance trap win-rates from `results_log.csv` via `log_result.py`. Silent until 30+ logged races — never guessed. |
 
 Also emitted per race: a **pace map** (predicted order to the first bend) and
 a **crowding flag** when 3+ early-pace dogs are drawn adjacent — those races
