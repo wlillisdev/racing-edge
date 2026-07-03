@@ -462,3 +462,75 @@ form-FIRST (#29), then marked against the winners. What the form said BEFORE the
    Dream 8.0 vs Phantom Gold 2.2).
 4. Big-field Irish handicaps: the flag stands — pass.
 All directional: one card, small sample, the trial record is the judge.
+
+---
+
+## 2026-07-03 (Fri) — the nap LOST at Chepstow 17:10: the master's dissection, banked
+
+**Result (from the master's photo):** Green Sky (IRE) 9/1 won readily (6yo, OR67,
+B R Millman — "towards rear, improved 3f out, led approaching 2f, readily drew away");
+Jindri 5/4f 2nd (Oisin Murphy — "led... ridden and headed... no match for winner");
+our nap lost. 5 ran, Class 5 fillies' handicap.
+
+**Why the system picked it (honest):** the well-in lens — won last time out,
+unpenalised. That single alignment carried it. Nothing in the pipeline asked the
+three questions the master asked in ten seconds:
+1. **"Stay away from races with young unexposed horses."** The field was young,
+   lightly raced fillies — a novice in disguise behind a handicap title. The #13 gate
+   reads the TITLE; it never read the FIELD. → fixed: field-exposure gate (#30).
+2. **"It was a bad race he won — what about form franking?"** `frank_form` existed
+   and the nap path never called it. The pick's last win was hollow and checkable.
+   → fixed: the nominee's form is franked before banking; a THIN frank kills confident.
+3. **"The jockey was out of his league... Oisin Murphy dictated the race."** Small
+   tactical field, elite riders, our claimer outgunned — and the winner came from the
+   good stable with the good record. No code lens for jockey class yet — banked here
+   as the master's read; the eye covers it until the record earns a rule.
+
+**The market note:** Jindri was backed off the board AND had the best jockey AND
+dictated — and still got hammered by the exposed older horse. The money and the
+tactics both lost to CLASS-IN-FIELD. In a 5-runner race the smashed fav failing is
+the same lesson as the deep-field version (2026-07-01) wearing different clothes:
+the gamble is not the form.
+
+**Meta:** the loss is banked in nap.db (settle records it) — the record stays honest.
+One pick, one loss, three structural fixes. That is the loop working as built.
+
+---
+
+## 2026-07-03 (Fri evening) — the jigsaw profile wins again, and the clock keeps us honest
+
+**Beverley 7:02 (Cl4, 8 ran): I'M NEXT WON at 2/1F; Emperor Spirit 2nd at 9/2.**
+Read form-first off the pre-race brief (pulled 18:39): WELL-IN + 2 course wins + the
+yard's NUMBER ONE rider up + 17% in-form yard + fair-priced fav (#19). The brief's TWO
+well-in tells in the race finished FIRST and SECOND. This is the Indian Run profile
+winning again — n=2 now for "well-in course specialist, stable's top rider, fair price."
+Still a small sample; the profile is a lead the record keeps testing, not a law.
+
+**The verification lesson (the master's challenge — "did you cheat?"):** the read
+landed in chat after the off, so it is UNVERIFIABLE and counts for NOTHING on the
+record, however right it was. Only picks banked in nap.db with a pre-off timestamp
+count. Right call, wrong channel = no credit. That discipline is the whole trial.
+
+**The brief's blind spot, caught live:** manner printed '·?' on every horse all night
+while the comments were demonstrably flowing — the scorecard's manner lens was
+hard-coded OWED from before the comments door opened (2026-07-01). Fixed tonight:
+the lens now reads FINISHER / placer! / excuse+ from the history comments, OWED only
+when genuinely blank. Tomorrow's brief reads the finish, not just the figures (#1).
+
+**Late calls (pre-off, results unknown at time of writing — settle honestly):**
+Giant Haystacks (Wexford 8:00, well-in -9, calculated gamble, move-dependent) and
+Qazaq e/w (Beverley 8:40, first-time headgear from 29% yard, #16). Mark them either
+way in tomorrow's restudy — no cherry-picking the ones that won.
+
+**SETTLED (master's word, same night):** Giant Haystacks WON the Wexford 8:00 — "won
+well." Called pre-off at ~19:44 on one fact: WELL-IN -9lb, the biggest treatment gap
+on the remaining card, at a fair 4.4 (#19), flagged as a calculated gamble with the
+move as the go/no-go. That's TWO winners tonight read off the same lens stack
+(I'm Next 2/1F, Giant Haystacks ~7/2) — the WELL-IN mark doing the heavy lifting both
+times. Qazaq (Beverley 8:40 e/w, the #16 headgear tell) still unsettled — mark it
+either way tomorrow, no cherry-picking.
+
+Discipline note, again: neither goes on the nap ledger (not banked in nap.db pre-off)
+and one evening is noise. But the evening's evidence keeps stacking the same way:
+the mark lens finds live ones, the drift rule keeps us off dead ones, and the record
+— the real one, banked at 07:30 each morning — is the only judge that counts.

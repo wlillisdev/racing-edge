@@ -60,6 +60,33 @@ def test_scorecard_reads_every_contender_and_flags_owed() -> None:
     assert "Caughtinyourtrance" in out and "OWED" in out and "?" in out
 
 
+def test_manner_lens_is_live_off_the_comments() -> None:
+    """The brief printed manner '·?' on every horse all night (2026-07-03) while the
+    comments were flowing — the lens was hard-coded OWED from before the door opened.
+    Now: finisher/placer/excuse read from history comments; OWED only when truly blank."""
+    race = Race(race_id="r", course="Beverley", off_time="19:02", date=date(2026, 7, 3),
+                race_type="Flat", is_handicap=True,
+                runners=(Runner(horse_id="A", horse="ImNext", official_rating=86,
+                                odds=Odds(consensus=3.1)),
+                         Runner(horse_id="B", horse="Placer", official_rating=80,
+                                odds=Odds(consensus=5.0))))
+    ev = [
+        RunnerEvidence(runner=race.runners[0], history=(
+            PastRun(date=date(2026, 6, 1), position=1,
+                    comment="challenged at the last - asserted on the run-in"),)),
+        RunnerEvidence(runner=race.runners[1], history=(
+            PastRun(date=date(2026, 6, 1), position=2, comment="every chance, found little"),
+            PastRun(date=date(2026, 5, 1), position=2, comment="one paced final furlong"),)),
+    ]
+    sc = build_scorecard(race, ev, top_n=2)
+
+    def cell(col):
+        return dict(sc.columns[col].cells)["manner"]
+
+    assert cell(0).text == "FINISHER" and not cell(0).owed
+    assert cell(1).text == "placer!" and not cell(1).owed
+
+
 def _main() -> int:
     fns = [v for k, v in sorted(globals().items()) if k.startswith("test_")]
     for fn in fns:

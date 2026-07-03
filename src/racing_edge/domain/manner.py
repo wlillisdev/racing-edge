@@ -25,6 +25,9 @@ _FINISHER = (
     "found extra", "quickened", "drew clear", "drew away", "went clear",
     "readily", "comfortably", "easily", "willingly", "stayed on to win",
     "ran on to win", "ran out a ready winner", "always doing enough", "in command",
+    # earned 2026-07-01 (Worcester 1:50 self-study): "asserted on the run-in" read as
+    # NEUTRAL and the rules missed the winner — the vocabulary grows as the eye sharpens
+    "asserted", "forged clear", "went on to win", "finished strongly",
 )
 # An excuse — the bare result lies, don't downgrade the manner.
 _TROUBLE = (

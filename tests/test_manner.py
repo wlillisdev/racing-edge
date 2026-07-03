@@ -25,6 +25,14 @@ def test_read_manner_winning_flourish_beats_soft_phrase() -> None:
     assert read_manner("kept on well to lead near the finish")[0] == "finisher"
 
 
+def test_read_manner_knows_the_words_the_card_taught() -> None:
+    """Earned 2026-07-01: 'asserted on the run-in' read NEUTRAL and the rules missed
+    Knightsbridge (Worcester 1:50). The vocabulary grows as the eye sharpens."""
+    assert read_manner("challenged at the last - asserted on the run-in")[0] == "finisher"
+    assert read_manner("led at the last - asserted under pressure and forged clear")[0] \
+        == "finisher"
+
+
 def test_nap_verdict_downgrades_a_nearly_type() -> None:
     # out-battled twice in three runs -> placer, not a NAP (the "again" pattern)
     v = nap_verdict(["beaten a neck, no extra",
