@@ -521,3 +521,16 @@ when genuinely blank. Tomorrow's brief reads the finish, not just the figures (#
 Giant Haystacks (Wexford 8:00, well-in -9, calculated gamble, move-dependent) and
 Qazaq e/w (Beverley 8:40, first-time headgear from 29% yard, #16). Mark them either
 way in tomorrow's restudy — no cherry-picking the ones that won.
+
+**SETTLED (master's word, same night):** Giant Haystacks WON the Wexford 8:00 — "won
+well." Called pre-off at ~19:44 on one fact: WELL-IN -9lb, the biggest treatment gap
+on the remaining card, at a fair 4.4 (#19), flagged as a calculated gamble with the
+move as the go/no-go. That's TWO winners tonight read off the same lens stack
+(I'm Next 2/1F, Giant Haystacks ~7/2) — the WELL-IN mark doing the heavy lifting both
+times. Qazaq (Beverley 8:40 e/w, the #16 headgear tell) still unsettled — mark it
+either way tomorrow, no cherry-picking.
+
+Discipline note, again: neither goes on the nap ledger (not banked in nap.db pre-off)
+and one evening is noise. But the evening's evidence keeps stacking the same way:
+the mark lens finds live ones, the drift rule keeps us off dead ones, and the record
+— the real one, banked at 07:30 each morning — is the only judge that counts.
