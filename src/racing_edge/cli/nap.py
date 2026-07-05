@@ -57,6 +57,31 @@ def _record() -> int:
     return 0
 
 
+def _resend(day_str: str) -> int:
+    """Re-EMAIL the already-banked nap for a day, straight from the ledger — never
+    re-picks, never re-banks (re-running the picker intra-day would overwrite the
+    pre-off record with moved prices). For when the morning email goes missing."""
+    day = resolve_date(day_str).isoformat()
+    log = open_nap_log()
+    n = next((x for x in log.history() if x["date"] == day), None)
+    log.close()
+    if n is None:
+        print(f"  No nap banked for {day} — nothing to resend.")
+        return 1
+    tag = "CONFIDENT NAP" if n["confident"] else "best candidate (not confident)"
+    res = ("" if n["won"] is None else
+           f"\nresult: {'WON' if n['won'] == 1 else 'lost'}"
+           f"{' @' + str(n['sp_dec']) if n['sp_dec'] else ''}")
+    subject = f"{tag}: {n['horse']} — {n['course']} ({day})"
+    body = (f"{subject}\n"
+            f"price at banking: {n['price']}   conviction score: {n['score']}{res}\n"
+            f"banked pre-off in nap.db — this is a RESEND of the banked record, "
+            f"nothing re-picked.")
+    print(body)
+    _maybe_email([body], subject, email=True)
+    return 0
+
+
 def _settle(day_str: str, email: bool) -> int:
     day = resolve_date(day_str)
     out: list[str] = []
@@ -98,10 +123,14 @@ def main() -> int:
     ap.add_argument("--both", action="store_true", help="both codes")
     ap.add_argument("--settle", metavar="DAY", help="settle a banked nap against results")
     ap.add_argument("--record", action="store_true", help="show the banked nap record")
+    ap.add_argument("--resend", metavar="DAY",
+                    help="re-EMAIL the banked nap for a day (never re-picks)")
     ap.add_argument("--email", action="store_true", help="email the output (uses SMTP env vars)")
     args = ap.parse_args()
     if args.record:
         return _record()
+    if args.resend:
+        return _resend(args.resend)
     if args.settle:
         return _settle(args.settle, args.email)
 
