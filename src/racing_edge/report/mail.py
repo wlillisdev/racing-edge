@@ -58,13 +58,20 @@ def send(subject: str, body: str, title: str = "", subtitle: str = "") -> bool:
     msg["From"] = sender
     msg["To"] = recipient
 
-    try:
-        with smtplib.SMTP(host, port, timeout=30) as smtp:
-            smtp.ehlo()
-            smtp.starttls()
-            smtp.ehlo()
-            smtp.login(sender, password)
-            smtp.sendmail(sender, recipient, msg.as_string())
-    except (smtplib.SMTPException, OSError):
-        return False
-    return True
+    # RETRY on transient failure — one shot at 07:30 sharp can lose a day's nap email
+    # to a network blip (suspected 2026-07-04). The API client retries; so does this now.
+    import time
+    for attempt in range(3):
+        try:
+            with smtplib.SMTP(host, port, timeout=30) as smtp:
+                smtp.ehlo()
+                smtp.starttls()
+                smtp.ehlo()
+                smtp.login(sender, password)
+                smtp.sendmail(sender, recipient, msg.as_string())
+            return True
+        except smtplib.SMTPAuthenticationError:
+            return False                      # bad credentials — retrying won't help
+        except (smtplib.SMTPException, OSError):
+            time.sleep(2 * (attempt + 1))
+    return False
