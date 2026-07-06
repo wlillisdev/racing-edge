@@ -230,9 +230,25 @@ def main() -> int:
             emit("  (deep read OFF — no ANTHROPIC_API_KEY; falling back to the "
                  "shallow engine pick)")
         else:
+            # the student's own notes go into the exam: validated nuances + tracked
+            # horses that appear among today's candidates (2026-07-05 — the pick was
+            # being made from a blank slate every morning while the lessons sat in a DB)
+            lesson_lines: list[str] = []
+            nlog2 = open_nuance_log()
+            lesson_lines += [f"- NUANCE (validated): {n['nuance']}"
+                             for n in nlog2.all() if n["status"] == "validated"]
+            cand_ids = {p.runner.horse_id for picks in cand_races for p in picks}
+            lesson_lines += [
+                f"- {t['angle'].upper()} {t['horse']}: {t['note']}"
+                + (f" [{t['conditions']}]" if t["conditions"] else "")
+                for t in nlog2.tracked_active() if t["horse_id"] in cand_ids
+            ]
+            nlog2.close()
             print(f"  deep read: {resolve_model('nap')} on "
-                  f"{len(candidates)} candidate race(s)…", flush=True)
-            text, trail = deep(NAP_SYSTEM, build_nap_prompt(candidates))
+                  f"{len(candidates)} candidate race(s), "
+                  f"{len(lesson_lines)} banked lesson(s) in hand…", flush=True)
+            text, trail = deep(NAP_SYSTEM,
+                               build_nap_prompt(candidates, "\n".join(lesson_lines)))
             for t in trail:
                 print(f"      🔎 {t}", flush=True)
             mp = parse_morning_pick(text)

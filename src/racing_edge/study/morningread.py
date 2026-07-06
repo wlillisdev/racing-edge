@@ -36,6 +36,15 @@ NAP_SYSTEM = (
     "readable winner. PASS is a last resort you must earn race by race — name what "
     "kills EACH candidate. A pass because reading is hard is the lazy student's answer; "
     "a stupid pick in an unreadable race is worse. Find the one that joins.\n"
+    "6. THE RECORD'S WINNING PROFILE (every winner so far matched it; both losers "
+    "broke it): WELL-IN — the bigger the gap the better — plus course-form depth, plus "
+    "yard INTENT (in-form stable and/or its #1 rider up), at a fair price (roughly "
+    "2.5-7.0), in a readable race: Class 4 or better, exposed field, anchored market. "
+    "Prefer the candidate matching this profile. Departing from it demands STRONGER "
+    "cited facts, said out loud in the case.\n"
+    "7. USE THE BANKED LESSONS: if a LESSONS block is supplied (validated nuances the "
+    "master promoted, tracked follow/oppose horses from past results), they are "
+    "evidence — apply them and cite them like any other fact.\n"
     "IRON RULES: only facts from the readouts and tool results; cite the exact fact "
     "for every claim; a blank is OWED, never filled; never let the price pick.\n"
     "Answer ONLY a single JSON object, no prose around it."
@@ -77,10 +86,15 @@ class MorningPick:
         return bool((self.horse and self.race_label) or (self.is_pass and self.pass_reason))
 
 
-def build_nap_prompt(candidates: list[tuple[str, str]]) -> str:
-    """candidates: (label, pre-race readout) per shortlisted race."""
+def build_nap_prompt(candidates: list[tuple[str, str]], lessons: str = "") -> str:
+    """candidates: (label, pre-race readout) per shortlisted race. `lessons` is the
+    student's own notes — validated nuances + tracked horses — injected so the pick
+    is made WITH the banked learning, not from a blank slate every morning."""
     blocks = [f"CANDIDATE RACE — {label}\n{readout}" for label, readout in candidates]
+    lessons_block = (f"LESSONS BANKED (the master validated these — apply and cite "
+                     f"them):\n{lessons}\n\n" if lessons.strip() else "")
     return (
+        f"{lessons_block}"
         f"Today's shortlisted races ({len(candidates)}). Read them ALL, pick the most "
         f"readable one, then the best horse in it by elimination — or earn a pass.\n\n"
         + "\n\n----------------------------------------\n\n".join(blocks)

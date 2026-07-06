@@ -64,6 +64,18 @@ def test_prompt_carries_every_candidate_block() -> None:
     assert "CANDIDATE RACE — Ascot 4:00" in p and "READOUT-B" in p
 
 
+def test_the_student_takes_its_notes_into_the_exam() -> None:
+    """2026-07-05: validated nuances and tracked horses sat in the DB while the pick
+    was made from a blank slate. The LESSONS block now rides with the prompt, and the
+    system prompt carries the record's winning profile."""
+    p = build_nap_prompt([("Thirsk 3:00", "R")],
+                         lessons="- NUANCE (validated): manner outranks bare mark rise\n"
+                                 "- OPPOSE King Of The Story: erratic jumper")
+    assert "LESSONS BANKED" in p and "manner outranks" in p and "OPPOSE King" in p
+    assert "LESSONS BANKED" not in build_nap_prompt([("T", "R")])   # empty = no block
+    assert "WINNING PROFILE" in NAP_SYSTEM and "BANKED LESSONS" in NAP_SYSTEM
+
+
 def _main() -> int:
     fns = [v for k, v in sorted(globals().items()) if k.startswith("test_")]
     for fn in fns:
