@@ -197,7 +197,70 @@ def main() -> int:
         emit("No nap — every contender crossed off. Discipline is a position.")
         _maybe_email(out, "Nap — no bet today", args.email)
         return 0
-    nap = survivors[0]      # zero in on the strongest SURVIVOR, not the top of the raw field
+
+    # THE MORNING DEEP READ (2026-07-05 — the master: "you can find a winner, just
+    # look harder; stop stupid picks"). The engine only SHORTLISTS; the deep model
+    # (with the franking tools) reads the candidate races form-first and picks THE
+    # race and THE horse — or earns a pass race by race. Fallback: the engine's
+    # strongest survivor, honestly labelled as the shallow pick.
+    nap = survivors[0]
+    deep_case: list[str] = []
+    try:
+        from racing_edge.ai.reason import get_investigator, resolve_model
+        from racing_edge.report.restudy import render_preread
+        from racing_edge.study.investigate import TOOLS, make_executor
+        from racing_edge.study.morningread import (
+            NAP_SYSTEM,
+            build_nap_prompt,
+            parse_morning_pick,
+        )
+        # group survivors by race (rank order preserved), take the top candidate races
+        by_race: dict[str, list] = {}
+        for p in survivors:
+            by_race.setdefault(p.race.race_id, []).append(p)
+        cand_races = list(by_race.values())[:4]
+        candidates = []
+        for picks in cand_races:
+            r0 = picks[0].race
+            label = f"{r0.course} {r0.off_time}"
+            hists = {p.runner.horse_id: p.history for p in picks}
+            candidates.append((label, render_preread(r0, hists)))
+        deep = get_investigator("nap", TOOLS, make_executor(client, cand_races[0][0].race))
+        if deep is None:
+            emit("  (deep read OFF — no ANTHROPIC_API_KEY; falling back to the "
+                 "shallow engine pick)")
+        else:
+            print(f"  deep read: {resolve_model('nap')} on "
+                  f"{len(candidates)} candidate race(s)…", flush=True)
+            text, trail = deep(NAP_SYSTEM, build_nap_prompt(candidates))
+            for t in trail:
+                print(f"      🔎 {t}", flush=True)
+            mp = parse_morning_pick(text)
+            if mp.ok and mp.is_pass:
+                emit("  DEEP READ: PASS earned, race by race:")
+                emit(f"    {mp.pass_reason}")
+                emit("  No nap today — a pass argued on facts beats a stupid pick.")
+                _maybe_email(out, "Nap — no bet today (pass earned)", args.email)
+                return 0
+            chosen = next((p for picks in cand_races for p in picks
+                           if mp.horse and p.runner.horse.strip().lower()
+                           == mp.horse.strip().lower()), None)
+            if mp.ok and chosen is not None:
+                nap = chosen
+                deep_case = [f"  DEEP READ ({resolve_model('nap')}) — the case:",
+                             f"    race readable: {mp.race_readable_because}",
+                             f"    {mp.case}"]
+                deep_case += [f"    ✗ crossed: {x}" for x in mp.crossed_off]
+                if mp.cite:
+                    deep_case.append(f"    rests on: {' | '.join(mp.cite)}")
+                if mp.owed:
+                    deep_case.append(f"    OWED: {mp.owed}")
+            else:
+                emit("  (deep read gave no usable pick — falling back to the shallow "
+                     "engine pick; raw kept in the task log)")
+                print(f"  raw: {mp.raw[:300]}", flush=True)
+    except Exception as exc:                      # the deep read must never kill the bank
+        emit(f"  (deep read failed: {exc.__class__.__name__} — shallow engine pick used)")
 
     # standing guard (rule #26): the two decisive facts the brief CAN'T see — never
     # invent them, never cross off or nap on a guessed run-style or a stale price.
@@ -220,6 +283,8 @@ def main() -> int:
 
     tag = "CONFIDENT NAP" if confident else "best candidate — NOT confident (declinable)"
     emit(f"  {tag}: {nap.runner.horse}  —  {r.course} {r.off_time} ({r.race_type})")
+    for line in deep_case:
+        emit(line)
     emit(f"  conviction {c.score}: {', '.join(c.aligned) or 'thin'}")
     emit(f"  frank (#5/#15): {fr.note}")
     if c.confident and fr.is_thin:

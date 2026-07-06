@@ -30,6 +30,7 @@ class NapPick:
     runner: Runner
     price: float | None
     conviction: Conviction
+    history: tuple = ()          # the contender's past runs — for the morning deep read
 
 
 def _rank_key(p: NapPick) -> tuple[int, int, int, float]:
@@ -77,7 +78,7 @@ def evaluate_field(client: _Client, day: str = "today",
             c = conviction(r, race, hist, ranks.get(r.horse_id, 99), race.field_size,
                            stable_strike=strike, yard_no1=no1)
             race_picks.append(NapPick(race=race, runner=r, price=r.odds.consensus,
-                                      conviction=c))
+                                      conviction=c, history=hist))
         # THE RACE-SELECTION GATES (#3 — race selection before horse selection; the
         # master, 2026-07-05, after two poor naps: "unexposed horses, poor classes and
         # grade, anything could win — learn to pick the correct TYPE of race").

@@ -37,6 +37,7 @@ _TASK_MODELS = {
     "study": "claude-sonnet-5",       # per-race read: strong reasoning, runs many times
     "sceptic": "claude-fable-5",      # the kill-pass must be sharper than the proposer
     "synthesis": "claude-fable-5",    # the weekly cross-day read: deepest, runs once
+    "nap": "claude-fable-5",          # THE morning pick: once a day, the deepest brain
 }
 _FALLBACK = "claude-sonnet-5"
 
