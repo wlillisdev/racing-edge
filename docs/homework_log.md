@@ -551,3 +551,75 @@ capped. FIXED same night: #19 fair-priced-fav lens (>=2.5, cramped still earns
 nothing), a heavily-treated lens at -5lb+, and the intent dots wired from evidence
 into conviction. Test pins the exact case: the I'm Next profile now outranks the
 bare sweet-spot profile. Tomorrow's 07:30 pick is the first with the full jigsaw.
+
+---
+
+## 2026-07-05 — the master's re-evaluation: "learn how to pick the correct TYPE of race"
+
+Two poor naps in a row (2026-07-04/05) and the fault was RACE selection, not horse
+selection — "unexposed horses, poor classes and grade, anything could win." Audit of
+the engine confirmed it: race choice was a title gate + a big-field flag, nothing else.
+No class read. No market-shape read. And the RANKING was blind to race quality — a Cl6
+scramble outranked a Cl3 on price alone, so the nap kept landing wherever the raw score
+happened to fall, which is exactly how you end up in lotteries.
+
+FIXED (rule #31 — the readability checklist):
+1. Bottom-grade gate: Cl6 flat = inconsistent animals, flagged.
+2. Market-anchor gate: fav 5.0+ (or 4.0+ in a 12+ field) = the market itself saying
+   anything could win. Believe it. Flagged.
+3. Exposure gate broadened (age<=5, runs<=5 for half the contenders).
+4. Class breaks ties in the ranking: equal reads -> the better-class race gets the nap.
+5. The self-study now asks QUESTION ZERO on every result: was this race READABLE at
+   all — and scores rule #3 on the scoreboard, so race selection is permanently on
+   trial alongside the picks.
+
+EXPECT MORE NO-BET DAYS from here. That is the point — the master passes nine races
+to bet the one he's sure of. The nap should live in the most readable race of the
+day, not wherever the biggest number fell.
+
+---
+
+## 2026-07-05 (later) — the master's alarm ("you are losing your way"): two agents sent out, both came back with blood
+
+Two audit agents dispatched on the master's order: one forensic (winners vs losers),
+one on the learning loop. Findings and fixes, all landed same day:
+
+### Forensic verdict
+WINNERS (Indian Run, Great Mates, I'm Next, Giant Haystacks): multi-lens, WELL-IN
+anchored, readable Cl3/4 races, exposed fields, fair price 2.5-7. LOSERS (Chepstow,
+Celestias Comet): single-lens picks in unreadable races — the mirror image on both
+axes. Gate walkthrough proved variants could STILL slip (Cl5/jumps low grade, 4.5 fav
+in a 10-runner scramble, 6yo unexposed fields) and three structural faults: the
+winning profile advised the prompt but never blocked the bank; a hollow frank only
+downgraded; the deep read saw just 4 horses per race while the whole field's evidence
+was fetched and discarded (Green Sky at 9/1 = the horse it couldn't weigh). Worst
+irony: my "pass is the lazy student's answer" prompt line SHAMED the model into
+forcing least-bad picks on bad cards — the exact genesis of both losers.
+
+### Loop audit verdict (13 leaks)
+Deadliest: the night study critiqued a pick whose reasoning it could not see — the
+case died in the email, so "why_i_picked" was A SELF-CRITIQUE OF AN INVENTED MEMORY.
+Also: learning tasks never in the documented schedule (the ledgers were starving);
+sceptic kill-reasons discarded (failure modes invisible); rule scoreboard fed nothing;
+tracked clues couldn't promote a race into the shortlist and are never settled;
+synthesis unscheduled and write-only.
+
+### Fixed today, all pinned
+1. PROFILE FLOOR at bank time: well-in + Cl4-or-better + anchored market or NO BET —
+   the profile now blocks, not advises.
+2. FRANK = VETO: a hollow-win pick is crossed off and the next survivor franked;
+   all hollow = no bet.
+3. Whole field to the deep read; FOLLOW-tracked horses can promote their race into
+   the candidate list; every tracked horse running today rides in the lessons block.
+4. The CASE banks with the pick (nap.db migration) and is handed to the night
+   critique — no more invented memories. Deep read's own confident/lean now decides
+   the CONFIDENT tag.
+5. Sceptic verdicts banked as status='refuted' with the ground; synthesis now reads
+   all three ledgers (nuances + rule scoreboard + tracked).
+6. Gates widened: any-code Cl6, fav>=4.0 in 8+ fields, 6yo unexposed counted.
+7. DRIFT GUARD (12:30 task): the banked pick's price re-checked pre-off; 20% drift =
+   STAND OFF email. The move — the strongest clue in this log — finally guards the
+   stake at the only moment it matters.
+8. The prompt's anti-pass shaming removed: a pass is CORRECT off-profile; the
+   profile_match checklist is now REQUIRED in the pick's JSON or it doesn't parse.
+9. TRIAL.md schedule corrected: 07:30 nap / 12:30 guard / 22:00 night / Sun synth.

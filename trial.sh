@@ -38,17 +38,19 @@ git pull origin claude/form-trial --quiet
 echo
 
 case "${1:-nap}" in
-  nap)     "${SDK_OFF[@]}" "$PY" -m racing_edge.cli.nap     --day today --both --email ;;
+  nap)     "$PY" -m racing_edge.cli.nap     --day today --both --email ;;   # keeps the key: the DEEP READ needs it (SDK-free)
   dissect) "${SDK_OFF[@]}" "$PY" -m racing_edge.cli.dissect --day today        --email ;;
   settle)  "${SDK_OFF[@]}" "$PY" -m racing_edge.cli.nap     --settle today      --email ;;
   restudy) "${SDK_OFF[@]}" "$PY" -m racing_edge.cli.restudy --day today ${RESTUDY_TIME:+--time "$RESTUDY_TIME"} --email ;;
   learn)   "$PY" -m racing_edge.cli.learn   --day today ${LEARN_TIME:+--time "$LEARN_TIME"} --email ;;
   synth)   "$PY" -m racing_edge.cli.learn   --synthesise --email ;;
+  guard)   "${SDK_OFF[@]}" "$PY" -m racing_edge.cli.nap --guard ;;
+  health)  "${SDK_OFF[@]}" "$PY" -m racing_edge.cli.health --email ;;
   night)   "${SDK_OFF[@]}" "$PY" -m racing_edge.cli.nap --settle today --email
            echo
            "$PY" -m racing_edge.cli.learn   --day today --email ;;
-  all)     "${SDK_OFF[@]}" "$PY" -m racing_edge.cli.nap     --day today --both --email
+  all)     "$PY" -m racing_edge.cli.nap     --day today --both --email
            echo
            "${SDK_OFF[@]}" "$PY" -m racing_edge.cli.dissect --day today         --email ;;
-  *) echo "usage: ./trial.sh [nap|dissect|settle|restudy|learn|synth|night|all]"; exit 1 ;;
+  *) echo "usage: ./trial.sh [nap|dissect|settle|restudy|learn|synth|night|guard|health|all]"; exit 1 ;;
 esac

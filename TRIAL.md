@@ -67,11 +67,16 @@ instead of arguing about it.
 Add these on PythonAnywhere → Tasks (each is one command; `trial.sh` pulls the branch,
 runs, banks, and emails):
 
-| Time  | Command |
-|-------|---------|
-| 07:30 | `~/racing_edge/trial.sh nap` |
-| 08:00 | `~/racing_edge/trial.sh dissect` |
-| 22:00 | `~/racing_edge/trial.sh settle` |
+| Time  | Command | Job |
+|-------|---------|-----|
+| 07:30 | `~/racing_edge/trial.sh nap` | the deep read picks + banks + emails (or earns a pass) |
+| 12:30 | `~/racing_edge/trial.sh guard` | drift guard: re-checks the pick's price, emails STAND OFF on a 20% drift |
+| 22:00 | `~/racing_edge/trial.sh night` | settle + the self-study (sceptic, nuances, rules, tracked) in one slot |
+| Sun 21:00 | `~/racing_edge/trial.sh synth` | the weekly join-the-dots across every ledger |
+
+**The 22:00 task must be `night`, not bare `settle`** — the audit (2026-07-05) found
+the learning loop was never in this schedule, so the nuance/rule/tracked ledgers
+starved while the code to fill them sat unused.
 
 - **07:30 nap** — reads today's real card, bins the novices/raised/lotteries, banks one
   pick (or "no bet"), emails it.

@@ -1,0 +1,100 @@
+"""Tests for the morning deep read — the detective picks the nap, not the lens-count."""
+
+from __future__ import annotations
+
+import sys
+from datetime import date
+
+from racing_edge.domain.models import Odds, Race, Runner
+from racing_edge.report.restudy import render_preread
+from racing_edge.study.morningread import (
+    NAP_SYSTEM,
+    build_nap_prompt,
+    parse_morning_pick,
+)
+
+
+def test_the_system_prompt_carries_the_masters_discipline() -> None:
+    # race first, form first, eliminate, look harder — and the pass tilt is balanced:
+    # a pass is CORRECT off-profile (the audit: the old "lazy student" shaming forced
+    # least-bad picks on bad cards — the genesis of both losers)
+    for phrase in ("RACE FIRST", "FORM FIRST, ODDS LAST", "ELIMINATE", "LOOK HARDER",
+                   "a pass is CORRECT", "Never force the least-bad pick",
+                   "never let the price pick", "WINNING PROFILE"):
+        assert phrase in NAP_SYSTEM
+    assert "lazy student" not in NAP_SYSTEM          # the anti-pass shaming is gone
+
+
+def test_preread_lays_out_the_pre_race_card_without_results() -> None:
+    from racing_edge.data.normalise import past_runs_from_raw
+    race = Race(race_id="r", course="Thirsk", off_time="3:00", date=date(2026, 7, 5),
+                race_type="Flat", is_handicap=True, race_class=3,
+                runners=(Runner(horse_id="A", horse="Gem", official_rating=86,
+                                form="21-1", odds=Odds(consensus=3.0)),))
+    hists = {"A": past_runs_from_raw([{"date": "2026-06-01", "race_id": "r0", "runners": [
+        {"horse_id": "A", "position": "1", "or": "82",
+         "comment": "asserted on the run-in"}]}], "A")}
+    out = render_preread(race, hists)
+    assert "PRE-RACE CARD" in out and "Gem" in out and "mkt 1/1 @3.0" in out
+    assert "manner read (#1): win_positive" in out
+    assert "asserted on the run-in" in out
+    assert "WON" not in out                       # no result anywhere — it's pre-race
+
+
+def test_parse_morning_pick_reads_a_pick_and_an_earned_pass() -> None:
+    pick = parse_morning_pick(
+        'the read:\n{"race": "Thirsk 3:00", "horse": "Gem", "case": "well-in and a '
+        'finisher", "race_readable_because": "Cl3, exposed field, anchored market", '
+        '"crossed_off": ["Rival — placer profile"], "cite": ["mark WELL-IN"], '
+        '"owed": "live move", "profile_match": {"well_in": true, "class_ok": true, '
+        '"market_anchor": true, "note": "full profile match"}, '
+        '"confidence": "Confident", "pass": false, "pass_reason": ""}')
+    assert pick.ok and not pick.is_pass
+    assert pick.race_label == "Thirsk 3:00" and pick.horse == "Gem"
+    assert pick.confidence == "confident"
+    assert pick.crossed_off == ("Rival — placer profile",)
+    assert pick.profile_flags == (True, True, True)
+    # a pick WITHOUT the profile checklist stated is NOT ok (audit fix 5c) — the
+    # model must say, per pick, how it fits the winning profile
+    unstated = parse_morning_pick('{"race": "T", "horse": "Gem", "case": "x", '
+                                  '"pass": false, "pass_reason": ""}')
+    assert not unstated.ok
+
+    p = parse_morning_pick('{"race": "", "horse": "", "pass": true, '
+                           '"pass_reason": "race A: lottery market; race B: babies"}')
+    assert p.ok and p.is_pass and "lottery" in p.pass_reason
+    # an unearned pass (no reasons) is NOT ok — the caller falls back
+    lazy = parse_morning_pick('{"race": "", "horse": "", "pass": true, "pass_reason": ""}')
+    assert not lazy.ok
+    assert not parse_morning_pick("no json").ok
+
+
+def test_prompt_carries_every_candidate_block() -> None:
+    p = build_nap_prompt([("Thirsk 3:00", "READOUT-A"), ("Ascot 4:00", "READOUT-B")])
+    assert "CANDIDATE RACE — Thirsk 3:00" in p and "READOUT-A" in p
+    assert "CANDIDATE RACE — Ascot 4:00" in p and "READOUT-B" in p
+
+
+def test_the_student_takes_its_notes_into_the_exam() -> None:
+    """2026-07-05: validated nuances and tracked horses sat in the DB while the pick
+    was made from a blank slate. The LESSONS block now rides with the prompt, and the
+    system prompt carries the record's winning profile."""
+    p = build_nap_prompt([("Thirsk 3:00", "R")],
+                         lessons="- NUANCE (validated): manner outranks bare mark rise\n"
+                                 "- OPPOSE King Of The Story: erratic jumper")
+    assert "LESSONS BANKED" in p and "manner outranks" in p and "OPPOSE King" in p
+    assert "LESSONS BANKED" not in build_nap_prompt([("T", "R")])   # empty = no block
+    assert "WINNING PROFILE" in NAP_SYSTEM and "BANKED LESSONS" in NAP_SYSTEM
+
+
+def _main() -> int:
+    fns = [v for k, v in sorted(globals().items()) if k.startswith("test_")]
+    for fn in fns:
+        fn()
+        print(f"PASS  {fn.__name__}")
+    print(f"\nTOTAL {len(fns)}/{len(fns)}")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(_main())

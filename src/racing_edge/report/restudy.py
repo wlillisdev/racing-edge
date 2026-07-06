@@ -43,6 +43,47 @@ def _past_line(h: PastRun) -> str:
     return f"        {h.date}  {pos:>2}  {where:<34}  {comment}{rid}"
 
 
+def render_preread(race: Race, histories: dict[str, tuple[PastRun, ...]],
+                   past_n: int = 4) -> str:
+    """The PRE-RACE full-form readout — same honest layout as the re-study, no result.
+    This is what the morning deep-read (the nap picker) reasons over: mark, form,
+    manner read, each contender's past runs WITH comments, market rank off the morning
+    prices. Blanks say OWED. Contenders ordered by market."""
+    priced = sorted([r for r in race.runners if r.odds.consensus and r.odds.consensus > 1],
+                    key=lambda r: r.odds.consensus)  # type: ignore[arg-type,return-value]
+    mkt_rank = {r.horse_id: i + 1 for i, r in enumerate(priced)}
+    ordered = priced + [r for r in race.runners if r.horse_id not in mkt_rank]
+    hcap = "Handicap " if race.is_handicap else ""
+    head = f"{race.course} {race.off_time} — {hcap}{race.race_type}"
+    if race.race_class:
+        head += f" (Cl{race.race_class})"
+    lines = [f"  PRE-RACE CARD: {head}  ({race.field_size} declared)"]
+    for r in ordered:
+        hist = histories.get(r.horse_id, ())
+        mark = mark_read(r.official_rating, hist)
+        marktxt = mark.verdict or "mark OWED (no prior win / no today mark)"
+        rank = (f"mkt {mkt_rank[r.horse_id]}/{len(priced)} @{r.odds.consensus}"
+                if r.horse_id in mkt_rank else "price OWED")
+        gear = f" | headgear {r.headgear}{'(1st time)' if r.headgear_first_time else ''}" \
+            if r.headgear else ""
+        lines.append("")
+        lines.append(f"  {r.horse:22} {rank}  [id {r.horse_id}]")
+        lines.append(f"        mark: {marktxt}  | form {r.form or '?'} "
+                     f"| OR {r.official_rating or '?'} RPR {r.rpr or '?'}{gear}")
+        mv = nap_verdict([h.comment for h in hist[:4]])
+        if mv.recommendation != "neutral" or mv.finisher_runs or mv.non_finisher_runs:
+            lines.append(f"        manner read (#1): {mv.recommendation} — {mv.reason}")
+        spot = r.spotlight.strip()
+        if spot:
+            lines.append(f"        spotlight: {spot[:200]}")
+        if hist:
+            for h in hist[:past_n]:
+                lines.append(_past_line(h))
+        else:
+            lines.append("        past runs: OWED — none through the window")
+    return "\n".join(lines)
+
+
 def render_restudy(race: Race, result: RaceResult,
                    histories: dict[str, tuple[PastRun, ...]], past_n: int = 3) -> str:
     """The full-form re-read of one finished race, ordered by finish (winner first)."""

@@ -8,6 +8,7 @@ versus a reasoned lean? One small SQLite table, same pattern as the picks/study 
 
 from __future__ import annotations
 
+import contextlib
 import sqlite3
 from datetime import date
 from pathlib import Path
@@ -34,15 +35,24 @@ class NapLog:
         self._conn = sqlite3.connect(str(path))
         self._conn.row_factory = sqlite3.Row
         self._conn.executescript(_SCHEMA)
+        # migration: the CASE rides with the pick (audit 2026-07-05: the night study
+        # was critiquing a pick whose reasoning it could not see — "a self-critique of
+        # an invented memory"). Older ledgers gain the columns in place.
+        for col in ("case_text", "deep_conf"):
+            with contextlib.suppress(sqlite3.OperationalError):   # column may exist
+                self._conn.execute(f"ALTER TABLE nap ADD COLUMN {col} TEXT DEFAULT ''")
         self._conn.commit()
 
     def record(self, *, day: date, race_id: str, course: str, horse: str, horse_id: str,
-               price: float | None, score: int, confident: bool) -> None:
-        """Bank the morning's nap (unsettled). Idempotent on the day."""
+               price: float | None, score: int, confident: bool,
+               case: str = "", deep_conf: str = "") -> None:
+        """Bank the morning's nap (unsettled), WITH its reasoning. Idempotent on the day."""
         self._conn.execute(
             "INSERT OR REPLACE INTO nap (date, race_id, course, horse, horse_id, price, "
-            "score, confident, won, sp_dec) VALUES (?,?,?,?,?,?,?,?,NULL,NULL)",
-            (day.isoformat(), race_id, course, horse, horse_id, price, score, int(confident)),
+            "score, confident, won, sp_dec, case_text, deep_conf) "
+            "VALUES (?,?,?,?,?,?,?,?,NULL,NULL,?,?)",
+            (day.isoformat(), race_id, course, horse, horse_id, price, score,
+             int(confident), case, deep_conf),
         )
         self._conn.commit()
 
