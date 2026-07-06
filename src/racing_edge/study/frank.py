@@ -52,15 +52,18 @@ class Franking:
         return self.rivals_ran_since >= 2 and self.rivals_franked < 2
 
 
-def _scored_after(runs: tuple[PastRun, ...], after: date) -> tuple[bool, bool]:
-    """(ran_since, placed_since) for a rival's runs strictly after `after`."""
-    later = [r for r in runs if r.date > after]
+def _scored_after(runs: tuple[PastRun, ...], after: date,
+                  before: date | None = None) -> tuple[bool, bool]:
+    """(ran_since, placed_since) for a rival's runs strictly after `after` — and,
+    for backtests, strictly BEFORE `before` (no look-ahead into the future)."""
+    later = [r for r in runs if r.date > after and (before is None or r.date < before)]
     placed = any(r.position is not None and r.position <= 3 for r in later)
     return bool(later), placed
 
 
 def frank_form(client: _Fetcher, horse_id: str, history: tuple[PastRun, ...],
-               cap: int = 6, max_lookback: int = 3) -> Franking:
+               cap: int = 6, max_lookback: int = 3,
+               as_of: date | None = None) -> Franking:
     """Frank the most recent FRANKABLE race in `horse_id`'s history — the most
     recent one where at least two rivals have run again since (so it can be judged).
     Walks back at most `max_lookback` races. Returns a Franking summary; if nothing
@@ -80,7 +83,7 @@ def frank_form(client: _Fetcher, horse_id: str, history: tuple[PastRun, ...],
         ran_since = franked = 0
         for rid in rivals:
             runs = past_runs_from_raw(client.horse_results(rid), rid)
-            ran, placed = _scored_after(runs, last.date)
+            ran, placed = _scored_after(runs, last.date, before=as_of)
             ran_since += int(ran)
             franked += int(placed)
         if ran_since >= 2:                       # frankable — enough rivals have re-run to judge

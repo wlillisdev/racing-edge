@@ -43,7 +43,8 @@ def _rank_key(p: NapPick) -> tuple[int, int, int, float]:
 
 def evaluate_field(client: _Client, day: str = "today",
                    codes: tuple[str, ...] = ("jump", "flat"), top_n: int = 4,
-                   progress: Callable[[str], None] | None = None) -> list[NapPick]:
+                   progress: Callable[[str], None] | None = None,
+                   as_of=None) -> list[NapPick]:
     """EVERY contender in every readable handicap, each given its own conviction read,
     sorted strongest-first. The fair-evaluation enforcement (rule #24): no horse is
     skipped, so a pick has to beat an even reading of the whole field, not an anchor.
@@ -59,7 +60,10 @@ def evaluate_field(client: _Client, day: str = "today",
     for race in races:
         if progress:
             progress(f"    · {race.course} {race.off_time} — reading {race.field_size} runners")
-        evidence = {e.runner.horse_id: e for e in build_evidence(race, client)}
+        # as_of enforces NO LOOK-AHEAD for backtesting: histories cut strictly before
+        # that date, current-stats intent lenses skipped (they know the future)
+        evidence = {e.runner.horse_id: e
+                    for e in build_evidence(race, client, as_of=as_of)}
         priced = sorted([r for r in race.runners if r.odds.consensus and r.odds.consensus > 1],
                         key=lambda r: r.odds.consensus)        # type: ignore[arg-type,return-value]
         ranks = {r.horse_id: i + 1 for i, r in enumerate(priced)}
