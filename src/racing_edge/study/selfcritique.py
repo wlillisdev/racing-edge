@@ -118,12 +118,14 @@ class Critique:
 
 
 def build_prompt(readout: str, winner: str, blind_pick: str | None = None,
-                 system_read: str = "") -> str:
+                 system_read: str = "", blind_case: str = "") -> str:
     """The self-prompt: the real readout + the master's questions + the output shape.
-    `system_read` is what the RULES said pre-race — supplied so the detective marks its
-    OWN homework (did the lenses find the winner?), not just the cold form."""
+    `system_read` is what the RULES said pre-race; `blind_case` is the pick's OWN
+    banked reasoning — so the critique marks the real case, not a guess at it (the
+    audit: 'a self-critique of an invented memory')."""
     pick_line = (
-        f"You picked **{blind_pick}** for this race, banked BLIND before the off.\n"
+        f"You picked **{blind_pick}** for this race, banked BLIND before the off"
+        + (f", BECAUSE:\n{blind_case}\n" if blind_case else ".\n")
         if blind_pick else
         "You did not bank a pick in this race — study the winner cold.\n"
     )

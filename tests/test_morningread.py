@@ -15,10 +15,14 @@ from racing_edge.study.morningread import (
 
 
 def test_the_system_prompt_carries_the_masters_discipline() -> None:
-    # race first, form first, eliminate, look harder — and pass must be EARNED
+    # race first, form first, eliminate, look harder — and the pass tilt is balanced:
+    # a pass is CORRECT off-profile (the audit: the old "lazy student" shaming forced
+    # least-bad picks on bad cards — the genesis of both losers)
     for phrase in ("RACE FIRST", "FORM FIRST, ODDS LAST", "ELIMINATE", "LOOK HARDER",
-                   "PASS is a last resort", "never let the price pick"):
+                   "a pass is CORRECT", "Never force the least-bad pick",
+                   "never let the price pick", "WINNING PROFILE"):
         assert phrase in NAP_SYSTEM
+    assert "lazy student" not in NAP_SYSTEM          # the anti-pass shaming is gone
 
 
 def test_preread_lays_out_the_pre_race_card_without_results() -> None:
@@ -42,12 +46,19 @@ def test_parse_morning_pick_reads_a_pick_and_an_earned_pass() -> None:
         'the read:\n{"race": "Thirsk 3:00", "horse": "Gem", "case": "well-in and a '
         'finisher", "race_readable_because": "Cl3, exposed field, anchored market", '
         '"crossed_off": ["Rival — placer profile"], "cite": ["mark WELL-IN"], '
-        '"owed": "live move", "confidence": "Confident", "pass": false, '
-        '"pass_reason": ""}')
+        '"owed": "live move", "profile_match": {"well_in": true, "class_ok": true, '
+        '"market_anchor": true, "note": "full profile match"}, '
+        '"confidence": "Confident", "pass": false, "pass_reason": ""}')
     assert pick.ok and not pick.is_pass
     assert pick.race_label == "Thirsk 3:00" and pick.horse == "Gem"
     assert pick.confidence == "confident"
     assert pick.crossed_off == ("Rival — placer profile",)
+    assert pick.profile_flags == (True, True, True)
+    # a pick WITHOUT the profile checklist stated is NOT ok (audit fix 5c) — the
+    # model must say, per pick, how it fits the winning profile
+    unstated = parse_morning_pick('{"race": "T", "horse": "Gem", "case": "x", '
+                                  '"pass": false, "pass_reason": ""}')
+    assert not unstated.ok
 
     p = parse_morning_pick('{"race": "", "horse": "", "pass": true, '
                            '"pass_reason": "race A: lottery market; race B: babies"}')

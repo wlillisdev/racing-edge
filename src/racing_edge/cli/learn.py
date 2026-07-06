@@ -41,11 +41,12 @@ from racing_edge.study.selfcritique import (
 )
 
 
-def _blind_pick_for(day_iso: str, race_id: str) -> str | None:
-    """What we banked BLIND in this race (if anything) — from the nap ledger."""
+def _blind_pick_for(day_iso: str, race_id: str) -> dict | None:
+    """The full banked row for this race's nap (if any) — horse AND its case, so the
+    critique marks the real reasoning, not an invented memory of it."""
     log = open_nap_log()
     try:
-        return next((n["horse"] for n in log.history()
+        return next((n for n in log.history()
                      if n["date"] == day_iso and n["race_id"] == race_id), None)
     finally:
         log.close()
@@ -94,9 +95,13 @@ def _rule(nuance_id: int, status: str) -> int:
 def _learn_one(st: Restudy, study, sceptic, day_iso: str) -> str:
     readout = render_restudy(st.race, st.result, st.histories)
     label = f"{st.race.course} {st.race.off_time}"
-    blind = _blind_pick_for(day_iso, st.race.race_id)
-    # the detective marks its OWN homework: what the rules said pre-race goes in too
-    prompt = build_prompt(readout, st.winner, blind, system_read=st.system_read())
+    row = _blind_pick_for(day_iso, st.race.race_id)
+    blind = row["horse"] if row else None
+    blind_case = (row.get("case_text") or "") if row else ""
+    # the detective marks its OWN homework: what the rules said pre-race AND the
+    # pick's banked case both go in — the critique judges the real reasoning
+    prompt = build_prompt(readout, st.winner, blind, system_read=st.system_read(),
+                          blind_case=blind_case)
     result = study(SYSTEM, prompt)
     # the investigator returns (text, trail); a plain reasoner returns text
     text, trail = result if isinstance(result, tuple) else (result, [])
@@ -128,8 +133,16 @@ def _learn_one(st: Restudy, study, sceptic, day_iso: str) -> str:
     ref = parse_refutation(sceptic(REFUTE_SYSTEM, build_refute_prompt(readout, crit)))
     out = render_critique(crit, label, st.winner)
     if ref.refuted:
-        return (out + f"\n    ✗ REFUTED by the sceptic ({ref.ground or '?'}) — NOT banked:"
-                      f"\n      {ref.reason}")
+        # the kill is evidence too — bank it as refuted WITH the ground, so repeated
+        # failure modes become visible to --show and the synthesis
+        log = open_nuance_log()
+        log.record(day=st.race.date, race_id=st.race.race_id, course=st.race.course,
+                   winner=st.winner, blind_pick=blind or "", status="refuted",
+                   sceptic_ground=ref.ground, sceptic_reason=ref.reason,
+                   **crit.record_fields())
+        log.close()
+        return (out + f"\n    ✗ REFUTED by the sceptic ({ref.ground or '?'}) — "
+                      f"banked as refuted:\n      {ref.reason}")
     log = open_nuance_log()
     log.record(day=st.race.date, race_id=st.race.race_id, course=st.race.course,
                winner=st.winner, blind_pick=blind or "", **crit.record_fields())
@@ -170,11 +183,23 @@ def _synthesise(reason, email: bool) -> int:
         nap_lines.append(f"- {n['date']} {n['horse']} ({n['course']}) "
                          f"{'CONFIDENT' if n['confident'] else 'lean'}: {res}"
                          f"{' @' + str(n['sp_dec']) if n['sp_dec'] else ''}")
-    prompt = ("SELF-TAUGHT NUANCES (status = the master's ruling):\n"
+    nlog3 = open_nuance_log()
+    tally_lines = [f"- {t['rule']}: supported {t['supports']}, contradicted "
+                   f"{t['contradicts']}" for t in nlog3.rule_tally()] or ["(none yet)"]
+    tracked_lines = [f"- [{t['angle']}] {t['horse']} ({t['date']}): {t['note']}"
+                     for t in nlog3.tracked_active()] or ["(none yet)"]
+    nlog3.close()
+    prompt = ("SELF-TAUGHT NUANCES (status = the master's ruling; 'refuted' = the "
+              "sceptic killed it — the grounds reveal my own failure modes):\n"
               + "\n".join(nu_lines)
+              + "\n\nTHE NOTEBOOK ON TRIAL (rule scoreboard from results):\n"
+              + "\n".join(tally_lines)
+              + "\n\nTRACKED FOLLOW/OPPOSE CLUES (unsettled):\n"
+              + "\n".join(tracked_lines)
               + "\n\nTHE BLIND NAP RECORD:\n" + "\n".join(nap_lines or ["(none yet)"])
-              + "\n\nJoin the dots. What repeats, what contradicts, what do the binned "
-                "ones share, and what is the record saying? End with at most three "
+              + "\n\nJoin the dots. What repeats, what contradicts, what do the binned/"
+                "refuted ones share (my failure modes), which rules are dying on the "
+                "scoreboard, and what is the record saying? End with at most three "
                 "SHARP actions for the coming week.")
     print("  synthesising across the ledger + the record…", flush=True)
     text = reason(_SYNTH_SYSTEM, prompt)

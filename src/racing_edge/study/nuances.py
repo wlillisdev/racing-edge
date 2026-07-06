@@ -9,6 +9,7 @@ One small SQLite table, the same shape as the nap log and study store.
 
 from __future__ import annotations
 
+import contextlib
 import sqlite3
 from datetime import date
 from pathlib import Path
@@ -58,18 +59,26 @@ class NuanceLog:
         self._conn = sqlite3.connect(str(path))
         self._conn.row_factory = sqlite3.Row
         self._conn.executescript(_SCHEMA)
+        # migration: the sceptic's verdict is evidence too (audit 2026-07-05: refuted
+        # nuances vanished, so the model's repeated failure modes were invisible)
+        for col in ("sceptic_ground", "sceptic_reason"):
+            with contextlib.suppress(sqlite3.OperationalError):   # column may exist
+                self._conn.execute(f"ALTER TABLE nuance ADD COLUMN {col} TEXT DEFAULT ''")
         self._conn.commit()
 
     def record(self, *, day: date, race_id: str, course: str, winner: str,
                blind_pick: str, nuance: str, what_missed: str, cite: str,
-               owed: str, confidence: str) -> None:
-        """Bank a proposed nuance. Idempotent on (date, race, nuance text)."""
+               owed: str, confidence: str, status: str = "proposed",
+               sceptic_ground: str = "", sceptic_reason: str = "") -> None:
+        """Bank a nuance (proposed, or refuted-with-the-kill-reason). Idempotent on
+        (date, race, nuance text)."""
         self._conn.execute(
             "INSERT OR IGNORE INTO nuance (date, race_id, course, winner, blind_pick, "
-            "nuance, what_missed, cite, owed, confidence, status) "
-            "VALUES (?,?,?,?,?,?,?,?,?,?, 'proposed')",
+            "nuance, what_missed, cite, owed, confidence, status, sceptic_ground, "
+            "sceptic_reason) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
             (day.isoformat(), race_id, course, winner, blind_pick, nuance,
-             what_missed, cite, owed, confidence),
+             what_missed, cite, owed, confidence, status, sceptic_ground,
+             sceptic_reason),
         )
         self._conn.commit()
 

@@ -65,10 +65,15 @@ def evaluate_field(client: _Client, day: str = "today",
         ranks = {r.horse_id: i + 1 for i, r in enumerate(priced)}
         race_picks: list[NapPick] = []
         young_unexposed = 0
-        for r in priced[:top_n]:
+        # EVERY priced runner gets a conviction read (rule #24 — the audit: "the deep
+        # read only sees 4 horses; Green Sky at 9/1 is exactly the horse it can't
+        # weigh"). Evidence was always fetched for the whole field; now it's all used.
+        for i, r in enumerate(priced):
             ev = evidence.get(r.horse_id)
             hist = ev.history if ev else ()
-            if (r.age or 99) <= 5 and len(hist) <= 5:
+            # exposure counted over the top-6 of the market (age<=6 — the audit: a
+            # 6yo lightly-raced field slipped the old age<=5 clause)
+            if i < 6 and (r.age or 99) <= 6 and len(hist) <= 5:
                 young_unexposed += 1
             # the INTENT dots (yard form + the stable's #1 booked) — collected here
             # all along, scored by conviction only since the I'm Next lesson
@@ -85,15 +90,17 @@ def evaluate_field(client: _Client, day: str = "today",
         race_flags: list[str] = []
         # 1. exposure (Chepstow 17:10, 2026-07-03): a field dominated by young,
         #    lightly-raced horses is a novice race in disguise, whatever the title
-        if race_picks and young_unexposed >= 2 and young_unexposed * 2 >= len(race_picks):
+        contenders = min(len(race_picks), 6)
+        if contenders and young_unexposed >= 2 and young_unexposed * 2 >= contenders:
             race_flags.append("young-unexposed field — a novice in disguise (#13/#30)")
-        # 2. grade: bottom-class flat is inconsistent animals — the form doesn't hold
-        if race.code == "flat" and race.race_class and race.race_class >= 6:
-            race_flags.append("bottom-grade race (Cl6 flat) — inconsistent animals (#3)")
-        # 3. market shape: a race with NO ANCHOR (big fav price / big open field) is the
+        # 2. grade: bottom-class racing is inconsistent animals — the form doesn't hold
+        if race.race_class and race.race_class >= 6:
+            race_flags.append("bottom-grade race (Cl6) — inconsistent animals (#3)")
+        # 3. market shape: a race with NO ANCHOR (big fav price / open field) is the
         #    market itself saying anything could win — the blanket-finish lottery
+        #    (audit: a 4.5 fav in a 10-runner scramble slipped the old 12+ threshold)
         fav = min((p.price for p in race_picks if p.price), default=None)
-        if fav and (fav >= 5.0 or (race.field_size >= 12 and fav >= 4.0)):
+        if fav and (fav >= 5.0 or (race.field_size >= 8 and fav >= 4.0)):
             race_flags.append(f"open market (fav {fav}) — anything-could-win race (#3)")
         if race_picks and race_flags:
             race_picks = [

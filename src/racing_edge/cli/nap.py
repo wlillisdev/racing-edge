@@ -82,6 +82,48 @@ def _resend(day_str: str) -> int:
     return 0
 
 
+def _guard() -> int:
+    """The pre-off DRIFT GUARD (audit fix 4). The move called the winner four times in
+    one day and the drift saved the Perfidia stake — yet the banked nap was never
+    re-checked. Compares the pick's price NOW vs at banking: a 20%+ drift = STAND OFF
+    (emailed); firmed = confirmation. The ledger is untouched either way — this guards
+    the STAKE, not the record."""
+    from racing_edge.data.normalise import racecards_from_raw
+    day = resolve_date("today")
+    log = open_nap_log()
+    n = next((x for x in log.pending() if x["date"] == day.isoformat()), None)
+    log.close()
+    if not n:
+        print("  No unsettled nap banked for today — nothing to guard.")
+        return 0
+    cards = racecards_from_raw(get_client().racecards("today"))
+    race = next((r for r in cards if r.race_id == n["race_id"]), None)
+    runner = next((x for x in race.runners if x.horse_id == n["horse_id"]), None) \
+        if race else None
+    now = runner.odds.consensus if runner else None
+    banked = n["price"]
+    if not (now and banked):
+        print(f"  price OWED (banked {banked}, now {now}) — cannot judge the move.")
+        return 0
+    from racing_edge.report.mail import send
+    if now >= banked * 1.2:
+        msg = (f"⚠ STAND OFF — {n['horse']} has DRIFTED {banked} -> {now}. "
+               f"The drift rule has been right every time (Perfidia, Artiste d'Ainay): "
+               f"the money is leaving. Keep the stake in your pocket. "
+               f"(The pick stays on the ledger — this guards the stake, not the record.)")
+        print(f"  {msg}")
+        send(f"STAND OFF: {n['horse']} drifting ({banked}->{now})", msg,
+             title="Drift guard", subtitle="racing-edge form trial")
+    elif now <= banked * 0.9:
+        msg = f"✓ {n['horse']} BACKED {banked} -> {now} — the market agrees with the pick."
+        print(f"  {msg}")
+        send(f"Backed: {n['horse']} ({banked}->{now})", msg,
+             title="Drift guard", subtitle="racing-edge form trial")
+    else:
+        print(f"  {n['horse']} steady ({banked} -> {now}) — no signal, no email.")
+    return 0
+
+
 def _settle(day_str: str, email: bool) -> int:
     day = resolve_date(day_str)
     out: list[str] = []
@@ -125,12 +167,16 @@ def main() -> int:
     ap.add_argument("--record", action="store_true", help="show the banked nap record")
     ap.add_argument("--resend", metavar="DAY",
                     help="re-EMAIL the banked nap for a day (never re-picks)")
+    ap.add_argument("--guard", action="store_true",
+                    help="pre-off drift guard: re-check the banked nap's price NOW")
     ap.add_argument("--email", action="store_true", help="email the output (uses SMTP env vars)")
     args = ap.parse_args()
     if args.record:
         return _record()
     if args.resend:
         return _resend(args.resend)
+    if args.guard:
+        return _guard()
     if args.settle:
         return _settle(args.settle, args.email)
 
@@ -205,6 +251,7 @@ def main() -> int:
     # strongest survivor, honestly labelled as the shallow pick.
     nap = survivors[0]
     deep_case: list[str] = []
+    mp = None
     try:
         from racing_edge.ai.reason import get_investigator, resolve_model
         from racing_edge.report.restudy import render_preread
@@ -214,11 +261,23 @@ def main() -> int:
             build_nap_prompt,
             parse_morning_pick,
         )
-        # group survivors by race (rank order preserved), take the top candidate races
-        by_race: dict[str, list] = {}
+        # candidate races come from the survivor ranking, but the deep read sees the
+        # WHOLE field of each (audit: "the deep read only sees 4 horses; Green Sky at
+        # 9/1 is exactly the horse it can't weigh"). All picks per race, all histories.
+        all_by_race: dict[str, list] = {}
+        for p in field:
+            all_by_race.setdefault(p.race.race_id, []).append(p)
+        cand_order: list[str] = []
         for p in survivors:
-            by_race.setdefault(p.race.race_id, []).append(p)
-        cand_races = list(by_race.values())[:4]
+            if p.race.race_id not in cand_order:
+                cand_order.append(p.race.race_id)
+        cand_order = cand_order[:4]
+        # a race carrying an active FOLLOW horse earns a candidate slot (audit: tracked
+        # clues could never promote a race into the shortlist)
+        for _hid, (tp, t) in seen.items():
+            if t["angle"] == "follow" and tp.race.race_id not in cand_order:
+                cand_order.append(tp.race.race_id)
+        cand_races = [all_by_race[rid] for rid in cand_order[:5]]
         candidates = []
         for picks in cand_races:
             r0 = picks[0].race
@@ -230,18 +289,23 @@ def main() -> int:
             emit("  (deep read OFF — no ANTHROPIC_API_KEY; falling back to the "
                  "shallow engine pick)")
         else:
-            # the student's own notes go into the exam: validated nuances + tracked
-            # horses that appear among today's candidates (2026-07-05 — the pick was
-            # being made from a blank slate every morning while the lessons sat in a DB)
+            # the student's own notes go into the exam: validated nuances + EVERY
+            # tracked horse running today + rules under fire on the scoreboard
             lesson_lines: list[str] = []
             nlog2 = open_nuance_log()
             lesson_lines += [f"- NUANCE (validated): {n['nuance']}"
                              for n in nlog2.all() if n["status"] == "validated"]
-            cand_ids = {p.runner.horse_id for picks in cand_races for p in picks}
             lesson_lines += [
-                f"- {t['angle'].upper()} {t['horse']}: {t['note']}"
+                f"- {t['angle'].upper()} {t['horse']} ({tp.race.course} "
+                f"{tp.race.off_time}): {t['note']}"
                 + (f" [{t['conditions']}]" if t["conditions"] else "")
-                for t in nlog2.tracked_active() if t["horse_id"] in cand_ids
+                for tp, t in seen.values()
+            ]
+            lesson_lines += [
+                f"- RULE UNDER FIRE: {t['rule']} contradicted "
+                f"{t['contradicts']}-{t['supports']} by results — weigh it lightly"
+                for t in nlog2.rule_tally()
+                if t["contradicts"] >= 3 and t["contradicts"] > t["supports"]
             ]
             nlog2.close()
             print(f"  deep read: {resolve_model('nap')} on "
@@ -284,18 +348,55 @@ def main() -> int:
     emit("     · live market MOVE (backed/drifted) — a forecast price is not the market")
     emit("     · run-STYLE / manner — who leads, who's held up (the comments door)")
 
+    # FRANK = VETO, not a downgrade (audit fix 2: under the old code a hollow-win pick
+    # still got banked as a "declinable lean" — Chepstow would have banked even without
+    # the exposure gate). A thin frank crosses the pick off and we fall to the next.
+    from racing_edge.study.frank import frank_form
+    fr = None
+    fallbacks = [nap] + [s for s in survivors if s is not nap]
+    for cand in fallbacks[:3]:
+        f = frank_form(client, cand.runner.horse_id, cand.history)
+        if f.is_thin:
+            emit(f"  ✗ FRANK VETO: {cand.runner.horse} — {f.note} "
+                 f"(a win in a bad race is a mirage; re-picking)")
+            if cand is nap:
+                deep_case = []          # the vetoed pick's case no longer applies
+            continue
+        nap, fr = cand, f
+        break
+    if fr is None:
+        emit("  No nap — every candidate's form franked HOLLOW. Discipline is a position.")
+        _maybe_email(out, "Nap — no bet today (franked hollow)", args.email)
+        return 0
+
     c, r = nap.conviction, nap.race
 
-    # FRANK THE NAP'S OWN FORM BEFORE BANKING (Chepstow 17:10, 2026-07-03: the pick had
-    # won last time unpenalised — but it was a BAD race, and franking would have said
-    # so. frank_form existed and the nap never called it. A thin frank — rivals re-ran
-    # and did NOT stack up — is the one veto-grade franking verdict: it kills CONFIDENT.)
-    from racing_edge.data.normalise import past_runs_from_raw
-    from racing_edge.study.frank import frank_form
-    nap_hist = past_runs_from_raw(client.horse_results(nap.runner.horse_id),
-                                  nap.runner.horse_id)
-    fr = frank_form(client, nap.runner.horse_id, nap_hist)
-    confident = c.confident and not fr.is_thin
+    # THE PROFILE FLOOR (audit fix 1: the winning profile advised the prompt but never
+    # blocked the bank). Every winner matched it; both losers broke it. The bank now
+    # requires: WELL-IN mark, Class 4 or better (unknown class allowed — Irish cards),
+    # and an anchored market. Fail = no bet, with the reasons said out loud.
+    from racing_edge.domain.mark import mark_read
+    delta = mark_read(nap.runner.official_rating, nap.history).delta
+    race_fav = min((p.price for p in field
+                    if p.race.race_id == r.race_id and p.price), default=None)
+    profile_fails = []
+    if delta is None or delta > 0:
+        profile_fails.append(f"not WELL-IN (mark delta {delta if delta is not None else 'OWED'})")
+    if r.race_class is not None and r.race_class > 4:
+        profile_fails.append(f"class too low (Cl{r.race_class} — the profile wants Cl4+)")
+    if race_fav is None or race_fav >= 5.0:
+        profile_fails.append(f"no market anchor (fav {race_fav})")
+    if profile_fails:
+        emit(f"  ✗ PROFILE FLOOR: {nap.runner.horse} fails the winning profile — "
+             f"{'; '.join(profile_fails)}")
+        emit("  No nap today — every winner matched the profile, both losers broke it. "
+             "No bet beats a stupid pick.")
+        _maybe_email(out, "Nap — no bet today (profile floor)", args.email)
+        return 0
+
+    # the deep read's own verdict decides CONFIDENT when it made the pick
+    deep_conf = mp.confidence if deep_case and mp is not None else ""
+    confident = (deep_conf == "confident") if deep_case else c.confident
 
     tag = "CONFIDENT NAP" if confident else "best candidate — NOT confident (declinable)"
     emit(f"  {tag}: {nap.runner.horse}  —  {r.course} {r.off_time} ({r.race_type})")
@@ -303,9 +404,6 @@ def main() -> int:
         emit(line)
     emit(f"  conviction {c.score}: {', '.join(c.aligned) or 'thin'}")
     emit(f"  frank (#5/#15): {fr.note}")
-    if c.confident and fr.is_thin:
-        emit("  ⚠ DOWNGRADED from confident: the form it beat has NOT stacked up since "
-             "— a win in a bad race is a mirage.")
     if c.flags:
         emit(f"  FLAGS: {', '.join(c.flags)}")
     if not c.mark_known:
@@ -315,9 +413,13 @@ def main() -> int:
 
     day = nap.race.date
     log = open_nap_log()
+    # the CASE banks with the pick — the night study interrogates the real reasoning,
+    # not a guess at it (audit: "a self-critique of an invented memory")
+    case_text = "\n".join(deep_case) if deep_case else \
+        f"engine pick: conviction {c.score} — {', '.join(c.aligned) or 'thin'}"
     log.record(day=day, race_id=r.race_id, course=r.course, horse=nap.runner.horse,
                horse_id=nap.runner.horse_id, price=nap.price, score=c.score,
-               confident=confident)
+               confident=confident, case=case_text, deep_conf=deep_conf)
     log.close()
     emit(f"\n  banked the nap for {day} — settle it tomorrow with --settle {day}.")
     _maybe_email(out, f"{tag}: {nap.runner.horse} — {r.course} {r.off_time} ({day})", args.email)

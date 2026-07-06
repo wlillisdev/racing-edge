@@ -32,10 +32,11 @@ NAP_SYSTEM = (
     "beat the survivors against each other. Pick LAST.\n"
     "4. USE THE TOOLS: frank the key form (what did the beaten horses do since?), pull "
     "deeper history where a line is thin. Spend lookups on your top candidates.\n"
-    "5. LOOK HARDER before passing: across a full card there is nearly always ONE "
-    "readable winner. PASS is a last resort you must earn race by race — name what "
-    "kills EACH candidate. A pass because reading is hard is the lazy student's answer; "
-    "a stupid pick in an unreadable race is worse. Find the one that joins.\n"
+    "5. LOOK HARDER before passing — but a pass is CORRECT when no candidate matches "
+    "the profile in rule 6. Across a full card there is usually one readable winner: "
+    "dig for it, frank it, chase the threads. If after real work nothing matches, PASS "
+    "and earn it — name what kills EACH candidate race. Never force the least-bad pick "
+    "on a bad card: that is how both losing naps happened.\n"
     "6. THE RECORD'S WINNING PROFILE (every winner so far matched it; both losers "
     "broke it): WELL-IN — the bigger the gap the better — plus course-form depth, plus "
     "yard INTENT (in-form stable and/or its #1 rider up), at a fair price (roughly "
@@ -60,6 +61,9 @@ _SCHEMA_HINT = (
     '  "crossed_off": ["horse — the fatal fact", "..."],\n'
     '  "cite": ["the exact readout/tool facts the case rests on"],\n'
     '  "owed": "what could not be checked (state it, never fill it)",\n'
+    '  "profile_match": {"well_in": true, "class_ok": true, "market_anchor": true, '
+    '"note": "how the pick fits the winning profile, or the STRONGER facts justifying '
+    'a departure"},\n'
     '  "confidence": "confident | lean",\n'
     '  "pass": false,\n'
     '  "pass_reason": "ONLY if pass=true: what kills EVERY candidate race, one by one"\n'
@@ -76,6 +80,8 @@ class MorningPick:
     crossed_off: tuple[str, ...] = field(default_factory=tuple)
     cite: tuple[str, ...] = field(default_factory=tuple)
     owed: str = ""
+    profile_note: str = ""
+    profile_flags: tuple[bool, bool, bool] = (False, False, False)   # well_in, class, anchor
     confidence: str = ""
     is_pass: bool = False
     pass_reason: str = ""
@@ -83,7 +89,10 @@ class MorningPick:
 
     @property
     def ok(self) -> bool:
-        return bool((self.horse and self.race_label) or (self.is_pass and self.pass_reason))
+        # a pick without the profile checklist stated is NOT ok — the model must say,
+        # per pick, how it fits the winning profile (or justify the departure)
+        pick_ok = bool(self.horse and self.race_label and self.profile_note)
+        return pick_ok or (self.is_pass and bool(self.pass_reason))
 
 
 def build_nap_prompt(candidates: list[tuple[str, str]], lessons: str = "") -> str:
@@ -116,6 +125,7 @@ def parse_morning_pick(text: str) -> MorningPick:
     def _tup(v) -> tuple[str, ...]:
         return tuple(str(x) for x in v) if isinstance(v, list) else ()
 
+    pm = d.get("profile_match") if isinstance(d.get("profile_match"), dict) else {}
     return MorningPick(
         race_label=str(d.get("race", "")).strip(),
         horse=str(d.get("horse", "")).strip(),
@@ -124,6 +134,9 @@ def parse_morning_pick(text: str) -> MorningPick:
         crossed_off=_tup(d.get("crossed_off")),
         cite=_tup(d.get("cite")),
         owed=str(d.get("owed", "")),
+        profile_note=str(pm.get("note", "")),
+        profile_flags=(bool(pm.get("well_in")), bool(pm.get("class_ok")),
+                       bool(pm.get("market_anchor"))),
         confidence=str(d.get("confidence", "")).lower().strip(),
         is_pass=bool(d.get("pass")),
         pass_reason=str(d.get("pass_reason", "")),
