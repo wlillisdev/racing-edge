@@ -102,6 +102,65 @@ def test_the_im_next_lesson_fair_fav_with_intent_outranks_bare_sweet_spot() -> N
     assert any("#19" in a for a in cramped.aligned)      # 3.1 is fair
 
 
+class _RaceClient:
+    """One configurable race for gate tests."""
+
+    def __init__(self, race_class="4", prices=("3.0", "4.0"), field_pad=0):
+        self._cls, self._prices, self._pad = race_class, prices, field_pad
+
+    def racecards(self, day="today"):
+        runners = [{"horse_id": f"H{i}", "horse": f"Horse{i}", "age": "7", "ofr": "70",
+                    "odds": [{"decimal": p}]} for i, p in enumerate(self._prices)]
+        runners += [{"horse_id": f"P{i}", "horse": f"Pad{i}", "age": "7", "ofr": "60"}
+                    for i in range(self._pad)]
+        return {"racecards": [{"race_id": "R1", "course": "Thirsk", "off_time": "3:00",
+                               "date": "2026-07-05", "race_name": "Handicap",
+                               "type": "Flat", "class": self._cls, "runners": runners}]}
+
+    def horse_results(self, hid, limit=12):
+        return [{"date": f"2026-0{m}-01", "runners": [
+            {"horse_id": hid, "position": str(pos), "or": "70"}]}
+            for m, pos in ((6, 2), (5, 1), (4, 3), (3, 5), (2, 4), (1, 6))]
+
+    def trainer_jockeys(self, tid):
+        return []
+
+
+def test_race_selection_gates_bottom_grade_and_open_market() -> None:
+    """2026-07-05, the master after two poor naps: 'really bad race selections —
+    unexposed horses, poor classes, anything could win.' Cl6 flat is flagged; a race
+    whose own market can't find an anchor (fav 5.0+) is flagged as a lottery."""
+    cl6 = evaluate_field(_RaceClient(race_class="6"), day="today", codes=("flat",))
+    assert cl6 and all(any("bottom-grade" in f for f in p.conviction.flags) for p in cl6)
+
+    open_mkt = evaluate_field(_RaceClient(race_class="4", prices=("5.5", "6.0", "7.0")),
+                              day="today", codes=("flat",))
+    assert open_mkt
+    assert all(any("anything-could-win" in f for f in p.conviction.flags)
+               for p in open_mkt)
+
+    clean = evaluate_field(_RaceClient(race_class="3", prices=("3.0", "4.0")),
+                           day="today", codes=("flat",))
+    assert clean and all(not p.conviction.flags for p in clean)   # readable race passes
+
+
+def test_equal_reads_prefer_the_better_class_race() -> None:
+    """The ranking was blind to race quality — a Cl6 scramble outranked a Cl3 on
+    price alone. Between equal convictions, the better-class race wins the nap."""
+    from racing_edge.pipeline.nap import _rank_key
+    r3 = Race(race_id="a", course="X", off_time="2:00", date=date(2026, 7, 5),
+              race_type="Flat", is_handicap=True, race_class=3)
+    r6 = Race(race_id="b", course="Y", off_time="3:00", date=date(2026, 7, 5),
+              race_type="Flat", is_handicap=True, race_class=6)
+    from racing_edge.selection.conviction import Conviction
+    c = Conviction(aligned=("well-in x", "course winner", "sweet"), flags=(),
+                   mark_known=True)
+    from racing_edge.pipeline.nap import NapPick
+    p3 = NapPick(race=r3, runner=Runner(horse_id="a", horse="A"), price=4.0, conviction=c)
+    p6 = NapPick(race=r6, runner=Runner(horse_id="b", horse="B"), price=3.0, conviction=c)
+    assert _rank_key(p3) > _rank_key(p6)      # Cl3 beats Cl6 despite the shorter price
+
+
 def test_field_of_young_unexposed_horses_is_flagged_a_novice_in_disguise() -> None:
     """Chepstow 17:10 (2026-07-03): the race TITLE passed the #13 gate but the field
     was young unexposed fillies — the form book didn't apply and the nap lost. When

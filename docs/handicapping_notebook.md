@@ -422,6 +422,26 @@ of the assembled dots — it has failed at the one job it's for.
      the winner too good — the strong-yard exposed one beat both the money and the
      tactics). Small fields are jockey-tactics races; respect the saddle (#21's cousin).
 
+31. **Pick the RIGHT RACE before any horse — the readability checklist (#3, sharpened
+   the hard way).** Two naps in a row died in the wrong TYPE of race (2026-07-04/05 —
+   the master: *"really bad race selections — unexposed horses, poor classes and grade,
+   anything could win"*). A nap race must pass ALL of these before a single horse is
+   read:
+   - **Grade**: bottom-class flat (Cl6) is inconsistent animals — the form book doesn't
+     hold. Prefer the best class on the card; between equal reads, the better-class race
+     wins the nap.
+   - **Exposure**: the FIELD (not the title) must be exposed — established handicappers
+     with real form lines. Half the contenders young and lightly raced = a novice in
+     disguise = pass.
+   - **Market anchor**: if the market itself can't find a favourite (fav 5.0+, or 4.0+
+     in a 12+ field), the race is telling you anything could win. Believe it. Pass.
+   - **Field size**: 16+ = lottery (already law).
+   The discipline restated: a strong horse in a dangerous race is a PASS. The nap wants
+   the *most readable* race of the day, then the best horse in it — never the best
+   score wherever it happens to fall. *(In code: race-selection gates + class tiebreak
+   in `pipeline/nap.py`; the self-study asks QUESTION ZERO — was this race readable —
+   on every result.)*
+
 ## The learning loop — how the notebook bites on selections
 
 A notebook that just sits here is useless. This is the closed loop that makes it

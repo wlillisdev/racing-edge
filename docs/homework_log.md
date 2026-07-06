@@ -551,3 +551,28 @@ capped. FIXED same night: #19 fair-priced-fav lens (>=2.5, cramped still earns
 nothing), a heavily-treated lens at -5lb+, and the intent dots wired from evidence
 into conviction. Test pins the exact case: the I'm Next profile now outranks the
 bare sweet-spot profile. Tomorrow's 07:30 pick is the first with the full jigsaw.
+
+---
+
+## 2026-07-05 — the master's re-evaluation: "learn how to pick the correct TYPE of race"
+
+Two poor naps in a row (2026-07-04/05) and the fault was RACE selection, not horse
+selection — "unexposed horses, poor classes and grade, anything could win." Audit of
+the engine confirmed it: race choice was a title gate + a big-field flag, nothing else.
+No class read. No market-shape read. And the RANKING was blind to race quality — a Cl6
+scramble outranked a Cl3 on price alone, so the nap kept landing wherever the raw score
+happened to fall, which is exactly how you end up in lotteries.
+
+FIXED (rule #31 — the readability checklist):
+1. Bottom-grade gate: Cl6 flat = inconsistent animals, flagged.
+2. Market-anchor gate: fav 5.0+ (or 4.0+ in a 12+ field) = the market itself saying
+   anything could win. Believe it. Flagged.
+3. Exposure gate broadened (age<=5, runs<=5 for half the contenders).
+4. Class breaks ties in the ranking: equal reads -> the better-class race gets the nap.
+5. The self-study now asks QUESTION ZERO on every result: was this race READABLE at
+   all — and scores rule #3 on the scoreboard, so race selection is permanently on
+   trial alongside the picks.
+
+EXPECT MORE NO-BET DAYS from here. That is the point — the master passes nine races
+to bet the one he's sure of. The nap should live in the most readable race of the
+day, not wherever the biggest number fell.

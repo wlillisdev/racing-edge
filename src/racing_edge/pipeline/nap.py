@@ -32,8 +32,12 @@ class NapPick:
     conviction: Conviction
 
 
-def _rank_key(p: NapPick) -> tuple[int, int, float]:
-    return (int(p.conviction.confident), p.conviction.score, -(p.price or 999.0))
+def _rank_key(p: NapPick) -> tuple[int, int, int, float]:
+    # RACE QUALITY breaks ties (the master, 2026-07-05: "really bad race selections —
+    # poor classes, anything could win"): between equal convictions, the pick in the
+    # BETTER-CLASS race wins. A readable Class 3 beats a Class 6 scramble every time.
+    return (int(p.conviction.confident), p.conviction.score,
+            -(p.race.race_class or 6), -(p.price or 999.0))
 
 
 def evaluate_field(client: _Client, day: str = "today",
@@ -63,7 +67,7 @@ def evaluate_field(client: _Client, day: str = "today",
         for r in priced[:top_n]:
             ev = evidence.get(r.horse_id)
             hist = ev.history if ev else ()
-            if (r.age or 99) <= 4 and len(hist) <= 4:
+            if (r.age or 99) <= 5 and len(hist) <= 5:
                 young_unexposed += 1
             # the INTENT dots (yard form + the stable's #1 booked) — collected here
             # all along, scored by conviction only since the I'm Next lesson
@@ -74,16 +78,26 @@ def evaluate_field(client: _Client, day: str = "today",
                            stable_strike=strike, yard_no1=no1)
             race_picks.append(NapPick(race=race, runner=r, price=r.odds.consensus,
                                       conviction=c))
-        # THE FIELD-EXPOSURE GATE (Chepstow 17:10, 2026-07-03): a handicap DOMINATED by
-        # young unexposed horses is a novice race in disguise — the race title passed
-        # the #13 gate but the form book still didn't apply, and the exposed older
-        # horse from the in-form yard hammered the babies. If half or more of the live
-        # contenders are young (<=4yo) AND lightly raced (<=4 runs), flag them ALL.
+        # THE RACE-SELECTION GATES (#3 — race selection before horse selection; the
+        # master, 2026-07-05, after two poor naps: "unexposed horses, poor classes and
+        # grade, anything could win — learn to pick the correct TYPE of race").
+        race_flags: list[str] = []
+        # 1. exposure (Chepstow 17:10, 2026-07-03): a field dominated by young,
+        #    lightly-raced horses is a novice race in disguise, whatever the title
         if race_picks and young_unexposed >= 2 and young_unexposed * 2 >= len(race_picks):
-            gate = "young-unexposed field — a novice in disguise (#13/#30)"
+            race_flags.append("young-unexposed field — a novice in disguise (#13/#30)")
+        # 2. grade: bottom-class flat is inconsistent animals — the form doesn't hold
+        if race.code == "flat" and race.race_class and race.race_class >= 6:
+            race_flags.append("bottom-grade race (Cl6 flat) — inconsistent animals (#3)")
+        # 3. market shape: a race with NO ANCHOR (big fav price / big open field) is the
+        #    market itself saying anything could win — the blanket-finish lottery
+        fav = min((p.price for p in race_picks if p.price), default=None)
+        if fav and (fav >= 5.0 or (race.field_size >= 12 and fav >= 4.0)):
+            race_flags.append(f"open market (fav {fav}) — anything-could-win race (#3)")
+        if race_picks and race_flags:
             race_picks = [
                 replace(p, conviction=replace(
-                    p.conviction, flags=(*p.conviction.flags, gate)))
+                    p.conviction, flags=(*p.conviction.flags, *race_flags)))
                 for p in race_picks
             ]
         out.extend(race_picks)
