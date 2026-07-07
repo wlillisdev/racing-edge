@@ -51,12 +51,16 @@ def main() -> int:
         f"{len(stale)} nap(s) unsettled for 2+ days ({', '.join(n['date'] for n in stale[:5])}) "
         "— the 22:00 night task is not settling",
         lines)
-    caseless = [n for n in recent if not (n.get("case_text") or "").strip()]
+    # only judge naps banked since the case feature existed (2026-07-06) — rows from
+    # before it are legitimately caseless legacy, not a live fault
+    caseless = [n for n in recent
+                if n["date"] >= "2026-07-06" and not (n.get("case_text") or "").strip()]
     all_ok &= _check(
         not caseless,
         "recent naps carry their CASE (the night study reads real reasoning)",
-        f"{len(caseless)} recent nap(s) banked with NO case — the deep read is not "
-        "running or not being stored",
+        f"{len(caseless)} nap(s) since 2026-07-06 banked with NO case — the deep read "
+        "is not running in the task env or not being stored (check the 07:30 task log "
+        "for 'deep read OFF' or 'deep read failed')",
         lines)
 
     nlog = open_nuance_log()
