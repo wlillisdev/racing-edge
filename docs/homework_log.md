@@ -623,3 +623,34 @@ synthesis unscheduled and write-only.
 8. The prompt's anti-pass shaming removed: a pass is CORRECT off-profile; the
    profile_match checklist is now REQUIRED in the pick's JSON or it doesn't parse.
 9. TRIAL.md schedule corrected: 07:30 nap / 12:30 guard / 22:00 night / Sun synth.
+
+---
+
+## 2026-07-08 — the old system audited, harvested, and BINNED
+
+The master: "is there a point to the old method? The trial is where we need to get to
+— you reading the form, not working off stats and figures. Audit it, pick the best
+findings out of it, and bin it."
+
+### What the old system's carcass had already given the trial (the harvest — kept)
+- **Franking** (`study/frank.py`) — its best idea, now the nap's veto gate.
+- **The manner reader** (`domain/manner.py`) — rule #1 in code, feeding conviction,
+  the scorecard and the readouts.
+- **The tells library, the mark lens, the evidence layer** (stable form, the yard's
+  #1-rider intent) — all live in the trial's pick.
+- **The email renderer** — every trial email still goes out through it.
+- **Its one great negative finding, already immortalised in TRIAL.md**: the CLV work
+  proved the NUMBERS had no selection edge. That finding is WHY the trial exists —
+  the old system's stats were the evidence against itself.
+
+### What was binned (~5,700 lines, verified unreachable from every live entry point)
+The score-based daily briefing, its pipeline, the CLV ledger/measurement stack, the
+ML and betting modules, the old paper-test/collect/homework mining loops, the
+SDK-based AI narrative (killing the httpx-crash landmine for good), and nine dead
+CLI entry points. Reachability-mapped first: nothing the trial imports was touched;
+172 -> 115 tests, every survivor green.
+
+### Why it matters beyond hygiene
+One system now. Every scheduled task, every line of the bill, every test serves the
+form reader and its ledgers. No stale entry point can burn usage or bank a
+number-crunched pick again — the code can only do the thing the master is teaching.

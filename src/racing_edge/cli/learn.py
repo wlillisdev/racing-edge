@@ -232,6 +232,9 @@ def main() -> int:
                     help="show the rule scoreboard: results FOR vs AGAINST each rule")
     ap.add_argument("--tracked", action="store_true",
                     help="show the horses-to-follow/oppose list mined from results")
+    ap.add_argument("--full", action="store_true",
+                    help="study EVERY readable race (token-expensive; default is "
+                         "focused: nap race + tracked-horse races, capped)")
     ap.add_argument("--email", action="store_true", help="email the self-study (SMTP env)")
     args = ap.parse_args()
     if args.show:
@@ -296,6 +299,31 @@ def main() -> int:
     if not studies:
         print(f"  Nothing to self-study for {ds} (no readable handicap with a result matched).")
         return 0
+
+    # FOCUSED STUDY (the master, 2026-07-08: "I cannot afford the large API fees on
+    # learning"). The full-card study burned ~90% of the model bill on races that
+    # taught little. Default: the NAP race (the mandatory autopsy) + races where a
+    # TRACKED horse ran, capped at 4/night. --full restores the old sweep.
+    if not args.full and not args.time and len(studies) > 4:
+        nlog4 = open_nuance_log()
+        tracked_ids = {t["horse_id"] for t in nlog4.tracked_active()}
+        nlog4.close()
+        naplog = open_nap_log()
+        nap_races = {n["race_id"] for n in naplog.history() if n["date"] == ds}
+        naplog.close()
+
+        def _priority(st) -> tuple[bool, bool]:
+            return (st.race.race_id in nap_races,
+                    any(r.horse_id in tracked_ids for r in st.race.runners))
+
+        prioritised = sorted(studies, key=_priority, reverse=True)
+        kept = [st for st in prioritised if _priority(st) != (False, False)][:4]
+        if not kept:
+            kept = prioritised[:2]        # quiet day: still study a couple, cheaply
+        print(f"  FOCUSED study: {len(kept)} of {len(studies)} race(s) "
+              f"(nap race + tracked runners; --full sweeps everything). "
+              f"{len(studies) - len(kept)} skipped to cap the model bill.", flush=True)
+        studies = kept
 
     out: list[str] = []
     for st in studies:
