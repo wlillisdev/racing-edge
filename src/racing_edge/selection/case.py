@@ -54,6 +54,10 @@ class RunnerEvidence:
     stable_jockey_ids: frozenset[str] = field(default_factory=frozenset)
     local_strike: float | None = None   # the yard's win% AT THIS COURSE (rule #10)
     local_runs: int = 0
+    trip_strike: float | None = None    # the horse's win% at ~today's distance
+    trip_runs: int = 0
+    jockey_course_strike: float | None = None   # the rider's win% at this track (#30)
+    jockey_course_rides: int = 0
     combo_rides: int = 0
     combo_wins: int = 0
     franked_count: int = 0

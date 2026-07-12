@@ -41,7 +41,11 @@ def _same_course(h: PastRun, race: Race) -> bool:
 
 def conviction(runner: Runner, race: Race, history: tuple[PastRun, ...],
                market_rank: int, field_size: int = 0, *,
-               stable_strike: float | None = None, yard_no1: bool = False) -> Conviction:
+               stable_strike: float | None = None, yard_no1: bool = False,
+               local_strike: float | None = None, local_runs: int = 0,
+               trip_strike: float | None = None, trip_runs: int = 0,
+               jockey_course_strike: float | None = None,
+               jockey_course_rides: int = 0) -> Conviction:
     """`stable_strike` (0..1, the yard's 14-day form) and `yard_no1` (the stable's #1
     rider is booked) are the INTENT dots — collected by evidence, printed on the brief,
     and, until 2026-07-03, never scored here. That night the engine napped a filly
@@ -96,6 +100,21 @@ def conviction(runner: Runner, race: Race, history: tuple[PastRun, ...],
         aligned.append(f"in-form yard ({round(stable_strike * 100)}%)")
     if yard_no1:
         aligned.append("stable's #1 rider up (intent)")
+    # rule #10 — THE LOCAL MASTER off data at last: the yard that wins at THIS track
+    if local_strike is not None and local_runs >= 10 and local_strike >= 0.18:
+        aligned.append(f"local master yard ({round(local_strike * 100)}% at this "
+                       f"course, {local_runs} runs — #10)")
+    # the TRIP lens — proven at ~today's distance (the distance-times endpoint)
+    if trip_strike is not None and trip_runs >= 4 and trip_strike >= 0.25:
+        aligned.append(f"trip proven ({round(trip_strike * 100)}% over this distance, "
+                       f"{trip_runs} runs)")
+    # the #30 jockey lens — the rider who wins at THIS track, and its quiet inverse
+    if jockey_course_strike is not None and jockey_course_rides >= 15:
+        if jockey_course_strike >= 0.15:
+            aligned.append(f"course jockey ({round(jockey_course_strike * 100)}% here, "
+                           f"{jockey_course_rides} rides — #30)")
+        elif jockey_course_strike == 0.0 and jockey_course_rides >= 25:
+            flags.append(f"jockey 0/{jockey_course_rides} at this course (#30)")
 
     for t in match_tells(runner, race, history):
         if "LOCAL MASTER" in t:

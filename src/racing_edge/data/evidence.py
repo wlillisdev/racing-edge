@@ -62,6 +62,23 @@ def course_strike_from_analysis(rows: list[dict], course: str) -> tuple[float | 
     return None, 0
 
 
+def trip_strike_from_analysis(rows: list[dict],
+                              distance_f: float | None) -> tuple[float | None, int]:
+    """The horse's (win%, runs) at ~today's DISTANCE from its distance-times rows.
+    Matches within half a furlong. (None, 0) when unknown — the honest blank."""
+    if not distance_f:
+        return None, 0
+    for r in rows or []:
+        d = _flt(r.get("dist_f") or r.get("distance_f") or r.get("dist"))
+        if d is None or abs(d - distance_f) > 0.5:
+            continue
+        runs = _flt(r.get("runners") or r.get("runs") or r.get("rides")) or 0.0
+        wins = _flt(r.get("1st") or r.get("wins") or r.get("win")) or 0.0
+        if runs > 0:
+            return round(wins / runs, 2), int(runs)
+    return None, 0
+
+
 def stable_jockeys_from_analysis(rows: list[dict]) -> frozenset[str]:
     """The yard's number-one rider(s): the most-used jockey(s) clearing a real
     body of rides and a meaningful share of the yard's bookings."""
@@ -92,6 +109,12 @@ class _Fetcher(Protocol):
     def trainer_course(self, trainer_id: str, course_id: str = "") -> list[dict]:
         return []                                    # optional — older fakes need not care
 
+    def jockey_course(self, jockey_id: str) -> list[dict]:
+        return []
+
+    def horse_distance_times(self, horse_id: str) -> list[dict]:
+        return []
+
 
 def build_evidence(race: Race, client: _Fetcher, as_of: date | None = None) -> list[RunnerEvidence]:
     """Assemble each runner's evidence. `as_of` enforces NO LOOK-AHEAD for
@@ -106,10 +129,25 @@ def build_evidence(race: Race, client: _Fetcher, as_of: date | None = None) -> l
     backtest = as_of is not None
     cache: dict[str, tuple] = {}
     evidence: list[RunnerEvidence] = []
+    jcache: dict[str, tuple[float | None, int]] = {}
     for r in race.runners:
         history = past_runs_from_raw(client.horse_results(r.horse_id), r.horse_id)
         if as_of is not None:
             history = tuple(h for h in history if h.date < as_of)
+        # the TRIP lens (distance-times endpoint) and the JOCKEY-AT-COURSE lens (#30) —
+        # every-endpoint audit 2026-07-09: paid for, never called. Skipped in backtests
+        # (current-stats look-ahead).
+        trip_strike, trip_runs = (None, 0) if backtest else trip_strike_from_analysis(
+            client.horse_distance_times(r.horse_id) if hasattr(
+                client, "horse_distance_times") else [], race.distance_f)
+        if backtest or not r.jockey_id:
+            j_strike, j_rides = None, 0
+        else:
+            if r.jockey_id not in jcache:
+                jrows = client.jockey_course(r.jockey_id) if hasattr(
+                    client, "jockey_course") else []
+                jcache[r.jockey_id] = course_strike_from_analysis(jrows, race.course)
+            j_strike, j_rides = jcache[r.jockey_id]
         if backtest:
             jockeys, ae, ae_runs = frozenset[str](), None, 0   # no current-stats leak
             local_strike, local_runs = None, 0
@@ -132,5 +170,9 @@ def build_evidence(race: Race, client: _Fetcher, as_of: date | None = None) -> l
             stable_jockey_ids=jockeys,
             local_strike=local_strike,
             local_runs=local_runs,
+            trip_strike=trip_strike,
+            trip_runs=trip_runs,
+            jockey_course_strike=j_strike,
+            jockey_course_rides=j_rides,
         ))
     return evidence

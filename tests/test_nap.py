@@ -161,6 +161,29 @@ def test_equal_reads_prefer_the_better_class_race() -> None:
     assert _rank_key(p3) > _rank_key(p6)      # Cl3 beats Cl6 despite the shorter price
 
 
+def test_every_paid_lens_scores_local_master_trip_and_course_jockey() -> None:
+    """The every-endpoint audit (2026-07-09): trainer-course (#10), distance-times
+    (the trip lens), jockey-course (#30) — paid for, never called. Pins that all
+    three now score, because the first attempt silently landed nowhere."""
+    r = Runner(horse_id="w", horse="Gem", official_rating=120, odds=Odds(consensus=3.0))
+    hist = (_won_cdg(date(2026, 5, 1), 120),)
+    c = conviction(r, _race(), hist, market_rank=2, field_size=8,
+                   local_strike=0.22, local_runs=14,
+                   trip_strike=0.30, trip_runs=6,
+                   jockey_course_strike=0.17, jockey_course_rides=20)
+    assert any("local master yard" in a for a in c.aligned)
+    assert any("trip proven" in a for a in c.aligned)
+    assert any("course jockey" in a for a in c.aligned)
+    # the quiet inverse: a rider 0-from-many here is a flag, not a cross-off
+    c2 = conviction(r, _race(), hist, market_rank=2, field_size=8,
+                    jockey_course_strike=0.0, jockey_course_rides=30)
+    assert any("0/30 at this course" in f for f in c2.flags)
+    # thin samples stay silent — no lens fires off 3 runs
+    c3 = conviction(r, _race(), hist, market_rank=2, field_size=8,
+                    local_strike=0.5, local_runs=3, trip_strike=0.5, trip_runs=2)
+    assert not any("local master" in a or "trip proven" in a for a in c3.aligned)
+
+
 def test_field_of_young_unexposed_horses_is_flagged_a_novice_in_disguise() -> None:
     """Chepstow 17:10 (2026-07-03): the race TITLE passed the #13 gate but the field
     was young unexposed fillies — the form book didn't apply and the nap lost. When

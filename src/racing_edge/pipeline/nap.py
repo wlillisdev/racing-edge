@@ -85,7 +85,13 @@ def evaluate_field(client: _Client, day: str = "today",
                       if ev and ev.stable_runs and ev.stable_runs >= 8 else None)
             no1 = bool(ev and r.jockey_id and r.jockey_id in ev.stable_jockey_ids)
             c = conviction(r, race, hist, ranks.get(r.horse_id, 99), race.field_size,
-                           stable_strike=strike, yard_no1=no1)
+                           stable_strike=strike, yard_no1=no1,
+                           local_strike=ev.local_strike if ev else None,
+                           local_runs=ev.local_runs if ev else 0,
+                           trip_strike=ev.trip_strike if ev else None,
+                           trip_runs=ev.trip_runs if ev else 0,
+                           jockey_course_strike=ev.jockey_course_strike if ev else None,
+                           jockey_course_rides=ev.jockey_course_rides if ev else 0)
             race_picks.append(NapPick(race=race, runner=r, price=r.odds.consensus,
                                       conviction=c, history=hist))
         # THE RACE-SELECTION GATES (#3 — race selection before horse selection; the

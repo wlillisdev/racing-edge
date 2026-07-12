@@ -126,6 +126,32 @@ class RacingAPIClient:
                     return v
         return doc if isinstance(doc, list) else []
 
+    def jockey_course(self, jockey_id: str) -> list[dict]:
+        """The jockey's record BY COURSE — the #30 lens (jockey class at this track).
+        Standard plan and up."""
+        if not jockey_id:
+            return []
+        doc = self._get(f"/jockeys/{jockey_id}/analysis/courses", allow_404=True)
+        if isinstance(doc, dict):
+            for key in ("courses", "analysis", "data", "results"):
+                v = doc.get(key)
+                if isinstance(v, list):
+                    return v
+        return doc if isinstance(doc, list) else []
+
+    def horse_distance_times(self, horse_id: str) -> list[dict]:
+        """The horse's record BY DISTANCE (win%, times) — the trip lens that has
+        printed '—' on every brief. Basic plan and up."""
+        if not horse_id:
+            return []
+        doc = self._get(f"/horses/{horse_id}/analysis/distance-times", allow_404=True)
+        if isinstance(doc, dict):
+            for key in ("distances", "analysis", "data", "results"):
+                v = doc.get(key)
+                if isinstance(v, list):
+                    return v
+        return doc if isinstance(doc, list) else []
+
     def trainer_jockeys(self, trainer_id: str) -> list[dict]:
         """A trainer's per-jockey record — to identify the stable's number-one
         rider for the jockey-intent read."""
