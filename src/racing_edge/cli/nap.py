@@ -342,7 +342,9 @@ def main() -> int:
                 nap = chosen
                 deep_case = [f"  DEEP READ ({resolve_model('nap')}) — the case:",
                              f"    race readable: {mp.race_readable_because}",
-                             f"    {mp.case}"]
+                             f"    {mp.case}",
+                             f"    THE DANGER: {mp.danger_horse} — {mp.danger_case}",
+                             f"    beaten because: {mp.danger_beaten}"]
                 deep_case += [f"    ✗ crossed: {x}" for x in mp.crossed_off]
                 if mp.cite:
                     deep_case.append(f"    rests on: {' | '.join(mp.cite)}")

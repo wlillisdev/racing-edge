@@ -79,6 +79,17 @@ def conviction(runner: Runner, race: Race, history: tuple[PastRun, ...],
     elif mv.recommendation == "excuse_upgrade":
         aligned.append("excuse last time (trouble in running) — form understates it")
 
+    # CURRENT FORM / MOMENTUM (2026-07-09, the master: the nap faced an in-form rival
+    # who "absolutely pissed in" — plain winning momentum had NO lens; the mark and
+    # manner could both miss a horse that's simply red-hot right now)
+    recent = [h.position for h in history[:3] if h.position is not None]
+    if len(recent) >= 2 and recent[0] == 1 and recent[1] == 1:
+        aligned.append("RED-HOT — won its last two")
+    elif recent and recent[0] == 1:
+        aligned.append("won last time out")
+    if len(recent) >= 2 and all(p >= 6 for p in recent[:2]):
+        flags.append(f"cold form ({'-'.join(str(p) for p in recent[:2])} last two)")
+
     course_wins = sum(1 for h in history if h.position == 1 and _same_course(h, race))
     if course_wins >= 2:
         aligned.append("proven course winner (depth)")

@@ -47,7 +47,13 @@ NAP_SYSTEM = (
     "7. USE THE BANKED LESSONS: if a LESSONS block is supplied (validated nuances the "
     "master promoted, tracked follow/oppose horses from past results), they are "
     "evidence — apply them and cite them like any other fact.\n"
-    "8. THE REMATCH READ (earned 2026-07-06 — Ebony Maw WON at 12.0 after the system "
+    "8. BEAT THE DANGER (2026-07-09, after the nap lost to an in-form rival who won "
+    "easily): a case is NOT finished until you name the single most feared rival — "
+    "usually the in-form one, the horse winning its recent races — state honestly why "
+    "IT can win, and then beat it with cited facts. If you cannot beat the danger "
+    "honestly, then the danger IS the pick, or the race is a pass. Never bank a case "
+    "that only argues FOR your horse.\n"
+    "9. THE REMATCH READ (earned 2026-07-06 — Ebony Maw WON at 12.0 after the system "
     "passed on its own correct read): when today's race is a REMATCH of a recent race "
     "on the same terms, the previous running IS the trial run. The horse that won the "
     "rematch off today's mark, with course form, is the angle EVEN AT A BIG PRICE "
@@ -70,6 +76,9 @@ _SCHEMA_HINT = (
     '  "crossed_off": ["horse — the fatal fact", "..."],\n'
     '  "cite": ["the exact readout/tool facts the case rests on"],\n'
     '  "owed": "what could not be checked (state it, never fill it)",\n'
+    '  "danger": {"horse": "the most feared rival (usually the in-form one)", '
+    '"its_case": "why IT can win — honest", "beaten_because": "the cited facts that '
+    'beat it"},\n'
     '  "profile_match": {"well_in": true, "class_ok": true, "market_anchor": true, '
     '"note": "how the pick fits the winning profile, or the STRONGER facts justifying '
     'a departure"},\n'
@@ -89,6 +98,9 @@ class MorningPick:
     crossed_off: tuple[str, ...] = field(default_factory=tuple)
     cite: tuple[str, ...] = field(default_factory=tuple)
     owed: str = ""
+    danger_horse: str = ""
+    danger_case: str = ""
+    danger_beaten: str = ""
     profile_note: str = ""
     profile_flags: tuple[bool, bool, bool] = (False, False, False)   # well_in, class, anchor
     confidence: str = ""
@@ -98,9 +110,10 @@ class MorningPick:
 
     @property
     def ok(self) -> bool:
-        # a pick without the profile checklist stated is NOT ok — the model must say,
-        # per pick, how it fits the winning profile (or justify the departure)
-        pick_ok = bool(self.horse and self.race_label and self.profile_note)
+        # a pick is NOT ok without (a) the profile checklist and (b) the DANGER named
+        # and beaten — a case that only argues FOR its horse is half a case
+        pick_ok = bool(self.horse and self.race_label and self.profile_note
+                       and self.danger_horse and self.danger_beaten)
         return pick_ok or (self.is_pass and bool(self.pass_reason))
 
 
@@ -135,6 +148,7 @@ def parse_morning_pick(text: str) -> MorningPick:
         return tuple(str(x) for x in v) if isinstance(v, list) else ()
 
     pm = d.get("profile_match") if isinstance(d.get("profile_match"), dict) else {}
+    dg = d.get("danger") if isinstance(d.get("danger"), dict) else {}
     return MorningPick(
         race_label=str(d.get("race", "")).strip(),
         horse=str(d.get("horse", "")).strip(),
@@ -143,6 +157,9 @@ def parse_morning_pick(text: str) -> MorningPick:
         crossed_off=_tup(d.get("crossed_off")),
         cite=_tup(d.get("cite")),
         owed=str(d.get("owed", "")),
+        danger_horse=str(dg.get("horse", "")).strip(),
+        danger_case=str(dg.get("its_case", "")),
+        danger_beaten=str(dg.get("beaten_because", "")),
         profile_note=str(pm.get("note", "")),
         profile_flags=(bool(pm.get("well_in")), bool(pm.get("class_ok")),
                        bool(pm.get("market_anchor"))),

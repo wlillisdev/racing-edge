@@ -46,10 +46,18 @@ def test_parse_morning_pick_reads_a_pick_and_an_earned_pass() -> None:
         'the read:\n{"race": "Thirsk 3:00", "horse": "Gem", "case": "well-in and a '
         'finisher", "race_readable_because": "Cl3, exposed field, anchored market", '
         '"crossed_off": ["Rival — placer profile"], "cite": ["mark WELL-IN"], '
-        '"owed": "live move", "profile_match": {"well_in": true, "class_ok": true, '
+        '"owed": "live move", "danger": {"horse": "Hot Rival", "its_case": "won its '
+        'last two", "beaten_because": "well-in 5lb vs raised 6lb, course jockey"}, '
+        '"profile_match": {"well_in": true, "class_ok": true, '
         '"market_anchor": true, "note": "full profile match"}, '
         '"confidence": "Confident", "pass": false, "pass_reason": ""}')
     assert pick.ok and not pick.is_pass
+    assert pick.danger_horse == "Hot Rival" and "well-in 5lb" in pick.danger_beaten
+    # a case that only argues FOR its horse (no danger beaten) is half a case — NOT ok
+    half = parse_morning_pick(
+        '{"race": "T", "horse": "Gem", "case": "x", "profile_match": {"note": "fits"}, '
+        '"pass": false, "pass_reason": ""}')
+    assert not half.ok
     assert pick.race_label == "Thirsk 3:00" and pick.horse == "Gem"
     assert pick.confidence == "confident"
     assert pick.crossed_off == ("Rival — placer profile",)
