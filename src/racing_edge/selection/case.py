@@ -52,6 +52,8 @@ class RunnerEvidence:
     stable_ae: float | None = None       # the yard's Actual/Expected — value, not just form
     stable_ae_runs: int = 0
     stable_jockey_ids: frozenset[str] = field(default_factory=frozenset)
+    local_strike: float | None = None   # the yard's win% AT THIS COURSE (rule #10)
+    local_runs: int = 0
     combo_rides: int = 0
     combo_wins: int = 0
     franked_count: int = 0

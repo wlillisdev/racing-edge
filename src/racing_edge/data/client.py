@@ -84,7 +84,12 @@ class RacingAPIClient:
             ds = day
         regions = [r.strip() for r in self._cfg.api.regions.split(",")]
         params = [("date", ds)] + [("region_codes", r) for r in regions]
-        return self._get("/racecards/pro", params=params, allow_404=True) or {"racecards": []}
+        # tier from env so a plan downgrade is one .env line, not a code change
+        # (RACING_API_CARDS=standard after dropping Pro; default stays pro)
+        import os
+        tier = os.environ.get("RACING_API_CARDS", "pro").strip() or "pro"
+        return self._get(f"/racecards/{tier}", params=params,
+                         allow_404=True) or {"racecards": []}
 
     def results_by_date(self, date_str: str) -> dict:
         params = [("start_date", date_str), ("end_date", date_str), ("limit", 100)]
@@ -106,6 +111,19 @@ class RacingAPIClient:
         if isinstance(doc, dict):
             rows = doc.get("results") or doc.get("data") or []
             return rows if isinstance(rows, list) else []
+        return doc if isinstance(doc, list) else []
+
+    def trainer_course(self, trainer_id: str, course_id: str = "") -> list[dict]:
+        """The trainer's record BY COURSE — rule #10 (the local master) finally gets
+        data: win% at THIS track instead of a prose rule. Standard plan and up."""
+        if not trainer_id:
+            return []
+        doc = self._get(f"/trainers/{trainer_id}/analysis/courses", allow_404=True)
+        if isinstance(doc, dict):
+            for key in ("courses", "analysis", "data", "results"):
+                v = doc.get(key)
+                if isinstance(v, list):
+                    return v
         return doc if isinstance(doc, list) else []
 
     def trainer_jockeys(self, trainer_id: str) -> list[dict]:
