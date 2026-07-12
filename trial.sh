@@ -30,11 +30,14 @@ PY="venv/bin/python"
 # or the task env) to think. `env ANTHROPIC_API_KEY=` blanks it for one command only.
 SDK_OFF=(env ANTHROPIC_API_KEY=)
 
-echo ">> updating to the latest trial branch (claude/form-trial)..."
+# form-trial was MERGED (PR #39) — the trial now lives on the current dev branch.
+# Override with TRIAL_BRANCH=... if the branch moves again.
+BRANCH="${TRIAL_BRANCH:-claude/tender-wright-kbn1h6}"
+echo ">> updating to the latest trial branch ($BRANCH)..."
 git fetch origin --quiet
-git checkout claude/form-trial --quiet 2>/dev/null \
-  || git checkout -b claude/form-trial origin/claude/form-trial
-git pull origin claude/form-trial --quiet
+git checkout "$BRANCH" --quiet 2>/dev/null \
+  || git checkout -b "$BRANCH" "origin/$BRANCH"
+git pull origin "$BRANCH" --quiet
 echo
 
 case "${1:-nap}" in
