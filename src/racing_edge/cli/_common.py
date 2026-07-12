@@ -6,16 +6,9 @@ from datetime import date, datetime, timedelta
 from pathlib import Path
 
 from racing_edge.config import get_config
-from racing_edge.measurement.store import Ledger
 from racing_edge.study.naplog import NapLog
 from racing_edge.study.nuances import NuanceLog
 from racing_edge.study.store import StudyStore
-
-
-def open_ledger() -> Ledger:
-    p = Path(get_config().project_dir) / "data" / "ledger.db"
-    p.parent.mkdir(parents=True, exist_ok=True)
-    return Ledger(p)
 
 
 def open_nap_log() -> NapLog:

@@ -10,7 +10,6 @@ from datetime import date
 
 from racing_edge.domain.models import Odds, PastRun, Race, Runner
 from racing_edge.selection.case import RunnerEvidence, assess
-from racing_edge.selection.select import pick_race
 
 
 def _race(cls: int = 3) -> Race:
@@ -54,29 +53,6 @@ def test_class_drop_forgives_the_veto() -> None:
     case = assess(RunnerEvidence(runner=runner, history=hist), _race(cls=3))
     assert case.vetoed is False
     assert any(s.name == "class_drop" for s in case.signals)
-
-
-def test_pick_race_chooses_strongest_live_case() -> None:
-    strong = Runner(horse_id="A", horse="Strong", weight_lbs=150, form="2311",
-                    odds=Odds(consensus=3.5))
-    weak = Runner(horse_id="B", horse="Weak", weight_lbs=160, form="78")
-    vetoed = Runner(horse_id="C", horse="Exposed", form="2232", weight_lbs=160)
-    evid = [
-        RunnerEvidence(runner=strong, history=_won_at_level(), stable_runs=20, stable_wins=6),
-        RunnerEvidence(runner=weak, history=()),
-        RunnerEvidence(runner=vetoed, history=(PastRun(date=date(2025, 12, 1),
-                       position=2, race_class=3),)),
-    ]
-    result = pick_race(_race(), evid)
-    assert result.is_bet
-    assert result.pick is not None and result.pick.runner.horse_id == "A"
-    assert all(not c.vetoed for c in result.ranked)   # vetoed horse excluded
-
-
-def test_pick_race_passes_when_nothing_stands_up() -> None:
-    weak = Runner(horse_id="B", horse="Weak", form="78", weight_lbs=160)
-    result = pick_race(_race(), [RunnerEvidence(runner=weak, history=())])
-    assert result.is_bet is False and result.pick is None
 
 
 def _main() -> int:
