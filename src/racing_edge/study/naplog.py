@@ -27,6 +27,18 @@ CREATE TABLE IF NOT EXISTS nap (
     sp_dec      REAL,
     PRIMARY KEY (date)
 );
+CREATE TABLE IF NOT EXISTS shadow (
+    date        TEXT NOT NULL,
+    race_id     TEXT NOT NULL,
+    course      TEXT NOT NULL DEFAULT '',
+    horse       TEXT NOT NULL DEFAULT '',
+    horse_id    TEXT NOT NULL DEFAULT '',
+    price       REAL,
+    score       INTEGER NOT NULL DEFAULT 0,
+    won         INTEGER,
+    sp_dec      REAL,
+    PRIMARY KEY (date)
+);
 """
 
 
@@ -78,6 +90,35 @@ class NapLog:
         """Every nap ever banked, oldest first — the readable record (settled + pending)."""
         rows = self._conn.execute("SELECT * FROM nap ORDER BY date").fetchall()
         return [dict(r) for r in rows]
+
+    # ---- the SHADOW ledger: the mechanical engine's pick, banked for A/B ---------
+    # (the master, 2026-07-08: the trial method is best AND the older method's shadow
+    # picks are good — so both get a record, one machine, two ledgers, zero extra cost)
+    def record_shadow(self, *, day: date, race_id: str, course: str, horse: str,
+                      horse_id: str, price: float | None, score: int) -> None:
+        self._conn.execute(
+            "INSERT OR REPLACE INTO shadow (date, race_id, course, horse, horse_id, "
+            "price, score, won, sp_dec) VALUES (?,?,?,?,?,?,?,NULL,NULL)",
+            (day.isoformat(), race_id, course, horse, horse_id, price, score),
+        )
+        self._conn.commit()
+
+    def pending_shadow(self) -> list[dict]:
+        rows = self._conn.execute(
+            "SELECT * FROM shadow WHERE won IS NULL ORDER BY date").fetchall()
+        return [dict(r) for r in rows]
+
+    def settle_shadow(self, day: date, won: bool, sp_dec: float | None = None) -> None:
+        self._conn.execute("UPDATE shadow SET won = ?, sp_dec = ? WHERE date = ?",
+                           (int(won), sp_dec, day.isoformat()))
+        self._conn.commit()
+
+    def shadow_strike(self) -> tuple[int, int]:
+        settled = int(self._conn.execute(
+            "SELECT COUNT(*) FROM shadow WHERE won IS NOT NULL").fetchone()[0])
+        wins = int(self._conn.execute(
+            "SELECT COUNT(*) FROM shadow WHERE won = 1").fetchone()[0])
+        return wins, settled
 
     def close(self) -> None:
         self._conn.close()

@@ -53,6 +53,10 @@ def _record() -> int:
     if n:
         print(f"  strike rate: {w}/{n} won ({100 * w / n:.0f}%) overall; "
               f"{cw}/{cn} on CONFIDENT naps.  (small samples lie — judge it over hundreds.)")
+    sw, sn = log.shadow_strike()
+    if sn:
+        print(f"  SHADOW (engine method): {sw}/{sn} won ({100 * sw / sn:.0f}%) — "
+              f"the A/B the record is running between the deep read and the engine.")
     log.close()
     return 0
 
@@ -147,6 +151,15 @@ def _settle(day_str: str, email: bool) -> int:
         return 0
     won = me.position == 1
     log.settle(day, won=won, sp_dec=me.sp_dec)
+    sh = next((x for x in log.pending_shadow() if x["date"] == day.isoformat()), None)
+    if sh is not None:
+        shr = next((r for r in results if r.race_id == sh["race_id"]), None)
+        shm = next((rr for rr in shr.runners if rr.horse_id == sh["horse_id"]), None) \
+            if shr else None
+        if shm is not None:
+            log.settle_shadow(day, won=shm.position == 1, sp_dec=shm.sp_dec)
+            out.append(f"  shadow settled: {sh['horse']} "
+                       f"{'WON' if shm.position == 1 else 'lost'}")
     w, n = log.strike_rate()
     cw, cn = log.strike_rate(confident_only=True)
     flag = "WON" if won else f"unplaced ({me.position or me.status})"
@@ -420,6 +433,16 @@ def main() -> int:
     log.record(day=day, race_id=r.race_id, course=r.course, horse=nap.runner.horse,
                horse_id=nap.runner.horse_id, price=nap.price, score=c.score,
                confident=confident, case=case_text, deep_conf=deep_conf)
+    # THE SHADOW: the mechanical engine's own top survivor, banked silently for the
+    # A/B record (one machine, two ledgers — the record decides which method earns
+    # the stakes). Costs nothing: it was already computed.
+    eng = survivors[0]
+    log.record_shadow(day=day, race_id=eng.race.race_id, course=eng.race.course,
+                      horse=eng.runner.horse, horse_id=eng.runner.horse_id,
+                      price=eng.price, score=eng.conviction.score)
+    if eng.runner.horse_id != nap.runner.horse_id:
+        emit(f"  shadow (engine method): {eng.runner.horse} — {eng.race.course} "
+             f"{eng.race.off_time} (paper only, banked for the A/B record)")
     log.close()
     emit(f"\n  banked the nap for {day} — settle it tomorrow with --settle {day}.")
     _maybe_email(out, f"{tag}: {nap.runner.horse} — {r.course} {r.off_time} ({day})", args.email)
