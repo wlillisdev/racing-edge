@@ -654,3 +654,68 @@ CLI entry points. Reachability-mapped first: nothing the trial imports was touch
 One system now. Every scheduled task, every line of the bill, every test serves the
 form reader and its ledgers. No stale entry point can burn usage or bank a
 number-crunched pick again — the code can only do the thing the master is teaching.
+## 2026-07-06 — THE EBONY MAW LESSON: the reader was right, my leash strangled it
+
+The deep read's first live morning under the new floors produced a PASS — and the
+pass reasoning NAMED THE WINNER: "the form horse is Ebony Maw: it won the exact
+rematch off today's 52 with Ayr form in both wins-window runs." Ebony Maw WON at 12.0.
+The read also called the 2.38 favourite FALSE (beaten off today's terms by three
+re-opposers — it was), checked the Qazaq tracked lesson honestly (aged out), and
+argued every elimination. As form reading, it was the best work the system has done.
+
+What failed was MY fitted parameters: the price band (2.5-7.0) and the hard Cl4+
+floor, fitted to a two-day sample of losers the day before. The number-cruncher
+overruled the form reader — the exact thing the master said he does not want.
+Master's own rules said back it: #12 (the horse doesn't know its odds — never talked
+off a well-merited horse by a big price) and #28 (big price + real case = EACH-WAY).
+
+FIXED:
+1. The mark stays SACRED (never a pick that isn't well-in — non-negotiable floor).
+2. Class and market-anchor became ARGUABLE: an argued multi-fact deep case (3+ cited
+   facts) may override them — banked as a LEAN, never CONFIDENT, each-way recommended
+   at 8.0+. The shallow engine pick gets no such licence.
+3. The fitted price band is GONE from the prompt: a big price never disqualifies a
+   form-proven case; only cramped sub-2.5 is unbettable.
+4. NEW TELL banked in the reader's standing orders — THE REMATCH READ: when today's
+   race is a rematch on the same terms, the previous running IS the trial run; the
+   horse that won it off today's mark is the angle even at a price, and a favourite
+   already beaten on today's terms is a FALSE anchor whose falseness makes the race
+   MORE readable.
+
+The meta-lesson, banked hard: floors exist to kill UNREADABLE races and NO-CASE
+picks. They must never outrank an argued case — the moment a rule fitted to last
+week's losers can silence this week's correct read, the system is a number-cruncher
+wearing a form reader's coat. Discipline gates the race; the CASE picks the horse.
+
+---
+
+## 2026-07-06 — THE EBONY MAW LESSON: the reader read the form; my leash strangled it
+
+The deep read's first live morning under the new floors produced a PASS — and the
+pass reasoning NAMED THE WINNER: "the form horse is Ebony Maw: it won the exact
+rematch off today's 52 with Ayr form in both wins-window runs." Ebony Maw WON at 12.0.
+The read also called the 2.38 favourite FALSE (beaten off today's terms by three
+re-opposers — it was), checked the Qazaq tracked lesson honestly (aged out), and
+argued every elimination. The master's verdict: "this is reading the form, not
+crunching numbers." The reader is real.
+
+What failed was MY fitted parameters: the price band (2.5-7.0) and the hard Cl4+
+floor, fitted the day before to a two-loser sample. The number-cruncher overruled
+the form reader. The master's own rules said back it: #12 (the horse doesn't know
+its odds) and #28 (big price + real case = EACH-WAY).
+
+FIXED:
+1. The mark stays SACRED — never a pick that isn't well-in, non-negotiable.
+2. Class and market-anchor became ARGUABLE: a deep case citing 3+ facts may override
+   them — banked as a LEAN, never CONFIDENT, each-way recommended at 8.0+. The
+   shallow engine pick gets no such licence.
+3. The fitted price band is GONE: a big price never disqualifies a form-proven case;
+   only cramped sub-2.5 is unbettable.
+4. NEW TELL in the reader's standing orders — THE REMATCH READ: a rematch on the
+   same terms means the previous running IS the trial run; the horse that won it off
+   today's mark is the angle even at a price; a favourite already beaten on today's
+   terms is a FALSE anchor whose falseness makes the race MORE readable.
+
+Meta-lesson, banked hard: floors exist to kill UNREADABLE races and NO-CASE picks —
+they must never outrank an argued case. Discipline gates the race; the CASE picks
+the horse.

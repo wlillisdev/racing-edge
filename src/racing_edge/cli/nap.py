@@ -392,24 +392,41 @@ def main() -> int:
     delta = mark_read(nap.runner.official_rating, nap.history).delta
     race_fav = min((p.price for p in field
                     if p.race.race_id == r.race_id and p.price), default=None)
-    profile_fails = []
+    # THE MARK IS SACRED — never a pick that isn't well-in. Non-negotiable.
     if delta is None or delta > 0:
-        profile_fails.append(f"not WELL-IN (mark delta {delta if delta is not None else 'OWED'})")
+        emit(f"  ✗ PROFILE FLOOR: {nap.runner.horse} is not WELL-IN "
+             f"(mark delta {delta if delta is not None else 'OWED'}) — no bet.")
+        _maybe_email(out, "Nap — no bet today (not well-in)", args.email)
+        return 0
+    # class and anchor are ARGUABLE — an argued multi-fact deep case may override them
+    # as a LEAN (Ebony Maw, 2026-07-06: the reader found the 12.0 rematch winner and
+    # the fitted class/price floor threw it away — the number-cruncher overruling the
+    # form reader, the exact thing the master said he does not want). Never CONFIDENT
+    # off-profile, and the shallow engine pick gets no such licence.
+    soft_fails = []
     if r.race_class is not None and r.race_class > 4:
-        profile_fails.append(f"class too low (Cl{r.race_class} — the profile wants Cl4+)")
+        soft_fails.append(f"class Cl{r.race_class}")
     if race_fav is None or race_fav >= 5.0:
-        profile_fails.append(f"no market anchor (fav {race_fav})")
-    if profile_fails:
-        emit(f"  ✗ PROFILE FLOOR: {nap.runner.horse} fails the winning profile — "
-             f"{'; '.join(profile_fails)}")
-        emit("  No nap today — every winner matched the profile, both losers broke it. "
-             "No bet beats a stupid pick.")
+        soft_fails.append(f"no market anchor (fav {race_fav})")
+    off_profile = bool(soft_fails)
+    argued = bool(deep_case) and mp is not None and len(mp.cite) >= 3
+    if off_profile and not argued:
+        emit(f"  ✗ PROFILE FLOOR: {nap.runner.horse} — {'; '.join(soft_fails)} and no "
+             f"argued multi-fact case to override. No bet beats a stupid pick.")
         _maybe_email(out, "Nap — no bet today (profile floor)", args.email)
         return 0
+    if off_profile:
+        emit(f"  ⚠ OFF-PROFILE ({'; '.join(soft_fails)}) — allowed on an argued case "
+             f"({len(mp.cite)} cited facts), as a LEAN only.")
 
-    # the deep read's own verdict decides CONFIDENT when it made the pick
+    # the deep read's own verdict decides CONFIDENT when it made the pick —
+    # but off-profile is NEVER confident
     deep_conf = mp.confidence if deep_case and mp is not None else ""
-    confident = (deep_conf == "confident") if deep_case else c.confident
+    confident = ((deep_conf == "confident") if deep_case else c.confident) \
+        and not off_profile
+    if nap.price and nap.price >= 8.0:
+        emit(f"  instrument (#28): EACH-WAY at {nap.price} — the place is the net, "
+             f"the win is the payday.")
 
     tag = "CONFIDENT NAP" if confident else "best candidate — NOT confident (declinable)"
     emit(f"  {tag}: {nap.runner.horse}  —  {r.course} {r.off_time} ({r.race_type})")
