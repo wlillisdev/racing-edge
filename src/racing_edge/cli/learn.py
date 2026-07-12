@@ -303,7 +303,7 @@ def main() -> int:
     # FOCUSED STUDY (the master, 2026-07-08: "I cannot afford the large API fees on
     # learning"). The full-card study burned ~90% of the model bill on races that
     # taught little. Default: the NAP race (the mandatory autopsy) + races where a
-    # TRACKED horse ran, capped at 4/night. --full restores the old sweep.
+    # TRACKED horse ran, capped at 2/night. --full restores the old sweep.
     if not args.full and not args.time and len(studies) > 4:
         nlog4 = open_nuance_log()
         tracked_ids = {t["horse_id"] for t in nlog4.tracked_active()}
@@ -317,7 +317,7 @@ def main() -> int:
                     any(r.horse_id in tracked_ids for r in st.race.runners))
 
         prioritised = sorted(studies, key=_priority, reverse=True)
-        kept = [st for st in prioritised if _priority(st) != (False, False)][:4]
+        kept = [st for st in prioritised if _priority(st) != (False, False)][:2]
         if not kept:
             kept = prioritised[:2]        # quiet day: still study a couple, cheaply
         print(f"  FOCUSED study: {len(kept)} of {len(studies)} race(s) "

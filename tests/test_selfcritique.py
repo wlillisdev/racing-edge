@@ -70,24 +70,28 @@ def test_record_fields_feed_the_nuance_ledger_signature() -> None:
 
 
 def test_each_task_gets_the_right_brain_never_haiku() -> None:
-    """Per-task model selection — the master's ruling after Haiku wrecked the reads.
-    The sceptic must be at least as sharp as the proposer; nothing defaults small."""
+    """Per-task model selection — economy tiers (2026-07-08, the burn): only THE pick
+    keeps the flagship; nothing defaults to Haiku; and the TABLE now beats a global
+    ANTHROPIC_MODEL (a stray global =fable in .env silently forced every nightly call
+    onto the most expensive model — the trap that caused the huge daily bill)."""
     import os
 
     from racing_edge.ai.reason import resolve_model
     for var in ("ANTHROPIC_MODEL", "ANTHROPIC_MODEL_STUDY", "ANTHROPIC_MODEL_SCEPTIC"):
         os.environ.pop(var, None)
     assert resolve_model("study") == "claude-sonnet-5"
-    assert resolve_model("sceptic") == "claude-fable-5"
-    assert resolve_model("synthesis") == "claude-fable-5"
-    for task in ("study", "sceptic", "synthesis"):
+    assert resolve_model("sceptic") == "claude-sonnet-5"
+    assert resolve_model("synthesis") == "claude-sonnet-5"
+    assert resolve_model("nap") == "claude-fable-5"       # the one flagship call a day
+    for task in ("study", "sceptic", "synthesis", "nap"):
         assert "haiku" not in resolve_model(task)
-    # override order: per-task beats global beats table
+    # THE TRAP IS DEAD: a global override no longer hijacks known tasks...
     os.environ["ANTHROPIC_MODEL"] = "claude-fable-5"
-    assert resolve_model("study") == "claude-fable-5"
+    assert resolve_model("study") == "claude-sonnet-5"
+    assert resolve_model("unknown-task") == "claude-fable-5"   # ...only unknown ones
+    # ...but an explicit per-task env still wins (deliberate beats accidental)
     os.environ["ANTHROPIC_MODEL_STUDY"] = "claude-opus-4-8"
     assert resolve_model("study") == "claude-opus-4-8"
-    assert resolve_model("sceptic") == "claude-fable-5"
     for var in ("ANTHROPIC_MODEL", "ANTHROPIC_MODEL_STUDY"):
         os.environ.pop(var, None)
 

@@ -56,23 +56,58 @@ _TIMEOUT = 120
 
 # The best model for each task — not one dial for everything.
 _TASK_MODELS = {
-    "study": "claude-sonnet-5",       # per-race read: strong reasoning, runs many times
-    "sceptic": "claude-fable-5",      # the kill-pass must be sharper than the proposer
-    "synthesis": "claude-fable-5",    # the weekly cross-day read: deepest, runs once
-    "nap": "claude-fable-5",          # THE morning pick: once a day, the deepest brain
+    "study": "claude-sonnet-5",       # per-race read: strong + affordable
+    "sceptic": "claude-sonnet-5",     # cost cut 2026-07-08: sonnet vs sonnet is a fair fight
+    "synthesis": "claude-sonnet-5",   # weekly; sonnet suffices for the summary
+    "nap": "claude-fable-5",          # THE pick: once a day, the only flagship call
 }
 _FALLBACK = "claude-sonnet-5"
 
 
 def resolve_model(task: str) -> str:
-    """Which model this task thinks with. Per-task env > global env > the table."""
+    """Which model this task thinks with: per-task env > the TABLE > global env.
+    THE TABLE NOW BEATS the global ANTHROPIC_MODEL (2026-07-08, the burn: a global
+    =claude-fable-5 left in .env silently forced EVERY nightly call onto the most
+    expensive model, overriding all the per-task savings). The global is now only a
+    fallback for tasks the table doesn't know."""
     per_task = os.environ.get(f"ANTHROPIC_MODEL_{task.upper()}")
     if per_task:
         return per_task
-    global_override = os.environ.get("ANTHROPIC_MODEL")
-    if global_override:
-        return global_override
-    return _TASK_MODELS.get(task, _FALLBACK)
+    if task in _TASK_MODELS:
+        return _TASK_MODELS[task]
+    return os.environ.get("ANTHROPIC_MODEL") or _FALLBACK
+
+
+def _budget_spent_today() -> int:
+    """Total tokens (in+out) logged today. 0 if no ledger yet."""
+    try:
+        import csv
+        import datetime
+        from pathlib import Path
+        today = datetime.date.today().isoformat()
+        total = 0
+        with (Path("data") / "model_usage.csv").open() as f:
+            for row in csv.DictReader(f):
+                if row["date"] == today:
+                    total += int(row["input_tokens"]) + int(row["output_tokens"])
+        return total
+    except Exception:
+        return 0
+
+
+def budget_blown() -> int | None:
+    """The HARD daily token budget (env NAP_TOKEN_BUDGET, default 300k in+out/day —
+    'this has to stop', 2026-07-08). Returns the spend if over budget, else None.
+    Callers refuse further model calls for the day; the morning pick degrades to the
+    engine (shadow) method and says so, rather than burning past the cap."""
+    try:
+        cap = int(os.environ.get("NAP_TOKEN_BUDGET", "300000"))
+    except ValueError:
+        cap = 300000
+    if cap <= 0:
+        return _budget_spent_today() or 1          # 0 = model OFF entirely
+    spent = _budget_spent_today()
+    return spent if spent >= cap else None
 
 
 def _post_with_retry(headers: dict, body: dict) -> tuple[dict | None, int]:
@@ -119,6 +154,10 @@ def get_investigator(task: str, tools: list[dict],
                "content-type": "application/json"}
 
     def complete(system: str, prompt: str) -> tuple[str, list[str]]:
+        spent = budget_blown()
+        if spent is not None:
+            return "", [f"DAILY TOKEN BUDGET reached ({spent} used) — no more model "
+                        f"calls today (raise NAP_TOKEN_BUDGET to override)"]
         messages: list[dict] = [{"role": "user", "content": prompt}]
         trail: list[str] = []
         steps = 0
@@ -188,6 +227,8 @@ def get_reasoner(task: str = "study",
     }
 
     def complete(system: str, prompt: str) -> str:
+        if budget_blown() is not None:
+            return ""                              # daily budget reached — hard stop
         body = {
             "model": model,
             "max_tokens": max_tokens,
