@@ -80,7 +80,7 @@ def _post_with_retry(headers: dict, body: dict) -> tuple[dict | None, int]:
 
 
 def get_investigator(task: str, tools: list[dict],
-                     executor: Callable[[str, dict], str], max_steps: int = 6,
+                     executor: Callable[[str, dict], str], max_steps: int = 4,
                      max_tokens: int = 3000):
     """An INVESTIGATING reasoner — the model can call the given tools mid-thought
     (pull a thread, ask for more evidence) instead of answering a questionnaire off a
@@ -126,7 +126,7 @@ def get_investigator(task: str, tools: list[dict],
                                    "using only evidence already gathered.")
                         results.append({"type": "tool_result",
                                         "tool_use_id": block.get("id", ""),
-                                        "content": out[:6000]})
+                                        "content": out[:4000]})
                 messages.append({"role": "user", "content": results})
                 continue
             text = "".join(b.get("text", "") for b in content if isinstance(b, dict))

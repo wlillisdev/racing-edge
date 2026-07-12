@@ -277,7 +277,7 @@ def main() -> int:
         for _hid, (tp, t) in seen.items():
             if t["angle"] == "follow" and tp.race.race_id not in cand_order:
                 cand_order.append(tp.race.race_id)
-        cand_races = [all_by_race[rid] for rid in cand_order[:5]]
+        cand_races = [all_by_race[rid] for rid in cand_order[:3]]
         candidates = []
         for picks in cand_races:
             r0 = picks[0].race
@@ -299,7 +299,7 @@ def main() -> int:
                 f"- {t['angle'].upper()} {t['horse']} ({tp.race.course} "
                 f"{tp.race.off_time}): {t['note']}"
                 + (f" [{t['conditions']}]" if t["conditions"] else "")
-                for tp, t in seen.values()
+                for tp, t in list(seen.values())[:10]      # cap: 472 clues won't flood the prompt
             ]
             lesson_lines += [
                 f"- RULE UNDER FIRE: {t['rule']} contradicted "
