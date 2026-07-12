@@ -51,7 +51,9 @@ case "${1:-nap}" in
   health)  "${SDK_OFF[@]}" "$PY" -m racing_edge.cli.health --email ;;
   night)   "${SDK_OFF[@]}" "$PY" -m racing_edge.cli.nap --settle today --email
            echo
-           "$PY" -m racing_edge.cli.learn   --day today --email ;;
+           "$PY" -m racing_edge.cli.learn   --day today --email
+           # Sunday: the weekly synthesis rides in the same slot (no weekly task needed)
+           if [ "$(date +%u)" = "7" ]; then echo; "$PY" -m racing_edge.cli.learn --synthesise --email; fi ;;
   all)     "$PY" -m racing_edge.cli.nap     --day today --both --email
            echo
            "${SDK_OFF[@]}" "$PY" -m racing_edge.cli.dissect --day today         --email ;;
