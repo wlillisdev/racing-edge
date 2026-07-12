@@ -29,6 +29,28 @@ from collections.abc import Callable
 import requests
 
 _URL = "https://api.anthropic.com/v1/messages"
+
+
+def _log_usage(task: str, model: str, data: dict) -> None:
+    """Append the call's REAL token counts (from the API response) to a local CSV —
+    the machine counts its own bill instead of anyone estimating it. Never raises."""
+    try:
+        import csv
+        import datetime
+        from pathlib import Path
+        u = data.get("usage") or {}
+        row = [datetime.date.today().isoformat(), task, model,
+               int(u.get("input_tokens") or 0), int(u.get("output_tokens") or 0)]
+        path = Path("data") / "model_usage.csv"
+        path.parent.mkdir(parents=True, exist_ok=True)
+        new_file = not path.exists()
+        with path.open("a", newline="") as f:
+            w = csv.writer(f)
+            if new_file:
+                w.writerow(["date", "task", "model", "input_tokens", "output_tokens"])
+            w.writerow(row)
+    except Exception:
+        pass
 _VERSION = "2023-06-01"
 _TIMEOUT = 120
 
@@ -109,6 +131,7 @@ def get_investigator(task: str, tools: list[dict],
             if data is None:
                 trail.append(f"API error {status or 'network'} — gave up after retries")
                 return "", trail
+            _log_usage(task, model, data)
             content = data.get("content") or []
             if data.get("stop_reason") == "tool_use":
                 messages.append({"role": "assistant", "content": content})
@@ -174,6 +197,7 @@ def get_reasoner(task: str = "study",
         data, _status = _post_with_retry(headers, body)
         if data is None:
             return ""
+        _log_usage(task, model, data)
         parts = data.get("content") or []
         return "".join(p.get("text", "") for p in parts if isinstance(p, dict))
 

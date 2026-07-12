@@ -88,6 +88,25 @@ def main() -> int:
         "the follow/oppose list is silting up unverified",
         lines)
 
+    # THE MODEL BILL, counted by the machine itself (real token counts from every
+    # API response, logged to data/model_usage.csv — multiply by your plan's rates)
+    try:
+        import csv
+        from pathlib import Path
+        by_day: dict[str, list[int]] = {}
+        with (Path("data") / "model_usage.csv").open() as f:
+            for row in csv.DictReader(f):
+                d = by_day.setdefault(row["date"], [0, 0])
+                d[0] += int(row["input_tokens"])
+                d[1] += int(row["output_tokens"])
+        for d in sorted(by_day)[-3:]:
+            i, o = by_day[d]
+            lines.append(f"  model usage {d}: {i / 1000:.0f}k in / {o / 1000:.0f}k out")
+    except FileNotFoundError:
+        lines.append("  model usage: no calls logged yet (ledger starts with the next run)")
+    except Exception:
+        lines.append("  model usage: ledger unreadable")
+
     w, n = 0, 0
     settled = [x for x in naps if x["won"] is not None]
     w, n = sum(x["won"] for x in settled), len(settled)
