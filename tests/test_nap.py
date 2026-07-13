@@ -3,12 +3,14 @@
 from __future__ import annotations
 
 import sys
-from datetime import date
+from datetime import date, datetime
 
 from racing_edge.domain.models import Odds, PastRun, Race, Runner
 from racing_edge.pipeline.nap import evaluate_field, nominate_nap
 from racing_edge.selection.conviction import conviction
 from racing_edge.study.naplog import NapLog
+
+MORNING = datetime(2026, 7, 13, 8, 0)   # fixed clock: fixture races are 'still to run'.
 
 
 def _race(**kw):
@@ -130,17 +132,17 @@ def test_race_selection_gates_bottom_grade_and_open_market() -> None:
     """2026-07-05, the master after two poor naps: 'really bad race selections —
     unexposed horses, poor classes, anything could win.' Cl6 flat is flagged; a race
     whose own market can't find an anchor (fav 5.0+) is flagged as a lottery."""
-    cl6 = evaluate_field(_RaceClient(race_class="6"), day="today", codes=("flat",))
+    cl6 = evaluate_field(_RaceClient(race_class="6"), day="today", codes=("flat",), now=MORNING)
     assert cl6 and all(any("bottom-grade" in f for f in p.conviction.flags) for p in cl6)
 
     open_mkt = evaluate_field(_RaceClient(race_class="4", prices=("5.5", "6.0", "7.0")),
-                              day="today", codes=("flat",))
+                              day="today", codes=("flat",), now=MORNING)
     assert open_mkt
     assert all(any("anything-could-win" in f for f in p.conviction.flags)
                for p in open_mkt)
 
     clean = evaluate_field(_RaceClient(race_class="3", prices=("3.0", "4.0")),
-                           day="today", codes=("flat",))
+                           day="today", codes=("flat",), now=MORNING)
     assert clean and all(not p.conviction.flags for p in clean)   # readable race passes
 
 
@@ -207,10 +209,10 @@ def test_field_of_young_unexposed_horses_is_flagged_a_novice_in_disguise() -> No
         def trainer_jockeys(self, tid):
             return []
 
-    field = evaluate_field(_YoungClient(), day="today", codes=("flat",))
+    field = evaluate_field(_YoungClient(), day="today", codes=("flat",), now=MORNING)
     assert field
     assert all(any("novice in disguise" in f for f in p.conviction.flags) for p in field)
-    assert nominate_nap(_YoungClient(), day="today", codes=("flat",)) is None  # no bet
+    assert nominate_nap(_YoungClient(), day="today", codes=("flat",), now=MORNING) is None  # no bet
 
 
 def test_conviction_needs_the_mark_to_be_confident() -> None:
@@ -248,7 +250,7 @@ class _Client:
 
 
 def test_nominate_nap_picks_the_conviction_horse_not_the_short_fav() -> None:
-    nap = nominate_nap(_Client(), day="today", codes=("jump",))
+    nap = nominate_nap(_Client(), day="today", codes=("jump",), now=MORNING)
     assert nap is not None
     assert nap.runner.horse == "Gem"          # the well-in proven horse, not the 2.0 fav
     assert nap.conviction.confident
@@ -256,10 +258,10 @@ def test_nominate_nap_picks_the_conviction_horse_not_the_short_fav() -> None:
 
 def test_evaluate_field_returns_every_contender_strongest_first() -> None:
     # rule #24: no horse skipped — both runners evaluated, the conviction horse on top
-    field = evaluate_field(_Client(), day="today", codes=("jump",))
+    field = evaluate_field(_Client(), day="today", codes=("jump",), now=MORNING)
     assert {p.runner.horse for p in field} == {"Gem", "Shorty"}   # the WHOLE field, not just pick
     assert field[0].runner.horse == "Gem"                         # strongest first
-    nap = nominate_nap(_Client(), day="today", codes=("jump",))
+    nap = nominate_nap(_Client(), day="today", codes=("jump",), now=MORNING)
     assert nap.runner.horse == field[0].runner.horse             # the nap is the top of the field
 
 

@@ -44,7 +44,7 @@ def _rank_key(p: NapPick) -> tuple[int, int, int, float]:
 def evaluate_field(client: _Client, day: str = "today",
                    codes: tuple[str, ...] = ("jump", "flat"), top_n: int = 4,
                    progress: Callable[[str], None] | None = None,
-                   as_of=None) -> list[NapPick]:
+                   as_of=None, now=None) -> list[NapPick]:
     """EVERY contender in every readable handicap, each given its own conviction read,
     sorted strongest-first. The fair-evaluation enforcement (rule #24): no horse is
     skipped, so a pick has to beat an even reading of the whole field, not an anchor.
@@ -59,7 +59,9 @@ def evaluate_field(client: _Client, day: str = "today",
     # hours 1-9 read as PM. Unparseable times are kept (safe: better shown than
     # silently dropped).
     if day == "today" and as_of is None:
-        from datetime import datetime, timedelta as _td
+        from datetime import datetime
+        from datetime import timedelta as _td
+        _now = now or datetime.now()          # injectable clock — tests pass a morning
 
         def _still_to_run(r: Race) -> bool:
             try:
@@ -67,8 +69,8 @@ def evaluate_field(client: _Client, day: str = "today",
                 hh, mm = int(h), int(m[:2])
                 if 1 <= hh <= 9:
                     hh += 12
-                off = datetime.now().replace(hour=hh, minute=mm, second=0)
-                return off > datetime.now() + _td(minutes=5)
+                off = _now.replace(hour=hh, minute=mm, second=0)
+                return off > _now + _td(minutes=5)
             except (ValueError, AttributeError):
                 return True
         before = len(races)
@@ -147,8 +149,10 @@ def evaluate_field(client: _Client, day: str = "today",
 
 
 def nominate_nap(client: _Client, day: str = "today",
-                 codes: tuple[str, ...] = ("jump", "flat"), top_n: int = 4) -> NapPick | None:
+                 codes: tuple[str, ...] = ("jump", "flat"), top_n: int = 4,
+                 now=None) -> NapPick | None:
     """The day's nap: zero in on the strongest SURVIVOR after crossing off every horse
     with a flaw (rule #25 — eliminate first, then pick). None if all are crossed off."""
-    survivors = [p for p in evaluate_field(client, day, codes, top_n) if not p.conviction.flags]
+    survivors = [p for p in evaluate_field(client, day, codes, top_n, now=now)
+                 if not p.conviction.flags]
     return survivors[0] if survivors else None

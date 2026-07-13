@@ -39,10 +39,14 @@ def main() -> int:
     log.close()
     dates = {n["date"] for n in naps}
     recent = [n for n in naps if n["date"] >= (today - timedelta(days=3)).isoformat()]
+    # health runs at 09:00, the nap at 07:30 — so TODAY'S row must exist by now.
+    # (2026-07-13: 'yesterday counts' showed ALL GREEN while a 422 was killing every
+    # morning — the watchman waved through the exact failure he exists to catch.)
     all_ok &= _check(
-        today.isoformat() in dates or yday.isoformat() in dates,
-        f"nap banked recently (latest {max(dates) if dates else 'never'})",
-        "NO NAP banked today or yesterday — the 07:30 task is dead or dying silently",
+        today.isoformat() in dates,
+        f"today's nap banked (latest {max(dates) if dates else 'never'})",
+        f"NO NAP banked TODAY (latest {max(dates) if dates else 'never'}) — the 07:30 "
+        "task failed or crashed; open its log on the Tasks page",
         lines)
     stale = [n for n in naps if n["won"] is None and n["date"] < yday.isoformat()]
     all_ok &= _check(
