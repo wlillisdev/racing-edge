@@ -53,6 +53,29 @@ def evaluate_field(client: _Client, day: str = "today",
     caller can NARRATE the (slow, per-horse) evidence fetch instead of sitting silent."""
     races = [r for r in racecards_from_raw(client.racecards(day))
              if r.is_readable_handicap and r.code in codes]
+    # LIVE-DAY TIME GUARD (2026-07-13, an 8pm manual run): races already OFF must
+    # never be pickable — banking a race whose result exists would corrupt the
+    # pre-off ledger. Off-times print without am/pm; racing runs ~11:00-21:45, so
+    # hours 1-9 read as PM. Unparseable times are kept (safe: better shown than
+    # silently dropped).
+    if day == "today" and as_of is None:
+        from datetime import datetime, timedelta as _td
+
+        def _still_to_run(r: Race) -> bool:
+            try:
+                h, m = r.off_time.strip().split(":")[:2]
+                hh, mm = int(h), int(m[:2])
+                if 1 <= hh <= 9:
+                    hh += 12
+                off = datetime.now().replace(hour=hh, minute=mm, second=0)
+                return off > datetime.now() + _td(minutes=5)
+            except (ValueError, AttributeError):
+                return True
+        before = len(races)
+        races = [r for r in races if _still_to_run(r)]
+        if progress and before != len(races):
+            progress(f"  time guard: {before - len(races)} race(s) already off — "
+                     f"only {len(races)} still to run are readable")
     if progress:
         progress(f"  reading the form on {len(races)} readable handicap(s) "
                  f"(form first, price last — rule #29)…")
