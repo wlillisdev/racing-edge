@@ -83,11 +83,24 @@ class RacingAPIClient:
         else:
             ds = day
         regions = [r.strip() for r in self._cfg.api.regions.split(",")]
-        params = [("date", ds)] + [("region_codes", r) for r in regions]
         # tier from env so a plan downgrade is one .env line, not a code change
         # (RACING_API_CARDS=standard after dropping Pro; default stays pro)
         import os
         tier = os.environ.get("RACING_API_CARDS", "pro").strip() or "pro"
+        if tier == "pro":
+            params = [("date", ds)] + [("region_codes", r) for r in regions]
+        else:
+            # standard/basic take day=today|tomorrow ONLY — no date param (the 422
+            # that silently killed every morning after the downgrade, 2026-07-13)
+            today = date.today().isoformat()
+            tomorrow = (date.today() + timedelta(days=1)).isoformat()
+            if ds == today:
+                dayp = "today"
+            elif ds == tomorrow:
+                dayp = "tomorrow"
+            else:
+                return {"racecards": []}   # past cards are Pro-only — honest empty
+            params = [("day", dayp)] + [("region_codes", r) for r in regions]
         return self._get(f"/racecards/{tier}", params=params,
                          allow_404=True) or {"racecards": []}
 
