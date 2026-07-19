@@ -68,6 +68,19 @@ class NapLog:
         )
         self._conn.commit()
 
+    def record_pass(self, *, day: date, reason: str) -> None:
+        """Bank a NO-BET day as a first-class row (won=-1: settled as 'no bet').
+        2026-07-18: an earned pass and a dead pipeline looked identical — empty inbox,
+        empty ledger. Now quiet days carry their reason and the watchman can tell
+        discipline from failure."""
+        self._conn.execute(
+            "INSERT OR REPLACE INTO nap (date, race_id, course, horse, horse_id, price, "
+            "score, confident, won, sp_dec, case_text, deep_conf) "
+            "VALUES (?,'PASS','','NO BET','',NULL,0,0,-1,NULL,?, '')",
+            (day.isoformat(), reason),
+        )
+        self._conn.commit()
+
     def settle(self, day: date, won: bool, sp_dec: float | None = None) -> None:
         self._conn.execute("UPDATE nap SET won = ?, sp_dec = ? WHERE date = ?",
                            (int(won), sp_dec, day.isoformat()))
@@ -75,7 +88,7 @@ class NapLog:
 
     def strike_rate(self, confident_only: bool = False) -> tuple[int, int]:
         """(naps won, naps settled). Pass confident_only to judge the real naps alone."""
-        q = "SELECT COUNT(*) FROM nap WHERE won IS NOT NULL"
+        q = "SELECT COUNT(*) FROM nap WHERE won IN (0, 1)"      # -1 = pass day, not a bet
         if confident_only:
             q += " AND confident = 1"
         settled = int(self._conn.execute(q).fetchone()[0])

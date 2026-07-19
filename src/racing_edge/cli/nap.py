@@ -34,6 +34,14 @@ def _maybe_email(buf: list[str], subject: str, email: bool) -> None:
     print(f"  email: {'sent to ' + (recipient() or '?') if ok else 'FAILED — check the SMTP env'}")
 
 
+def _bank_pass(day, reason: str) -> None:
+    """A no-bet day is still a ledger day — banked with its reason (never overwrites
+    a real pick: record_pass only fires on paths where none was banked)."""
+    log = open_nap_log()
+    log.record_pass(day=day, reason=reason)
+    log.close()
+
+
 def _record() -> int:
     """Show the banked nap record — read it yourself, don't take my word for it."""
     log = open_nap_log()
@@ -44,6 +52,10 @@ def _record() -> int:
         return 0
     print("  NAP RECORD (banked BEFORE each race, settled AFTER — the real ledger):")
     for r in rows:
+        if r["won"] == -1:
+            print(f"    {r['date']}  NO BET (pass) — "
+                  f"{(r.get('case_text') or 'discipline')[:60]}")
+            continue
         res = ("WON" if r["won"] == 1 else "lost") if r["won"] is not None else "pending"
         conf = "CONFIDENT" if r["confident"] else "lean"
         sp = f" @{r['sp_dec']}" if r["sp_dec"] else ""
@@ -72,6 +84,12 @@ def _resend(day_str: str) -> int:
     if n is None:
         print(f"  No nap banked for {day} — nothing to resend.")
         return 1
+    if n["won"] == -1:
+        body = (f"NO BET banked for {day} — an earned pass, not a failure.\n"
+                f"reason: {n.get('case_text') or 'discipline'}")
+        print(body)
+        _maybe_email([body], f"Nap — no bet ({day}, resend)", email=True)
+        return 0
     tag = "CONFIDENT NAP" if n["confident"] else "best candidate (not confident)"
     res = ("" if n["won"] is None else
            f"\nresult: {'WON' if n['won'] == 1 else 'lost'}"
@@ -232,6 +250,7 @@ def main() -> int:
 
     if not field:
         emit("No nap — nothing readable stands up today. Discipline is a position.")
+        _bank_pass(resolve_date(args.day), "nothing readable on the card")
         _maybe_email(out, "Nap — no bet today", args.email)
         return 0
 
@@ -254,6 +273,7 @@ def main() -> int:
 
     if not survivors:
         emit("No nap — every contender crossed off. Discipline is a position.")
+        _bank_pass(resolve_date(args.day), "every contender crossed off by the gates")
         _maybe_email(out, "Nap — no bet today", args.email)
         return 0
 
@@ -333,6 +353,7 @@ def main() -> int:
                 emit("  DEEP READ: PASS earned, race by race:")
                 emit(f"    {mp.pass_reason}")
                 emit("  No nap today — a pass argued on facts beats a stupid pick.")
+                _bank_pass(resolve_date(args.day), f"deep-read pass: {mp.pass_reason}")
                 _maybe_email(out, "Nap — no bet today (pass earned)", args.email)
                 return 0
             chosen = next((p for picks in cand_races for p in picks
@@ -381,6 +402,7 @@ def main() -> int:
         break
     if fr is None:
         emit("  No nap — every candidate's form franked HOLLOW. Discipline is a position.")
+        _bank_pass(resolve_date(args.day), "all candidates franked hollow")
         _maybe_email(out, "Nap — no bet today (franked hollow)", args.email)
         return 0
 
