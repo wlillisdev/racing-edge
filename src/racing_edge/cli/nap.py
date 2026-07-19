@@ -30,8 +30,8 @@ def _maybe_email(buf: list[str], subject: str, email: bool) -> None:
         print("  (--email set, but EMAIL_SENDER/PASSWORD/RECIPIENT aren't in the env — not sent)")
         return
     ok = send(subject, "\n".join(buf), title=subject, subtitle="racing-edge form trial")
-    # show the ADDRESS it went to — so you can check it's really yours (and check spam)
-    print(f"  email: {'sent to ' + (recipient() or '?') if ok else 'FAILED — check the SMTP env'}")
+    # the delivery VERDICT, verified in the mailbox itself — not just 'sent'
+    print(f"  email to {recipient() or '?'}: {ok if ok else 'FAILED — check the SMTP env'}")
 
 
 def _bank_pass(day, reason: str) -> None:

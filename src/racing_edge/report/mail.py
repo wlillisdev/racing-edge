@@ -15,6 +15,7 @@ import os
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from email.utils import make_msgid
 
 _REQUIRED = ("EMAIL_SENDER", "EMAIL_PASSWORD", "EMAIL_RECIPIENT")
 
@@ -29,7 +30,7 @@ def recipient() -> str:
     return os.environ.get("EMAIL_RECIPIENT", "")
 
 
-def send(subject: str, body: str, title: str = "", subtitle: str = "") -> bool:
+def send(subject: str, body: str, title: str = "", subtitle: str = ""):
     """Send `body` (plain text) to EMAIL_RECIPIENT over SMTP/TLS, with a styled HTML
     part when email_render is importable. Never raises; returns True on success."""
     if not configured():
@@ -57,6 +58,46 @@ def send(subject: str, body: str, title: str = "", subtitle: str = "") -> bool:
     msg["Subject"] = subject
     msg["From"] = sender
     msg["To"] = recipient
+    msg_id = make_msgid()
+    msg["Message-ID"] = msg_id
+
+    def _verify_and_rescue() -> str:
+        """SELF-VERIFYING DELIVERY (2026-07-19 — 'I am not getting nap email, simple
+        as that, find the bug'): SMTP said accepted every time, but Gmail was FILING
+        the self-sent betting-shaped mail. So the machine now checks its own mailbox
+        over IMAP: found in INBOX -> proven; found in SPAM -> moved to INBOX
+        automatically (which also trains Gmail). Never raises."""
+        try:
+            import imaplib
+            import time
+            time.sleep(8)                          # give Gmail a moment to file it
+            box = imaplib.IMAP4_SSL(
+                os.environ.get("IMAP_HOST", "imap.gmail.com"), timeout=25)
+            box.login(sender, password)
+
+            def _find(folder: str):
+                try:
+                    box.select(folder)
+                    typ, d = box.search(None, "HEADER", "Message-ID", msg_id)
+                    return d[0].split() if typ == "OK" and d and d[0] else []
+                except Exception:
+                    return []
+
+            if _find("INBOX"):
+                box.logout()
+                return "delivered to INBOX (verified)"
+            spam_ids = _find("[Gmail]/Spam")
+            if spam_ids:
+                for i in spam_ids:
+                    box.copy(i, "INBOX")
+                    box.store(i, "+FLAGS", "\\Deleted")
+                box.expunge()
+                box.logout()
+                return "was filed in SPAM — RESCUED to Inbox (Gmail is learning)"
+            box.logout()
+            return "accepted (not yet filed — check All Mail if missing)"
+        except Exception as exc:
+            return f"accepted (verify unavailable: {exc.__class__.__name__})"
 
     # RETRY on transient failure — one shot at 07:30 sharp can lose a day's nap email
     # to a network blip (suspected 2026-07-04). The API client retries; so does this now.
@@ -69,7 +110,7 @@ def send(subject: str, body: str, title: str = "", subtitle: str = "") -> bool:
                 smtp.ehlo()
                 smtp.login(sender, password)
                 smtp.sendmail(sender, recipient, msg.as_string())
-            return True
+            return _verify_and_rescue()
         except smtplib.SMTPAuthenticationError:
             return False                      # bad credentials — retrying won't help
         except (smtplib.SMTPException, OSError):
