@@ -22,6 +22,16 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 
+# FLIGHT RECORDER (2026-07-21): the scheduled task kept silently not-running and the
+# only evidence lived on the Tasks webpage. Now every run — scheduled or manual —
+# logs its start, its FULL output and its exit code to data/task_runs.log, readable
+# from the console:  tail -80 data/task_runs.log
+mkdir -p data
+LOGF="data/task_runs.log"
+echo "=== $(date -u '+%F %T') UTC :: trial.sh ${1:-nap} START" >> "$LOGF"
+trap 'echo "=== $(date -u "+%F %T") UTC :: trial.sh '"${1:-nap}"' EXIT $?" >> "$LOGF"' EXIT
+exec > >(tee -a "$LOGF") 2>&1
+
 export PYTHONPATH=src
 PY="venv/bin/python"
 # The SDK/httpx clash only bites the paths that import the anthropic SDK (nap/dissect/

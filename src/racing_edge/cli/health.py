@@ -96,6 +96,27 @@ def main() -> int:
         "the follow/oppose list is silting up unverified",
         lines)
 
+    # THE FLIGHT RECORDER — did the scheduler actually LAUNCH anything today?
+    # (2026-07-21: the ledger proved scheduled runs weren't happening; this separates
+    # 'PythonAnywhere never started it' from 'started and died at line X')
+    try:
+        from pathlib import Path as _P
+        tail = _P("data/task_runs.log").read_text().splitlines()
+        starts = [ln for ln in tail if "START" in ln and today.isoformat() in ln]
+        exits = [ln for ln in tail if "EXIT" in ln and today.isoformat() in ln]
+        all_ok &= _check(
+            bool(starts),
+            f"scheduler launched {len(starts)} run(s) today "
+            f"(last exit: {exits[-1].split('EXIT')[-1].strip() if exits else 'n/a'})",
+            "the scheduler NEVER LAUNCHED trial.sh today — this is a PythonAnywhere-"
+            "side failure (task disabled/expired, account plan limits, or CPU quota), "
+            "NOT a code failure. Check the Tasks page and account plan.",
+            lines)
+    except FileNotFoundError:
+        lines.append("  flight recorder: no runs logged yet (starts with the next run)")
+    except Exception:
+        lines.append("  flight recorder: log unreadable")
+
     # THE MODEL BILL, counted by the machine itself (real token counts from every
     # API response, logged to data/model_usage.csv — multiply by your plan's rates)
     try:
