@@ -325,9 +325,33 @@ def main() -> int:
             # the student's own notes go into the exam: validated nuances + EVERY
             # tracked horse running today + rules under fire on the scoreboard
             lesson_lines: list[str] = []
+            # THE LOSSES RIDE WITH THE PICKER (coroner fix 2: the morning model did
+            # not know it was on a losing streak — night autopsies fed nothing while
+            # validated=0). Last 5 losing naps + their autopsy verdicts + the record.
+            _llog = open_nap_log()
+            _hist = _llog.history()
+            _w, _n = _llog.strike_rate()
+            _llog.close()
+            losses = [x for x in _hist if x["won"] == 0][-5:]
             nlog2 = open_nuance_log()
+            _nu_by_race = {}
+            for _nu in nlog2.all():
+                _nu_by_race.setdefault(_nu["race_id"], _nu)
+            if _n:
+                lesson_lines.append(f"- RECORD: {_w}/{_n} settled — "
+                                    + ("COLD: tighten race selection, demand the full "
+                                       "profile" if _w * 2 < _n else "steady"))
+            for x in losses:
+                aut = _nu_by_race.get(x["race_id"])
+                missed = (aut.get("what_missed") or "")[:140] if aut else ""
+                lesson_lines.append(
+                    f"- RECENT LOSS {x['date']} {x['horse']} ({x['course']})"
+                    + (f": missed — {missed}" if missed else ""))
             validated = [n for n in nlog2.all() if n["status"] == "validated"]
             lesson_lines += [f"- MASTER-VALIDATED: {n['nuance']}" for n in validated]
+            proposed = [n for n in nlog2.all() if n["status"] == "proposed"][-3:]
+            lesson_lines += [f"- UNPROVEN nuance (weigh lightly): {n['nuance'][:140]}"
+                             for n in proposed]
             # tracked clues are UNVERIFIED leads (2026-07-21: two losers were built on
             # tracked clues my old header mislabelled 'master validated' — the model
             # believed the label). Honest label + explicit weight instruction.

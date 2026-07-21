@@ -136,11 +136,41 @@ def main() -> int:
     except Exception:
         lines.append("  model usage: ledger unreadable")
 
-    w, n = 0, 0
-    settled = [x for x in naps if x["won"] is not None]
-    w, n = sum(x["won"] for x in settled), len(settled)
+    log2 = open_nap_log()
+    w, n = log2.strike_rate()                      # correct: pass days (won=-1) excluded
+    sw, sn = log2.shadow_strike()
+    log2.close()
     lines.append(f"  record: {w}/{n} settled naps won"
                  + (f" ({100 * w / n:.0f}%)" if n else ""))
+    # LOSS-STREAK ALARM (coroner fix 1: six losses passed with no alarm anywhere)
+    real = [x for x in naps if x["won"] in (0, 1)]
+    streak = 0
+    for x in reversed(real):
+        if x["won"] == 0:
+            streak += 1
+        else:
+            break
+    last7 = real[-7:]
+    cold = sum(1 for x in last7 if x["won"] == 1) <= 1 and len(last7) >= 6
+    all_ok &= _check(
+        streak < 4 and not cold,
+        f"form healthy (current losing streak: {streak})",
+        f"COLD STREAK — {streak} straight losses / {sum(1 for x in last7 if x['won'] == 1)}"
+        f"/{len(last7)} in the last 7. Tighten race selection; review the losing cases "
+        "before trusting another pick.",
+        lines)
+    # SHADOW A/B ALARM (coroner fix 3: if the free engine outpicks the flagship
+    # deep read, that fact must surface, not sit unread in a table)
+    if sn >= 7:
+        all_ok &= _check(
+            not (sw - w >= 2),
+            f"deep read holding its own vs shadow engine ({w}/{n} vs {sw}/{sn})",
+            f"the SHADOW ENGINE is outpicking the deep read ({sw}/{sn} vs {w}/{n}) — "
+            "the flagship may be subtracting value; review the A/B before paying for "
+            "more deep reads.",
+            lines)
+    elif sn:
+        lines.append(f"  shadow A/B: {sw}/{sn} (needs 7+ settled for the alarm)")
     verdict = "ALL GREEN — the loop is running and feeding itself." if all_ok else \
         "RED LINES ABOVE — a part of the loop is silently dead. Fix before trusting a pick."
     lines.append(f"\n  {verdict}")
