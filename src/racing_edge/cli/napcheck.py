@@ -63,7 +63,8 @@ def main() -> int:
             if fr.is_thin:
                 reason = f"frank veto on {cand.runner.horse}"
                 continue
-            delta = mark_read(cand.runner.official_rating, cand.history).delta
+            delta = mark_read(cand.runner.official_rating, cand.history,
+                              code=cand.race.code).delta
             fav = min((p.price for p in field
                        if p.race.race_id == cand.race.race_id and p.price), default=None)
             fails = []

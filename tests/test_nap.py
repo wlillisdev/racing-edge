@@ -215,6 +215,24 @@ def test_field_of_young_unexposed_horses_is_flagged_a_novice_in_disguise() -> No
     assert nominate_nap(_YoungClient(), day="today", codes=("flat",), now=MORNING) is None  # no bet
 
 
+def test_marks_never_cross_codes() -> None:
+    """Caught BY THE DEEP READ mid-pass (2026-07-21): a flat 61 compared against a
+    hurdles win off 107 produced a fantasy 'WELL-IN -46lb'. Flat and jumps marks are
+    different currencies — with the code given, only same-code wins count."""
+    from racing_edge.domain.mark import mark_read
+    hist = (
+        PastRun(date=date(2026, 6, 1), position=1, official_rating=107,
+                race_type="Hurdle"),
+        PastRun(date=date(2026, 4, 1), position=2, official_rating=63,
+                race_type="Flat"),
+    )
+    assert mark_read(61, hist).delta == -46            # codeless: the old fantasy
+    assert mark_read(61, hist, code="flat").delta is None   # honest: no FLAT win
+    flat_hist = (PastRun(date=date(2026, 5, 1), position=1, official_rating=59,
+                         race_type="Flat"),) + hist
+    assert mark_read(61, flat_hist, code="flat").delta == 2  # real flat comparison
+
+
 def test_conviction_needs_the_mark_to_be_confident() -> None:
     # everything aligns but the OR isn't on the card -> mark unknown -> never confident
     r = Runner(horse_id="w", horse="Gem", odds=Odds(consensus=3.0))   # no official_rating

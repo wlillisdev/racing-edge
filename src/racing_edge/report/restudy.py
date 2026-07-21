@@ -60,7 +60,7 @@ def render_preread(race: Race, histories: dict[str, tuple[PastRun, ...]],
     lines = [f"  PRE-RACE CARD: {head}  ({race.field_size} declared)"]
     for r in ordered:
         hist = histories.get(r.horse_id, ())
-        mark = mark_read(r.official_rating, hist)
+        mark = mark_read(r.official_rating, hist, code=race.code)
         marktxt = mark.verdict or "mark OWED (no prior win / no today mark)"
         rank = (f"mkt {mkt_rank[r.horse_id]}/{len(priced)} @{r.odds.consensus}"
                 if r.horse_id in mkt_rank else "price OWED")
@@ -118,7 +118,7 @@ def render_restudy(race: Race, result: RaceResult,
         sp = rr.sp_dec if rr else None
         star = " ★WON" if (rr and rr.position == 1) else ""
         hist = histories.get(r.horse_id, ())
-        mark = mark_read(r.official_rating, hist)
+        mark = mark_read(r.official_rating, hist, code=race.code)
         marktxt = mark.verdict or "mark OWED (no prior win / no today mark)"
         btn = f" btn {rr.beaten_lengths}" if rr and rr.beaten_lengths else ""
         rank = f"  mkt {mkt_rank[r.horse_id]}/{len(priced)}" if r.horse_id in mkt_rank else ""

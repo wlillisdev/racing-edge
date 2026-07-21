@@ -413,7 +413,8 @@ def main() -> int:
     # requires: WELL-IN mark, Class 4 or better (unknown class allowed — Irish cards),
     # and an anchored market. Fail = no bet, with the reasons said out loud.
     from racing_edge.domain.mark import mark_read
-    delta = mark_read(nap.runner.official_rating, nap.history).delta
+    delta = mark_read(nap.runner.official_rating, nap.history,
+                      code=nap.race.code).delta
     race_fav = min((p.price for p in field
                     if p.race.race_id == r.race_id and p.price), default=None)
     # THE MARK IS SACRED — never a pick that isn't well-in. Non-negotiable.

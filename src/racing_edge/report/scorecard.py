@@ -74,7 +74,7 @@ def _same_going(h: PastRun, race: Race) -> bool:
 
 # each lens: (RunnerEvidence, Race) -> Cell. owed=True means "go and get it".
 def _mark(ev: RunnerEvidence, race: Race) -> Cell:
-    mr = mark_read(ev.runner.official_rating, ev.history)
+    mr = mark_read(ev.runner.official_rating, ev.history, code=race.code)
     if mr.today is None:
         return Cell("OR?", owed=True)                       # no mark on the card
     if mr.last_won is None:

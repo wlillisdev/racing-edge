@@ -56,7 +56,7 @@ def conviction(runner: Runner, race: Race, history: tuple[PastRun, ...],
     aligned: list[str] = []
     flags: list[str] = []
 
-    mr = mark_read(runner.official_rating, history)
+    mr = mark_read(runner.official_rating, history, code=race.code)
     if mr.delta is not None:
         if mr.delta <= 0:
             aligned.append(f"well-in ({mr.verdict})")
