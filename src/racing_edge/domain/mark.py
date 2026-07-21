@@ -50,6 +50,20 @@ def mark_read(today_or: int | None, history: tuple[PastRun, ...],
     last_won = next(
         (h.official_rating for h in history
          if h.position == 1 and h.official_rating
-         and (code is None or not h.race_type or race_code(h.race_type) == code)),
+         and (code is None
+              or bool(h.race_type) and race_code(h.race_type) == code)),
         None)
     return MarkRead(today=today_or, last_won=last_won)
+
+
+def same_code_runs(history: tuple[PastRun, ...], code: str) -> tuple[PastRun, ...]:
+    """History filtered to runs in the SAME code as today's race. Filter FIRST, window
+    after — a [:3] window sliced before filtering still reads the wrong-code runs
+    (2026-07-21 contamination audit: momentum, manner, course and trip lenses were all
+    scoring a flat race off jumps runs, and vice versa). A blank race_type is a data
+    gap, not evidence of the wrong code: those runs stay in for the SOFT lenses. The
+    sacred mark gate is stricter — mark_read refuses a blank-typed win as its anchor,
+    because a fantasy well-in is worse than an OWED one."""
+    from racing_edge.domain.units import race_code
+    return tuple(h for h in history
+                 if not h.race_type or race_code(h.race_type) == code)

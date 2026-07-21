@@ -13,9 +13,26 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from racing_edge.domain.manner import nap_verdict
-from racing_edge.domain.mark import mark_read
+from racing_edge.domain.mark import mark_read, same_code_runs
 from racing_edge.domain.models import PastRun, Race, Runner
 from racing_edge.domain.tells import match_tells
+
+# The lens FAMILIES — the currency conviction is scored in. The winning-era engine
+# had ~6 orthogonal lenses, so score>=3 meant half the jigsaw agreed. By 2026-07-12
+# there were ~15 stackable labels (regression audit: an in-form favourite from a hot
+# yard could stack 8+ correlated labels and outrank the profile that actually won).
+# Distinct FAMILIES restore the old meaning: two labels saying the same thing —
+# "well-in" + "heavily treated", or course winner + course jockey — count once.
+_FAMILIES: tuple[tuple[str, tuple[str, ...]], ...] = (
+    ("mark", ("well-in", "heavily treated")),
+    ("manner", ("finisher", "excuse last time")),
+    ("momentum", ("RED-HOT", "won last time out")),
+    ("course", ("course winner", "local master yard", "local course master",
+                "course jockey")),
+    ("trip", ("trip proven",)),
+    ("market", ("market sweet spot", "fair-priced favourite")),
+    ("intent", ("in-form yard", "#1 rider", "headgear key")),
+)
 
 
 @dataclass(frozen=True)
@@ -26,11 +43,14 @@ class Conviction:
 
     @property
     def score(self) -> int:
-        return len(self.aligned)
+        """Distinct lens FAMILIES aligned (max 7) — not the raw label count."""
+        return sum(1 for _name, keys in _FAMILIES
+                   if any(k in a for k in keys for a in self.aligned))
 
     @property
     def confident(self) -> bool:
-        """A real nap: at least three lenses align, the MARK was read, nothing flags it."""
+        """A real nap: at least three FAMILIES align, the MARK was read, nothing
+        flags it — the winning-era bar, meaningful again."""
         return self.score >= 3 and self.mark_known and not self.flags
 
 
@@ -56,6 +76,12 @@ def conviction(runner: Runner, race: Race, history: tuple[PastRun, ...],
     aligned: list[str] = []
     flags: list[str] = []
 
+    # form lenses read SAME-CODE runs only (2026-07-21 contamination audit: a horse
+    # that won two jumps races read "RED-HOT" for a flat handicap, a chase faller
+    # scored "excuse last time" on the flat, and a hurdles win at the track scored
+    # "course winner"). Filter FIRST, window after.
+    hist = same_code_runs(history, race.code)
+
     mr = mark_read(runner.official_rating, history, code=race.code)
     if mr.delta is not None:
         if mr.delta <= 0:
@@ -71,7 +97,7 @@ def conviction(runner: Runner, race: Race, history: tuple[PastRun, ...],
     # months ago but starved: PastRun carried no comment until the window opened. Now
     # each recent run's in-running comment feeds it. A repeated out-battled/found-little
     # profile is a FLAG (a placer, not a nap); a proven finisher is a lens FOR it.
-    mv = nap_verdict([h.comment for h in history[:4]])
+    mv = nap_verdict([h.comment for h in hist[:4]])
     if mv.recommendation == "win_positive":
         aligned.append(f"finisher ({mv.finisher_runs} strong finish(es) in comments)")
     elif mv.recommendation == "place_only":
@@ -82,7 +108,7 @@ def conviction(runner: Runner, race: Race, history: tuple[PastRun, ...],
     # CURRENT FORM / MOMENTUM (2026-07-09, the master: the nap faced an in-form rival
     # who "absolutely pissed in" — plain winning momentum had NO lens; the mark and
     # manner could both miss a horse that's simply red-hot right now)
-    recent = [h.position for h in history[:3] if h.position is not None]
+    recent = [h.position for h in hist[:3] if h.position is not None]
     if len(recent) >= 2 and recent[0] == 1 and recent[1] == 1:
         aligned.append("RED-HOT — won its last two")
     elif recent and recent[0] == 1:
@@ -90,7 +116,7 @@ def conviction(runner: Runner, race: Race, history: tuple[PastRun, ...],
     if len(recent) >= 2 and all(p >= 6 for p in recent[:2]):
         flags.append(f"cold form ({'-'.join(str(p) for p in recent[:2])} last two)")
 
-    course_wins = sum(1 for h in history if h.position == 1 and _same_course(h, race))
+    course_wins = sum(1 for h in hist if h.position == 1 and _same_course(h, race))
     if course_wins >= 2:
         aligned.append("proven course winner (depth)")
     elif course_wins == 1:
@@ -115,7 +141,17 @@ def conviction(runner: Runner, race: Race, history: tuple[PastRun, ...],
     if local_strike is not None and local_runs >= 10 and local_strike >= 0.18:
         aligned.append(f"local master yard ({round(local_strike * 100)}% at this "
                        f"course, {local_runs} runs — #10)")
-    # the TRIP lens — proven at ~today's distance (the distance-times endpoint)
+    # the TRIP lens — proven at ~today's distance. The distance-times endpoint
+    # aggregates the WHOLE career across codes (13-17f is where flat and hurdles
+    # overlap — 3-from-8 over 2m hurdles read "trip proven" for a 2m flat race), so
+    # a mixed-code horse's trip is read from its same-code runs instead.
+    if len(hist) < len(history):
+        trips = [h for h in hist
+                 if h.distance_f and race.distance_f
+                 and abs(h.distance_f - race.distance_f) <= 1.0]
+        trip_runs = len(trips)
+        trip_strike = (sum(1 for h in trips if h.position == 1) / trip_runs
+                       if trip_runs else None)
     if trip_strike is not None and trip_runs >= 4 and trip_strike >= 0.25:
         aligned.append(f"trip proven ({round(trip_strike * 100)}% over this distance, "
                        f"{trip_runs} runs)")

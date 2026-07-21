@@ -18,9 +18,11 @@ def _race(**kw):
                 race_type="Handicap Chase", is_handicap=True, distance_f=25.0, going="Good", **kw)
 
 
-def _won_cdg(d, orr):
+def _won_cdg(d, orr, rtype="Chase"):
+    # the live feed always carries the run's type; the sacred mark gate refuses a
+    # blank-typed win as its anchor (a fantasy well-in is worse than an OWED one)
     return PastRun(date=d, position=1, course="Cartmel", going="Good", distance_f=25.0,
-                   official_rating=orr)
+                   official_rating=orr, race_type=rtype)
 
 
 def test_conviction_rewards_the_well_in_proven_horse() -> None:
@@ -255,10 +257,10 @@ class _Client:
         if hid == "GEM":   # well-in repeat course winner
             return [
                 {"date": "2026-05-01", "race_id": "p1", "course": "Cartmel", "going": "Good",
-                 "dist_f": "25.0",
+                 "dist_f": "25.0", "type": "Chase",
                  "runners": [{"horse_id": "GEM", "position": "1", "or": "120"}]},
                 {"date": "2026-04-01", "race_id": "p2", "course": "Cartmel", "going": "Good",
-                 "dist_f": "25.0",
+                 "dist_f": "25.0", "type": "Chase",
                  "runners": [{"horse_id": "GEM", "position": "1", "or": "116"}]},
             ]
         return []

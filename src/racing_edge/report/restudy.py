@@ -16,7 +16,7 @@ Pure: a race (card) + its result + each runner's history in, a readout out.
 from __future__ import annotations
 
 from racing_edge.domain.manner import nap_verdict
-from racing_edge.domain.mark import mark_read
+from racing_edge.domain.mark import mark_read, same_code_runs
 from racing_edge.domain.models import PastRun, Race, RaceResult, RunnerResult
 
 
@@ -32,12 +32,16 @@ def _move(morning: float | None, sp: float | None) -> str:
 
 
 def _past_line(h: PastRun) -> str:
-    """One past run, with the COMMENT — the how-it-ran door the old code dropped."""
+    """One past run, with the COMMENT — the how-it-ran door the old code dropped.
+    The race TYPE prints too (2026-07-21 audit: without it, the model shown an or107
+    hurdles win against today's flat or61 happily re-derives by eye the cross-code
+    'WELL-IN -46lb' fantasy that mark_read no longer computes)."""
     pos = str(h.position) if h.position else "—"
     cls = f"c{h.race_class}" if h.race_class else "c?"
     org = f"or{h.official_rating}" if h.official_rating else "or?"
     d = f"{h.distance_f:.0f}f" if h.distance_f else "?f"
-    where = f"{h.course[:10]} {d} {h.going[:6] or '?'} {cls} {org}".strip()
+    typ = (h.race_type or "?")[:6]
+    where = f"{h.course[:10]} {typ} {d} {h.going[:6] or '?'} {cls} {org}".strip()
     comment = h.comment.strip() if h.comment.strip() else "OWED — no comment through the window"
     rid = f"  [race {h.race_id}]" if h.race_id else ""       # thread id for the investigator
     return f"        {h.date}  {pos:>2}  {where:<34}  {comment}{rid}"
@@ -70,7 +74,7 @@ def render_preread(race: Race, histories: dict[str, tuple[PastRun, ...]],
         lines.append(f"  {r.horse:22} {rank}  [id {r.horse_id}]")
         lines.append(f"        mark: {marktxt}  | form {r.form or '?'} "
                      f"| OR {r.official_rating or '?'} RPR {r.rpr or '?'}{gear}")
-        mv = nap_verdict([h.comment for h in hist[:4]])
+        mv = nap_verdict([h.comment for h in same_code_runs(hist, race.code)[:4]])
         if mv.recommendation != "neutral" or mv.finisher_runs or mv.non_finisher_runs:
             lines.append(f"        manner read (#1): {mv.recommendation} — {mv.reason}")
         spot = r.spotlight.strip()
@@ -131,7 +135,7 @@ def render_restudy(race: Race, result: RaceResult,
                      f"| OR {r.official_rating or '?'} RPR {r.rpr or '?'}{gear}")
         # the manner read, done in code from the comments (rule #1) — the model reasons
         # over the verdict instead of re-classifying prose (where it slips)
-        mv = nap_verdict([h.comment for h in hist[:4]])
+        mv = nap_verdict([h.comment for h in same_code_runs(hist, race.code)[:4]])
         if mv.recommendation != "neutral" or mv.finisher_runs or mv.non_finisher_runs:
             lines.append(f"        manner read (#1): {mv.recommendation} — {mv.reason}")
         spot = r.spotlight.strip()

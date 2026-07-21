@@ -421,7 +421,8 @@ def main() -> int:
     fr = None
     fallbacks = [nap] + [s for s in survivors if s is not nap]
     for cand in fallbacks[:3]:
-        f = frank_form(client, cand.runner.horse_id, cand.history)
+        f = frank_form(client, cand.runner.horse_id, cand.history,
+                       code=cand.race.code)
         if f.is_thin:
             emit(f"  ✗ FRANK VETO: {cand.runner.horse} — {f.note} "
                  f"(a win in a bad race is a mirage; re-picking)")
@@ -448,11 +449,12 @@ def main() -> int:
     race_fav = min((p.price for p in field
                     if p.race.race_id == r.race_id and p.price), default=None)
     # FALLBACK DISCIPLINE (2026-07-21: three of six losers were shallow fallback
-    # picks at conviction 3 — the bare minimum under today's inflated lens count,
+    # picks at conviction 3 — the bare minimum under the then-inflated lens count,
     # banked when the deep read errored). Reader unavailable => the engine pick must
-    # carry a WINNING-ERA core (conv >= 5 including well-in) or the day is a pass.
+    # carry a WINNING-ERA core (4+ lens FAMILIES including well-in — the banked
+    # winners' shape: mark + course + market + one more) or the day is a pass.
     if not deep_case:
-        if nap.conviction.score < 5 or not any(
+        if nap.conviction.score < 4 or not any(
                 "well-in" in a for a in nap.conviction.aligned):
             emit(f"  ✗ FALLBACK TOO THIN: deep read unavailable and the engine pick "
                  f"({nap.runner.horse}, conv {nap.conviction.score}) lacks the "
@@ -480,21 +482,36 @@ def main() -> int:
     if race_fav is None or race_fav >= 5.0:
         soft_fails.append(f"no market anchor (fav {race_fav})")
     off_profile = bool(soft_fails)
-    argued = bool(deep_case) and mp is not None and len(mp.cite) >= 3
+    # the bypass needs more than eloquence (regression audit: an LLM cites 3 facts
+    # every single time — the bar filtered nothing). An off-profile case is arguable
+    # only in a race the gates did NOT flag: the Ebony Maw race was READABLE (a
+    # rematch, a false favourite); a gated race arguing itself off-profile is exactly
+    # the eloquent-loser signature.
+    race_gated = any(("novice in disguise" in f) or ("bottom-grade" in f)
+                     or ("open market" in f) for f in c.flags)
+    argued = (bool(deep_case) and mp is not None and len(mp.cite) >= 3
+              and not race_gated)
     if off_profile and not argued:
-        emit(f"  ✗ PROFILE FLOOR: {nap.runner.horse} — {'; '.join(soft_fails)} and no "
-             f"argued multi-fact case to override. No bet beats a stupid pick.")
+        why = ("the race itself is gated — no off-profile licence in a flagged race"
+               if race_gated and deep_case else
+               "no argued multi-fact case to override")
+        emit(f"  ✗ PROFILE FLOOR: {nap.runner.horse} — {'; '.join(soft_fails)} and "
+             f"{why}. No bet beats a stupid pick.")
         _maybe_email(out, "Nap — no bet today (profile floor)", args.email)
         return 0
     if off_profile:
         emit(f"  ⚠ OFF-PROFILE ({'; '.join(soft_fails)}) — allowed on an argued case "
              f"({len(mp.cite)} cited facts), as a LEAN only.")
 
-    # the deep read's own verdict decides CONFIDENT when it made the pick —
-    # but off-profile is NEVER confident
+    # the deep read's own verdict decides CONFIDENT when it made the pick — but
+    # off-profile is NEVER confident, and neither is a pick the engine flagged (the
+    # reader may overrule the cruncher's red flags, but only ever as a LEAN)
     deep_conf = mp.confidence if deep_case and mp is not None else ""
+    if deep_case and c.flags:
+        emit(f"  ⚠ the engine flags this horse ({', '.join(c.flags)}) — the reader "
+             f"may overrule, but never at full confidence. LEAN only.")
     confident = ((deep_conf == "confident") if deep_case else c.confident) \
-        and not off_profile
+        and not off_profile and not c.flags
     if nap.price and nap.price >= 8.0:
         emit(f"  instrument (#28): EACH-WAY at {nap.price} — the place is the net, "
              f"the win is the payday.")

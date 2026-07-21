@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 
-from racing_edge.domain.mark import mark_read
+from racing_edge.domain.mark import mark_read, same_code_runs
 from racing_edge.domain.models import PastRun, Race, Runner
 from racing_edge.domain.units import going_band
 
@@ -134,5 +134,10 @@ _TELLS: tuple[Callable[[Runner, Race, tuple[PastRun, ...]], str | None], ...] = 
 
 def match_tells(runner: Runner, race: Race, history: tuple[PastRun, ...]) -> tuple[str, ...]:
     """The tells this runner trips, in the conditions of this race. Empty when none —
-    the library is young; it grows as results teach me more."""
-    return tuple(note for tell in _TELLS if (note := tell(runner, race, history)) is not None)
+    the library is young; it grows as results teach me more.
+
+    Tells only read SAME-CODE runs (2026-07-21 contamination audit: the 530133a fix
+    missed these call sites — _well_in still printed the -46lb flat-vs-hurdles fantasy,
+    and worse, a fantasy well-in delta was SPARING horses from the rising-mark trap)."""
+    hist = same_code_runs(history, race.code)
+    return tuple(note for tell in _TELLS if (note := tell(runner, race, hist)) is not None)

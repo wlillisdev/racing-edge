@@ -59,7 +59,8 @@ def main() -> int:
         pick = None
         reason = "no survivors (gates crossed everything off)"
         for cand in survivors[:3]:
-            fr = frank_form(client, cand.runner.horse_id, cand.history, as_of=day)
+            fr = frank_form(client, cand.runner.horse_id, cand.history, as_of=day,
+                            code=cand.race.code)
             if fr.is_thin:
                 reason = f"frank veto on {cand.runner.horse}"
                 continue

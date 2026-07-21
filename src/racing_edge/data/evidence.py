@@ -131,7 +131,11 @@ def build_evidence(race: Race, client: _Fetcher, as_of: date | None = None) -> l
     evidence: list[RunnerEvidence] = []
     jcache: dict[str, tuple[float | None, int]] = {}
     for r in race.runners:
-        history = past_runs_from_raw(client.horse_results(r.horse_id), r.horse_id)
+        # limit 20 (was the default 12): the form lenses now read SAME-CODE runs only,
+        # and a dual-code horse whose last 12 runs are all one code would otherwise
+        # have its relevant history pushed out of the window entirely (2026-07-21 audit)
+        history = past_runs_from_raw(client.horse_results(r.horse_id, limit=20),
+                                     r.horse_id)
         if as_of is not None:
             history = tuple(h for h in history if h.date < as_of)
         # the TRIP lens (distance-times endpoint) and the JOCKEY-AT-COURSE lens (#30) —

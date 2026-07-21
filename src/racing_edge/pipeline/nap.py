@@ -33,11 +33,12 @@ class NapPick:
     history: tuple = ()          # the contender's past runs — for the morning deep read
 
 
-def _rank_key(p: NapPick) -> tuple[int, int, int, float]:
+def _rank_key(p: NapPick) -> tuple[int, int, int, int, float]:
     # RACE QUALITY breaks ties (the master, 2026-07-05: "really bad race selections —
     # poor classes, anything could win"): between equal convictions, the pick in the
     # BETTER-CLASS race wins. A readable Class 3 beats a Class 6 scramble every time.
-    return (int(p.conviction.confident), p.conviction.score,
+    # score is lens FAMILIES (coarse, honest); raw label count breaks family ties.
+    return (int(p.conviction.confident), p.conviction.score, len(p.conviction.aligned),
             -(p.race.race_class or 6), -(p.price or 999.0))
 
 
@@ -132,10 +133,12 @@ def evaluate_field(client: _Client, day: str = "today",
         if race.race_class and race.race_class >= 6:
             race_flags.append("bottom-grade race (Cl6) — inconsistent animals (#3)")
         # 3. market shape: a race with NO ANCHOR (big fav price / open field) is the
-        #    market itself saying anything could win — the blanket-finish lottery
-        #    (audit: a 4.5 fav in a 10-runner scramble slipped the old 12+ threshold)
+        #    market itself saying anything could win — the blanket-finish lottery.
+        #    Loosened 2026-07-21 (regression audit): fav>=4.0 in ANY 8+ field was
+        #    crossing off the exact competitive Cl3/4 handicaps the banked winners
+        #    came from (2nd/3rd fav at 4.5-6.5); the 4.0 bar now needs a 12+ field.
         fav = min((p.price for p in race_picks if p.price), default=None)
-        if fav and (fav >= 5.0 or (race.field_size >= 8 and fav >= 4.0)):
+        if fav and (fav >= 5.0 or (race.field_size >= 12 and fav >= 4.0)):
             race_flags.append(f"open market (fav {fav}) — anything-could-win race (#3)")
         if race_picks and race_flags:
             race_picks = [
