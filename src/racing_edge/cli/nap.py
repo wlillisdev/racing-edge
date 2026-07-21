@@ -326,14 +326,20 @@ def main() -> int:
             # tracked horse running today + rules under fire on the scoreboard
             lesson_lines: list[str] = []
             nlog2 = open_nuance_log()
-            lesson_lines += [f"- NUANCE (validated): {n['nuance']}"
-                             for n in nlog2.all() if n["status"] == "validated"]
-            lesson_lines += [
-                f"- {t['angle'].upper()} {t['horse']} ({tp.race.course} "
-                f"{tp.race.off_time}): {t['note']}"
-                + (f" [{t['conditions']}]" if t["conditions"] else "")
-                for tp, t in list(seen.values())[:10]      # cap: 472 clues won't flood the prompt
+            validated = [n for n in nlog2.all() if n["status"] == "validated"]
+            lesson_lines += [f"- MASTER-VALIDATED: {n['nuance']}" for n in validated]
+            # tracked clues are UNVERIFIED leads (2026-07-21: two losers were built on
+            # tracked clues my old header mislabelled 'master validated' — the model
+            # believed the label). Honest label + explicit weight instruction.
+            tracked_lines = [
+                f"- unverified lead ({t['angle']}): {t['horse']} ({tp.race.course} "
+                f"{tp.race.off_time}): {t['note'][:120]}"
+                for tp, t in list(seen.values())[:8]
             ]
+            if tracked_lines:
+                lesson_lines.append("UNVERIFIED TRACKED LEADS — colour only, weigh "
+                                    "lightly, NEVER the foundation of a case:")
+                lesson_lines += tracked_lines
             lesson_lines += [
                 f"- RULE UNDER FIRE: {t['rule']} contradicted "
                 f"{t['contradicts']}-{t['supports']} by results — weigh it lightly"
@@ -417,6 +423,22 @@ def main() -> int:
                       code=nap.race.code).delta
     race_fav = min((p.price for p in field
                     if p.race.race_id == r.race_id and p.price), default=None)
+    # FALLBACK DISCIPLINE (2026-07-21: three of six losers were shallow fallback
+    # picks at conviction 3 — the bare minimum under today's inflated lens count,
+    # banked when the deep read errored). Reader unavailable => the engine pick must
+    # carry a WINNING-ERA core (conv >= 5 including well-in) or the day is a pass.
+    if not deep_case:
+        if nap.conviction.score < 5 or not any(
+                "well-in" in a for a in nap.conviction.aligned):
+            emit(f"  ✗ FALLBACK TOO THIN: deep read unavailable and the engine pick "
+                 f"({nap.runner.horse}, conv {nap.conviction.score}) lacks the "
+                 f"winning-era core — no bet without the reader.")
+            _bank_pass(resolve_date(args.day),
+                       f"deep read unavailable; engine fallback too thin "
+                       f"(conv {nap.conviction.score})")
+            _maybe_email(out, "Nap — no bet today (fallback too thin)", args.email)
+            return 0
+
     # THE MARK IS SACRED — never a pick that isn't well-in. Non-negotiable.
     if delta is None or delta > 0:
         emit(f"  ✗ PROFILE FLOOR: {nap.runner.horse} is not WELL-IN "

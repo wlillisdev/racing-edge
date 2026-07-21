@@ -44,9 +44,11 @@ NAP_SYSTEM = (
     "form-proven case (#12 — the horse doesn't know its odds): a big price on a real "
     "case is EACH-WAY VALUE (#28), and only a cramped sub-2.5 is unbettable. The mark "
     "is the one non-negotiable: never a pick that isn't well-in.\n"
-    "7. USE THE BANKED LESSONS: if a LESSONS block is supplied (validated nuances the "
-    "master promoted, tracked follow/oppose horses from past results), they are "
-    "evidence — apply them and cite them like any other fact.\n"
+    "7. LESSONS AND LEADS: MASTER-VALIDATED lines are real evidence — apply and cite "
+    "them. Lines marked 'unverified lead' are COLOUR ONLY: they may tip a close call "
+    "but a case may NEVER rest on one — the form facts must stand alone without the "
+    "lead. (2026-07-21: two losing cases were built on unverified leads mislabelled "
+    "as validated. Never again.)\n"
     "8. BEAT THE DANGER (2026-07-09, after the nap lost to an in-form rival who won "
     "easily): a case is NOT finished until you name the single most feared rival — "
     "usually the in-form one, the horse winning its recent races — state honestly why "
@@ -122,8 +124,8 @@ def build_nap_prompt(candidates: list[tuple[str, str]], lessons: str = "") -> st
     student's own notes — validated nuances + tracked horses — injected so the pick
     is made WITH the banked learning, not from a blank slate every morning."""
     blocks = [f"CANDIDATE RACE — {label}\n{readout}" for label, readout in candidates]
-    lessons_block = (f"LESSONS BANKED (the master validated these — apply and cite "
-                     f"them):\n{lessons}\n\n" if lessons.strip() else "")
+    lessons_block = (f"LESSONS & LEADS (labels matter — see rule 7):\n{lessons}\n\n"
+                     if lessons.strip() else "")
     return (
         f"{lessons_block}"
         f"Today's shortlisted races ({len(candidates)}). Read them ALL, pick the most "
