@@ -116,3 +116,37 @@ def send(subject: str, body: str, title: str = "", subtitle: str = ""):
         except (smtplib.SMTPException, OSError):
             time.sleep(2 * (attempt + 1))
     return False
+
+
+def main() -> int:
+    """SELF-TEST — `python -m racing_edge.report.mail` sends a timestamped test
+    through the EXACT nap path (SMTP retry + IMAP verify + spam rescue) and prints
+    the verdict. Born 2026-07-22 ('test it'): proving delivery must be one command,
+    not a day of waiting for the scheduler."""
+    from datetime import datetime
+
+    try:                                       # load .env like the tasks do — but only
+        from dotenv import load_dotenv         # the email vars matter for this test
+        load_dotenv()
+    except ImportError:
+        pass
+    if not configured():
+        print("  ✗ EMAIL NOT CONFIGURED — EMAIL_SENDER / EMAIL_PASSWORD / "
+              "EMAIL_RECIPIENT missing from .env")
+        return 1
+    stamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    print(f"  sending test to {recipient()} …", flush=True)
+    verdict = send(f"TEST — racing-edge email path ({stamp})",
+                   f"Test sent {stamp} UTC through the live nap email path.\n"
+                   "If you are reading this, delivery works end to end.",
+                   title="Email self-test", subtitle="racing-edge")
+    if verdict:
+        print(f"  ✓ {verdict}")
+        return 0
+    print("  ✗ SEND FAILED — SMTP refused (auth error or repeated network failure). "
+          "Check EMAIL_PASSWORD (Gmail app password) in .env.")
+    return 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
