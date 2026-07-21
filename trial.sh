@@ -44,10 +44,14 @@ SDK_OFF=(env ANTHROPIC_API_KEY=)
 # Override with TRIAL_BRANCH=... if the branch moves again.
 BRANCH="${TRIAL_BRANCH:-claude/tender-wright-kbn1h6}"
 echo ">> updating to the latest trial branch ($BRANCH)..."
-git fetch origin --quiet
-git checkout "$BRANCH" --quiet 2>/dev/null \
-  || git checkout -b "$BRANCH" "origin/$BRANCH"
-git pull origin "$BRANCH" --quiet
+# BEST-EFFORT update (2026-07-21): under set -e a git/network hiccup at 08:30 killed
+# the entire run before it banked anything. Stale code running beats no run.
+if ! ( git fetch origin --quiet \
+       && ( git checkout "$BRANCH" --quiet 2>/dev/null \
+            || git checkout -b "$BRANCH" "origin/$BRANCH" ) \
+       && git pull origin "$BRANCH" --quiet ); then
+  echo ">> WARNING: git update failed — running with the code already on disk"
+fi
 echo
 
 case "${1:-nap}" in
