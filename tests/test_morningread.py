@@ -90,9 +90,9 @@ def test_the_student_takes_its_notes_into_the_exam() -> None:
     p = build_nap_prompt([("Thirsk 3:00", "R")],
                          lessons="- NUANCE (validated): manner outranks bare mark rise\n"
                                  "- OPPOSE King Of The Story: erratic jumper")
-    assert "LESSONS BANKED" in p and "manner outranks" in p and "OPPOSE King" in p
-    assert "LESSONS BANKED" not in build_nap_prompt([("T", "R")])   # empty = no block
-    assert "WINNING PROFILE" in NAP_SYSTEM and "BANKED LESSONS" in NAP_SYSTEM
+    assert "LESSONS & LEADS" in p and "manner outranks" in p and "OPPOSE King" in p
+    assert "LESSONS & LEADS" not in build_nap_prompt([("T", "R")])   # empty = no block
+    assert "WINNING PROFILE" in NAP_SYSTEM and "unverified lead" in NAP_SYSTEM
 
 
 def _main() -> int:
