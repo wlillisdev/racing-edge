@@ -119,6 +119,55 @@ class MorningPick:
         return pick_ok or (self.is_pass and bool(self.pass_reason))
 
 
+def build_lessons(nap_history: list[dict], strike: tuple[int, int],
+                  nuances: list[dict], tracked_today: list[dict],
+                  rule_tally: list[dict]) -> list[str]:
+    """The student's notes for the exam, assembled PURE so a test can prove the loop
+    is closed: the record and the last losses (with their night-autopsy verdicts),
+    the master-validated lessons, the freshest unproven ones (weigh lightly), today's
+    tracked leads (honestly labelled unverified), and rules dying on the scoreboard.
+
+    This is the wire the coroner found cut (2026-07-21): huge credits went on night
+    study whose output never reached the morning pick — validated=0 by construction,
+    losses taught nothing forward. Everything the loop banks now flows through here.
+
+    `nap_history` rows: date/horse/course/race_id/won. `tracked_today` rows:
+    angle/horse/course/off_time/note (the tracked horses running TODAY)."""
+    lines: list[str] = []
+    w, n = strike
+    if n:
+        lines.append(f"- RECORD: {w}/{n} settled — "
+                     + ("COLD: tighten race selection, demand the full profile"
+                        if w * 2 < n else "steady"))
+    nu_by_race: dict[str, dict] = {}
+    for nu in nuances:
+        nu_by_race.setdefault(nu["race_id"], nu)
+    for x in [x for x in nap_history if x["won"] == 0][-5:]:
+        aut = nu_by_race.get(x["race_id"])
+        missed = (aut.get("what_missed") or "")[:140] if aut else ""
+        lines.append(f"- RECENT LOSS {x['date']} {x['horse']} ({x['course']})"
+                     + (f": missed — {missed}" if missed else ""))
+    lines += [f"- MASTER-VALIDATED: {nu['nuance']}"
+              for nu in nuances if nu["status"] == "validated"]
+    lines += [f"- UNPROVEN nuance (weigh lightly): {nu['nuance'][:140]}"
+              for nu in nuances if nu["status"] == "proposed"][-3:]
+    # tracked clues are UNVERIFIED leads (2026-07-21: two losers were built on tracked
+    # clues the old header mislabelled 'master validated' — the model believed the
+    # label). Honest label + explicit weight instruction.
+    tracked_lines = [f"- unverified lead ({t['angle']}): {t['horse']} ({t['course']} "
+                     f"{t['off_time']}): {t['note'][:120]}"
+                     for t in tracked_today[:8]]
+    if tracked_lines:
+        lines.append("UNVERIFIED TRACKED LEADS — colour only, weigh lightly, "
+                     "NEVER the foundation of a case:")
+        lines += tracked_lines
+    lines += [f"- RULE UNDER FIRE: {t['rule']} contradicted "
+              f"{t['contradicts']}-{t['supports']} by results — weigh it lightly"
+              for t in rule_tally
+              if t["contradicts"] >= 3 and t["contradicts"] > t["supports"]]
+    return lines
+
+
 def build_nap_prompt(candidates: list[tuple[str, str]], lessons: str = "") -> str:
     """candidates: (label, pre-race readout) per shortlisted race. `lessons` is the
     student's own notes — validated nuances + tracked horses — injected so the pick

@@ -343,54 +343,21 @@ def main() -> int:
             emit("  (deep read OFF — no ANTHROPIC_API_KEY; falling back to the "
                  "shallow engine pick)")
         else:
-            # the student's own notes go into the exam: validated nuances + EVERY
-            # tracked horse running today + rules under fire on the scoreboard
-            lesson_lines: list[str] = []
-            # THE LOSSES RIDE WITH THE PICKER (coroner fix 2: the morning model did
-            # not know it was on a losing streak — night autopsies fed nothing while
-            # validated=0). Last 5 losing naps + their autopsy verdicts + the record.
+            # the student's own notes go into the exam — assembled by the PURE
+            # build_lessons (tested: a banked loss + its autopsy MUST reach the
+            # morning prompt; the coroner found this wire cut while credits burned)
+            from racing_edge.study.morningread import build_lessons
             _llog = open_nap_log()
             _hist = _llog.history()
-            _w, _n = _llog.strike_rate()
+            _strike = _llog.strike_rate()
             _llog.close()
-            losses = [x for x in _hist if x["won"] == 0][-5:]
             nlog2 = open_nuance_log()
-            _nu_by_race = {}
-            for _nu in nlog2.all():
-                _nu_by_race.setdefault(_nu["race_id"], _nu)
-            if _n:
-                lesson_lines.append(f"- RECORD: {_w}/{_n} settled — "
-                                    + ("COLD: tighten race selection, demand the full "
-                                       "profile" if _w * 2 < _n else "steady"))
-            for x in losses:
-                aut = _nu_by_race.get(x["race_id"])
-                missed = (aut.get("what_missed") or "")[:140] if aut else ""
-                lesson_lines.append(
-                    f"- RECENT LOSS {x['date']} {x['horse']} ({x['course']})"
-                    + (f": missed — {missed}" if missed else ""))
-            validated = [n for n in nlog2.all() if n["status"] == "validated"]
-            lesson_lines += [f"- MASTER-VALIDATED: {n['nuance']}" for n in validated]
-            proposed = [n for n in nlog2.all() if n["status"] == "proposed"][-3:]
-            lesson_lines += [f"- UNPROVEN nuance (weigh lightly): {n['nuance'][:140]}"
-                             for n in proposed]
-            # tracked clues are UNVERIFIED leads (2026-07-21: two losers were built on
-            # tracked clues my old header mislabelled 'master validated' — the model
-            # believed the label). Honest label + explicit weight instruction.
-            tracked_lines = [
-                f"- unverified lead ({t['angle']}): {t['horse']} ({tp.race.course} "
-                f"{tp.race.off_time}): {t['note'][:120]}"
-                for tp, t in list(seen.values())[:8]
-            ]
-            if tracked_lines:
-                lesson_lines.append("UNVERIFIED TRACKED LEADS — colour only, weigh "
-                                    "lightly, NEVER the foundation of a case:")
-                lesson_lines += tracked_lines
-            lesson_lines += [
-                f"- RULE UNDER FIRE: {t['rule']} contradicted "
-                f"{t['contradicts']}-{t['supports']} by results — weigh it lightly"
-                for t in nlog2.rule_tally()
-                if t["contradicts"] >= 3 and t["contradicts"] > t["supports"]
-            ]
+            lesson_lines = build_lessons(
+                _hist, _strike, nlog2.all(),
+                [{"angle": t["angle"], "horse": t["horse"], "course": tp.race.course,
+                  "off_time": tp.race.off_time, "note": t["note"]}
+                 for tp, t in list(seen.values())],
+                nlog2.rule_tally())
             nlog2.close()
             print(f"  deep read: {resolve_model('nap')} on "
                   f"{len(candidates)} candidate race(s), "

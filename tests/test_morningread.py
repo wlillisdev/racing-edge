@@ -9,6 +9,7 @@ from racing_edge.domain.models import Odds, Race, Runner
 from racing_edge.report.restudy import render_preread
 from racing_edge.study.morningread import (
     NAP_SYSTEM,
+    build_lessons,
     build_nap_prompt,
     parse_morning_pick,
 )
@@ -93,6 +94,44 @@ def test_the_student_takes_its_notes_into_the_exam() -> None:
     assert "LESSONS & LEADS" in p and "manner outranks" in p and "OPPOSE King" in p
     assert "LESSONS & LEADS" not in build_nap_prompt([("T", "R")])   # empty = no block
     assert "WINNING PROFILE" in NAP_SYSTEM and "unverified lead" in NAP_SYSTEM
+
+
+def test_the_learning_loop_reaches_the_exam() -> None:
+    """The coroner's central finding (2026-07-21): huge credits went on night study
+    whose output NEVER reached the morning pick. This pins the wire closed — a banked
+    loss with its autopsy, the cold record, the validated and unproven lessons, and
+    the honestly-labelled tracked leads must all land in the prompt the picker reads."""
+    naps = [
+        {"date": "2026-07-18", "horse": "Rahmi", "course": "Ascot",
+         "race_id": "rA", "won": 0},
+        {"date": "2026-07-19", "horse": "Kalokalo", "course": "Ripon",
+         "race_id": "rB", "won": 0},
+    ]
+    nuances = [
+        {"race_id": "rA", "status": "refuted", "nuance": "x",
+         "what_missed": "the winner was the in-form danger the case never beat"},
+        {"race_id": "z1", "status": "validated", "nuance": "manner outranks bare mark"},
+        {"race_id": "z2", "status": "proposed", "nuance": "false favourites make races MORE readable"},
+    ]
+    tracked = [{"angle": "follow", "horse": "Green Sky", "course": "York",
+                "off_time": "3:15", "note": "finished powerfully from an impossible spot"}]
+    tally = [{"rule": "#2", "supports": 1, "contradicts": 4}]
+    lines = build_lessons(naps, (1, 8), nuances, tracked, tally)
+    text = "\n".join(lines)
+    assert "RECORD: 1/8 settled — COLD" in text
+    assert "RECENT LOSS 2026-07-18 Rahmi (Ascot): missed — the winner was the in-form" in text
+    assert "RECENT LOSS 2026-07-19 Kalokalo (Ripon)" in text
+    assert "MASTER-VALIDATED: manner outranks bare mark" in text
+    assert "UNPROVEN nuance (weigh lightly): false favourites" in text
+    assert "UNVERIFIED TRACKED LEADS" in text and "Green Sky (York 3:15)" in text
+    assert "RULE UNDER FIRE: #2 contradicted 4-1" in text
+    # and the whole block rides into the actual exam prompt
+    p = build_nap_prompt([("York 3:15", "R")], "\n".join(lines))
+    assert "RECENT LOSS 2026-07-18 Rahmi" in p and "LESSONS & LEADS" in p
+    # a healthy record stays quiet about cold; no losses = no loss lines
+    quiet = build_lessons([{"date": "d", "horse": "h", "course": "c",
+                            "race_id": "r", "won": 1}], (5, 8), [], [], [])
+    assert not any("COLD" in ln or "RECENT LOSS" in ln for ln in quiet)
 
 
 def _main() -> int:
