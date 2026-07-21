@@ -95,6 +95,17 @@ def main() -> int:
         f"{len(old_tracked)} tracked clues older than 3 weeks and never settled — "
         "the follow/oppose list is silting up unverified",
         lines)
+    # THE DOORBELL (coroner 2026-07-21: 0 validated / 104 refuted — nuances have no
+    # path to 'validated' without the master's ruling, and nothing ever ASKED him).
+    # The freshest proposals ring here daily, with the exact commands to rule.
+    pending = [n for n in nuances if n["status"] == "proposed"][-3:]
+    if pending:
+        lines.append(f"  AWAITING YOUR RULING ({sum(1 for n in nuances if n['status'] == 'proposed')} "
+                     "proposed nuance(s) — promote what your eye confirms, bin the rest):")
+        for n in pending:
+            lines.append(f"    #{n['id']}: {n['nuance'][:120]}")
+            lines.append(f"        promote: python -m racing_edge.cli.learn --promote {n['id']}"
+                         f"   |   bin: --bin {n['id']}")
 
     # THE FLIGHT RECORDER — did the scheduler actually LAUNCH anything today?
     # (2026-07-21: the ledger proved scheduled runs weren't happening; this separates

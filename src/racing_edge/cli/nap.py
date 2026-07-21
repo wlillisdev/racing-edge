@@ -178,6 +178,27 @@ def _settle(day_str: str, email: bool) -> int:
             log.settle_shadow(day, won=shm.position == 1, sp_dec=shm.sp_dec)
             out.append(f"  shadow settled: {sh['horse']} "
                        f"{'WON' if shm.position == 1 else 'lost'}")
+    # TRACKED CLUES SETTLE TOO (coroner 2026-07-21: 872 follow/oppose clues banked,
+    # not one ever settled — the whole day's results are in hand, so any tracked
+    # horse that ran today gets its clue marked done with the outcome)
+    nlog = open_nuance_log()
+    tracked_by_id = {t["horse_id"]: t for t in nlog.tracked_active() if t["horse_id"]}
+    settled_clues = 0
+    for res in results:
+        for rr in res.runners:
+            t = tracked_by_id.get(rr.horse_id)
+            if t is None:
+                continue
+            outcome = (f"ran {day.isoformat()}, "
+                       f"{'WON' if rr.position == 1 else f'pos {rr.position or rr.status}'}")
+            settled_clues += nlog.settle_tracked(rr.horse_id, outcome=outcome)
+            hit = (rr.position == 1) == (t["angle"] == "follow")
+            out.append(f"  tracked clue settled: [{t['angle']}] {t['horse']} — "
+                       f"{outcome} ({'clue HELD' if hit else 'clue missed'})")
+            del tracked_by_id[rr.horse_id]
+    nlog.close()
+    if settled_clues:
+        out.append(f"  ({settled_clues} tracked clue(s) marked done)")
     w, n = log.strike_rate()
     cw, cn = log.strike_rate(confident_only=True)
     flag = "WON" if won else f"unplaced ({me.position or me.status})"

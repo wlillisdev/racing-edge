@@ -117,9 +117,27 @@ class NuanceLog:
         self._conn.commit()
 
     def tracked_active(self) -> list[dict]:
+        """Active clues no older than 28 days — a clue is about the horse's NEXT run;
+        a month on, that run has happened unseen or the clue is stale either way
+        (coroner 2026-07-21: 872 rows, the oldest from week one, none ever settled)."""
+        from datetime import timedelta
+        cutoff = (date.today() - timedelta(days=28)).isoformat()
         rows = self._conn.execute(
-            "SELECT * FROM tracked WHERE status = 'active' ORDER BY date").fetchall()
+            "SELECT * FROM tracked WHERE status = 'active' AND date >= ? ORDER BY date",
+            (cutoff,)).fetchall()
         return [dict(r) for r in rows]
+
+    def settle_tracked(self, horse_id: str, *, outcome: str) -> int:
+        """The clue's horse RAN — the clue is spent. Mark every active row for the
+        horse 'done' and stamp how it worked out, so follow/oppose leads accumulate
+        a record instead of silting up unverified. Returns rows settled."""
+        cur = self._conn.execute(
+            "UPDATE tracked SET status = 'done', "
+            "note = note || '  [settled: ' || ? || ']' "
+            "WHERE horse_id = ? AND status = 'active'",
+            (outcome, horse_id))
+        self._conn.commit()
+        return cur.rowcount
 
     def rule_tally(self) -> list[dict]:
         """Per-rule evidence counts: how often results supported vs contradicted each

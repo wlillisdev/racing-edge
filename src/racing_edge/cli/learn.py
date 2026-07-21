@@ -120,17 +120,26 @@ def _learn_one(st: Restudy, study, sceptic, day_iso: str) -> str:
             if rule and verdict in ("supports", "contradicts"):
                 log.record_evidence(day=st.race.date, race_id=st.race.race_id,
                                     rule=rule, verdict=verdict, note=note)
+        # intake capped (coroner 2026-07-21: 872 tracked clues, none ever settled —
+        # an unbounded intake with no outflow is silt, not a follow list)
+        banked_clues = 0
         for horse, angle, note, conditions in crit.to_follow:
+            if banked_clues >= 3:
+                break
             hid = ids.get(horse.strip().lower(), "")
             if horse and angle in ("follow", "oppose") and hid:   # only horses ON the card
                 log.track(day=st.race.date, race_id=st.race.race_id, horse=horse,
                           horse_id=hid, angle=angle, note=note, conditions=conditions)
+                banked_clues += 1
         log.close()
 
     # THE SCEPTIC — a second, adversarial pass on a SHARPER model tries to KILL the
     # nuance against the same readout before it's banked (per-task models: the kill-pass
     # must out-think the proposer — Haiku proposing AND checking wrecked the reads).
-    ref = parse_refutation(sceptic(REFUTE_SYSTEM, build_refute_prompt(readout, crit)))
+    # The tool trail rides along so lookup-cited facts are visible evidence, not
+    # hearsay to kill on sight (coroner 2026-07-21: the court was structurally rigged).
+    ref = parse_refutation(
+        sceptic(REFUTE_SYSTEM, build_refute_prompt(readout, crit, trail=trail)))
     out = render_critique(crit, label, st.winner)
     if ref.refuted:
         # the kill is evidence too — bank it as refuted WITH the ground, so repeated
@@ -147,8 +156,15 @@ def _learn_one(st: Restudy, study, sceptic, day_iso: str) -> str:
     log.record(day=st.race.date, race_id=st.race.race_id, course=st.race.course,
                winner=st.winner, blind_pick=blind or "", **crit.record_fields())
     log.close()
-    survived = (f"survived the sceptic ({ref.reason})" if ref.answered
-                else "sceptic gave no verdict — banked anyway, rule with --show")
+    if ref.answered and ref.ground == "triviality":
+        survived = (f"sceptic: restates a known rule ({ref.reason}) — filed as "
+                    f"support, not slaughtered")
+    elif ref.answered:
+        survived = f"survived the sceptic ({ref.reason})"
+    else:
+        # an empty sceptic reply (budget spent / model error) is NOT a survival —
+        # banked as proposed but honestly labelled unjudged (coroner fix)
+        survived = "sceptic did NOT judge (empty reply) — banked as proposed, unjudged"
     return out + f"\n    ✓ {survived}"
 
 
@@ -186,8 +202,13 @@ def _synthesise(reason, email: bool) -> int:
     nlog3 = open_nuance_log()
     tally_lines = [f"- {t['rule']}: supported {t['supports']}, contradicted "
                    f"{t['contradicts']}" for t in nlog3.rule_tally()] or ["(none yet)"]
+    tracked = nlog3.tracked_active()
+    # cap the dump (coroner 2026-07-21: synthesis was fed all 872 tracked rows —
+    # drowning the signal and the token budget in silt); newest carry the signal
     tracked_lines = [f"- [{t['angle']}] {t['horse']} ({t['date']}): {t['note']}"
-                     for t in nlog3.tracked_active()] or ["(none yet)"]
+                     for t in tracked[-40:]] or ["(none yet)"]
+    if len(tracked) > 40:
+        tracked_lines.append(f"(… {len(tracked) - 40} older active clues not shown)")
     nlog3.close()
     prompt = ("SELF-TAUGHT NUANCES (status = the master's ruling; 'refuted' = the "
               "sceptic killed it — the grounds reveal my own failure modes):\n"
