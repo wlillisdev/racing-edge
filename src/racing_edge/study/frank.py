@@ -46,10 +46,15 @@ class Franking:
 
     @property
     def is_thin(self) -> bool:
-        # the sample re-ran but the form did NOT stack up — the ONLY case worth a veto.
+        # the sample re-ran and the form did NOT stack up — the ONLY case worth a veto.
         # "too soon" (rivals_ran_since < 2) is deliberately NOT thin: absence of a
         # re-run is the calendar, not evidence against the horse.
-        return self.rivals_ran_since >= 2 and self.rivals_franked < 2
+        # RECALIBRATED 2026-07-25 (the Saturday wipe-out: the veto crossed off every
+        # candidate on the best card of the week): 1 placer from 2 re-runners was
+        # scoring 'thin' — that's an ambiguous small sample, not evidence of a hollow
+        # race. Thin now means a FAIR sample re-ran and NOBODY placed. Franking is a
+        # tiebreaker (#15), and an ambiguous frank is no frank at all.
+        return self.rivals_ran_since >= 3 and self.rivals_franked == 0
 
 
 def _scored_after(runs: tuple[PastRun, ...], after: date,

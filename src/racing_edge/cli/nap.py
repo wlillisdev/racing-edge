@@ -409,11 +409,21 @@ def main() -> int:
     # the exposure gate). A thin frank crosses the pick off and we fall to the next.
     from racing_edge.study.frank import frank_form
     fr = None
+    frank_thin_deep = False
     fallbacks = [nap] + [s for s in survivors if s is not nap]
     for cand in fallbacks[:3]:
         f = frank_form(client, cand.runner.horse_id, cand.history,
                        code=cand.race.code)
         if f.is_thin:
+            if cand is fallbacks[0] and deep_case:
+                # THE READER OUTRANKS THE MECHANICAL FRANK (2026-07-25, the Saturday
+                # wipe-out): an argued deep case — which franks its own key form with
+                # tools, rule 4 — is downgraded to LEAN by a thin frank, never killed.
+                # The veto stays for engine picks: no case argues for those.
+                emit(f"  ⚠ FRANK THIN on the deep pick ({f.note}) — the argued case "
+                     f"stands, but LEAN only, never confident against a hollow frank.")
+                nap, fr, frank_thin_deep = cand, f, True
+                break
             emit(f"  ✗ FRANK VETO: {cand.runner.horse} — {f.note} "
                  f"(a win in a bad race is a mirage; re-picking)")
             if cand is nap:
@@ -501,7 +511,7 @@ def main() -> int:
         emit(f"  ⚠ the engine flags this horse ({', '.join(c.flags)}) — the reader "
              f"may overrule, but never at full confidence. LEAN only.")
     confident = ((deep_conf == "confident") if deep_case else c.confident) \
-        and not off_profile and not c.flags
+        and not off_profile and not c.flags and not frank_thin_deep
     if nap.price and nap.price >= 8.0:
         emit(f"  instrument (#28): EACH-WAY at {nap.price} — the place is the net, "
              f"the win is the payday.")

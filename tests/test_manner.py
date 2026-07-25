@@ -199,3 +199,18 @@ def test_study_race_reports_franking_when_present() -> None:
     s = study_race(runners)
     assert any("frank:" in line and "FRANKED" in line for line in s.lessons)
     assert not any("FRANK the winner" in g for g in s.gaps)   # finding replaces the gap
+
+
+def test_frank_thin_needs_a_real_sample_and_zero_placers() -> None:
+    """2026-07-25, the Saturday wipe-out: 1 placer from 2 re-runners scored 'thin'
+    and the veto crossed off every candidate on the best card of the week. Thin now
+    means a FAIR sample re-ran (3+) and NOBODY placed — ambiguous is not hollow."""
+    from racing_edge.study.frank import Franking
+    ambiguous = Franking(None, 6, 2, 1, "")     # 1/2 placed — small, mixed sample
+    assert not ambiguous.is_thin
+    fair_but_mixed = Franking(None, 6, 4, 1, "")  # 1/4 placed — form found SOME support
+    assert not fair_but_mixed.is_thin
+    hollow = Franking(None, 6, 3, 0, "")        # 3 re-ran, nobody placed — a mirage
+    assert hollow.is_thin
+    too_soon = Franking(None, 6, 1, 0, "")      # calendar, not evidence
+    assert not too_soon.is_thin
