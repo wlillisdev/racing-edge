@@ -198,14 +198,23 @@ def _settle(day_str: str, email: bool) -> int:
             t = tracked_by_id.get(rr.horse_id)
             if t is None:
                 continue
+            # SP in the stamp (ROI audit: without it the clue stream can never be
+            # judged in money or against the fav baseline)
             outcome = (f"ran {day.isoformat()}, "
-                       f"{'WON' if rr.position == 1 else f'pos {rr.position or rr.status}'}")
-            settled_clues += nlog.settle_tracked(rr.horse_id, outcome=outcome)
+                       f"{'WON' if rr.position == 1 else f'pos {rr.position or rr.status}'}"
+                       + (f", SP {rr.sp_dec}" if rr.sp_dec else ""))
             hit = (rr.position == 1) == (t["angle"] == "follow")
+            settled_clues += nlog.settle_tracked(rr.horse_id, outcome=outcome, held=hit)
             emit(f"  tracked clue settled: [{t['angle']}] {t['horse']} — "
                  f"{outcome} ({'clue HELD' if hit else 'clue missed'})")
             del tracked_by_id[rr.horse_id]
     swept = nlog.expire_tracked()
+    # RECORD-BASED promotion: a theme whose settled clues prove out promotes its
+    # nuances to 'field-tested' — the trial record doing the validating, exactly as
+    # the ledger's own law allows ('the TRIAL RECORD or the MASTER promotes')
+    for ft in nlog.field_test_themes():
+        emit(f"  ★ FIELD-TESTED by the record: theme '{ft}' — its lessons now ride "
+             f"with weight in the morning prompt")
     nlog.close()
     if settled_clues:
         emit(f"  ({settled_clues} tracked clue(s) marked done)")

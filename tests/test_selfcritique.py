@@ -179,7 +179,7 @@ def test_critique_mines_forward_clues_and_the_tracker_stores_them() -> None:
     )
     assert c.to_follow[0] == ("Crackerjack Queen", "follow",
                               "pressed the winner after making up ground from 12th",
-                              "similar class, decent pace")
+                              "similar class, decent pace", "")
     text = render_critique(c, "x", "y")
     assert "→ FOLLOW Crackerjack Queen" in text and "→ OPPOSE Phantom Gold" in text
     with tempfile.TemporaryDirectory() as d:
@@ -261,3 +261,45 @@ def _main() -> int:
 
 if __name__ == "__main__":
     sys.exit(_main())
+
+
+def test_repetition_becomes_votes_and_the_record_promotes_themes() -> None:
+    """2026-07-25 value audit: the loop re-proposed the same lesson nightly with no
+    memory of itself (#190 = the Hoodie Hoo nuance), and nothing could reach any
+    promoted status without the master. Now: a near-duplicate becomes a VOTE
+    (seen_count), and a theme whose settled clues prove out is promoted to
+    'field-tested' BY THE RECORD — 'validated' stays master-only."""
+    with tempfile.TemporaryDirectory() as d:
+        log = NuanceLog(Path(d) / "n.db")
+        first = ("When a beaten horse's in-running comment shows a genuine "
+                 "trouble-in-running excuse in a race later franked by the winner "
+                 "going in again, upgrade that horse over the raw market position")
+        assert log.record(day=date(2026, 7, 21), race_id="r1", course="Nottingham",
+                          winner="Hoodie Hoo", blind_pick="", nuance=first,
+                          what_missed="", cite="", owed="", confidence="medium",
+                          theme="trouble-in-running-upgrade") is None
+        rewrite = ("When a beaten horse's in-running comment shows genuine "
+                   "trouble-in-running (short of room, checked, blocked) in a race "
+                   "franked by the winner going in again, upgrade that horse over "
+                   "the field's raw mark/market position")
+        merged = log.record(day=date(2026, 7, 25), race_id="r9", course="York",
+                            winner="X", blind_pick="", nuance=rewrite,
+                            what_missed="", cite="", owed="", confidence="medium",
+                            theme="trouble-in-running-upgrade")
+        rows = log.all()
+        assert merged == rows[0]["id"] and len(rows) == 1     # a vote, not a new row
+        assert rows[0]["seen_count"] == 2
+        # the record promotes: 5 settled clues of the theme, 4 held
+        for i in range(5):
+            log.track(day=date(2026, 7, 1 + i), race_id=f"t{i}", horse=f"H{i}",
+                      horse_id=f"h{i}", angle="follow", note="quoted comment",
+                      conditions="similar class, clean run needed",
+                      theme="trouble-in-running-upgrade")
+            log.settle_tracked(f"h{i}", outcome=f"ran 2026-07-2{i}, WON",
+                               held=(i != 0))
+        promoted = log.field_test_themes()
+        assert promoted and "trouble-in-running-upgrade" in promoted[0]
+        assert log.all()[0]["status"] == "field-tested"       # never 'validated'
+        cs = log.clue_scoreboard(since="2026-07-01")
+        assert cs["follow"]["n"] == 5 and cs["follow"]["hits"] == 4
+        log.close()

@@ -117,7 +117,8 @@ def test_the_learning_loop_reaches_the_exam() -> None:
                 "off_time": "3:15", "date": "2026-07-20",
                 "note": "finished powerfully from an impossible spot",
                 "conflict": "engine flags this horse (cold form) — the lead conflicts"}]
-    tally = [{"rule": "#2", "supports": 1, "contradicts": 4}]
+    tally = [{"rule": "#2", "supports": 2, "contradicts": 10},   # significant at n=12
+             {"rule": "#19", "supports": 3, "contradicts": 4}]    # n=7: too early, silent
     lines = build_lessons(naps, (1, 8), nuances, tracked, tally)
     text = "\n".join(lines)
     assert "RECORD: 1/8 settled — COLD" in text
@@ -130,7 +131,8 @@ def test_the_learning_loop_reaches_the_exam() -> None:
     # points against the engine's read carries its conflict (2026-07-25 audit)
     assert "banked 2026-07-20" in text and "Green Sky runs today York 3:15" in text
     assert "NB: engine flags this horse (cold form)" in text
-    assert "RULE UNDER FIRE: #2 contradicted 4-1" in text
+    assert "RULE UNDER FIRE: #2 contradicted 10-2 over 12 races" in text
+    assert "#19" not in text          # small-sample rules stay silent (no whipsaw)
     # and the whole block rides into the actual exam prompt
     p = build_nap_prompt([("York 3:15", "R")], "\n".join(lines))
     assert "RECENT LOSS 2026-07-18 Rahmi" in p and "LESSONS & LEADS" in p

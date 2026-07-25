@@ -135,6 +135,11 @@ def render_restudy(race: Race, result: RaceResult,
             if r.headgear else ""
         lines.append(f"        mark: {marktxt}  | form {r.form or '?'} "
                      f"| OR {r.official_rating or '?'} RPR {r.rpr or '?'}{gear}")
+        # HOW THE RACE UNFOLDED (design audit 2026-07-25: today's in-running comments
+        # were fetched, stored and then dropped — the study model was analysing a
+        # race it never saw run, and the toolless sceptic judged pace claims blind)
+        if rr and rr.comment.strip():
+            lines.append(f"        ran TODAY: {rr.comment.strip()[:220]}")
         # the manner read, done in code from the comments (rule #1) — the model reasons
         # over the verdict instead of re-classifying prose (where it slips)
         _mh = same_code_runs(hist, race.code)[:4]
