@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS shadow (
 
 class NapLog:
     def __init__(self, path: str | Path) -> None:
-        self._conn = sqlite3.connect(str(path))
+        self._conn = sqlite3.connect(str(path), timeout=30)
         self._conn.row_factory = sqlite3.Row
         self._conn.executescript(_SCHEMA)
         # migration: the CASE rides with the pick (audit 2026-07-05: the night study

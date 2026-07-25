@@ -67,7 +67,11 @@ class RacingAPIClient:
                 continue
             if resp.status_code == 200:
                 return resp.json()
-            if resp.status_code == 404 and allow_404:
+            # 404 = not found; 403 = plan doesn't cover the endpoint (2026-07-25
+            # reliability audit: a tier downgrade must degrade an OPTIONAL lens to
+            # OWED, never crash the whole morning) — both read as honest empties
+            # where the caller allows it
+            if resp.status_code in (404, 403) and allow_404:
                 return None
             raise RacingAPIError(resp.status_code, url, resp.text[:200])
 

@@ -36,10 +36,12 @@ exec > >(tee -a "$LOGF") 2>&1
 
 export PYTHONPATH=src
 PY="venv/bin/python"
-# The SDK/httpx clash only bites the paths that import the anthropic SDK (nap/dissect/
-# settle's optional narrative). Blank the key for THOSE with this prefix — but NOT for
-# `learn`, which uses the SDK-free direct-HTTP reasoner and NEEDS the real key (from .env
-# or the task env) to think. `env ANTHROPIC_API_KEY=` blanks it for one command only.
+# SDK_OFF = "make NO model calls for this task" — a COST/SCOPE switch, nothing else.
+# (2026-07-25 reliability audit: the old comment claimed an SDK/httpx clash; the SDK
+# was deleted long ago — everything uses the direct-HTTP reasoner. DO NOT "fix" the
+# nap or learn cases by adding this prefix: nap MUST keep the key for the morning
+# deep read, learn MUST keep it for the night study. Blanking either would silently
+# lobotomise the scheduled runs while manual runs kept working.)
 SDK_OFF=(env ANTHROPIC_API_KEY=)
 
 # form-trial was MERGED (PR #39) — the trial now lives on the current dev branch.

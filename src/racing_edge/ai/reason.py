@@ -38,6 +38,7 @@ def _log_usage(task: str, model: str, data: dict) -> None:
         import csv
         import datetime
         from pathlib import Path
+        _data_dir = Path(__file__).resolve().parents[3] / "data"
         u = data.get("usage") or {}
         # cache-aware (2026-07-25): cache writes bill ~like input; cache READS bill
         # at ~0.1x, so they count at a tenth — the ledger stays in cost-proportional
@@ -47,7 +48,10 @@ def _log_usage(task: str, model: str, data: dict) -> None:
                   + int(u.get("cache_read_input_tokens") or 0) // 10)
         row = [datetime.date.today().isoformat(), task, model,
                eff_in, int(u.get("output_tokens") or 0)]
-        path = Path("data") / "model_usage.csv"
+        # anchored to the repo, not the CWD (2026-07-25 audit: a manual
+        # run from elsewhere wrote spend into a stray data/ — the budget
+        # breaker could be bypassed without anyone deciding to)
+        path = _data_dir / "model_usage.csv"
         path.parent.mkdir(parents=True, exist_ok=True)
         new_file = not path.exists()
         with path.open("a", newline="") as f:
@@ -92,7 +96,8 @@ def _budget_spent_today() -> int:
         from pathlib import Path
         today = datetime.date.today().isoformat()
         total = 0
-        with (Path("data") / "model_usage.csv").open() as f:
+        _data_dir = Path(__file__).resolve().parents[3] / "data"
+        with (_data_dir / "model_usage.csv").open() as f:
             for row in csv.DictReader(f):
                 if row["date"] == today:
                     total += int(row["input_tokens"]) + int(row["output_tokens"])

@@ -134,22 +134,36 @@ def build_evidence(race: Race, client: _Fetcher, as_of: date | None = None) -> l
         # limit 20 (was the default 12): the form lenses now read SAME-CODE runs only,
         # and a dual-code horse whose last 12 runs are all one code would otherwise
         # have its relevant history pushed out of the window entirely (2026-07-21 audit)
-        history = past_runs_from_raw(client.horse_results(r.horse_id, limit=20),
-                                     r.horse_id)
+        # One horse's fetch dying must not kill the whole morning (2026-07-25
+        # reliability audit): the horse degrades to history-OWED, said out loud.
+        try:
+            history = past_runs_from_raw(client.horse_results(r.horse_id, limit=20),
+                                         r.horse_id)
+        except Exception:
+            print(f"      ⚠ evidence OWED for {r.horse} — history fetch failed",
+                  flush=True)
+            history = ()
         if as_of is not None:
             history = tuple(h for h in history if h.date < as_of)
         # the TRIP lens (distance-times endpoint) and the JOCKEY-AT-COURSE lens (#30) —
         # every-endpoint audit 2026-07-09: paid for, never called. Skipped in backtests
         # (current-stats look-ahead).
-        trip_strike, trip_runs = (None, 0) if backtest else trip_strike_from_analysis(
-            client.horse_distance_times(r.horse_id) if hasattr(
-                client, "horse_distance_times") else [], race.distance_f)
+        try:
+            trip_strike, trip_runs = (None, 0) if backtest else \
+                trip_strike_from_analysis(
+                    client.horse_distance_times(r.horse_id) if hasattr(
+                        client, "horse_distance_times") else [], race.distance_f)
+        except Exception:
+            trip_strike, trip_runs = None, 0      # optional lens — OWED, not fatal
         if backtest or not r.jockey_id:
             j_strike, j_rides = None, 0
         else:
             if r.jockey_id not in jcache:
-                jrows = client.jockey_course(r.jockey_id) if hasattr(
-                    client, "jockey_course") else []
+                try:
+                    jrows = client.jockey_course(r.jockey_id) if hasattr(
+                        client, "jockey_course") else []
+                except Exception:
+                    jrows = []                    # optional lens — OWED, not fatal
                 jcache[r.jockey_id] = course_strike_from_analysis(jrows, race.course)
             j_strike, j_rides = jcache[r.jockey_id]
         if backtest:

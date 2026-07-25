@@ -78,7 +78,7 @@ def main() -> int:
         bool(fresh_nu) or not naps,
         f"self-study flowing ({len(fresh_nu)} nuance row(s) in the last 2 days; "
         f"{sum(1 for n in nuances if n['status'] == 'validated')} validated, "
-        f"{sum(1 for n in nuances if n['status'] == 'refuted')} refuted on record)",
+        f"{sum(1 for n in nuances if n['status'] in ('refuted', 'rejected'))} killed on record)",
         "NO nuance rows in 2+ days — the learn/night task is not running; the "
         "ledgers are starving again (the exact audit finding of 2026-07-05)",
         lines)
@@ -119,7 +119,8 @@ def main() -> int:
     # 'PythonAnywhere never started it' from 'started and died at line X')
     try:
         from pathlib import Path as _P
-        tail = _P("data/task_runs.log").read_text().splitlines()
+        _root = _P(__file__).resolve().parents[3]
+        tail = (_root / "data" / "task_runs.log").read_text().splitlines()
         starts = [ln for ln in tail if "START" in ln and today.isoformat() in ln]
         exits = [ln for ln in tail if "EXIT" in ln and today.isoformat() in ln]
         all_ok &= _check(
@@ -141,7 +142,8 @@ def main() -> int:
         import csv
         from pathlib import Path
         by_day: dict[str, list[int]] = {}
-        with (Path("data") / "model_usage.csv").open() as f:
+        _root2 = Path(__file__).resolve().parents[3]
+        with (_root2 / "data" / "model_usage.csv").open() as f:
             for row in csv.DictReader(f):
                 d = by_day.setdefault(row["date"], [0, 0])
                 d[0] += int(row["input_tokens"])

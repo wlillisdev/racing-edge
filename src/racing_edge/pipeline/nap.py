@@ -41,8 +41,7 @@ def _rank_key(p: NapPick) -> tuple[int, int, int, int, int, float]:
     # WELL-IN ranks first among equals (2026-07-25 audit: a mark-OWED conv-4 outranked
     # well-in conv-3 horses — wasting candidate slots and fallback places on picks the
     # sacred floor can never bank; the decisive lens now carries rank weight).
-    well_in = int(any("well-in" in a for a in p.conviction.aligned))
-    return (int(p.conviction.confident), well_in, p.conviction.score,
+    return (int(p.conviction.confident), int(p.conviction.well_in), p.conviction.score,
             len(p.conviction.aligned), -(p.race.race_class or 6), -(p.price or 999.0))
 
 
@@ -66,7 +65,13 @@ def evaluate_field(client: _Client, day: str = "today",
     if day == "today" and as_of is None:
         from datetime import datetime
         from datetime import timedelta as _td
-        _now = now or datetime.now()          # injectable clock — tests pass a morning
+        if now is None:
+            # UK WALL-CLOCK, not box time (2026-07-25 reliability audit: the box
+            # runs UTC; in BST a race gone off 55 minutes ago still read as 'still
+            # to run' — the guard must speak the card's own timezone)
+            from zoneinfo import ZoneInfo
+            now = datetime.now(ZoneInfo("Europe/London")).replace(tzinfo=None)
+        _now = now                            # injectable clock — tests pass a morning
 
         def _still_to_run(r: Race) -> bool:
             try:
@@ -87,9 +92,13 @@ def evaluate_field(client: _Client, day: str = "today",
         progress(f"  reading the form on {len(races)} readable handicap(s) "
                  f"(form first, price last — rule #29)…")
     out: list[NapPick] = []
+    oddsless = 0
     for race in races:
         if progress:
             progress(f"    · {race.course} {race.off_time} — reading {race.field_size} runners")
+        if race.runners and not any(r.odds.consensus and r.odds.consensus > 1
+                                    for r in race.runners):
+            oddsless += 1
         # as_of enforces NO LOOK-AHEAD for backtesting: histories cut strictly before
         # that date, current-stats intent lenses skipped (they know the future)
         evidence = {e.runner.horse_id: e
@@ -157,6 +166,11 @@ def evaluate_field(client: _Client, day: str = "today",
                 for p in race_picks
             ]
         out.extend(race_picks)
+    if oddsless and progress:
+        # AN OUTAGE MUST NEVER WEAR DISCIPLINE'S COAT (2026-07-25 reliability audit:
+        # an odds-feed failure produced an empty field and banked as an earned pass)
+        progress(f"  ⚠ {oddsless} race(s) carried runners but NO odds — possible "
+                 f"odds-feed outage; those races are unreadable, not passed on merit")
     out.sort(key=_rank_key, reverse=True)
     return out
 

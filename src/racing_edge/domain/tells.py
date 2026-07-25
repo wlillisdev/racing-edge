@@ -68,7 +68,7 @@ def _hat_trick_trap(runner: Runner, race: Race, history: tuple[PastRun, ...]) ->
     # the trap is an EXPOSED horse RAISED by the handicapper. If the mark shows it's
     # actually WELL-IN (won twice but still off no higher a mark), it's ahead of the
     # assessor, NOT a trap — spare it. (The Friday lesson, now with the data to apply it.)
-    mr = mark_read(runner.official_rating, history)
+    mr = mark_read(runner.official_rating, history, code=race.code)
     if mr.delta is not None and mr.delta <= 0:
         return None
     risk = " in a chase (completion risk)" if "chase" in race.race_type.lower() else ""
@@ -116,8 +116,11 @@ def _well_in(runner: Runner, race: Race, history: tuple[PastRun, ...]) -> str | 
     running off the SAME or a LOWER mark than when it last won is well-in — the
     handicapper hasn't caught it. The positive mirror of the rising-mark trap, and the
     decisive lens I failed to compare on Friday."""
-    mr = mark_read(runner.official_rating, history)
-    if mr.delta is not None and mr.delta <= 0:
+    # code passed even over the pre-filtered history (2026-07-25 replication audit:
+    # the soft-lens filter keeps blank-typed runs, but the sacred mark refuses a
+    # blank-typed win as its anchor — the tell must agree with conviction's read)
+    mr = mark_read(runner.official_rating, history, code=race.code)
+    if mr.delta is not None and mr.delta <= 0 and not mr.stale:
         return (f"TELL — WELL-IN ({mr.verdict}): running off no higher a mark than when it last "
                 "won — the handicapper hasn't caught it (Caughtinyourtrance, 26 Jun)")
     return None

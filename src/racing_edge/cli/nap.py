@@ -21,6 +21,17 @@ from racing_edge.pipeline.nap import evaluate_field
 from racing_edge.report.scorecard import build_scorecard, render_scorecard
 
 
+# every race-level gate's flag text, in ONE place (2026-07-25 replication audit:
+# the top-class door and the profile floor each kept their own partial list — one
+# rewording of a flag would have silently blinded them out of step with each other)
+_RACE_GATE_TERMS = ("novice in disguise", "bottom-grade", "open market",
+                    "all-weather", "big-field")
+
+
+def _race_gate_flags(flags) -> list[str]:
+    return [f for f in flags if any(g in f for g in _RACE_GATE_TERMS)]
+
+
 def _maybe_email(buf: list[str], subject: str, email: bool) -> None:
     """Email the buffered output if --email was set. Never crashes the run."""
     if not email:
@@ -134,13 +145,15 @@ def _guard() -> int:
                f"the money is leaving. Keep the stake in your pocket. "
                f"(The pick stays on the ledger — this guards the stake, not the record.)")
         print(f"  {msg}")
-        send(f"STAND OFF: {n['horse']} drifting ({banked}->{now})", msg,
-             title="Drift guard", subtitle="racing-edge form trial")
+        ok = send(f"STAND OFF: {n['horse']} drifting ({banked}->{now})", msg,
+                  title="Drift guard", subtitle="racing-edge form trial")
+        print(f"  email: {ok or 'FAILED'}")   # the one email that guards the stake
     elif now <= banked * 0.9:
         msg = f"✓ {n['horse']} BACKED {banked} -> {now} — the market agrees with the pick."
         print(f"  {msg}")
-        send(f"Backed: {n['horse']} ({banked}->{now})", msg,
-             title="Drift guard", subtitle="racing-edge form trial")
+        ok = send(f"Backed: {n['horse']} ({banked}->{now})", msg,
+                  title="Drift guard", subtitle="racing-edge form trial")
+        print(f"  email: {ok or 'FAILED'}")
     else:
         print(f"  {n['horse']} steady ({banked} -> {now}) — no signal, no email.")
     return 0
@@ -367,20 +380,24 @@ def main() -> int:
         # market, carrying a well-in mark-read pick with 3+ families — rule #22: a
         # beatable favourite is the green light to study the FIELD. The reader must
         # still argue it; the engine fallback still can't touch it (survivors only).
-        _race_gate_terms = ("novice in disguise", "bottom-grade", "open market",
-                            "all-weather", "big-field")
         for p in sorted(crossed, key=lambda p: (p.conviction.score,
                                                 -(p.race.race_class or 6)),
                         reverse=True):
             r = p.race
-            gates = [f for f in p.conviction.flags
-                     if any(g in f for g in _race_gate_terms)]
+            gates = _race_gate_flags(p.conviction.flags)
+            # only the class-tier fav bar is forgivable — an "in a 12+ field" open
+            # market is the crowd rule, not rule #22's quality-field green light;
+            # and the carrier horse itself must be clean of the Woodstock profile
             if (r.race_id not in cand_order
                     and r.race_class is not None and r.race_class <= 3
                     and r.field_size < 16
-                    and gates and all("open market" in f for f in gates)
+                    and gates
+                    and all("open market" in f and "12+ field" not in f
+                            for f in gates)
                     and p.conviction.mark_known and p.conviction.score >= 3
-                    and any("well-in" in a for a in p.conviction.aligned)):
+                    and p.conviction.well_in
+                    and not p.conviction.stale_anchor
+                    and not p.conviction.placer_risk):
                 cand_order.append(r.race_id)
                 emit(f"  ⚠ top-class door: {r.course} {r.off_time} (Cl{r.race_class}, "
                      f"open market) earns a candidate slot on {p.runner.horse} — "
@@ -541,8 +558,8 @@ def main() -> int:
     # requires: WELL-IN mark, Class 4 or better (unknown class allowed — Irish cards),
     # and an anchored market. Fail = no bet, with the reasons said out loud.
     from racing_edge.domain.mark import mark_read
-    delta = mark_read(nap.runner.official_rating, nap.history,
-                      code=nap.race.code).delta
+    _mr = mark_read(nap.runner.official_rating, nap.history, code=nap.race.code)
+    delta = _mr.delta
     race_fav = min((p.price for p in field
                     if p.race.race_id == r.race_id and p.price), default=None)
     # FALLBACK DISCIPLINE (2026-07-21: three of six losers were shallow fallback
@@ -551,8 +568,7 @@ def main() -> int:
     # carry a WINNING-ERA core (4+ lens FAMILIES including well-in — the banked
     # winners' shape: mark + course + market + one more) or the day is a pass.
     if not deep_case:
-        if nap.conviction.score < 4 or not any(
-                "well-in" in a for a in nap.conviction.aligned):
+        if nap.conviction.score < 4 or not nap.conviction.well_in:
             emit(f"  ✗ FALLBACK TOO THIN: deep read unavailable and the engine pick "
                  f"({nap.runner.horse}, conv {nap.conviction.score}) lacks the "
                  f"winning-era core — no bet without the reader.")
@@ -562,13 +578,18 @@ def main() -> int:
             _maybe_email(out, "Nap — no bet today (fallback too thin)", args.email)
             return 0
 
-    # THE MARK IS SACRED — never a pick that isn't well-in. Non-negotiable.
-    if delta is None or delta > 0:
-        emit(f"  ✗ PROFILE FLOOR: {nap.runner.horse} is not WELL-IN "
-             f"(mark delta {delta if delta is not None else 'OWED'}) — no bet.")
+    # THE MARK IS SACRED — never a pick that isn't well-in, and never one whose
+    # well-in anchor is from a dead era (2026-07-25 Woodstock audit: 'WELL-IN -7lb'
+    # against a win older than the visible history is a placer profile, not a
+    # missed handicapper). Non-negotiable.
+    if delta is None or delta > 0 or _mr.stale:
+        why_mark = ("STALE anchor — " + _mr.verdict if _mr.stale else
+                    f"mark delta {delta if delta is not None else 'OWED'}")
+        emit(f"  ✗ PROFILE FLOOR: {nap.runner.horse} is not soundly WELL-IN "
+             f"({why_mark}) — no bet.")
         _bank_pass(resolve_date(args.day),
-                   f"profile floor: {nap.runner.horse} not well-in "
-                   f"(delta {delta if delta is not None else 'OWED'})")
+                   f"profile floor: {nap.runner.horse} not soundly well-in "
+                   f"({why_mark})")
         _maybe_email(out, "Nap — no bet today (not well-in)", args.email)
         return 0
     # class and anchor are ARGUABLE — an argued multi-fact deep case may override them
@@ -593,9 +614,9 @@ def main() -> int:
     # still kills the licence.)
     _top_class_open = (r.race_class is not None and r.race_class <= 3
                        and r.field_size < 16)
-    race_gated = any(("novice in disguise" in f) or ("bottom-grade" in f)
-                     or ("open market" in f and not _top_class_open)
-                     for f in c.flags)
+    race_gated = any(
+        not ("open market" in f and "12+ field" not in f and _top_class_open)
+        for f in _race_gate_flags(c.flags))
     argued = (bool(deep_case) and mp is not None and len(mp.cite) >= 3
               and not race_gated)
     if off_profile and not argued:

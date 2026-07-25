@@ -53,6 +53,21 @@ class Conviction:
         flags it — the winning-era bar, meaningful again."""
         return self.score >= 3 and self.mark_known and not self.flags
 
+    # the decisive-lens facts, exposed as PROPERTIES (2026-07-25 replication audit:
+    # ranking, the top-class door and the fallback floor were each string-matching
+    # the aligned labels — one rewording would have silently blinded all three)
+    @property
+    def well_in(self) -> bool:
+        return any("well-in" in a for a in self.aligned)
+
+    @property
+    def stale_anchor(self) -> bool:
+        return any("STALE" in f for f in self.flags)
+
+    @property
+    def placer_risk(self) -> bool:
+        return any("placer risk" in f for f in self.flags)
+
 
 def _same_course(h: PastRun, race: Race) -> bool:
     return (bool(h.course and race.course)
