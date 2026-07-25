@@ -37,17 +37,38 @@ NAP_SYSTEM = (
     "dig for it, frank it, chase the threads. If after real work nothing matches, PASS "
     "and earn it — name what kills EACH candidate race. Never force the least-bad pick "
     "on a bad card: that is how both losing naps happened.\n"
-    "6. THE RECORD'S WINNING PROFILE (every winner so far matched it; both losers "
-    "broke it): WELL-IN — the bigger the gap the better — plus course-form depth, plus "
-    "yard INTENT (in-form stable and/or its #1 rider up), at a fair price (roughly "
-    "2.5-7.0), in a readable race: Class 4 or better, exposed field, anchored market. "
-    "Prefer the candidate matching this profile. Departing from it demands STRONGER "
-    "cited facts, said out loud in the case.\n"
-    "7. USE THE BANKED LESSONS: if a LESSONS block is supplied (validated nuances the "
-    "master promoted, tracked follow/oppose horses from past results), they are "
-    "evidence — apply them and cite them like any other fact.\n"
+    "6. THE RECORD'S WINNING PROFILE: WELL-IN — the bigger the gap the better — plus "
+    "course-form depth, plus yard INTENT where visible, in a readable race with an "
+    "exposed field and an anchored market. Class 4+ preferred; Class 5 demands a "
+    "STRONGER multi-fact case; Class 6 flat is a pass. THE PRICE NEVER DISQUALIFIES a "
+    "form-proven case (#12 — the horse doesn't know its odds): a big price on a real "
+    "case is EACH-WAY VALUE (#28), and only a cramped sub-2.5 is unbettable. The mark "
+    "is the one non-negotiable: never a pick that isn't well-in.\n"
+    "7. LESSONS AND LEADS: MASTER-VALIDATED lines are real evidence — apply and cite "
+    "them. Lines marked 'unverified lead' are COLOUR ONLY: they may tip a close call "
+    "but a case may NEVER rest on one — the form facts must stand alone without the "
+    "lead. (2026-07-21: two losing cases were built on unverified leads mislabelled "
+    "as validated. Never again.)\n"
+    "8. BEAT THE DANGER (2026-07-09, after the nap lost to an in-form rival who won "
+    "easily): a case is NOT finished until you name the single most feared rival — "
+    "usually the in-form one, the horse winning its recent races — state honestly why "
+    "IT can win, and then beat it with cited facts. If you cannot beat the danger "
+    "honestly, then the danger IS the pick, or the race is a pass. Never bank a case "
+    "that only argues FOR your horse.\n"
+    "9. THE REMATCH READ (earned 2026-07-06 — Ebony Maw WON at 12.0 after the system "
+    "passed on its own correct read): when today's race is a REMATCH of a recent race "
+    "on the same terms, the previous running IS the trial run. The horse that won the "
+    "rematch off today's mark, with course form, is the angle EVEN AT A BIG PRICE "
+    "(each-way, #28). A favourite already BEATEN on today's terms by re-opposers is a "
+    "FALSE anchor — oppose it, and its falseness makes the race MORE readable, not "
+    "less. Recommend the instrument in the case: win single in the fair band, "
+    "each-way at 8.0+.\n"
     "IRON RULES: only facts from the readouts and tool results; cite the exact fact "
-    "for every claim; a blank is OWED, never filled; never let the price pick.\n"
+    "for every claim; a blank is OWED, never filled; never let the price pick. OWED "
+    "IS SYMMETRIC (2026-07-25): a blank on a RIVAL is owed exactly as a blank on your "
+    "pick — absence of evidence never counts AGAINST the danger; beat it only with "
+    "facts you HAVE. And any fatal fact you use to cross off a rival that also "
+    "applies to your own pick must be confronted in the case, never parked in owed.\n"
     "Answer ONLY a single JSON object, no prose around it."
 )
 
@@ -61,6 +82,9 @@ _SCHEMA_HINT = (
     '  "crossed_off": ["horse — the fatal fact", "..."],\n'
     '  "cite": ["the exact readout/tool facts the case rests on"],\n'
     '  "owed": "what could not be checked (state it, never fill it)",\n'
+    '  "danger": {"horse": "the most feared rival (usually the in-form one)", '
+    '"its_case": "why IT can win — honest", "beaten_because": "the cited facts that '
+    'beat it"},\n'
     '  "profile_match": {"well_in": true, "class_ok": true, "market_anchor": true, '
     '"note": "how the pick fits the winning profile, or the STRONGER facts justifying '
     'a departure"},\n'
@@ -80,6 +104,9 @@ class MorningPick:
     crossed_off: tuple[str, ...] = field(default_factory=tuple)
     cite: tuple[str, ...] = field(default_factory=tuple)
     owed: str = ""
+    danger_horse: str = ""
+    danger_case: str = ""
+    danger_beaten: str = ""
     profile_note: str = ""
     profile_flags: tuple[bool, bool, bool] = (False, False, False)   # well_in, class, anchor
     confidence: str = ""
@@ -89,10 +116,66 @@ class MorningPick:
 
     @property
     def ok(self) -> bool:
-        # a pick without the profile checklist stated is NOT ok — the model must say,
-        # per pick, how it fits the winning profile (or justify the departure)
-        pick_ok = bool(self.horse and self.race_label and self.profile_note)
+        # a pick is NOT ok without (a) the profile checklist and (b) the DANGER named
+        # and beaten — a case that only argues FOR its horse is half a case
+        pick_ok = bool(self.horse and self.race_label and self.profile_note
+                       and self.danger_horse and self.danger_beaten)
         return pick_ok or (self.is_pass and bool(self.pass_reason))
+
+
+def build_lessons(nap_history: list[dict], strike: tuple[int, int],
+                  nuances: list[dict], tracked_today: list[dict],
+                  rule_tally: list[dict]) -> list[str]:
+    """The student's notes for the exam, assembled PURE so a test can prove the loop
+    is closed: the record and the last losses (with their night-autopsy verdicts),
+    the master-validated lessons, the freshest unproven ones (weigh lightly), today's
+    tracked leads (honestly labelled unverified), and rules dying on the scoreboard.
+
+    This is the wire the coroner found cut (2026-07-21): huge credits went on night
+    study whose output never reached the morning pick — validated=0 by construction,
+    losses taught nothing forward. Everything the loop banks now flows through here.
+
+    `nap_history` rows: date/horse/course/race_id/won. `tracked_today` rows:
+    angle/horse/course/off_time/note (the tracked horses running TODAY)."""
+    lines: list[str] = []
+    w, n = strike
+    if n:
+        lines.append(f"- RECORD: {w}/{n} settled — "
+                     + ("COLD: tighten race selection, demand the full profile"
+                        if w * 2 < n else "steady"))
+    nu_by_race: dict[str, dict] = {}
+    for nu in nuances:
+        nu_by_race.setdefault(nu["race_id"], nu)
+    for x in [x for x in nap_history if x["won"] == 0][-5:]:
+        aut = nu_by_race.get(x["race_id"])
+        missed = (aut.get("what_missed") or "")[:140] if aut else ""
+        lines.append(f"- RECENT LOSS {x['date']} {x['horse']} ({x['course']})"
+                     + (f": missed — {missed}" if missed else ""))
+    lines += [f"- MASTER-VALIDATED: {nu['nuance']}"
+              for nu in nuances if nu["status"] == "validated"]
+    lines += [f"- UNPROVEN nuance (weigh lightly): {nu['nuance'][:140]}"
+              for nu in nuances if nu["status"] == "proposed"][-3:]
+    # tracked clues are UNVERIFIED leads (2026-07-21: two losers were built on tracked
+    # clues the old header mislabelled 'master validated' — the model believed the
+    # label). Honest label + explicit weight instruction. The clue's DATE prints too
+    # (2026-07-25 audit: notes narrate the PAST race that taught them — 'won today',
+    # 'finished 2nd' — and without the date they read as today's results), and a
+    # CONFLICT note when the lead points against the engine's own read.
+    tracked_lines = [
+        f"- unverified lead ({t['angle']}, banked {t.get('date', '?')} — the note "
+        f"describes THAT day's run, not today): {t['horse']} runs today "
+        f"{t['course']} {t['off_time']}: {t['note'][:120]}"
+        + (f" (NB: {t['conflict']})" if t.get("conflict") else "")
+        for t in tracked_today[:8]]
+    if tracked_lines:
+        lines.append("UNVERIFIED TRACKED LEADS — colour only, weigh lightly, "
+                     "NEVER the foundation of a case:")
+        lines += tracked_lines
+    lines += [f"- RULE UNDER FIRE: {t['rule']} contradicted "
+              f"{t['contradicts']}-{t['supports']} by results — weigh it lightly"
+              for t in rule_tally
+              if t["contradicts"] >= 3 and t["contradicts"] > t["supports"]]
+    return lines
 
 
 def build_nap_prompt(candidates: list[tuple[str, str]], lessons: str = "") -> str:
@@ -100,8 +183,8 @@ def build_nap_prompt(candidates: list[tuple[str, str]], lessons: str = "") -> st
     student's own notes — validated nuances + tracked horses — injected so the pick
     is made WITH the banked learning, not from a blank slate every morning."""
     blocks = [f"CANDIDATE RACE — {label}\n{readout}" for label, readout in candidates]
-    lessons_block = (f"LESSONS BANKED (the master validated these — apply and cite "
-                     f"them):\n{lessons}\n\n" if lessons.strip() else "")
+    lessons_block = (f"LESSONS & LEADS (labels matter — see rule 7):\n{lessons}\n\n"
+                     if lessons.strip() else "")
     return (
         f"{lessons_block}"
         f"Today's shortlisted races ({len(candidates)}). Read them ALL, pick the most "
@@ -126,6 +209,7 @@ def parse_morning_pick(text: str) -> MorningPick:
         return tuple(str(x) for x in v) if isinstance(v, list) else ()
 
     pm = d.get("profile_match") if isinstance(d.get("profile_match"), dict) else {}
+    dg = d.get("danger") if isinstance(d.get("danger"), dict) else {}
     return MorningPick(
         race_label=str(d.get("race", "")).strip(),
         horse=str(d.get("horse", "")).strip(),
@@ -134,6 +218,9 @@ def parse_morning_pick(text: str) -> MorningPick:
         crossed_off=_tup(d.get("crossed_off")),
         cite=_tup(d.get("cite")),
         owed=str(d.get("owed", "")),
+        danger_horse=str(dg.get("horse", "")).strip(),
+        danger_case=str(dg.get("its_case", "")),
+        danger_beaten=str(dg.get("beaten_because", "")),
         profile_note=str(pm.get("note", "")),
         profile_flags=(bool(pm.get("well_in")), bool(pm.get("class_ok")),
                        bool(pm.get("market_anchor"))),

@@ -67,7 +67,11 @@ class RacingAPIClient:
                 continue
             if resp.status_code == 200:
                 return resp.json()
-            if resp.status_code == 404 and allow_404:
+            # 404 = not found; 403 = plan doesn't cover the endpoint (2026-07-25
+            # reliability audit: a tier downgrade must degrade an OPTIONAL lens to
+            # OWED, never crash the whole morning) — both read as honest empties
+            # where the caller allows it
+            if resp.status_code in (404, 403) and allow_404:
                 return None
             raise RacingAPIError(resp.status_code, url, resp.text[:200])
 
@@ -83,8 +87,26 @@ class RacingAPIClient:
         else:
             ds = day
         regions = [r.strip() for r in self._cfg.api.regions.split(",")]
-        params = [("date", ds)] + [("region_codes", r) for r in regions]
-        return self._get("/racecards/pro", params=params, allow_404=True) or {"racecards": []}
+        # tier from env so a plan downgrade is one .env line, not a code change
+        # (RACING_API_CARDS=standard after dropping Pro; default stays pro)
+        import os
+        tier = os.environ.get("RACING_API_CARDS", "pro").strip() or "pro"
+        if tier == "pro":
+            params = [("date", ds)] + [("region_codes", r) for r in regions]
+        else:
+            # standard/basic take day=today|tomorrow ONLY — no date param (the 422
+            # that silently killed every morning after the downgrade, 2026-07-13)
+            today = date.today().isoformat()
+            tomorrow = (date.today() + timedelta(days=1)).isoformat()
+            if ds == today:
+                dayp = "today"
+            elif ds == tomorrow:
+                dayp = "tomorrow"
+            else:
+                return {"racecards": []}   # past cards are Pro-only — honest empty
+            params = [("day", dayp)] + [("region_codes", r) for r in regions]
+        return self._get(f"/racecards/{tier}", params=params,
+                         allow_404=True) or {"racecards": []}
 
     def results_by_date(self, date_str: str) -> dict:
         params = [("start_date", date_str), ("end_date", date_str), ("limit", 100)]
@@ -106,6 +128,45 @@ class RacingAPIClient:
         if isinstance(doc, dict):
             rows = doc.get("results") or doc.get("data") or []
             return rows if isinstance(rows, list) else []
+        return doc if isinstance(doc, list) else []
+
+    def trainer_course(self, trainer_id: str, course_id: str = "") -> list[dict]:
+        """The trainer's record BY COURSE — rule #10 (the local master) finally gets
+        data: win% at THIS track instead of a prose rule. Standard plan and up."""
+        if not trainer_id:
+            return []
+        doc = self._get(f"/trainers/{trainer_id}/analysis/courses", allow_404=True)
+        if isinstance(doc, dict):
+            for key in ("courses", "analysis", "data", "results"):
+                v = doc.get(key)
+                if isinstance(v, list):
+                    return v
+        return doc if isinstance(doc, list) else []
+
+    def jockey_course(self, jockey_id: str) -> list[dict]:
+        """The jockey's record BY COURSE — the #30 lens (jockey class at this track).
+        Standard plan and up."""
+        if not jockey_id:
+            return []
+        doc = self._get(f"/jockeys/{jockey_id}/analysis/courses", allow_404=True)
+        if isinstance(doc, dict):
+            for key in ("courses", "analysis", "data", "results"):
+                v = doc.get(key)
+                if isinstance(v, list):
+                    return v
+        return doc if isinstance(doc, list) else []
+
+    def horse_distance_times(self, horse_id: str) -> list[dict]:
+        """The horse's record BY DISTANCE (win%, times) — the trip lens that has
+        printed '—' on every brief. Basic plan and up."""
+        if not horse_id:
+            return []
+        doc = self._get(f"/horses/{horse_id}/analysis/distance-times", allow_404=True)
+        if isinstance(doc, dict):
+            for key in ("distances", "analysis", "data", "results"):
+                v = doc.get(key)
+                if isinstance(v, list):
+                    return v
         return doc if isinstance(doc, list) else []
 
     def trainer_jockeys(self, trainer_id: str) -> list[dict]:

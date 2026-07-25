@@ -29,28 +29,96 @@ from collections.abc import Callable
 import requests
 
 _URL = "https://api.anthropic.com/v1/messages"
+
+
+def _log_usage(task: str, model: str, data: dict) -> None:
+    """Append the call's REAL token counts (from the API response) to a local CSV —
+    the machine counts its own bill instead of anyone estimating it. Never raises."""
+    try:
+        import csv
+        import datetime
+        from pathlib import Path
+        _data_dir = Path(__file__).resolve().parents[3] / "data"
+        u = data.get("usage") or {}
+        # cache-aware (2026-07-25): cache writes bill ~like input; cache READS bill
+        # at ~0.1x, so they count at a tenth — the ledger stays in cost-proportional
+        # token units and the budget breaker keeps meaning what it meant.
+        eff_in = (int(u.get("input_tokens") or 0)
+                  + int(u.get("cache_creation_input_tokens") or 0)
+                  + int(u.get("cache_read_input_tokens") or 0) // 10)
+        row = [datetime.date.today().isoformat(), task, model,
+               eff_in, int(u.get("output_tokens") or 0)]
+        # anchored to the repo, not the CWD (2026-07-25 audit: a manual
+        # run from elsewhere wrote spend into a stray data/ — the budget
+        # breaker could be bypassed without anyone deciding to)
+        path = _data_dir / "model_usage.csv"
+        path.parent.mkdir(parents=True, exist_ok=True)
+        new_file = not path.exists()
+        with path.open("a", newline="") as f:
+            w = csv.writer(f)
+            if new_file:
+                w.writerow(["date", "task", "model", "input_tokens", "output_tokens"])
+            w.writerow(row)
+    except Exception:
+        pass
 _VERSION = "2023-06-01"
 _TIMEOUT = 120
 
 # The best model for each task — not one dial for everything.
 _TASK_MODELS = {
-    "study": "claude-sonnet-5",       # per-race read: strong reasoning, runs many times
-    "sceptic": "claude-fable-5",      # the kill-pass must be sharper than the proposer
-    "synthesis": "claude-fable-5",    # the weekly cross-day read: deepest, runs once
-    "nap": "claude-fable-5",          # THE morning pick: once a day, the deepest brain
+    "study": "claude-sonnet-5",       # per-race read: strong + affordable
+    "sceptic": "claude-sonnet-5",     # cost cut 2026-07-08: sonnet vs sonnet is a fair fight
+    "synthesis": "claude-sonnet-5",   # weekly; sonnet suffices for the summary
+    "nap": "claude-fable-5",          # THE pick: once a day, the only flagship call
 }
 _FALLBACK = "claude-sonnet-5"
 
 
 def resolve_model(task: str) -> str:
-    """Which model this task thinks with. Per-task env > global env > the table."""
+    """Which model this task thinks with: per-task env > the TABLE > global env.
+    THE TABLE NOW BEATS the global ANTHROPIC_MODEL (2026-07-08, the burn: a global
+    =claude-fable-5 left in .env silently forced EVERY nightly call onto the most
+    expensive model, overriding all the per-task savings). The global is now only a
+    fallback for tasks the table doesn't know."""
     per_task = os.environ.get(f"ANTHROPIC_MODEL_{task.upper()}")
     if per_task:
         return per_task
-    global_override = os.environ.get("ANTHROPIC_MODEL")
-    if global_override:
-        return global_override
-    return _TASK_MODELS.get(task, _FALLBACK)
+    if task in _TASK_MODELS:
+        return _TASK_MODELS[task]
+    return os.environ.get("ANTHROPIC_MODEL") or _FALLBACK
+
+
+def _budget_spent_today() -> int:
+    """Total tokens (in+out) logged today. 0 if no ledger yet."""
+    try:
+        import csv
+        import datetime
+        from pathlib import Path
+        today = datetime.date.today().isoformat()
+        total = 0
+        _data_dir = Path(__file__).resolve().parents[3] / "data"
+        with (_data_dir / "model_usage.csv").open() as f:
+            for row in csv.DictReader(f):
+                if row["date"] == today:
+                    total += int(row["input_tokens"]) + int(row["output_tokens"])
+        return total
+    except Exception:
+        return 0
+
+
+def budget_blown() -> int | None:
+    """The HARD daily token budget (env NAP_TOKEN_BUDGET, default 300k in+out/day —
+    'this has to stop', 2026-07-08). Returns the spend if over budget, else None.
+    Callers refuse further model calls for the day; the morning pick degrades to the
+    engine (shadow) method and says so, rather than burning past the cap."""
+    try:
+        cap = int(os.environ.get("NAP_TOKEN_BUDGET", "300000"))
+    except ValueError:
+        cap = 300000
+    if cap <= 0:
+        return _budget_spent_today() or 1          # 0 = model OFF entirely
+    spent = _budget_spent_today()
+    return spent if spent >= cap else None
 
 
 def _post_with_retry(headers: dict, body: dict) -> tuple[dict | None, int]:
@@ -97,18 +165,35 @@ def get_investigator(task: str, tools: list[dict],
                "content-type": "application/json"}
 
     def complete(system: str, prompt: str) -> tuple[str, list[str]]:
-        messages: list[dict] = [{"role": "user", "content": prompt}]
+        spent = budget_blown()
+        if spent is not None:
+            return "", [f"DAILY TOKEN BUDGET reached ({spent} used) — no more model "
+                        f"calls today (raise NAP_TOKEN_BUDGET to override)"]
+        # the big first prompt gets its own cache breakpoint; a ROLLING marker on
+        # the newest tool-result extends the cached prefix every round (2026-07-25
+        # review: system-only caching still re-billed the growing history in full)
+        messages: list[dict] = [{"role": "user", "content": [
+            {"type": "text", "text": prompt,
+             "cache_control": {"type": "ephemeral"}}]}]
         trail: list[str] = []
+        prev_marked: dict | None = None
         steps = 0
         budget = max_tokens
         bumped = False
         for _round in range(max_steps + 5):            # hard cap on conversation rounds
-            body = {"model": model, "max_tokens": budget, "system": system,
+            # PROMPT CACHING (2026-07-25 audit): the loop re-billed the identical
+            # system+tools+prompt prefix every tool round at full price. Cache
+            # markers make each round after the first read the prefix at ~0.1x —
+            # what made max_steps=6 affordable.
+            body = {"model": model, "max_tokens": budget,
+                    "system": [{"type": "text", "text": system,
+                                "cache_control": {"type": "ephemeral"}}],
                     "messages": messages, "tools": tools}
             data, status = _post_with_retry(headers, body)
             if data is None:
                 trail.append(f"API error {status or 'network'} — gave up after retries")
                 return "", trail
+            _log_usage(task, model, data)
             content = data.get("content") or []
             if data.get("stop_reason") == "tool_use":
                 messages.append({"role": "assistant", "content": content})
@@ -127,6 +212,11 @@ def get_investigator(task: str, tools: list[dict],
                         results.append({"type": "tool_result",
                                         "tool_use_id": block.get("id", ""),
                                         "content": out[:4000]})
+                if results:
+                    if prev_marked is not None:
+                        prev_marked.pop("cache_control", None)
+                    results[-1]["cache_control"] = {"type": "ephemeral"}
+                    prev_marked = results[-1]
                 messages.append({"role": "user", "content": results})
                 continue
             text = "".join(b.get("text", "") for b in content if isinstance(b, dict))
@@ -165,6 +255,8 @@ def get_reasoner(task: str = "study",
     }
 
     def complete(system: str, prompt: str) -> str:
+        if budget_blown() is not None:
+            return ""                              # daily budget reached — hard stop
         body = {
             "model": model,
             "max_tokens": max_tokens,
@@ -174,6 +266,7 @@ def get_reasoner(task: str = "study",
         data, _status = _post_with_retry(headers, body)
         if data is None:
             return ""
+        _log_usage(task, model, data)
         parts = data.get("content") or []
         return "".join(p.get("text", "") for p in parts if isinstance(p, dict))
 

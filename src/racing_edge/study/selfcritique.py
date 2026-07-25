@@ -187,15 +187,20 @@ def parse_critique(text: str) -> Critique:
 REFUTE_SYSTEM = (
     "You are the SCEPTIC — a second, adversarial pass over an apprentice handicapper's "
     "self-study. You get the SAME full-form readout and the nuance the apprentice "
-    "proposes. Your one job: try to KILL the nuance using only the readout's facts.\n\n"
-    "Attack it on exactly these grounds:\n"
-    "1. FACT CHECK — does every claim it rests on actually appear in the readout, "
-    "verbatim? (e.g. calling a horse WELL-IN when its own cited marks show it RAISED.)\n"
-    "2. CONTRADICTION — does other readout evidence cut against it?\n"
-    "3. ARTIFACT — is it built on a data gap (blank/OWED fields, missing coverage) "
-    "rather than a racing fact?\n"
-    "4. TRIVIALITY — is it just restating an obvious known rule with no new edge?\n"
-    "Do NOT introduce outside facts. If the nuance survives all four, say so honestly — "
+    "proposes. Your one job: try to KILL the nuance where the evidence shows it FALSE.\n\n"
+    "THE RULES OF EVIDENCE (2026-07-21 coroner: the old court was rigged — 104 refuted, "
+    "0 validated, because you were judging tool-lookups you could not see and killing "
+    "sound lessons as 'trivial'):\n"
+    "1. The apprentice had LIVE LOOKUP TOOLS you do not have. A cited fact that is "
+    "absent from the readout is ADMISSIBLE — you may kill a claim only when the "
+    "readout itself CONTRADICTS it, never because you cannot find it.\n"
+    "2. CONTRADICTION — does readout evidence cut against the nuance? That kills.\n"
+    "3. ARTIFACT — a nuance BUILT ON a data gap (its foundation is a blank/OWED field) "
+    "is killed; a nuance merely accompanied by gaps is not.\n"
+    "4. TRIVIALITY is NOT a kill. A lesson that restates a known rule is the record "
+    "AGREEING with the notebook — answer refuted=false with ground 'triviality' so it "
+    "is filed as support, not slaughtered.\n"
+    "Do NOT introduce outside facts. If the nuance survives, say so honestly — "
     "you are a sceptic, not a cynic.\n"
     'Answer ONLY a JSON object: {"refuted": true|false, "ground": "fact|contradiction|'
     'artifact|triviality|none", "reason": "one or two sentences citing the readout"}'
@@ -214,12 +219,20 @@ class Refutation:
         return bool(self.reason or self.ground)
 
 
-def build_refute_prompt(readout: str, critique: Critique) -> str:
+def build_refute_prompt(readout: str, critique: Critique,
+                        trail: list[str] | None = None) -> str:
+    """`trail` is the apprentice's tool-lookup log — supplied so the sceptic can SEE
+    what was actually fetched instead of treating every lookup-cited fact as hearsay."""
+    trail_block = (
+        "\nTHE APPRENTICE'S TOOL LOOKUPS (evidence it fetched live — admissible):\n"
+        + "\n".join(f"  {t}" for t in trail[:20]) + "\n"
+        if trail else ""
+    )
     return (
         f"THE APPRENTICE'S NUANCE (attack this):\n{critique.nuance}\n\n"
         f"It claims to rest on: {' | '.join(critique.cite) or '(nothing cited)'}\n"
-        f"What it says was missed: {critique.what_i_missed}\n\n"
-        f"FULL-FORM READOUT (the only admissible evidence):\n"
+        f"What it says was missed: {critique.what_i_missed}\n{trail_block}\n"
+        f"FULL-FORM READOUT:\n"
         f"-----------------------------------------------\n{readout}\n"
         f"-----------------------------------------------\n\n"
         f"Try to kill it. JSON only."

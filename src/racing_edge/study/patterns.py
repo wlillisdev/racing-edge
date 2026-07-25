@@ -40,7 +40,7 @@ def least_raised_recent_winner(st: Restudy) -> PatternHit | None:
         hist = st.histories.get(r.horse_id, ())
         if not hist or hist[0].position != 1:       # most recent run must be a WIN
             continue
-        mr = mark_read(r.official_rating, hist)
+        mr = mark_read(r.official_rating, hist, code=st.race.code)
         if mr.delta is None:
             continue
         cands.append((r.horse_id, r.horse, mr.delta))

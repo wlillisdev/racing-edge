@@ -15,7 +15,7 @@ def _runner(hid: str, name: str, ofr: int) -> Runner:
 
 
 def _won_off(orr: int, d: date = date(2026, 6, 1)) -> PastRun:
-    return PastRun(date=d, position=1, official_rating=orr)
+    return PastRun(date=d, position=1, official_rating=orr, race_type="Flat")
 
 
 def _st(runners, results, histories) -> Restudy:

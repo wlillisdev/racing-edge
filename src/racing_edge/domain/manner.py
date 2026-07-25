@@ -44,6 +44,9 @@ _NON_FINISHER = (
     "out-battled", "outbattled", "outpaced", "weakened", "faded", "no response",
     "plugged on", "failed to quicken", "soon beaten", "well held", "every chance",
     "no further progress", "lacked a turn of foot", "stayed on past beaten horses",
+    # led-and-caught (2026-07-25 Woodstock audit: 'driven to the front... overtaken
+    # inside the final 110 yards' read NEUTRAL — the textbook nearly-type went unseen)
+    "overtaken", "headed", "collared", "caught inside the final", "caught close home",
 )
 _GREEN = (
     "green", "ran green", "will improve", "needed the run", "should improve",
@@ -71,10 +74,24 @@ class MannerVerdict:
     finisher_runs: int
 
 
-def nap_verdict(recent_comments: list[str]) -> MannerVerdict:
+def nap_verdict(recent_comments: list[str],
+                positions: list[int | None] | None = None) -> MannerVerdict:
     """Read a horse's recent comments (MOST RECENT FIRST) and judge it as a NAP.
-    Repeated out-battled/found-little = a placer, not a NAP (rule #1's 'again')."""
-    manners = [read_manner(c)[0] for c in recent_comments if c and c.strip()]
+    Repeated out-battled/found-little = a placer, not a NAP (rule #1's 'again').
+
+    `positions`, when given (aligned with recent_comments), guards the vocabulary:
+    a comment from a run the horse WON can never read non-finisher (2026-07-25
+    adversarial review: 'made most, headed over 1f out, kept on to lead again close
+    home, won going away' classified non_finisher on the word 'headed' — a rallying
+    front-running WINNER flagged as a placer)."""
+    pairs = [(c, positions[i] if positions and i < len(positions) else None)
+             for i, c in enumerate(recent_comments) if c and c.strip()]
+    manners = []
+    for c, pos in pairs:
+        m = read_manner(c)[0]
+        if m == "non_finisher" and pos == 1:
+            m = "finisher"                     # it WON — the finish speaks for itself
+        manners.append(m)
     if not manners:
         return MannerVerdict("neutral", "no running comments to read", 0, 0)
     nonf = manners.count("non_finisher")

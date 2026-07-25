@@ -12,7 +12,7 @@ from __future__ import annotations
 from collections.abc import Callable
 from dataclasses import dataclass
 
-from racing_edge.domain.mark import mark_read
+from racing_edge.domain.mark import mark_read, same_code_runs
 from racing_edge.domain.models import PastRun, Race
 from racing_edge.domain.tells import match_tells
 from racing_edge.domain.units import going_band
@@ -74,7 +74,7 @@ def _same_going(h: PastRun, race: Race) -> bool:
 
 # each lens: (RunnerEvidence, Race) -> Cell. owed=True means "go and get it".
 def _mark(ev: RunnerEvidence, race: Race) -> Cell:
-    mr = mark_read(ev.runner.official_rating, ev.history)
+    mr = mark_read(ev.runner.official_rating, ev.history, code=race.code)
     if mr.today is None:
         return Cell("OR?", owed=True)                       # no mark on the card
     if mr.last_won is None:
@@ -83,10 +83,12 @@ def _mark(ev: RunnerEvidence, race: Race) -> Cell:
 
 
 def _course(ev: RunnerEvidence, race: Race) -> Cell:
+    # same-code only: a hurdles win at the track is not course form for the flat
+    hist = same_code_runs(ev.history, race.code)
     if not ev.history:
         return Cell("·", owed=True)
-    w = sum(1 for h in ev.history if _won(h) and _same_course(h, race))
-    p = sum(1 for h in ev.history if _placed(h) and not _won(h) and _same_course(h, race))
+    w = sum(1 for h in hist if _won(h) and _same_course(h, race))
+    p = sum(1 for h in hist if _placed(h) and not _won(h) and _same_course(h, race))
     if w:
         return Cell(f"{w}W" + (f"+{p}P" if p else ""))   # depth: 2W beats 1W (Friday's lesson)
     return Cell(f"{p}P" if p else "—")
@@ -95,28 +97,33 @@ def _course(ev: RunnerEvidence, race: Race) -> Cell:
 def _trip(ev: RunnerEvidence, race: Race) -> Cell:
     if not ev.history:
         return Cell("·", owed=True)
-    return Cell("✓" if any(_placed(h) and _same_trip(h, race) for h in ev.history) else "—")
+    hist = same_code_runs(ev.history, race.code)
+    return Cell("✓" if any(_placed(h) and _same_trip(h, race) for h in hist) else "—")
 
 
 def _going(ev: RunnerEvidence, race: Race) -> Cell:
     if not ev.history:
         return Cell("·", owed=True)
-    return Cell("✓" if any(_placed(h) and _same_going(h, race) for h in ev.history) else "—")
+    hist = same_code_runs(ev.history, race.code)
+    return Cell("✓" if any(_placed(h) and _same_going(h, race) for h in hist) else "—")
 
 
 def _manner(ev: RunnerEvidence, race: Race) -> Cell:
     # rule #1 read the finish — LIVE since the comments door opened (2026-07-01): the
     # history carries in-running comments, nap_verdict classifies them. Only OWED when
-    # the runs genuinely came through without comments.
+    # the runs genuinely came through without comments. Same-code comments only — a
+    # chase faller's "pulled up" is not a flat excuse (2026-07-21 audit).
     from racing_edge.domain.manner import nap_verdict
-    mv = nap_verdict([h.comment for h in ev.history[:4]])
+    hist = same_code_runs(ev.history, race.code)
+    mv = nap_verdict([h.comment for h in hist[:4]],
+                     positions=[h.position for h in hist[:4]])
     if mv.recommendation == "win_positive":
         return Cell("FINISHER")
     if mv.recommendation == "place_only":
         return Cell("placer!")                       # the nearly-type warning, visible
     if mv.recommendation == "excuse_upgrade":
         return Cell("excuse+")
-    if any(h.comment.strip() for h in ev.history[:4]):
+    if any(h.comment.strip() for h in hist[:4]):
         return Cell("—")                             # comments read, nothing decisive
     return Cell("·", owed=True)                      # no comments through the window
 

@@ -11,8 +11,10 @@ from racing_edge.domain.tells import match_tells
 
 
 def _hist(*pairs):
-    # (position, official_rating) most-recent first
-    return tuple(PastRun(date=date(2026, 1, i + 1), position=p, official_rating=o)
+    # (position, official_rating) most-recent first — typed, like the live feed:
+    # the sacred mark (and now the tells too) refuse a blank-typed win as anchor
+    return tuple(PastRun(date=date(2026, 1, i + 1), position=p, official_rating=o,
+                         race_type="Chase")
                  for i, (p, o) in enumerate(pairs))
 
 

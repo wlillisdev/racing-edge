@@ -70,37 +70,49 @@ def test_record_fields_feed_the_nuance_ledger_signature() -> None:
 
 
 def test_each_task_gets_the_right_brain_never_haiku() -> None:
-    """Per-task model selection — the master's ruling after Haiku wrecked the reads.
-    The sceptic must be at least as sharp as the proposer; nothing defaults small."""
+    """Per-task model selection — economy tiers (2026-07-08, the burn): only THE pick
+    keeps the flagship; nothing defaults to Haiku; and the TABLE now beats a global
+    ANTHROPIC_MODEL (a stray global =fable in .env silently forced every nightly call
+    onto the most expensive model — the trap that caused the huge daily bill)."""
     import os
 
     from racing_edge.ai.reason import resolve_model
     for var in ("ANTHROPIC_MODEL", "ANTHROPIC_MODEL_STUDY", "ANTHROPIC_MODEL_SCEPTIC"):
         os.environ.pop(var, None)
     assert resolve_model("study") == "claude-sonnet-5"
-    assert resolve_model("sceptic") == "claude-fable-5"
-    assert resolve_model("synthesis") == "claude-fable-5"
-    for task in ("study", "sceptic", "synthesis"):
+    assert resolve_model("sceptic") == "claude-sonnet-5"
+    assert resolve_model("synthesis") == "claude-sonnet-5"
+    assert resolve_model("nap") == "claude-fable-5"       # the one flagship call a day
+    for task in ("study", "sceptic", "synthesis", "nap"):
         assert "haiku" not in resolve_model(task)
-    # override order: per-task beats global beats table
+    # THE TRAP IS DEAD: a global override no longer hijacks known tasks...
     os.environ["ANTHROPIC_MODEL"] = "claude-fable-5"
-    assert resolve_model("study") == "claude-fable-5"
+    assert resolve_model("study") == "claude-sonnet-5"
+    assert resolve_model("unknown-task") == "claude-fable-5"   # ...only unknown ones
+    # ...but an explicit per-task env still wins (deliberate beats accidental)
     os.environ["ANTHROPIC_MODEL_STUDY"] = "claude-opus-4-8"
     assert resolve_model("study") == "claude-opus-4-8"
-    assert resolve_model("sceptic") == "claude-fable-5"
     for var in ("ANTHROPIC_MODEL", "ANTHROPIC_MODEL_STUDY"):
         os.environ.pop(var, None)
 
 
 def test_the_sceptic_is_adversarial_and_grounded() -> None:
-    # the second pass must attack on the four grounds and stay inside the readout
+    # the second pass attacks — but under FAIR rules of evidence (coroner 2026-07-21:
+    # 104 refuted / 0 validated because the court was rigged): lookup-cited facts are
+    # admissible, triviality files as support instead of killing, and the sceptic can
+    # see the apprentice's tool trail
     assert "KILL the nuance" in REFUTE_SYSTEM
-    for ground in ("FACT CHECK", "CONTRADICTION", "ARTIFACT", "TRIVIALITY"):
+    for ground in ("CONTRADICTION", "ARTIFACT", "TRIVIALITY"):
         assert ground in REFUTE_SYSTEM
+    assert "ADMISSIBLE" in REFUTE_SYSTEM              # lookups can't be killed on sight
+    assert "TRIVIALITY is NOT a kill" in REFUTE_SYSTEM
     c = parse_critique('{"nuance": "the claim", "cite": ["WELL-IN at 8.5"], '
                        '"what_i_missed": "x"}')
     p = build_refute_prompt("THE-READOUT", c)
     assert "the claim" in p and "WELL-IN at 8.5" in p and "THE-READOUT" in p
+    assert "TOOL LOOKUPS" not in p                    # no trail given -> no block
+    p2 = build_refute_prompt("THE-READOUT", c, trail=["horse_runs(X) -> 4 runs"])
+    assert "TOOL LOOKUPS" in p2 and "horse_runs(X)" in p2
 
 
 def test_parse_refutation_reads_the_verdict_and_survives_prose() -> None:
@@ -179,6 +191,27 @@ def test_critique_mines_forward_clues_and_the_tracker_stores_them() -> None:
         rows = log.tracked_active()
         assert len(rows) == 1 and rows[0]["horse_id"] == "H9"
         assert rows[0]["status"] == "active"
+        log.close()
+
+
+def test_tracked_clues_settle_and_expire() -> None:
+    """Coroner 2026-07-21: 872 tracked clues, none ever settled — an intake with no
+    outflow. Clues now settle 'done' when the horse runs, and expire from the active
+    list at 28 days (the clue was about the NEXT run; a month on it's stale)."""
+    from datetime import timedelta
+    with tempfile.TemporaryDirectory() as d:
+        log = NuanceLog(Path(d) / "n.db")
+        log.track(day=date.today() - timedelta(days=3), race_id="r1", horse="Fresh",
+                  horse_id="F1", angle="follow", note="eye-catcher", conditions="")
+        log.track(day=date.today() - timedelta(days=40), race_id="r0", horse="Stale",
+                  horse_id="S1", angle="oppose", note="ancient clue", conditions="")
+        active = log.tracked_active()
+        assert [t["horse"] for t in active] == ["Fresh"]      # the 40-day row expired
+        assert log.settle_tracked("F1", outcome="ran 2026-07-21, WON") == 1
+        assert log.tracked_active() == []                     # settled = done
+        done = log._conn.execute(
+            "SELECT note, status FROM tracked WHERE horse_id = 'F1'").fetchone()
+        assert done["status"] == "done" and "settled: ran 2026-07-21, WON" in done["note"]
         log.close()
 
 

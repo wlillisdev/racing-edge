@@ -46,10 +46,15 @@ class Franking:
 
     @property
     def is_thin(self) -> bool:
-        # the sample re-ran but the form did NOT stack up — the ONLY case worth a veto.
+        # the sample re-ran and the form did NOT stack up — the ONLY case worth a veto.
         # "too soon" (rivals_ran_since < 2) is deliberately NOT thin: absence of a
         # re-run is the calendar, not evidence against the horse.
-        return self.rivals_ran_since >= 2 and self.rivals_franked < 2
+        # RECALIBRATED 2026-07-25 (the Saturday wipe-out: the veto crossed off every
+        # candidate on the best card of the week): 1 placer from 2 re-runners was
+        # scoring 'thin' — that's an ambiguous small sample, not evidence of a hollow
+        # race. Thin now means a FAIR sample re-ran and NOBODY placed. Franking is a
+        # tiebreaker (#15), and an ambiguous frank is no frank at all.
+        return self.rivals_ran_since >= 3 and self.rivals_franked == 0
 
 
 def _scored_after(runs: tuple[PastRun, ...], after: date,
@@ -63,15 +68,27 @@ def _scored_after(runs: tuple[PastRun, ...], after: date,
 
 def frank_form(client: _Fetcher, horse_id: str, history: tuple[PastRun, ...],
                cap: int = 6, max_lookback: int = 3,
-               as_of: date | None = None) -> Franking:
+               as_of: date | None = None, code: str | None = None) -> Franking:
     """Frank the most recent FRANKABLE race in `horse_id`'s history — the most
     recent one where at least two rivals have run again since (so it can be judged).
     Walks back at most `max_lookback` races. Returns a Franking summary; if nothing
-    is frankable yet (recent form too fresh), is_franked and is_thin are both False."""
+    is frankable yet (recent form too fresh), is_franked and is_thin are both False.
+
+    With `code`, the walk prefers SAME-CODE races (2026-07-21 audit: a code-switcher's
+    flat pick was being franked — or vetoed — on its recent jumps races while the
+    relevant flat form went unexamined). Falls back to any code only when the horse
+    has no same-code past at all."""
     if not history:
         return Franking(None, 0, 0, 0, "no prior form to frank")
 
-    for last in history[:max_lookback]:
+    pool = history
+    if code:
+        from racing_edge.domain.units import race_code
+        same = tuple(h for h in history
+                     if h.race_type and race_code(h.race_type) == code)
+        pool = same or history
+
+    for last in pool[:max_lookback]:
         if not (last.race_id and last.date):
             continue
         field = next((r for r in results_from_raw(client.results_by_date(last.date.isoformat()))
@@ -87,10 +104,15 @@ def frank_form(client: _Fetcher, horse_id: str, history: tuple[PastRun, ...],
             ran_since += int(ran)
             franked += int(placed)
         if ran_since >= 2:                       # frankable — enough rivals have re-run to judge
-            verdict = "FRANKED" if franked >= 2 else "thin"
+            # three-way label mirroring is_franked/is_thin (2026-07-25 audit: the
+            # note said 'thin' on a 1/5 frank that the recalibration deliberately
+            # no longer vetoes — the email must not say what the code doesn't mean)
+            verdict = ("FRANKED" if franked >= 2
+                       else "THIN (nobody placed)" if ran_since >= 3 and franked == 0
+                       else "mixed/ambiguous — no frank either way")
             return Franking(last.date, len(rivals), ran_since, franked,
                             f"{last.date.isoformat()} race {verdict}: "
                             f"{franked}/{ran_since} re-runners won/placed since")
 
-    return Franking(history[0].date, 0, 0, 0,
+    return Franking(pool[0].date, 0, 0, 0,
                     "too soon to frank — rivals from recent races haven't run again yet")

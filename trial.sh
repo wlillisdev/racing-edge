@@ -22,22 +22,40 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 
+# FLIGHT RECORDER (2026-07-21): the scheduled task kept silently not-running and the
+# only evidence lived on the Tasks webpage. Now every run — scheduled or manual —
+# logs its start, its FULL output and its exit code to data/task_runs.log, readable
+# from the console:  tail -80 data/task_runs.log
+mkdir -p data
+LOGF="data/task_runs.log"
+echo "=== $(date -u '+%F %T') UTC :: trial.sh ${1:-nap} START" >> "$LOGF"
+# NOTE the st=$? FIRST: $(date) inside the echo resets $?, so the old trap logged
+# EXIT 0 on crashed runs — three starved nights (07-22..24) hid behind that zero.
+trap 'st=$?; echo "=== $(date -u "+%F %T") UTC :: trial.sh '"${1:-nap}"' EXIT $st" >> "$LOGF"' EXIT
+exec > >(tee -a "$LOGF") 2>&1
+
 export PYTHONPATH=src
 PY="venv/bin/python"
-# The SDK/httpx clash only bites the paths that import the anthropic SDK (nap/dissect/
-# settle's optional narrative). Blank the key for THOSE with this prefix — but NOT for
-# `learn`, which uses the SDK-free direct-HTTP reasoner and NEEDS the real key (from .env
-# or the task env) to think. `env ANTHROPIC_API_KEY=` blanks it for one command only.
+# SDK_OFF = "make NO model calls for this task" — a COST/SCOPE switch, nothing else.
+# (2026-07-25 reliability audit: the old comment claimed an SDK/httpx clash; the SDK
+# was deleted long ago — everything uses the direct-HTTP reasoner. DO NOT "fix" the
+# nap or learn cases by adding this prefix: nap MUST keep the key for the morning
+# deep read, learn MUST keep it for the night study. Blanking either would silently
+# lobotomise the scheduled runs while manual runs kept working.)
 SDK_OFF=(env ANTHROPIC_API_KEY=)
 
 # form-trial was MERGED (PR #39) — the trial now lives on the current dev branch.
 # Override with TRIAL_BRANCH=... if the branch moves again.
 BRANCH="${TRIAL_BRANCH:-claude/tender-wright-kbn1h6}"
 echo ">> updating to the latest trial branch ($BRANCH)..."
-git fetch origin --quiet
-git checkout "$BRANCH" --quiet 2>/dev/null \
-  || git checkout -b "$BRANCH" "origin/$BRANCH"
-git pull origin "$BRANCH" --quiet
+# BEST-EFFORT update (2026-07-21): under set -e a git/network hiccup at 08:30 killed
+# the entire run before it banked anything. Stale code running beats no run.
+if ! ( git fetch origin --quiet \
+       && ( git checkout "$BRANCH" --quiet 2>/dev/null \
+            || git checkout -b "$BRANCH" "origin/$BRANCH" ) \
+       && git pull origin "$BRANCH" --quiet ); then
+  echo ">> WARNING: git update failed — running with the code already on disk"
+fi
 echo
 
 case "${1:-nap}" in
@@ -49,9 +67,15 @@ case "${1:-nap}" in
   synth)   "$PY" -m racing_edge.cli.learn   --synthesise --email ;;
   guard)   "${SDK_OFF[@]}" "$PY" -m racing_edge.cli.nap --guard ;;
   health)  "${SDK_OFF[@]}" "$PY" -m racing_edge.cli.health --email ;;
-  night)   "${SDK_OFF[@]}" "$PY" -m racing_edge.cli.nap --settle today --email
+  night)   # settle is best-effort: a settle crash must never cancel the self-study
+           # (07-22..24: one NameError in settle starved the nuance ledger 3 nights)
+           if ! "${SDK_OFF[@]}" "$PY" -m racing_edge.cli.nap --settle today --email; then
+             echo "WARNING: settle FAILED — continuing to the self-study regardless"
+           fi
            echo
-           "$PY" -m racing_edge.cli.learn   --day today --email ;;
+           "$PY" -m racing_edge.cli.learn   --day today --email
+           # Sunday: the weekly synthesis rides in the same slot (no weekly task needed)
+           if [ "$(date +%u)" = "7" ]; then echo; "$PY" -m racing_edge.cli.learn --synthesise --email; fi ;;
   all)     "$PY" -m racing_edge.cli.nap     --day today --both --email
            echo
            "${SDK_OFF[@]}" "$PY" -m racing_edge.cli.dissect --day today         --email ;;

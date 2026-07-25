@@ -48,7 +48,7 @@ def test_render_orders_by_finish_stars_winner_and_marks_owed() -> None:
     ))
     # H1 last won off OR 70 -> today 78 is +8lb (raised); give it a winning history line
     histories = {
-        "H1": past_runs_from_raw([{"date": "2026-05-01", "runners": [
+        "H1": past_runs_from_raw([{"date": "2026-05-01", "type": "Flat", "runners": [
             {"horse_id": "H1", "position": "1", "or": "70", "comment": "readily"}]}], "H1"),
         "H2": (),   # no history -> past runs OWED
     }
@@ -94,7 +94,7 @@ def test_system_read_reports_what_the_rules_said_pre_race() -> None:
                 runners=(_runner("H1", "Gem", 3.0, 120),))
     result = RaceResult(race_id="r1", date=date(2026, 7, 1),
                         runners=(RunnerResult(horse_id="H1", position=1, sp_dec=3.0),))
-    hist = {"H1": past_runs_from_raw([{"date": "2026-05-01", "course": "Cartmel",
+    hist = {"H1": past_runs_from_raw([{"date": "2026-05-01", "course": "Cartmel", "type": "Chase",
                                        "runners": [{"horse_id": "H1", "position": "1",
                                                     "or": "120"}]}], "H1")}
     read = Restudy(race=race, result=result, histories=hist).system_read()

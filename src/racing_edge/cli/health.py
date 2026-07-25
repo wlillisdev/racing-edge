@@ -39,10 +39,14 @@ def main() -> int:
     log.close()
     dates = {n["date"] for n in naps}
     recent = [n for n in naps if n["date"] >= (today - timedelta(days=3)).isoformat()]
+    # health runs at 09:00, the nap at 07:30 — so TODAY'S row must exist by now.
+    # (2026-07-13: 'yesterday counts' showed ALL GREEN while a 422 was killing every
+    # morning — the watchman waved through the exact failure he exists to catch.)
     all_ok &= _check(
-        today.isoformat() in dates or yday.isoformat() in dates,
-        f"nap banked recently (latest {max(dates) if dates else 'never'})",
-        "NO NAP banked today or yesterday — the 07:30 task is dead or dying silently",
+        today.isoformat() in dates,
+        f"today's nap banked (latest {max(dates) if dates else 'never'})",
+        f"NO NAP banked TODAY (latest {max(dates) if dates else 'never'}) — the 07:30 "
+        "task failed or crashed; open its log on the Tasks page",
         lines)
     stale = [n for n in naps if n["won"] is None and n["date"] < yday.isoformat()]
     all_ok &= _check(
@@ -51,12 +55,16 @@ def main() -> int:
         f"{len(stale)} nap(s) unsettled for 2+ days ({', '.join(n['date'] for n in stale[:5])}) "
         "— the 22:00 night task is not settling",
         lines)
-    caseless = [n for n in recent if not (n.get("case_text") or "").strip()]
+    # only judge naps banked since the case feature existed (2026-07-06) — rows from
+    # before it are legitimately caseless legacy, not a live fault
+    caseless = [n for n in recent
+                if n["date"] >= "2026-07-06" and not (n.get("case_text") or "").strip()]
     all_ok &= _check(
         not caseless,
         "recent naps carry their CASE (the night study reads real reasoning)",
-        f"{len(caseless)} recent nap(s) banked with NO case — the deep read is not "
-        "running or not being stored",
+        f"{len(caseless)} nap(s) since 2026-07-06 banked with NO case — the deep read "
+        "is not running in the task env or not being stored (check the 07:30 task log "
+        "for 'deep read OFF' or 'deep read failed')",
         lines)
 
     nlog = open_nuance_log()
@@ -70,7 +78,7 @@ def main() -> int:
         bool(fresh_nu) or not naps,
         f"self-study flowing ({len(fresh_nu)} nuance row(s) in the last 2 days; "
         f"{sum(1 for n in nuances if n['status'] == 'validated')} validated, "
-        f"{sum(1 for n in nuances if n['status'] == 'refuted')} refuted on record)",
+        f"{sum(1 for n in nuances if n['status'] in ('refuted', 'rejected'))} killed on record)",
         "NO nuance rows in 2+ days — the learn/night task is not running; the "
         "ledgers are starving again (the exact audit finding of 2026-07-05)",
         lines)
@@ -79,20 +87,110 @@ def main() -> int:
         f"rule scoreboard accumulating ({len(tally)} rule(s) on trial)",
         "self-studies run but NO rule evidence banked — the scoreboard pipe is broken",
         lines)
-    old_tracked = [t for t in tracked
-                   if t["date"] < (today - timedelta(days=21)).isoformat()]
+    # the silting alarm now watches the BROOM, not the backlog (2026-07-25: the old
+    # 21-day count red-lined forever on legacy rows the 28-day expiry already hid
+    # from the working lists — an alarm nobody can silence teaches people to ignore
+    # alarms). Stale = rows STILL 'active' in the DB beyond 28 days: ~0 while the
+    # nightly expire_tracked broom runs; growing = the broom is dead.
+    nlog_stale = open_nuance_log()
+    stale_clues = nlog_stale.tracked_stale()
+    nlog_stale.close()
     all_ok &= _check(
-        len(old_tracked) < 10,
-        f"tracked list healthy ({len(tracked)} active clue(s))",
-        f"{len(old_tracked)} tracked clues older than 3 weeks and never settled — "
-        "the follow/oppose list is silting up unverified",
+        stale_clues < 10,
+        f"tracked list healthy ({len(tracked)} live clue(s); {stale_clues} awaiting "
+        "the nightly broom)",
+        f"{stale_clues} clues sitting active beyond the 28-day expiry — the nightly "
+        "broom (expire_tracked in --settle) is not running",
         lines)
+    # THE DOORBELL (coroner 2026-07-21: 0 validated / 104 refuted — nuances have no
+    # path to 'validated' without the master's ruling, and nothing ever ASKED him).
+    # The freshest proposals ring here daily, with the exact commands to rule.
+    pending = [n for n in nuances if n["status"] == "proposed"][-3:]
+    if pending:
+        lines.append(f"  AWAITING YOUR RULING ({sum(1 for n in nuances if n['status'] == 'proposed')} "
+                     "proposed nuance(s) — promote what your eye confirms, bin the rest):")
+        for n in pending:
+            lines.append(f"    #{n['id']}: {n['nuance'][:120]}")
+            lines.append(f"        promote: python -m racing_edge.cli.learn --promote {n['id']}"
+                         f"   |   bin: --bin {n['id']}")
 
-    w, n = 0, 0
-    settled = [x for x in naps if x["won"] is not None]
-    w, n = sum(x["won"] for x in settled), len(settled)
+    # THE FLIGHT RECORDER — did the scheduler actually LAUNCH anything today?
+    # (2026-07-21: the ledger proved scheduled runs weren't happening; this separates
+    # 'PythonAnywhere never started it' from 'started and died at line X')
+    try:
+        from pathlib import Path as _P
+        _root = _P(__file__).resolve().parents[3]
+        tail = (_root / "data" / "task_runs.log").read_text().splitlines()
+        starts = [ln for ln in tail if "START" in ln and today.isoformat() in ln]
+        exits = [ln for ln in tail if "EXIT" in ln and today.isoformat() in ln]
+        all_ok &= _check(
+            bool(starts),
+            f"scheduler launched {len(starts)} run(s) today "
+            f"(last exit: {exits[-1].split('EXIT')[-1].strip() if exits else 'n/a'})",
+            "the scheduler NEVER LAUNCHED trial.sh today — this is a PythonAnywhere-"
+            "side failure (task disabled/expired, account plan limits, or CPU quota), "
+            "NOT a code failure. Check the Tasks page and account plan.",
+            lines)
+    except FileNotFoundError:
+        lines.append("  flight recorder: no runs logged yet (starts with the next run)")
+    except Exception:
+        lines.append("  flight recorder: log unreadable")
+
+    # THE MODEL BILL, counted by the machine itself (real token counts from every
+    # API response, logged to data/model_usage.csv — multiply by your plan's rates)
+    try:
+        import csv
+        from pathlib import Path
+        by_day: dict[str, list[int]] = {}
+        _root2 = Path(__file__).resolve().parents[3]
+        with (_root2 / "data" / "model_usage.csv").open() as f:
+            for row in csv.DictReader(f):
+                d = by_day.setdefault(row["date"], [0, 0])
+                d[0] += int(row["input_tokens"])
+                d[1] += int(row["output_tokens"])
+        for d in sorted(by_day)[-3:]:
+            i, o = by_day[d]
+            lines.append(f"  model usage {d}: {i / 1000:.0f}k in / {o / 1000:.0f}k out")
+    except FileNotFoundError:
+        lines.append("  model usage: no calls logged yet (ledger starts with the next run)")
+    except Exception:
+        lines.append("  model usage: ledger unreadable")
+
+    log2 = open_nap_log()
+    w, n = log2.strike_rate()                      # correct: pass days (won=-1) excluded
+    sw, sn = log2.shadow_strike()
+    log2.close()
     lines.append(f"  record: {w}/{n} settled naps won"
                  + (f" ({100 * w / n:.0f}%)" if n else ""))
+    # LOSS-STREAK ALARM (coroner fix 1: six losses passed with no alarm anywhere)
+    real = [x for x in naps if x["won"] in (0, 1)]
+    streak = 0
+    for x in reversed(real):
+        if x["won"] == 0:
+            streak += 1
+        else:
+            break
+    last7 = real[-7:]
+    cold = sum(1 for x in last7 if x["won"] == 1) <= 1 and len(last7) >= 6
+    all_ok &= _check(
+        streak < 4 and not cold,
+        f"form healthy (current losing streak: {streak})",
+        f"COLD STREAK — {streak} straight losses / {sum(1 for x in last7 if x['won'] == 1)}"
+        f"/{len(last7)} in the last 7. Tighten race selection; review the losing cases "
+        "before trusting another pick.",
+        lines)
+    # SHADOW A/B ALARM (coroner fix 3: if the free engine outpicks the flagship
+    # deep read, that fact must surface, not sit unread in a table)
+    if sn >= 7:
+        all_ok &= _check(
+            not (sw - w >= 2),
+            f"deep read holding its own vs shadow engine ({w}/{n} vs {sw}/{sn})",
+            f"the SHADOW ENGINE is outpicking the deep read ({sw}/{sn} vs {w}/{n}) — "
+            "the flagship may be subtracting value; review the A/B before paying for "
+            "more deep reads.",
+            lines)
+    elif sn:
+        lines.append(f"  shadow A/B: {sw}/{sn} (needs 7+ settled for the alarm)")
     verdict = "ALL GREEN — the loop is running and feeding itself." if all_ok else \
         "RED LINES ABOVE — a part of the loop is silently dead. Fix before trusting a pick."
     lines.append(f"\n  {verdict}")

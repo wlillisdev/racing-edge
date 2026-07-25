@@ -24,7 +24,7 @@ from datetime import date, datetime, timedelta
 from racing_edge.data.client import get_client
 from racing_edge.data.normalise import results_from_raw
 from racing_edge.domain.mark import mark_read
-from racing_edge.pipeline.nap import evaluate_field
+from racing_edge.pipeline.nap import anchor_bar, evaluate_field
 from racing_edge.study.frank import frank_form
 
 
@@ -59,11 +59,13 @@ def main() -> int:
         pick = None
         reason = "no survivors (gates crossed everything off)"
         for cand in survivors[:3]:
-            fr = frank_form(client, cand.runner.horse_id, cand.history, as_of=day)
+            fr = frank_form(client, cand.runner.horse_id, cand.history, as_of=day,
+                            code=cand.race.code)
             if fr.is_thin:
                 reason = f"frank veto on {cand.runner.horse}"
                 continue
-            delta = mark_read(cand.runner.official_rating, cand.history).delta
+            delta = mark_read(cand.runner.official_rating, cand.history,
+                              code=cand.race.code).delta
             fav = min((p.price for p in field
                        if p.race.race_id == cand.race.race_id and p.price), default=None)
             fails = []
@@ -71,7 +73,7 @@ def main() -> int:
                 fails.append("not well-in")
             if cand.race.race_class is not None and cand.race.race_class > 4:
                 fails.append(f"Cl{cand.race.race_class}")
-            if fav is None or fav >= 5.0:
+            if fav is None or fav >= anchor_bar(cand.race.race_class):
                 fails.append(f"no anchor (fav {fav})")
             if fails:
                 reason = f"profile floor on {cand.runner.horse}: {', '.join(fails)}"

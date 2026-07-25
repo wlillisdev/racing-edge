@@ -3,12 +3,14 @@
 from __future__ import annotations
 
 import sys
-from datetime import date
+from datetime import date, datetime
 
 from racing_edge.domain.models import Odds, PastRun, Race, Runner
 from racing_edge.pipeline.nap import evaluate_field, nominate_nap
 from racing_edge.selection.conviction import conviction
 from racing_edge.study.naplog import NapLog
+
+MORNING = datetime(2026, 7, 13, 8, 0)   # fixed clock: fixture races are 'still to run'.
 
 
 def _race(**kw):
@@ -16,9 +18,11 @@ def _race(**kw):
                 race_type="Handicap Chase", is_handicap=True, distance_f=25.0, going="Good", **kw)
 
 
-def _won_cdg(d, orr):
+def _won_cdg(d, orr, rtype="Chase"):
+    # the live feed always carries the run's type; the sacred mark gate refuses a
+    # blank-typed win as its anchor (a fantasy well-in is worse than an OWED one)
     return PastRun(date=d, position=1, course="Cartmel", going="Good", distance_f=25.0,
-                   official_rating=orr)
+                   official_rating=orr, race_type=rtype)
 
 
 def test_conviction_rewards_the_well_in_proven_horse() -> None:
@@ -130,17 +134,17 @@ def test_race_selection_gates_bottom_grade_and_open_market() -> None:
     """2026-07-05, the master after two poor naps: 'really bad race selections —
     unexposed horses, poor classes, anything could win.' Cl6 flat is flagged; a race
     whose own market can't find an anchor (fav 5.0+) is flagged as a lottery."""
-    cl6 = evaluate_field(_RaceClient(race_class="6"), day="today", codes=("flat",))
+    cl6 = evaluate_field(_RaceClient(race_class="6"), day="today", codes=("flat",), now=MORNING)
     assert cl6 and all(any("bottom-grade" in f for f in p.conviction.flags) for p in cl6)
 
     open_mkt = evaluate_field(_RaceClient(race_class="4", prices=("5.5", "6.0", "7.0")),
-                              day="today", codes=("flat",))
+                              day="today", codes=("flat",), now=MORNING)
     assert open_mkt
     assert all(any("anything-could-win" in f for f in p.conviction.flags)
                for p in open_mkt)
 
     clean = evaluate_field(_RaceClient(race_class="3", prices=("3.0", "4.0")),
-                           day="today", codes=("flat",))
+                           day="today", codes=("flat",), now=MORNING)
     assert clean and all(not p.conviction.flags for p in clean)   # readable race passes
 
 
@@ -159,6 +163,29 @@ def test_equal_reads_prefer_the_better_class_race() -> None:
     p3 = NapPick(race=r3, runner=Runner(horse_id="a", horse="A"), price=4.0, conviction=c)
     p6 = NapPick(race=r6, runner=Runner(horse_id="b", horse="B"), price=3.0, conviction=c)
     assert _rank_key(p3) > _rank_key(p6)      # Cl3 beats Cl6 despite the shorter price
+
+
+def test_every_paid_lens_scores_local_master_trip_and_course_jockey() -> None:
+    """The every-endpoint audit (2026-07-09): trainer-course (#10), distance-times
+    (the trip lens), jockey-course (#30) — paid for, never called. Pins that all
+    three now score, because the first attempt silently landed nowhere."""
+    r = Runner(horse_id="w", horse="Gem", official_rating=120, odds=Odds(consensus=3.0))
+    hist = (_won_cdg(date(2026, 5, 1), 120),)
+    c = conviction(r, _race(), hist, market_rank=2, field_size=8,
+                   local_strike=0.22, local_runs=14,
+                   trip_strike=0.30, trip_runs=6,
+                   jockey_course_strike=0.17, jockey_course_rides=20)
+    assert any("local master yard" in a for a in c.aligned)
+    assert any("trip proven" in a for a in c.aligned)
+    assert any("course jockey" in a for a in c.aligned)
+    # the quiet inverse: a rider 0-from-many here is a flag, not a cross-off
+    c2 = conviction(r, _race(), hist, market_rank=2, field_size=8,
+                    jockey_course_strike=0.0, jockey_course_rides=30)
+    assert any("0/30 at this course" in f for f in c2.flags)
+    # thin samples stay silent — no lens fires off 3 runs
+    c3 = conviction(r, _race(), hist, market_rank=2, field_size=8,
+                    local_strike=0.5, local_runs=3, trip_strike=0.5, trip_runs=2)
+    assert not any("local master" in a or "trip proven" in a for a in c3.aligned)
 
 
 def test_field_of_young_unexposed_horses_is_flagged_a_novice_in_disguise() -> None:
@@ -184,10 +211,28 @@ def test_field_of_young_unexposed_horses_is_flagged_a_novice_in_disguise() -> No
         def trainer_jockeys(self, tid):
             return []
 
-    field = evaluate_field(_YoungClient(), day="today", codes=("flat",))
+    field = evaluate_field(_YoungClient(), day="today", codes=("flat",), now=MORNING)
     assert field
     assert all(any("novice in disguise" in f for f in p.conviction.flags) for p in field)
-    assert nominate_nap(_YoungClient(), day="today", codes=("flat",)) is None  # no bet
+    assert nominate_nap(_YoungClient(), day="today", codes=("flat",), now=MORNING) is None  # no bet
+
+
+def test_marks_never_cross_codes() -> None:
+    """Caught BY THE DEEP READ mid-pass (2026-07-21): a flat 61 compared against a
+    hurdles win off 107 produced a fantasy 'WELL-IN -46lb'. Flat and jumps marks are
+    different currencies — with the code given, only same-code wins count."""
+    from racing_edge.domain.mark import mark_read
+    hist = (
+        PastRun(date=date(2026, 6, 1), position=1, official_rating=107,
+                race_type="Hurdle"),
+        PastRun(date=date(2026, 4, 1), position=2, official_rating=63,
+                race_type="Flat"),
+    )
+    assert mark_read(61, hist).delta == -46            # codeless: the old fantasy
+    assert mark_read(61, hist, code="flat").delta is None   # honest: no FLAT win
+    flat_hist = (PastRun(date=date(2026, 5, 1), position=1, official_rating=59,
+                         race_type="Flat"),) + hist
+    assert mark_read(61, flat_hist, code="flat").delta == 2  # real flat comparison
 
 
 def test_conviction_needs_the_mark_to_be_confident() -> None:
@@ -212,10 +257,10 @@ class _Client:
         if hid == "GEM":   # well-in repeat course winner
             return [
                 {"date": "2026-05-01", "race_id": "p1", "course": "Cartmel", "going": "Good",
-                 "dist_f": "25.0",
+                 "dist_f": "25.0", "type": "Chase",
                  "runners": [{"horse_id": "GEM", "position": "1", "or": "120"}]},
                 {"date": "2026-04-01", "race_id": "p2", "course": "Cartmel", "going": "Good",
-                 "dist_f": "25.0",
+                 "dist_f": "25.0", "type": "Chase",
                  "runners": [{"horse_id": "GEM", "position": "1", "or": "116"}]},
             ]
         return []
@@ -225,7 +270,7 @@ class _Client:
 
 
 def test_nominate_nap_picks_the_conviction_horse_not_the_short_fav() -> None:
-    nap = nominate_nap(_Client(), day="today", codes=("jump",))
+    nap = nominate_nap(_Client(), day="today", codes=("jump",), now=MORNING)
     assert nap is not None
     assert nap.runner.horse == "Gem"          # the well-in proven horse, not the 2.0 fav
     assert nap.conviction.confident
@@ -233,10 +278,10 @@ def test_nominate_nap_picks_the_conviction_horse_not_the_short_fav() -> None:
 
 def test_evaluate_field_returns_every_contender_strongest_first() -> None:
     # rule #24: no horse skipped — both runners evaluated, the conviction horse on top
-    field = evaluate_field(_Client(), day="today", codes=("jump",))
+    field = evaluate_field(_Client(), day="today", codes=("jump",), now=MORNING)
     assert {p.runner.horse for p in field} == {"Gem", "Shorty"}   # the WHOLE field, not just pick
     assert field[0].runner.horse == "Gem"                         # strongest first
-    nap = nominate_nap(_Client(), day="today", codes=("jump",))
+    nap = nominate_nap(_Client(), day="today", codes=("jump",), now=MORNING)
     assert nap.runner.horse == field[0].runner.horse             # the nap is the top of the field
 
 
@@ -264,3 +309,91 @@ def _main() -> int:
 
 if __name__ == "__main__":
     sys.exit(_main())
+
+
+def test_settle_can_see_every_name_it_calls() -> None:
+    """2026-07-22..24: open_nuance_log was imported inside main() only, so _settle
+    raised NameError at 22:00 three nights straight — naps settled, then the crash
+    killed the night before the self-study, starving the nuance ledger (and the
+    flight recorder's broken trap logged EXIT 0 over it). Every name _settle's code
+    references must resolve at module scope."""
+    import racing_edge.cli.nap as napcli
+    for name in ("open_nap_log", "open_nuance_log", "resolve_date",
+                 "results_from_raw", "get_client"):
+        assert hasattr(napcli, name), f"cli.nap missing module-level name: {name}"
+
+
+def test_the_woodstock_lesson_stale_anchor_and_serial_placer_flag() -> None:
+    """2026-07-25 adversarial audit: Woodstock read 'WELL-IN -7lb' against a win
+    older than its entire visible history — an exposed loser's mark erodes BECAUSE
+    it keeps losing, and 0 wins in 10 visible runs is a placer profile at win odds.
+    Both now flag; a flagged horse is never confident and never a clean survivor."""
+    r = Runner(horse_id="w", horse="Woodstock", official_rating=68,
+               odds=Odds(consensus=4.9))
+    losses = tuple(PastRun(date=date(2026, 7, 1 + i), position=2 + (i % 4),
+                           race_type="Flat") for i in range(10))
+    old_win = (PastRun(date=date(2025, 6, 1), position=1, official_rating=75,
+                       race_type="Flat"),)
+    race = Race(race_id="r", course="Cartmel", off_time="15:50",
+                date=date(2026, 6, 27), race_type="Flat", is_handicap=True)
+    c = conviction(r, race, losses + old_win, market_rank=2, field_size=8)
+    assert any("STALE" in f for f in c.flags)            # anchor from a dead era
+    assert any("placer risk" in f for f in c.flags)
+    assert not c.confident
+    # a fresh winner is untouched: won 2 runs back, no stale/placer noise
+    fresh = (PastRun(date=date(2026, 7, 10), position=3, race_type="Flat"),
+             PastRun(date=date(2026, 7, 1), position=1, official_rating=68,
+                     race_type="Flat"))
+    c2 = conviction(r, race, fresh, market_rank=2, field_size=8)
+    assert not any("STALE" in f or "placer risk" in f for f in c2.flags)
+
+
+def test_led_and_caught_reads_as_the_nearly_type() -> None:
+    from racing_edge.domain.manner import read_manner
+    m, _ = read_manner("driven to the front with a furlong out - overtaken "
+                       "inside the final 110 yards by the winner")
+    assert m == "non_finisher"                            # the Woodstock comment
+    m2, _ = read_manner("made headway over 2f out and stayed on well")
+    assert m2 == "finisher"                               # 'headway' is not 'headed'
+
+
+def test_rank_key_weights_the_decisive_lens() -> None:
+    """2026-07-25 audit: a mark-OWED conv-4 outranked well-in conv-3 horses,
+    wasting candidate slots on picks the sacred floor can never bank."""
+    from racing_edge.pipeline.nap import _rank_key
+    race = Race(race_id="r", course="Cartmel", off_time="15:50",
+                date=date(2026, 6, 27), race_type="Flat", is_handicap=True,
+                race_class=4)
+    well_in = Runner(horse_id="a", horse="WellIn", official_rating=70,
+                     odds=Odds(consensus=4.0))
+    wh = (PastRun(date=date(2026, 7, 10), position=4, race_type="Flat"),
+          PastRun(date=date(2026, 7, 1), position=1, official_rating=72,
+                  course="Thirsk", race_type="Flat"))
+    cw = conviction(well_in, race, wh, market_rank=2, field_size=8)
+    owed = Runner(horse_id="b", horse="MarkOwed", odds=Odds(consensus=3.0))
+    hist = (PastRun(date=date(2026, 7, 10), position=1, race_type="Flat"),)
+    co = conviction(owed, race, hist, market_rank=2, field_size=8,
+                    stable_strike=0.2, yard_no1=True,
+                    jockey_course_strike=0.2, jockey_course_rides=30)
+    assert not co.mark_known and co.score > cw.score      # the audited shape
+    from racing_edge.pipeline.nap import NapPick
+    pw = NapPick(race=race, runner=well_in, price=4.0, conviction=cw)
+    po = NapPick(race=race, runner=owed, price=3.0, conviction=co)
+    assert _rank_key(pw) > _rank_key(po)                  # well-in outranks anyway
+
+
+def test_stale_anchor_counts_same_code_runs_only() -> None:
+    """2026-07-25 adversarial review: `since` was the raw index over the mixed-code
+    history, so a summer-flat/winter-jumps horse that WON its last flat start read
+    'STALE — 10 runs back' off its intervening hurdles runs and was crossed off."""
+    race = Race(race_id="r", course="Cartmel", off_time="15:50",
+                date=date(2026, 6, 27), race_type="Flat", is_handicap=True)
+    r = Runner(horse_id="d", horse="DualCode", official_rating=70,
+               odds=Odds(consensus=4.0))
+    jumps = tuple(PastRun(date=date(2026, 6, 1 + i), position=3,
+                          race_type="Hurdle") for i in range(10))
+    flat_win = (PastRun(date=date(2026, 5, 1), position=1, official_rating=72,
+                        race_type="Flat"),)
+    c = conviction(r, race, jumps + flat_win, market_rank=2, field_size=8)
+    assert any("well-in" in a for a in c.aligned)
+    assert not c.stale_anchor            # its LAST FLAT START was the win — fresh
