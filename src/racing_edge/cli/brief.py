@@ -23,10 +23,42 @@ def main() -> int:
     ap.add_argument("--flat", action="store_true", help="flat instead of jumps")
     ap.add_argument("--both", action="store_true", help="both codes")
     ap.add_argument("--top", type=int, default=4, help="how many contenders per race")
+    ap.add_argument("--race", metavar='"COURSE H:MM"',
+                    help='full pre-race form readout for ONE race (any type, '
+                         'handicap or not) — e.g. --race "Salisbury 7:15". '
+                         'Born 2026-07-25: the on-demand read channel — paste the '
+                         'output to the reader, get the method applied.')
     args = ap.parse_args()
 
     codes = ["jump", "flat"] if args.both else ["flat" if args.flat else "jump"]
     client = get_client()
+
+    if args.race:
+        from racing_edge.data.normalise import past_runs_from_raw
+        from racing_edge.report.restudy import render_preread
+        want = args.race.strip().lower()
+        course_part, _, time_part = want.rpartition(" ")
+        cards = racecards_from_raw(client.racecards(args.day))
+        race = next((r for r in cards
+                     if r.off_time.strip() == time_part
+                     and course_part in r.course.strip().lower()), None)
+        if race is None:
+            print(f"  No race matching '{args.race}' on {args.day}'s card. On today:")
+            for r in cards:
+                print(f"    {r.course} {r.off_time} — {r.race_type}"
+                      + (f" (Cl{r.race_class})" if r.race_class else ""))
+            return 1
+        print(f"  {race.course} {race.off_time} — fetching form for "
+              f"{race.field_size} runner(s)…", flush=True)
+        hists = {}
+        for r in race.runners:
+            try:
+                hists[r.horse_id] = past_runs_from_raw(
+                    client.horse_results(r.horse_id, limit=20), r.horse_id)
+            except Exception:
+                hists[r.horse_id] = ()
+        print(render_preread(race, hists))
+        return 0
     races = [r for r in racecards_from_raw(client.racecards(args.day))
              if r.is_readable_handicap and r.code in codes]
     if not races:
