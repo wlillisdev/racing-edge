@@ -30,8 +30,13 @@ def open_nuance_log() -> NuanceLog:
 
 
 def resolve_date(s: str) -> date:
+    """'today' means the RACING day — Europe/London — not the box's UTC clock
+    (2026-07-25 reliability audit: a UTC box's date and the card's date part ways
+    at midnight London time; every ledger row keys on this)."""
+    from zoneinfo import ZoneInfo
+    _today = datetime.now(ZoneInfo("Europe/London")).date()
     if s == "today":
-        return date.today()
+        return _today
     if s == "yesterday":
-        return date.today() - timedelta(days=1)
+        return _today - timedelta(days=1)
     return datetime.strptime(s, "%Y-%m-%d").date()
