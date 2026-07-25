@@ -397,3 +397,29 @@ def test_stale_anchor_counts_same_code_runs_only() -> None:
     c = conviction(r, race, jumps + flat_win, market_rank=2, field_size=8)
     assert any("well-in" in a for a in c.aligned)
     assert not c.stale_anchor            # its LAST FLAT START was the win — fresh
+
+
+def test_the_dial_in_gauges_pnl_and_lens_attribution() -> None:
+    """2026-07-25, the master: 'first consistency, now picking winners.' You can't
+    tune what you don't measure: the ledger now carries level-stakes P/L at SP and
+    per-lens win/loss attribution, so knobs turn on evidence, not on last week's mood."""
+    import tempfile
+    from pathlib import Path
+    with tempfile.TemporaryDirectory() as d:
+        log = NapLog(Path(d) / "nap.db")
+        log.record(day=date(2026, 7, 1), race_id="r1", course="York", horse="A",
+                   horse_id="a", price=4.0, score=4, confident=True,
+                   aligned="well-in (WELL-IN -5lb) | market sweet spot (2nd/3rd fav)")
+        log.settle(date(2026, 7, 1), won=True, sp_dec=4.0)
+        log.record(day=date(2026, 7, 2), race_id="r2", course="Ayr", horse="B",
+                   horse_id="b", price=3.0, score=3, confident=False,
+                   aligned="well-in (WELL-IN -2lb) | fair-priced favourite (#19)")
+        log.settle(date(2026, 7, 2), won=False, sp_dec=3.1)
+        log.record_pass(day=date(2026, 7, 3), reason="discipline")   # never counted
+        pnl, n = log.profit_loss()
+        assert n == 2 and abs(pnl - 2.0) < 1e-9        # +3.0 win, -1.0 loss
+        attr = {a["lens"]: (a["wins"], a["losses"]) for a in log.lens_attribution()}
+        assert attr["well-in"] == (1, 1)               # rides both — no signal yet
+        assert attr["market sweet spot"] == (1, 0)
+        assert attr["fair-priced favourite"] == (0, 1)
+        log.close()

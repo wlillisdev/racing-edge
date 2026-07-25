@@ -76,6 +76,14 @@ def _record() -> int:
     if n:
         print(f"  strike rate: {w}/{n} won ({100 * w / n:.0f}%) overall; "
               f"{cw}/{cn} on CONFIDENT naps.  (small samples lie — judge it over hundreds.)")
+        pnl, pn = log.profit_loss()
+        print(f"  LEVEL STAKES at SP: {pnl:+.1f}pt over {pn} bet(s) — "
+              f"the money gauge; strike rate without prices measures nothing.")
+        attr = log.lens_attribution()
+        if attr:
+            print("  LENS ATTRIBUTION (which lenses ride winners vs losers — the dial):")
+            for a in attr[:10]:
+                print(f"    {a['lens']:28} {a['wins']}W / {a['losses']}L")
     sw, sn = log.shadow_strike()
     if sn:
         # honest label (2026-07-25 replication audit): this is the RAW top survivor,
@@ -679,7 +687,8 @@ def main() -> int:
         f"engine pick: conviction {c.score} — {', '.join(c.aligned) or 'thin'}"
     log.record(day=day, race_id=r.race_id, course=r.course, horse=nap.runner.horse,
                horse_id=nap.runner.horse_id, price=nap.price, score=c.score,
-               confident=confident, case=case_text, deep_conf=deep_conf)
+               confident=confident, case=case_text, deep_conf=deep_conf,
+               aligned=" | ".join(c.aligned))
     # THE SHADOW: the mechanical engine's own top survivor, banked silently for the
     # A/B record (one machine, two ledgers — the record decides which method earns
     # the stakes). Costs nothing: it was already computed.

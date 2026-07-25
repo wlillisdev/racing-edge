@@ -160,8 +160,9 @@ def main() -> int:
     w, n = log2.strike_rate()                      # correct: pass days (won=-1) excluded
     sw, sn = log2.shadow_strike()
     log2.close()
+    pnl, _pn = log2.profit_loss() if hasattr(log2, "profit_loss") else (0.0, 0)
     lines.append(f"  record: {w}/{n} settled naps won"
-                 + (f" ({100 * w / n:.0f}%)" if n else ""))
+                 + (f" ({100 * w / n:.0f}%), level stakes at SP {pnl:+.1f}pt" if n else ""))
     # LOSS-STREAK ALARM (coroner fix 1: six losses passed with no alarm anywhere)
     real = [x for x in naps if x["won"] in (0, 1)]
     streak = 0
