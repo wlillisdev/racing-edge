@@ -17,7 +17,7 @@ from racing_edge.cli._common import open_nap_log, open_nuance_log, resolve_date
 from racing_edge.data.client import get_client
 from racing_edge.data.evidence import build_evidence
 from racing_edge.data.normalise import results_from_raw
-from racing_edge.pipeline.nap import evaluate_field
+from racing_edge.pipeline.nap import anchor_bar, evaluate_field
 from racing_edge.report.scorecard import build_scorecard, render_scorecard
 
 
@@ -170,7 +170,15 @@ def _settle(day_str: str, email: bool) -> int:
     # TRACKED CLUES + THE BROOM RUN FIRST (2026-07-25 audit: they sat below the
     # 'no nap banked' early return, so on every PASS day no clue settled and the
     # 28-day broom never swept — the exact silting the fix existed to end)
-    results = results_from_raw(get_client().results_by_date(day.isoformat()))
+    try:
+        results = results_from_raw(get_client().results_by_date(day.isoformat()))
+    except Exception as exc:
+        # a transient API failure must not kill the settle run with a bare
+        # traceback (2026-07-25 review) — say it, email it, retry tomorrow
+        emit(f"  ⚠ results fetch failed ({exc.__class__.__name__}) — nothing "
+             f"settled this run; the night task retries tomorrow")
+        _maybe_email(out, f"Settle FAILED — results fetch error ({day})", email)
+        return 1
     nlog = open_nuance_log()
     tracked_by_id = {t["horse_id"]: t for t in nlog.tracked_active() if t["horse_id"]}
     settled_clues = 0
@@ -183,30 +191,26 @@ def _settle(day_str: str, email: bool) -> int:
                        f"{'WON' if rr.position == 1 else f'pos {rr.position or rr.status}'}")
             settled_clues += nlog.settle_tracked(rr.horse_id, outcome=outcome)
             hit = (rr.position == 1) == (t["angle"] == "follow")
-            out.append(f"  tracked clue settled: [{t['angle']}] {t['horse']} — "
-                       f"{outcome} ({'clue HELD' if hit else 'clue missed'})")
+            emit(f"  tracked clue settled: [{t['angle']}] {t['horse']} — "
+                 f"{outcome} ({'clue HELD' if hit else 'clue missed'})")
             del tracked_by_id[rr.horse_id]
     swept = nlog.expire_tracked()
     nlog.close()
     if settled_clues:
-        out.append(f"  ({settled_clues} tracked clue(s) marked done)")
+        emit(f"  ({settled_clues} tracked clue(s) marked done)")
     if swept:
-        out.append(f"  ({swept} stale clue(s) expired unverified — 28-day broom)")
+        emit(f"  ({swept} stale clue(s) expired unverified — 28-day broom)")
 
     log = open_nap_log()
     nap = next((n for n in log.pending() if n["date"] == day.isoformat()), None)
     if nap is None:
         print(f"No unsettled nap for {day} (pass day or already settled).")
-        for line in out:
-            print(line)
         log.close()
         return 0
     race = next((r for r in results if r.race_id == nap["race_id"]), None)
     me = next((rr for rr in race.runners if rr.horse_id == nap["horse_id"]), None) if race else None
     if me is None:
         print(f"Result for {nap['horse']} not in yet for {day}.")
-        for line in out:
-            print(line)
         log.close()
         return 0
     won = me.position == 1
@@ -274,7 +278,7 @@ def main() -> int:
         print(f"  A row is already banked for {resolve_date(args.day)} ({was}). "
               f"Re-picking would overwrite the pre-off record.")
         print("  Use --resend to re-email it, or --force-rebank to deliberately re-pick.")
-        return 1
+        return 0          # an intentional no-op, not a failure (set -e in trial.sh all)
 
     codes = ("jump", "flat") if args.both else (("flat",) if args.flat else ("jump",))
     client = get_client()
@@ -368,11 +372,16 @@ def main() -> int:
         for p in survivors:
             if p.race.race_id not in cand_order:
                 cand_order.append(p.race.race_id)
-        cand_order = cand_order[:4]
+        # survivors take at most 3 slots; the 4th is RESERVED for a FOLLOW or
+        # top-class-door promotion (2026-07-25 adversarial review: on a busy
+        # Saturday survivors alone spanned 4 races, so both promotions appended
+        # past the slice and were silently dropped — while claiming they worked)
+        cand_order = cand_order[:3]
         # a race carrying an active FOLLOW horse earns a candidate slot (audit: tracked
         # clues could never promote a race into the shortlist)
         for _hid, (tp, t) in seen.items():
-            if t["angle"] == "follow" and tp.race.race_id not in cand_order:
+            if (t["angle"] == "follow" and tp.race.race_id not in cand_order
+                    and len(cand_order) < 4):
                 cand_order.append(tp.race.race_id)
         # THE TOP-CLASS DOOR (2026-07-25 Saturday audit: every York and Ascot race was
         # gated and the reader never saw the week's best racing). One slot is reserved
@@ -388,7 +397,7 @@ def main() -> int:
             # only the class-tier fav bar is forgivable — an "in a 12+ field" open
             # market is the crowd rule, not rule #22's quality-field green light;
             # and the carrier horse itself must be clean of the Woodstock profile
-            if (r.race_id not in cand_order
+            if (r.race_id not in cand_order and len(cand_order) < 4
                     and r.race_class is not None and r.race_class <= 3
                     and r.field_size < 16
                     and gates
@@ -600,7 +609,7 @@ def main() -> int:
     soft_fails = []
     if r.race_class is not None and r.race_class > 4:
         soft_fails.append(f"class Cl{r.race_class}")
-    if race_fav is None or race_fav >= 5.0:
+    if race_fav is None or race_fav >= anchor_bar(r.race_class):
         soft_fails.append(f"no market anchor (fav {race_fav})")
     off_profile = bool(soft_fails)
     # the bypass needs more than eloquence (regression audit: an LLM cites 3 facts

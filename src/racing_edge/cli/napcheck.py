@@ -24,7 +24,7 @@ from datetime import date, datetime, timedelta
 from racing_edge.data.client import get_client
 from racing_edge.data.normalise import results_from_raw
 from racing_edge.domain.mark import mark_read
-from racing_edge.pipeline.nap import evaluate_field
+from racing_edge.pipeline.nap import anchor_bar, evaluate_field
 from racing_edge.study.frank import frank_form
 
 
@@ -73,7 +73,7 @@ def main() -> int:
                 fails.append("not well-in")
             if cand.race.race_class is not None and cand.race.race_class > 4:
                 fails.append(f"Cl{cand.race.race_class}")
-            if fav is None or fav >= 5.0:
+            if fav is None or fav >= anchor_bar(cand.race.race_class):
                 fails.append(f"no anchor (fav {fav})")
             if fails:
                 reason = f"profile floor on {cand.runner.horse}: {', '.join(fails)}"

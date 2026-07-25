@@ -214,3 +214,21 @@ def test_frank_thin_needs_a_real_sample_and_zero_placers() -> None:
     assert hollow.is_thin
     too_soon = Franking(None, 6, 1, 0, "")      # calendar, not evidence
     assert not too_soon.is_thin
+
+
+def test_a_winning_run_never_reads_as_a_non_finisher() -> None:
+    """2026-07-25 adversarial review: 'made most, headed over 1f out, kept on to
+    lead again close home' classified non_finisher on the word 'headed' — a
+    rallying front-running WINNER flagged 'placer, not a nap'."""
+    from racing_edge.domain.manner import nap_verdict
+    comments = ["made most, headed over 1f out, kept on to lead again close home",
+                "led, headed 2f out, led again inside final furlong"]
+    v = nap_verdict(comments, positions=[1, 1])
+    assert v.recommendation != "place_only"
+    assert v.finisher_runs == 2                      # it WON both — finishes fine
+    # without positions the vocabulary still reads led-and-caught as the
+    # nearly-type for LOSING runs (the Woodstock lesson stays)
+    lost = nap_verdict(["driven to the front - overtaken inside the final 110 yards",
+                        "led until headed and weakened final furlong"],
+                       positions=[2, 4])
+    assert lost.recommendation == "place_only"

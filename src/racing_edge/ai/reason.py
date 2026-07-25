@@ -169,8 +169,14 @@ def get_investigator(task: str, tools: list[dict],
         if spent is not None:
             return "", [f"DAILY TOKEN BUDGET reached ({spent} used) — no more model "
                         f"calls today (raise NAP_TOKEN_BUDGET to override)"]
-        messages: list[dict] = [{"role": "user", "content": prompt}]
+        # the big first prompt gets its own cache breakpoint; a ROLLING marker on
+        # the newest tool-result extends the cached prefix every round (2026-07-25
+        # review: system-only caching still re-billed the growing history in full)
+        messages: list[dict] = [{"role": "user", "content": [
+            {"type": "text", "text": prompt,
+             "cache_control": {"type": "ephemeral"}}]}]
         trail: list[str] = []
+        prev_marked: dict | None = None
         steps = 0
         budget = max_tokens
         bumped = False
@@ -206,6 +212,11 @@ def get_investigator(task: str, tools: list[dict],
                         results.append({"type": "tool_result",
                                         "tool_use_id": block.get("id", ""),
                                         "content": out[:4000]})
+                if results:
+                    if prev_marked is not None:
+                        prev_marked.pop("cache_control", None)
+                    results[-1]["cache_control"] = {"type": "ephemeral"}
+                    prev_marked = results[-1]
                 messages.append({"role": "user", "content": results})
                 continue
             text = "".join(b.get("text", "") for b in content if isinstance(b, dict))

@@ -115,7 +115,8 @@ def _manner(ev: RunnerEvidence, race: Race) -> Cell:
     # chase faller's "pulled up" is not a flat excuse (2026-07-21 audit).
     from racing_edge.domain.manner import nap_verdict
     hist = same_code_runs(ev.history, race.code)
-    mv = nap_verdict([h.comment for h in hist[:4]])
+    mv = nap_verdict([h.comment for h in hist[:4]],
+                     positions=[h.position for h in hist[:4]])
     if mv.recommendation == "win_positive":
         return Cell("FINISHER")
     if mv.recommendation == "place_only":

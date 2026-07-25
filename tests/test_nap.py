@@ -380,3 +380,20 @@ def test_rank_key_weights_the_decisive_lens() -> None:
     pw = NapPick(race=race, runner=well_in, price=4.0, conviction=cw)
     po = NapPick(race=race, runner=owed, price=3.0, conviction=co)
     assert _rank_key(pw) > _rank_key(po)                  # well-in outranks anyway
+
+
+def test_stale_anchor_counts_same_code_runs_only() -> None:
+    """2026-07-25 adversarial review: `since` was the raw index over the mixed-code
+    history, so a summer-flat/winter-jumps horse that WON its last flat start read
+    'STALE — 10 runs back' off its intervening hurdles runs and was crossed off."""
+    race = Race(race_id="r", course="Cartmel", off_time="15:50",
+                date=date(2026, 6, 27), race_type="Flat", is_handicap=True)
+    r = Runner(horse_id="d", horse="DualCode", official_rating=70,
+               odds=Odds(consensus=4.0))
+    jumps = tuple(PastRun(date=date(2026, 6, 1 + i), position=3,
+                          race_type="Hurdle") for i in range(10))
+    flat_win = (PastRun(date=date(2026, 5, 1), position=1, official_rating=72,
+                        race_type="Flat"),)
+    c = conviction(r, race, jumps + flat_win, market_rank=2, field_size=8)
+    assert any("well-in" in a for a in c.aligned)
+    assert not c.stale_anchor            # its LAST FLAT START was the win — fresh

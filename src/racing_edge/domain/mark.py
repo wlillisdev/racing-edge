@@ -58,11 +58,19 @@ def mark_read(today_or: int | None, history: tuple[PastRun, ...],
     mark of 61 was compared against a hurdles win off 107, producing a fantasy
     'WELL-IN -46lb'. Flat and jumps marks are different currencies — never convert.)"""
     from racing_edge.domain.units import race_code
+
+    def _counts(h: PastRun) -> bool:
+        # `since` is measured in SAME-CODE runs (2026-07-25 adversarial review: the
+        # raw index counted a dual-code horse's jumps runs against its flat anchor —
+        # a horse that won its last flat start read 'STALE, 10 runs back')
+        return code is None or not h.race_type or race_code(h.race_type) == code
+
     for i, h in enumerate(history):
         if (h.position == 1 and h.official_rating
                 and (code is None
                      or bool(h.race_type) and race_code(h.race_type) == code)):
-            return MarkRead(today=today_or, last_won=h.official_rating, since=i)
+            return MarkRead(today=today_or, last_won=h.official_rating,
+                            since=sum(1 for x in history[:i] if _counts(x)))
     return MarkRead(today=today_or, last_won=None)
 
 

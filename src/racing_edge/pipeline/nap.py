@@ -33,6 +33,14 @@ class NapPick:
     history: tuple = ()          # the contender's past runs — for the morning deep read
 
 
+def anchor_bar(race_class: int | None) -> float:
+    """The fav price at which a race's market counts as ANCHORLESS — defined ONCE
+    (2026-07-25: the gate was class-tiered to 6.0 for Cl<=3 while the profile floor
+    kept a flat 5.0, so the exact races the Saturday recalibration opened could pass
+    the gate yet never bank). Top-class races earn the higher bar (rule #22)."""
+    return 6.0 if (race_class or 9) <= 3 else 5.0
+
+
 def _rank_key(p: NapPick) -> tuple[int, int, int, int, int, float]:
     # RACE QUALITY breaks ties (the master, 2026-07-05: "really bad race selections —
     # poor classes, anything could win"): between equal convictions, the pick in the
@@ -154,7 +162,7 @@ def evaluate_field(client: _Client, day: str = "today",
         #    Cl2/3 handicappers is rule #22's green light ("study the FIELD"), not a
         #    lottery — top-class races get a 6.0 bar; everything else keeps 5.0.
         fav = min((p.price for p in race_picks if p.price), default=None)
-        fav_bar = 6.0 if (race.race_class or 9) <= 3 else 5.0
+        fav_bar = anchor_bar(race.race_class)
         if fav and (fav >= fav_bar or (race.field_size >= 12 and fav >= 4.0)):
             crowd = " in a 12+ field" if fav < fav_bar else ""
             race_flags.append(f"open market (fav {fav}{crowd}) — "

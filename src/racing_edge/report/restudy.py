@@ -74,7 +74,9 @@ def render_preread(race: Race, histories: dict[str, tuple[PastRun, ...]],
         lines.append(f"  {r.horse:22} {rank}  [id {r.horse_id}]")
         lines.append(f"        mark: {marktxt}  | form {r.form or '?'} "
                      f"| OR {r.official_rating or '?'} RPR {r.rpr or '?'}{gear}")
-        mv = nap_verdict([h.comment for h in same_code_runs(hist, race.code)[:4]])
+        _mh = same_code_runs(hist, race.code)[:4]
+        mv = nap_verdict([h.comment for h in _mh],
+                         positions=[h.position for h in _mh])
         if mv.recommendation != "neutral" or mv.finisher_runs or mv.non_finisher_runs:
             lines.append(f"        manner read (#1): {mv.recommendation} — {mv.reason}")
         spot = r.spotlight.strip()
@@ -135,7 +137,9 @@ def render_restudy(race: Race, result: RaceResult,
                      f"| OR {r.official_rating or '?'} RPR {r.rpr or '?'}{gear}")
         # the manner read, done in code from the comments (rule #1) — the model reasons
         # over the verdict instead of re-classifying prose (where it slips)
-        mv = nap_verdict([h.comment for h in same_code_runs(hist, race.code)[:4]])
+        _mh = same_code_runs(hist, race.code)[:4]
+        mv = nap_verdict([h.comment for h in _mh],
+                         positions=[h.position for h in _mh])
         if mv.recommendation != "neutral" or mv.finisher_runs or mv.non_finisher_runs:
             lines.append(f"        manner read (#1): {mv.recommendation} — {mv.reason}")
         spot = r.spotlight.strip()

@@ -122,7 +122,8 @@ def conviction(runner: Runner, race: Race, history: tuple[PastRun, ...],
     # months ago but starved: PastRun carried no comment until the window opened. Now
     # each recent run's in-running comment feeds it. A repeated out-battled/found-little
     # profile is a FLAG (a placer, not a nap); a proven finisher is a lens FOR it.
-    mv = nap_verdict([h.comment for h in hist[:4]])
+    mv = nap_verdict([h.comment for h in hist[:4]],
+                     positions=[h.position for h in hist[:4]])
     if mv.recommendation == "win_positive":
         aligned.append(f"finisher ({mv.finisher_runs} strong finish(es) in comments)")
     elif mv.recommendation == "place_only":
