@@ -39,8 +39,14 @@ def _log_usage(task: str, model: str, data: dict) -> None:
         import datetime
         from pathlib import Path
         u = data.get("usage") or {}
+        # cache-aware (2026-07-25): cache writes bill ~like input; cache READS bill
+        # at ~0.1x, so they count at a tenth — the ledger stays in cost-proportional
+        # token units and the budget breaker keeps meaning what it meant.
+        eff_in = (int(u.get("input_tokens") or 0)
+                  + int(u.get("cache_creation_input_tokens") or 0)
+                  + int(u.get("cache_read_input_tokens") or 0) // 10)
         row = [datetime.date.today().isoformat(), task, model,
-               int(u.get("input_tokens") or 0), int(u.get("output_tokens") or 0)]
+               eff_in, int(u.get("output_tokens") or 0)]
         path = Path("data") / "model_usage.csv"
         path.parent.mkdir(parents=True, exist_ok=True)
         new_file = not path.exists()
@@ -164,7 +170,13 @@ def get_investigator(task: str, tools: list[dict],
         budget = max_tokens
         bumped = False
         for _round in range(max_steps + 5):            # hard cap on conversation rounds
-            body = {"model": model, "max_tokens": budget, "system": system,
+            # PROMPT CACHING (2026-07-25 audit): the loop re-billed the identical
+            # system+tools+prompt prefix every tool round at full price. Cache
+            # markers make each round after the first read the prefix at ~0.1x —
+            # what made max_steps=6 affordable.
+            body = {"model": model, "max_tokens": budget,
+                    "system": [{"type": "text", "text": system,
+                                "cache_control": {"type": "ephemeral"}}],
                     "messages": messages, "tools": tools}
             data, status = _post_with_retry(headers, body)
             if data is None:

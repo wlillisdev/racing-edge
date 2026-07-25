@@ -44,6 +44,9 @@ _NON_FINISHER = (
     "out-battled", "outbattled", "outpaced", "weakened", "faded", "no response",
     "plugged on", "failed to quicken", "soon beaten", "well held", "every chance",
     "no further progress", "lacked a turn of foot", "stayed on past beaten horses",
+    # led-and-caught (2026-07-25 Woodstock audit: 'driven to the front... overtaken
+    # inside the final 110 yards' read NEUTRAL — the textbook nearly-type went unseen)
+    "overtaken", "headed", "collared", "caught inside the final", "caught close home",
 )
 _GREEN = (
     "green", "ran green", "will improve", "needed the run", "should improve",

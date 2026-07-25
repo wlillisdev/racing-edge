@@ -114,7 +114,9 @@ def test_the_learning_loop_reaches_the_exam() -> None:
         {"race_id": "z2", "status": "proposed", "nuance": "false favourites make races MORE readable"},
     ]
     tracked = [{"angle": "follow", "horse": "Green Sky", "course": "York",
-                "off_time": "3:15", "note": "finished powerfully from an impossible spot"}]
+                "off_time": "3:15", "date": "2026-07-20",
+                "note": "finished powerfully from an impossible spot",
+                "conflict": "engine flags this horse (cold form) — the lead conflicts"}]
     tally = [{"rule": "#2", "supports": 1, "contradicts": 4}]
     lines = build_lessons(naps, (1, 8), nuances, tracked, tally)
     text = "\n".join(lines)
@@ -123,7 +125,11 @@ def test_the_learning_loop_reaches_the_exam() -> None:
     assert "RECENT LOSS 2026-07-19 Kalokalo (Ripon)" in text
     assert "MASTER-VALIDATED: manner outranks bare mark" in text
     assert "UNPROVEN nuance (weigh lightly): false favourites" in text
-    assert "UNVERIFIED TRACKED LEADS" in text and "Green Sky (York 3:15)" in text
+    assert "UNVERIFIED TRACKED LEADS" in text
+    # the clue's DATE leads, the note is framed as THAT day's run, and a lead that
+    # points against the engine's read carries its conflict (2026-07-25 audit)
+    assert "banked 2026-07-20" in text and "Green Sky runs today York 3:15" in text
+    assert "NB: engine flags this horse (cold form)" in text
     assert "RULE UNDER FIRE: #2 contradicted 4-1" in text
     # and the whole block rides into the actual exam prompt
     p = build_nap_prompt([("York 3:15", "R")], "\n".join(lines))

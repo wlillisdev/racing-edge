@@ -154,33 +154,10 @@ def _settle(day_str: str, email: bool) -> int:
         print(s)
         out.append(s)
 
-    log = open_nap_log()
-    nap = next((n for n in log.pending() if n["date"] == day.isoformat()), None)
-    if nap is None:
-        print(f"No unsettled nap for {day}.")
-        log.close()
-        return 0
+    # TRACKED CLUES + THE BROOM RUN FIRST (2026-07-25 audit: they sat below the
+    # 'no nap banked' early return, so on every PASS day no clue settled and the
+    # 28-day broom never swept — the exact silting the fix existed to end)
     results = results_from_raw(get_client().results_by_date(day.isoformat()))
-    race = next((r for r in results if r.race_id == nap["race_id"]), None)
-    me = next((rr for rr in race.runners if rr.horse_id == nap["horse_id"]), None) if race else None
-    if me is None:
-        print(f"Result for {nap['horse']} not in yet for {day}.")
-        log.close()
-        return 0
-    won = me.position == 1
-    log.settle(day, won=won, sp_dec=me.sp_dec)
-    sh = next((x for x in log.pending_shadow() if x["date"] == day.isoformat()), None)
-    if sh is not None:
-        shr = next((r for r in results if r.race_id == sh["race_id"]), None)
-        shm = next((rr for rr in shr.runners if rr.horse_id == sh["horse_id"]), None) \
-            if shr else None
-        if shm is not None:
-            log.settle_shadow(day, won=shm.position == 1, sp_dec=shm.sp_dec)
-            out.append(f"  shadow settled: {sh['horse']} "
-                       f"{'WON' if shm.position == 1 else 'lost'}")
-    # TRACKED CLUES SETTLE TOO (coroner 2026-07-21: 872 follow/oppose clues banked,
-    # not one ever settled — the whole day's results are in hand, so any tracked
-    # horse that ran today gets its clue marked done with the outcome)
     nlog = open_nuance_log()
     tracked_by_id = {t["horse_id"]: t for t in nlog.tracked_active() if t["horse_id"]}
     settled_clues = 0
@@ -202,6 +179,34 @@ def _settle(day_str: str, email: bool) -> int:
         out.append(f"  ({settled_clues} tracked clue(s) marked done)")
     if swept:
         out.append(f"  ({swept} stale clue(s) expired unverified — 28-day broom)")
+
+    log = open_nap_log()
+    nap = next((n for n in log.pending() if n["date"] == day.isoformat()), None)
+    if nap is None:
+        print(f"No unsettled nap for {day} (pass day or already settled).")
+        for line in out:
+            print(line)
+        log.close()
+        return 0
+    race = next((r for r in results if r.race_id == nap["race_id"]), None)
+    me = next((rr for rr in race.runners if rr.horse_id == nap["horse_id"]), None) if race else None
+    if me is None:
+        print(f"Result for {nap['horse']} not in yet for {day}.")
+        for line in out:
+            print(line)
+        log.close()
+        return 0
+    won = me.position == 1
+    log.settle(day, won=won, sp_dec=me.sp_dec)
+    sh = next((x for x in log.pending_shadow() if x["date"] == day.isoformat()), None)
+    if sh is not None:
+        shr = next((r for r in results if r.race_id == sh["race_id"]), None)
+        shm = next((rr for rr in shr.runners if rr.horse_id == sh["horse_id"]), None) \
+            if shr else None
+        if shm is not None:
+            log.settle_shadow(day, won=shm.position == 1, sp_dec=shm.sp_dec)
+            out.append(f"  shadow settled: {sh['horse']} "
+                       f"{'WON' if shm.position == 1 else 'lost'}")
     w, n = log.strike_rate()
     cw, cn = log.strike_rate(confident_only=True)
     flag = "WON" if won else f"unplaced ({me.position or me.status})"
@@ -225,6 +230,9 @@ def main() -> int:
     ap.add_argument("--guard", action="store_true",
                     help="pre-off drift guard: re-check the banked nap's price NOW")
     ap.add_argument("--email", action="store_true", help="email the output (uses SMTP env vars)")
+    ap.add_argument("--force-rebank", action="store_true",
+                    help="allow re-picking a day that already has a banked row "
+                         "(otherwise refused — the pre-off record is sacred)")
     args = ap.parse_args()
     if args.record:
         return _record()
@@ -240,6 +248,20 @@ def main() -> int:
     def emit(s: str = "") -> None:
         print(s)
         out.append(s)
+
+    # THE PRE-OFF RECORD IS SACRED (2026-07-25 audit: a midday manual re-run silently
+    # overwrote the morning's banked row — price at banking, drift baseline, the pick
+    # itself). A day that already has a row is refused unless --force-rebank.
+    _existing_log = open_nap_log()
+    _existing = next((n for n in _existing_log.history()
+                      if n["date"] == resolve_date(args.day).isoformat()), None)
+    _existing_log.close()
+    if _existing is not None and not args.force_rebank:
+        was = "PASS" if _existing["won"] == -1 else _existing["horse"]
+        print(f"  A row is already banked for {resolve_date(args.day)} ({was}). "
+              f"Re-picking would overwrite the pre-off record.")
+        print("  Use --resend to re-email it, or --force-rebank to deliberately re-pick.")
+        return 1
 
     codes = ("jump", "flat") if args.both else (("flat",) if args.flat else ("jump",))
     client = get_client()
@@ -263,12 +285,18 @@ def main() -> int:
         if p.runner.horse_id in tracked and p.runner.horse_id not in seen:
             seen[p.runner.horse_id] = (p, tracked[p.runner.horse_id])
     if seen:
+        # the note narrates the PAST race that taught the clue (2026-07-25 audit:
+        # 'ran on to finish 2nd' against today's race label read like a result that
+        # hadn't happened yet) — the clue's date now leads every line, and the full
+        # dump is capped: the signal was drowning in ~60 lines about gated races
         emit("  ★ TRACKED HORSES RUN TODAY (clues mined from past results, #27):")
-        for p, t in seen.values():
+        for p, t in list(seen.values())[:12]:
             tag = "FOLLOW" if t["angle"] == "follow" else "OPPOSE"
             cond = f"  [{t['conditions']}]" if t["conditions"] else ""
             emit(f"    {tag} {p.runner.horse:22} {p.race.course} {p.race.off_time} "
-                 f"— {t['note']}{cond}")
+                 f"— from its {t['date']} run: {t['note']}{cond}")
+        if len(seen) > 12:
+            emit(f"    … and {len(seen) - 12} more tracked lead(s) (learn --tracked)")
         emit("")
 
     if not field:
@@ -333,14 +361,46 @@ def main() -> int:
         for _hid, (tp, t) in seen.items():
             if t["angle"] == "follow" and tp.race.race_id not in cand_order:
                 cand_order.append(tp.race.race_id)
-        cand_races = [all_by_race[rid] for rid in cand_order[:3]]
+        # THE TOP-CLASS DOOR (2026-07-25 Saturday audit: every York and Ascot race was
+        # gated and the reader never saw the week's best racing). One slot is reserved
+        # for the best Cl<=3, sub-16-field race whose ONLY race-level flag is the open
+        # market, carrying a well-in mark-read pick with 3+ families — rule #22: a
+        # beatable favourite is the green light to study the FIELD. The reader must
+        # still argue it; the engine fallback still can't touch it (survivors only).
+        _race_gate_terms = ("novice in disguise", "bottom-grade", "open market",
+                            "all-weather", "big-field")
+        for p in sorted(crossed, key=lambda p: (p.conviction.score,
+                                                -(p.race.race_class or 6)),
+                        reverse=True):
+            r = p.race
+            gates = [f for f in p.conviction.flags
+                     if any(g in f for g in _race_gate_terms)]
+            if (r.race_id not in cand_order
+                    and r.race_class is not None and r.race_class <= 3
+                    and r.field_size < 16
+                    and gates and all("open market" in f for f in gates)
+                    and p.conviction.mark_known and p.conviction.score >= 3
+                    and any("well-in" in a for a in p.conviction.aligned)):
+                cand_order.append(r.race_id)
+                emit(f"  ⚠ top-class door: {r.course} {r.off_time} (Cl{r.race_class}, "
+                     f"open market) earns a candidate slot on {p.runner.horse} — "
+                     f"the reader must argue past the flag.")
+                break
+        # slice widened [:3]->[:4] (audit: with 3 survivor races the FOLLOW/top-class
+        # appends could never actually get in — dead promotions)
+        cand_races = [all_by_race[rid] for rid in cand_order[:4]]
         candidates = []
         for picks in cand_races:
             r0 = picks[0].race
             label = f"{r0.course} {r0.off_time}"
             hists = {p.runner.horse_id: p.history for p in picks}
             candidates.append((label, render_preread(r0, hists)))
-        deep = get_investigator("nap", TOOLS, make_executor(client, cand_races[0][0].race))
+        # max_steps=6 (2026-07-25 audit: rules 4+8 demand ~2 lookups per candidate
+        # race — franking the key form AND checking the danger — and at 4 the model
+        # ran dry mid-frank on a 3-race Saturday shortlist)
+        deep = get_investigator("nap", TOOLS,
+                                make_executor(client, cand_races[0][0].race),
+                                max_steps=6)
         if deep is None:
             emit("  (deep read OFF — no ANTHROPIC_API_KEY; falling back to the "
                  "shallow engine pick)")
@@ -354,11 +414,28 @@ def main() -> int:
             _strike = _llog.strike_rate()
             _llog.close()
             nlog2 = open_nuance_log()
+            # leads about candidate races ride FIRST (the [:8] cut was dropping the
+            # only actionable leads in favour of gated-race colour), each with its
+            # clue DATE and a CONFLICT note when it points against the engine's read
+            _surv_ids = {p.runner.horse_id for p in survivors}
+            _cand_ids = set(cand_order[:4])
+
+            def _lead_row(tp, t) -> dict:
+                conflict = ""
+                if t["angle"] == "oppose" and tp.runner.horse_id in _surv_ids:
+                    conflict = "engine ranks this horse a SURVIVOR — the lead conflicts"
+                elif t["angle"] == "follow" and tp.conviction.flags:
+                    conflict = ("engine flags this horse "
+                                f"({tp.conviction.flags[0]}) — the lead conflicts")
+                return {"angle": t["angle"], "horse": t["horse"], "date": t["date"],
+                        "course": tp.race.course, "off_time": tp.race.off_time,
+                        "note": t["note"], "conflict": conflict}
+
+            _leads = sorted(seen.values(),
+                            key=lambda pt: pt[0].race.race_id not in _cand_ids)
             lesson_lines = build_lessons(
                 _hist, _strike, nlog2.all(),
-                [{"angle": t["angle"], "horse": t["horse"], "course": tp.race.course,
-                  "off_time": tp.race.off_time, "note": t["note"]}
-                 for tp, t in list(seen.values())],
+                [_lead_row(tp, t) for tp, t in _leads],
                 nlog2.rule_tally())
             nlog2.close()
             print(f"  deep read: {resolve_model('nap')} on "
@@ -376,9 +453,29 @@ def main() -> int:
                 _bank_pass(resolve_date(args.day), f"deep-read pass: {mp.pass_reason}")
                 _maybe_email(out, "Nap — no bet today (pass earned)", args.email)
                 return 0
-            chosen = next((p for picks in cand_races for p in picks
-                           if mp.horse and p.runner.horse.strip().lower()
-                           == mp.horse.strip().lower()), None)
+            # match the horse WITHIN the race the model named (2026-07-25 audit:
+            # name-only matching across all candidates could bank a duplicate name
+            # against the wrong race); fall back to name-only with a loud warning
+            def _match(require_label: bool):
+                for picks in cand_races:
+                    label_ok = (not require_label or not mp.race_label
+                                or mp.race_label.strip().lower().startswith(
+                                    picks[0].race.course.strip().lower()))
+                    if not label_ok:
+                        continue
+                    for p in picks:
+                        if (mp.horse and p.runner.horse.strip().lower()
+                                == mp.horse.strip().lower()):
+                            return p
+                return None
+
+            chosen = _match(require_label=True)
+            if chosen is None and mp.horse:
+                chosen = _match(require_label=False)
+                if chosen is not None:
+                    emit(f"  ⚠ race label '{mp.race_label}' did not match the chosen "
+                         f"horse's race ({chosen.race.course} {chosen.race.off_time}) "
+                         f"— matched by name only; verify before trusting.")
             if mp.ok and chosen is not None:
                 nap = chosen
                 deep_case = [f"  DEEP READ ({resolve_model('nap')}) — the case:",
@@ -469,6 +566,9 @@ def main() -> int:
     if delta is None or delta > 0:
         emit(f"  ✗ PROFILE FLOOR: {nap.runner.horse} is not WELL-IN "
              f"(mark delta {delta if delta is not None else 'OWED'}) — no bet.")
+        _bank_pass(resolve_date(args.day),
+                   f"profile floor: {nap.runner.horse} not well-in "
+                   f"(delta {delta if delta is not None else 'OWED'})")
         _maybe_email(out, "Nap — no bet today (not well-in)", args.email)
         return 0
     # class and anchor are ARGUABLE — an argued multi-fact deep case may override them
@@ -487,8 +587,15 @@ def main() -> int:
     # only in a race the gates did NOT flag: the Ebony Maw race was READABLE (a
     # rematch, a false favourite); a gated race arguing itself off-profile is exactly
     # the eloquent-loser signature.
+    # (2026-07-25: a top-class open market is NOT a licence-killer — rule #22 calls a
+    # beatable favourite in a Cl<=3 race the green light to study the field; the
+    # top-class door exists exactly so the reader can argue those. Every other gate
+    # still kills the licence.)
+    _top_class_open = (r.race_class is not None and r.race_class <= 3
+                       and r.field_size < 16)
     race_gated = any(("novice in disguise" in f) or ("bottom-grade" in f)
-                     or ("open market" in f) for f in c.flags)
+                     or ("open market" in f and not _top_class_open)
+                     for f in c.flags)
     argued = (bool(deep_case) and mp is not None and len(mp.cite) >= 3
               and not race_gated)
     if off_profile and not argued:
@@ -497,6 +604,8 @@ def main() -> int:
                "no argued multi-fact case to override")
         emit(f"  ✗ PROFILE FLOOR: {nap.runner.horse} — {'; '.join(soft_fails)} and "
              f"{why}. No bet beats a stupid pick.")
+        _bank_pass(resolve_date(args.day),
+                   f"profile floor: {'; '.join(soft_fails)} — {why}")
         _maybe_email(out, "Nap — no bet today (profile floor)", args.email)
         return 0
     if off_profile:

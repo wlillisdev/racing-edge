@@ -64,7 +64,11 @@ NAP_SYSTEM = (
     "less. Recommend the instrument in the case: win single in the fair band, "
     "each-way at 8.0+.\n"
     "IRON RULES: only facts from the readouts and tool results; cite the exact fact "
-    "for every claim; a blank is OWED, never filled; never let the price pick.\n"
+    "for every claim; a blank is OWED, never filled; never let the price pick. OWED "
+    "IS SYMMETRIC (2026-07-25): a blank on a RIVAL is owed exactly as a blank on your "
+    "pick — absence of evidence never counts AGAINST the danger; beat it only with "
+    "facts you HAVE. And any fatal fact you use to cross off a rival that also "
+    "applies to your own pick must be confronted in the case, never parked in owed.\n"
     "Answer ONLY a single JSON object, no prose around it."
 )
 
@@ -153,10 +157,16 @@ def build_lessons(nap_history: list[dict], strike: tuple[int, int],
               for nu in nuances if nu["status"] == "proposed"][-3:]
     # tracked clues are UNVERIFIED leads (2026-07-21: two losers were built on tracked
     # clues the old header mislabelled 'master validated' — the model believed the
-    # label). Honest label + explicit weight instruction.
-    tracked_lines = [f"- unverified lead ({t['angle']}): {t['horse']} ({t['course']} "
-                     f"{t['off_time']}): {t['note'][:120]}"
-                     for t in tracked_today[:8]]
+    # label). Honest label + explicit weight instruction. The clue's DATE prints too
+    # (2026-07-25 audit: notes narrate the PAST race that taught them — 'won today',
+    # 'finished 2nd' — and without the date they read as today's results), and a
+    # CONFLICT note when the lead points against the engine's own read.
+    tracked_lines = [
+        f"- unverified lead ({t['angle']}, banked {t.get('date', '?')} — the note "
+        f"describes THAT day's run, not today): {t['horse']} runs today "
+        f"{t['course']} {t['off_time']}: {t['note'][:120]}"
+        + (f" (NB: {t['conflict']})" if t.get("conflict") else "")
+        for t in tracked_today[:8]]
     if tracked_lines:
         lines.append("UNVERIFIED TRACKED LEADS — colour only, weigh lightly, "
                      "NEVER the foundation of a case:")

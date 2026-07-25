@@ -104,7 +104,12 @@ def frank_form(client: _Fetcher, horse_id: str, history: tuple[PastRun, ...],
             ran_since += int(ran)
             franked += int(placed)
         if ran_since >= 2:                       # frankable — enough rivals have re-run to judge
-            verdict = "FRANKED" if franked >= 2 else "thin"
+            # three-way label mirroring is_franked/is_thin (2026-07-25 audit: the
+            # note said 'thin' on a 1/5 frank that the recalibration deliberately
+            # no longer vetoes — the email must not say what the code doesn't mean)
+            verdict = ("FRANKED" if franked >= 2
+                       else "THIN (nobody placed)" if ran_since >= 3 and franked == 0
+                       else "mixed/ambiguous — no frank either way")
             return Franking(last.date, len(rivals), ran_since, franked,
                             f"{last.date.isoformat()} race {verdict}: "
                             f"{franked}/{ran_since} re-runners won/placed since")

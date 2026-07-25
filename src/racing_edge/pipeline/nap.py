@@ -33,13 +33,17 @@ class NapPick:
     history: tuple = ()          # the contender's past runs — for the morning deep read
 
 
-def _rank_key(p: NapPick) -> tuple[int, int, int, int, float]:
+def _rank_key(p: NapPick) -> tuple[int, int, int, int, int, float]:
     # RACE QUALITY breaks ties (the master, 2026-07-05: "really bad race selections —
     # poor classes, anything could win"): between equal convictions, the pick in the
     # BETTER-CLASS race wins. A readable Class 3 beats a Class 6 scramble every time.
     # score is lens FAMILIES (coarse, honest); raw label count breaks family ties.
-    return (int(p.conviction.confident), p.conviction.score, len(p.conviction.aligned),
-            -(p.race.race_class or 6), -(p.price or 999.0))
+    # WELL-IN ranks first among equals (2026-07-25 audit: a mark-OWED conv-4 outranked
+    # well-in conv-3 horses — wasting candidate slots and fallback places on picks the
+    # sacred floor can never bank; the decisive lens now carries rank weight).
+    well_in = int(any("well-in" in a for a in p.conviction.aligned))
+    return (int(p.conviction.confident), well_in, p.conviction.score,
+            len(p.conviction.aligned), -(p.race.race_class or 6), -(p.price or 999.0))
 
 
 def evaluate_field(client: _Client, day: str = "today",
@@ -137,9 +141,15 @@ def evaluate_field(client: _Client, day: str = "today",
         #    Loosened 2026-07-21 (regression audit): fav>=4.0 in ANY 8+ field was
         #    crossing off the exact competitive Cl3/4 handicaps the banked winners
         #    came from (2nd/3rd fav at 4.5-6.5); the 4.0 bar now needs a 12+ field.
+        #    Class-tiered 2026-07-25 (the Saturday audit): a 5.6 fav over ten exposed
+        #    Cl2/3 handicappers is rule #22's green light ("study the FIELD"), not a
+        #    lottery — top-class races get a 6.0 bar; everything else keeps 5.0.
         fav = min((p.price for p in race_picks if p.price), default=None)
-        if fav and (fav >= 5.0 or (race.field_size >= 12 and fav >= 4.0)):
-            race_flags.append(f"open market (fav {fav}) — anything-could-win race (#3)")
+        fav_bar = 6.0 if (race.race_class or 9) <= 3 else 5.0
+        if fav and (fav >= fav_bar or (race.field_size >= 12 and fav >= 4.0)):
+            crowd = " in a 12+ field" if fav < fav_bar else ""
+            race_flags.append(f"open market (fav {fav}{crowd}) — "
+                              "anything-could-win race (#3)")
         if race_picks and race_flags:
             race_picks = [
                 replace(p, conviction=replace(

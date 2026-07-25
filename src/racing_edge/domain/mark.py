@@ -18,6 +18,7 @@ from racing_edge.domain.models import PastRun
 class MarkRead:
     today: int | None
     last_won: int | None        # the OR it ran off when it LAST won (None = never won / unknown)
+    since: int | None = None    # runs between today and that win (0 = won last time out)
 
     @property
     def delta(self) -> int | None:
@@ -31,12 +32,22 @@ class MarkRead:
         return self.delta is not None
 
     @property
+    def stale(self) -> bool:
+        """The anchor is from a dead era (2026-07-25, the Woodstock audit): a horse
+        that hasn't won in 10+ runs reads 'well-in' against its ancient winning mark
+        precisely BECAUSE it kept losing — the opposite of the handicapper missing it."""
+        return self.since is not None and self.since >= 10
+
+    @property
     def verdict(self) -> str:
         d = self.delta
         if d is None:
             return ""                       # can't judge — no today mark or no prior win
         if d <= 0:
-            return "WELL-IN" if d == 0 else f"WELL-IN {d}lb"
+            base = "WELL-IN" if d == 0 else f"WELL-IN {d}lb"
+            if self.stale:
+                base += f" (STALE — last win {self.since} runs back)"
+            return base
         return f"+{d}lb"                     # up in the weights since it won
 
 
@@ -47,13 +58,12 @@ def mark_read(today_or: int | None, history: tuple[PastRun, ...],
     mark of 61 was compared against a hurdles win off 107, producing a fantasy
     'WELL-IN -46lb'. Flat and jumps marks are different currencies — never convert.)"""
     from racing_edge.domain.units import race_code
-    last_won = next(
-        (h.official_rating for h in history
-         if h.position == 1 and h.official_rating
-         and (code is None
-              or bool(h.race_type) and race_code(h.race_type) == code)),
-        None)
-    return MarkRead(today=today_or, last_won=last_won)
+    for i, h in enumerate(history):
+        if (h.position == 1 and h.official_rating
+                and (code is None
+                     or bool(h.race_type) and race_code(h.race_type) == code)):
+            return MarkRead(today=today_or, last_won=h.official_rating, since=i)
+    return MarkRead(today=today_or, last_won=None)
 
 
 def same_code_runs(history: tuple[PastRun, ...], code: str) -> tuple[PastRun, ...]:

@@ -90,8 +90,18 @@ def conviction(runner: Runner, race: Race, history: tuple[PastRun, ...],
                 # MAGNITUDE matters: a 5lb+ gap is its own signal, not the same dot
                 # twice (Giant Haystacks won off -9; it had scored level with a 0lb)
                 aligned.append(f"heavily treated ({mr.delta}lb below last winning mark)")
+            if mr.stale:
+                # THE WOODSTOCK LESSON (2026-07-25 audit): an exposed loser's mark
+                # erodes BECAUSE it keeps losing — 'well-in' against a win 10+ runs
+                # back is a placer's profile wearing the winning profile's coat
+                flags.append(f"well-in anchor STALE (last win {mr.since} runs back) "
+                             "— placer risk, not a missed handicapper")
         else:
             flags.append(f"raised {mr.verdict} since last win")
+    if len(hist) >= 6 and not any(h.position == 1 for h in hist):
+        # comment-independent serial-placer catch (the audit's Giant/Woodstock pair:
+        # the manner flag couldn't fire because every comment was missing)
+        flags.append(f"no win in {len(hist)} visible runs — placer risk")
 
     # THE MANNER (rule #1 — read the finish, not the figures). The reader was built
     # months ago but starved: PastRun carried no comment until the window opened. Now

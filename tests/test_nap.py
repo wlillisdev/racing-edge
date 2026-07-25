@@ -321,3 +321,62 @@ def test_settle_can_see_every_name_it_calls() -> None:
     for name in ("open_nap_log", "open_nuance_log", "resolve_date",
                  "results_from_raw", "get_client"):
         assert hasattr(napcli, name), f"cli.nap missing module-level name: {name}"
+
+
+def test_the_woodstock_lesson_stale_anchor_and_serial_placer_flag() -> None:
+    """2026-07-25 adversarial audit: Woodstock read 'WELL-IN -7lb' against a win
+    older than its entire visible history — an exposed loser's mark erodes BECAUSE
+    it keeps losing, and 0 wins in 10 visible runs is a placer profile at win odds.
+    Both now flag; a flagged horse is never confident and never a clean survivor."""
+    r = Runner(horse_id="w", horse="Woodstock", official_rating=68,
+               odds=Odds(consensus=4.9))
+    losses = tuple(PastRun(date=date(2026, 7, 1 + i), position=2 + (i % 4),
+                           race_type="Flat") for i in range(10))
+    old_win = (PastRun(date=date(2025, 6, 1), position=1, official_rating=75,
+                       race_type="Flat"),)
+    race = Race(race_id="r", course="Cartmel", off_time="15:50",
+                date=date(2026, 6, 27), race_type="Flat", is_handicap=True)
+    c = conviction(r, race, losses + old_win, market_rank=2, field_size=8)
+    assert any("STALE" in f for f in c.flags)            # anchor from a dead era
+    assert any("placer risk" in f for f in c.flags)
+    assert not c.confident
+    # a fresh winner is untouched: won 2 runs back, no stale/placer noise
+    fresh = (PastRun(date=date(2026, 7, 10), position=3, race_type="Flat"),
+             PastRun(date=date(2026, 7, 1), position=1, official_rating=68,
+                     race_type="Flat"))
+    c2 = conviction(r, race, fresh, market_rank=2, field_size=8)
+    assert not any("STALE" in f or "placer risk" in f for f in c2.flags)
+
+
+def test_led_and_caught_reads_as_the_nearly_type() -> None:
+    from racing_edge.domain.manner import read_manner
+    m, _ = read_manner("driven to the front with a furlong out - overtaken "
+                       "inside the final 110 yards by the winner")
+    assert m == "non_finisher"                            # the Woodstock comment
+    m2, _ = read_manner("made headway over 2f out and stayed on well")
+    assert m2 == "finisher"                               # 'headway' is not 'headed'
+
+
+def test_rank_key_weights_the_decisive_lens() -> None:
+    """2026-07-25 audit: a mark-OWED conv-4 outranked well-in conv-3 horses,
+    wasting candidate slots on picks the sacred floor can never bank."""
+    from racing_edge.pipeline.nap import _rank_key
+    race = Race(race_id="r", course="Cartmel", off_time="15:50",
+                date=date(2026, 6, 27), race_type="Flat", is_handicap=True,
+                race_class=4)
+    well_in = Runner(horse_id="a", horse="WellIn", official_rating=70,
+                     odds=Odds(consensus=4.0))
+    wh = (PastRun(date=date(2026, 7, 10), position=4, race_type="Flat"),
+          PastRun(date=date(2026, 7, 1), position=1, official_rating=72,
+                  course="Thirsk", race_type="Flat"))
+    cw = conviction(well_in, race, wh, market_rank=2, field_size=8)
+    owed = Runner(horse_id="b", horse="MarkOwed", odds=Odds(consensus=3.0))
+    hist = (PastRun(date=date(2026, 7, 10), position=1, race_type="Flat"),)
+    co = conviction(owed, race, hist, market_rank=2, field_size=8,
+                    stable_strike=0.2, yard_no1=True,
+                    jockey_course_strike=0.2, jockey_course_rides=30)
+    assert not co.mark_known and co.score > cw.score      # the audited shape
+    from racing_edge.pipeline.nap import NapPick
+    pw = NapPick(race=race, runner=well_in, price=4.0, conviction=cw)
+    po = NapPick(race=race, runner=owed, price=3.0, conviction=co)
+    assert _rank_key(pw) > _rank_key(po)                  # well-in outranks anyway
