@@ -309,3 +309,15 @@ def _main() -> int:
 
 if __name__ == "__main__":
     sys.exit(_main())
+
+
+def test_settle_can_see_every_name_it_calls() -> None:
+    """2026-07-22..24: open_nuance_log was imported inside main() only, so _settle
+    raised NameError at 22:00 three nights straight — naps settled, then the crash
+    killed the night before the self-study, starving the nuance ledger (and the
+    flight recorder's broken trap logged EXIT 0 over it). Every name _settle's code
+    references must resolve at module scope."""
+    import racing_edge.cli.nap as napcli
+    for name in ("open_nap_log", "open_nuance_log", "resolve_date",
+                 "results_from_raw", "get_client"):
+        assert hasattr(napcli, name), f"cli.nap missing module-level name: {name}"

@@ -29,7 +29,9 @@ cd "$(dirname "$0")"
 mkdir -p data
 LOGF="data/task_runs.log"
 echo "=== $(date -u '+%F %T') UTC :: trial.sh ${1:-nap} START" >> "$LOGF"
-trap 'echo "=== $(date -u "+%F %T") UTC :: trial.sh '"${1:-nap}"' EXIT $?" >> "$LOGF"' EXIT
+# NOTE the st=$? FIRST: $(date) inside the echo resets $?, so the old trap logged
+# EXIT 0 on crashed runs — three starved nights (07-22..24) hid behind that zero.
+trap 'st=$?; echo "=== $(date -u "+%F %T") UTC :: trial.sh '"${1:-nap}"' EXIT $st" >> "$LOGF"' EXIT
 exec > >(tee -a "$LOGF") 2>&1
 
 export PYTHONPATH=src
@@ -63,7 +65,11 @@ case "${1:-nap}" in
   synth)   "$PY" -m racing_edge.cli.learn   --synthesise --email ;;
   guard)   "${SDK_OFF[@]}" "$PY" -m racing_edge.cli.nap --guard ;;
   health)  "${SDK_OFF[@]}" "$PY" -m racing_edge.cli.health --email ;;
-  night)   "${SDK_OFF[@]}" "$PY" -m racing_edge.cli.nap --settle today --email
+  night)   # settle is best-effort: a settle crash must never cancel the self-study
+           # (07-22..24: one NameError in settle starved the nuance ledger 3 nights)
+           if ! "${SDK_OFF[@]}" "$PY" -m racing_edge.cli.nap --settle today --email; then
+             echo "WARNING: settle FAILED — continuing to the self-study regardless"
+           fi
            echo
            "$PY" -m racing_edge.cli.learn   --day today --email
            # Sunday: the weekly synthesis rides in the same slot (no weekly task needed)

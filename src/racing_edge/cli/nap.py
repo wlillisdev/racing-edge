@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import argparse
 
-from racing_edge.cli._common import open_nap_log, resolve_date
+from racing_edge.cli._common import open_nap_log, open_nuance_log, resolve_date
 from racing_edge.data.client import get_client
 from racing_edge.data.evidence import build_evidence
 from racing_edge.data.normalise import results_from_raw
@@ -255,7 +255,6 @@ def main() -> int:
 
     # THE FORWARD CLUES (#27): horses mined from past results that reappear TODAY.
     # This is the result-mining paying off on the card, not sitting in a database.
-    from racing_edge.cli._common import open_nuance_log
     nlog = open_nuance_log()
     tracked = {t["horse_id"]: t for t in nlog.tracked_active()}
     nlog.close()
