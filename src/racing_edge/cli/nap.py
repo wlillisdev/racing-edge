@@ -78,8 +78,11 @@ def _record() -> int:
               f"{cw}/{cn} on CONFIDENT naps.  (small samples lie — judge it over hundreds.)")
     sw, sn = log.shadow_strike()
     if sn:
-        print(f"  SHADOW (engine method): {sw}/{sn} won ({100 * sw / sn:.0f}%) — "
-              f"the A/B the record is running between the deep read and the engine.")
+        # honest label (2026-07-25 replication audit): this is the RAW top survivor,
+        # no frank, no floor — a signal, not a bettable method; the full A/B needs
+        # the mechanical chain extracted so both sides play by the same rules
+        print(f"  SHADOW (raw engine top survivor — no floor applied, not bettable "
+              f"as-is): {sw}/{sn} won ({100 * sw / sn:.0f}%).")
     log.close()
     return 0
 
