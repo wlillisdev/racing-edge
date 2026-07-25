@@ -196,9 +196,12 @@ def _settle(day_str: str, email: bool) -> int:
             out.append(f"  tracked clue settled: [{t['angle']}] {t['horse']} — "
                        f"{outcome} ({'clue HELD' if hit else 'clue missed'})")
             del tracked_by_id[rr.horse_id]
+    swept = nlog.expire_tracked()
     nlog.close()
     if settled_clues:
         out.append(f"  ({settled_clues} tracked clue(s) marked done)")
+    if swept:
+        out.append(f"  ({swept} stale clue(s) expired unverified — 28-day broom)")
     w, n = log.strike_rate()
     cw, cn = log.strike_rate(confident_only=True)
     flag = "WON" if won else f"unplaced ({me.position or me.status})"

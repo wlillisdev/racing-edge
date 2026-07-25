@@ -87,13 +87,20 @@ def main() -> int:
         f"rule scoreboard accumulating ({len(tally)} rule(s) on trial)",
         "self-studies run but NO rule evidence banked — the scoreboard pipe is broken",
         lines)
-    old_tracked = [t for t in tracked
-                   if t["date"] < (today - timedelta(days=21)).isoformat()]
+    # the silting alarm now watches the BROOM, not the backlog (2026-07-25: the old
+    # 21-day count red-lined forever on legacy rows the 28-day expiry already hid
+    # from the working lists — an alarm nobody can silence teaches people to ignore
+    # alarms). Stale = rows STILL 'active' in the DB beyond 28 days: ~0 while the
+    # nightly expire_tracked broom runs; growing = the broom is dead.
+    nlog_stale = open_nuance_log()
+    stale_clues = nlog_stale.tracked_stale()
+    nlog_stale.close()
     all_ok &= _check(
-        len(old_tracked) < 10,
-        f"tracked list healthy ({len(tracked)} active clue(s))",
-        f"{len(old_tracked)} tracked clues older than 3 weeks and never settled — "
-        "the follow/oppose list is silting up unverified",
+        stale_clues < 10,
+        f"tracked list healthy ({len(tracked)} live clue(s); {stale_clues} awaiting "
+        "the nightly broom)",
+        f"{stale_clues} clues sitting active beyond the 28-day expiry — the nightly "
+        "broom (expire_tracked in --settle) is not running",
         lines)
     # THE DOORBELL (coroner 2026-07-21: 0 validated / 104 refuted — nuances have no
     # path to 'validated' without the master's ruling, and nothing ever ASKED him).

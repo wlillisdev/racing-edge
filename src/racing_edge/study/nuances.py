@@ -127,6 +127,30 @@ class NuanceLog:
             (cutoff,)).fetchall()
         return [dict(r) for r in rows]
 
+    def expire_tracked(self, days: int = 28) -> int:
+        """The nightly broom (2026-07-25: health nagged '225 clues older than 3 weeks'
+        forever — the 28-day filter hid them from the working lists but the rows sat
+        'active' in the DB for good). A clue whose horse hasn't reappeared within
+        `days` is marked done-expired: the lead went cold, honestly. Returns rows swept."""
+        from datetime import timedelta
+        cutoff = (date.today() - timedelta(days=days)).isoformat()
+        cur = self._conn.execute(
+            "UPDATE tracked SET status = 'done', "
+            "note = note || '  [expired unverified — horse never reappeared]' "
+            "WHERE status = 'active' AND date < ?", (cutoff,))
+        self._conn.commit()
+        return cur.rowcount
+
+    def tracked_stale(self, days: int = 28) -> int:
+        """Rows STILL marked active in the DB beyond the expiry horizon — should be
+        ~0 while the nightly broom runs; a growing count means the broom is dead."""
+        from datetime import timedelta
+        cutoff = (date.today() - timedelta(days=days)).isoformat()
+        row = self._conn.execute(
+            "SELECT COUNT(*) AS n FROM tracked WHERE status = 'active' AND date < ?",
+            (cutoff,)).fetchone()
+        return int(row["n"])
+
     def settle_tracked(self, horse_id: str, *, outcome: str) -> int:
         """The clue's horse RAN — the clue is spent. Mark every active row for the
         horse 'done' and stamp how it worked out, so follow/oppose leads accumulate
