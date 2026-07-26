@@ -43,12 +43,26 @@ TOOLS = [
             "required": ["race_id"],
         },
     },
+    {
+        "name": "trainer_angle",
+        "description": "The trainer's strike-rate BY HORSE AGE (trainer_id from the "
+                       "readout). The specialty read: a yard with an amazing record "
+                       "for exactly today's TYPE of horse — e.g. its 4yo chasers — "
+                       "is a huge tick; a yard that never wins with them is a "
+                       "warning. Ask it when the type looks distinctive.",
+        "input_schema": {
+            "type": "object",
+            "properties": {"trainer_id": {"type": "string"}},
+            "required": ["trainer_id"],
+        },
+    },
 ]
 
 
 class _Client:
     def horse_results(self, horse_id: str, limit: int = 12) -> list[dict]: ...
     def result_by_id(self, race_id: str) -> dict | None: ...
+    def trainer_ages(self, trainer_id: str) -> list[dict]: ...
 
 
 def make_executor(client: _Client, race: Race) -> Callable[[str, dict], str]:
@@ -78,12 +92,30 @@ def make_executor(client: _Client, race: Race) -> Callable[[str, dict], str]:
                          f"{comment}")
         return "\n".join(lines[:20])
 
+    def trainer_angle(trainer_id: str) -> str:
+        rows = client.trainer_ages(trainer_id) if hasattr(client, "trainer_ages") else []
+        if not rows:
+            return "Trainer age analysis not available through the window (OWED)."
+        lines = []
+        for r in rows[:12]:
+            runs = r.get("runners") or r.get("runs") or r.get("total_runs") or 0
+            wins = r.get("1st") or r.get("wins") or 0
+            age = r.get("age") or r.get("horse_age") or "?"
+            try:
+                pct = f" ({100 * int(wins) / int(runs):.0f}%)" if int(runs) else ""
+            except (ValueError, ZeroDivisionError, TypeError):
+                pct = ""
+            lines.append(f"  age {age}: {wins} wins from {runs} runs{pct}")
+        return "\n".join(lines) or "OWED"
+
     def execute(name: str, args: dict) -> str:
         try:
             if name == "horse_runs":
                 return horse_runs(str(args.get("horse_id", "")))
             if name == "race_result":
                 return race_result(str(args.get("race_id", "")))
+            if name == "trainer_angle":
+                return trainer_angle(str(args.get("trainer_id", "")))
             return f"Unknown tool {name!r}."
         except Exception as exc:                       # a bad lookup must not kill the study
             return f"Lookup failed ({exc.__class__.__name__}) — treat as OWED."

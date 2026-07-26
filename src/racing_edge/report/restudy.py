@@ -90,7 +90,8 @@ def render_preread(race: Race, histories: dict[str, tuple[PastRun, ...]],
         gear = f" | headgear {r.headgear}{'(1st time)' if r.headgear_first_time else ''}" \
             if r.headgear else ""
         lines.append("")
-        lines.append(f"  {r.horse:22} {rank}  [id {r.horse_id}]")
+        tid = f" trainer {r.trainer or '?'} [tid {r.trainer_id}]" if r.trainer_id else ""
+        lines.append(f"  {r.horse:22} {rank}  [id {r.horse_id}]{tid}")
         wt = ""
         if r.weight_lbs and _top:
             st, lb = divmod(r.weight_lbs, 14)

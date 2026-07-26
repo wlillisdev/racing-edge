@@ -130,6 +130,18 @@ class RacingAPIClient:
             return rows if isinstance(rows, list) else []
         return doc if isinstance(doc, list) else []
 
+    def trainer_ages(self, trainer_id: str) -> list[dict]:
+        """The trainer's record BY HORSE AGE — the specialty read (the master,
+        2026-07-26: 'if the trainer has an amazing strike rate for his 4-year-old
+        chasers this is a HUGE tick'). Honest empty when the plan lacks it."""
+        if not trainer_id:
+            return []
+        doc = self._get(f"/trainers/{trainer_id}/analysis/horse-age", allow_404=True)
+        if isinstance(doc, dict):
+            rows = doc.get("horse_ages") or doc.get("ages") or doc.get("data") or []
+            return rows if isinstance(rows, list) else []
+        return doc if isinstance(doc, list) else []
+
     def trainer_course(self, trainer_id: str, course_id: str = "") -> list[dict]:
         """The trainer's record BY COURSE — rule #10 (the local master) finally gets
         data: win% at THIS track instead of a prose rule. Standard plan and up."""
