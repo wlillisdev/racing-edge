@@ -16,6 +16,7 @@ Pure: a race (card) + its result + each runner's history in, a readout out.
 from __future__ import annotations
 
 from racing_edge.domain.manner import nap_verdict
+from racing_edge.domain.courses import handedness
 from racing_edge.domain.mark import mark_read, same_code_runs
 from racing_edge.domain.models import PastRun, Race, RaceResult, RunnerResult
 
@@ -79,6 +80,34 @@ def render_preread(race: Race, histories: dict[str, tuple[PastRun, ...]],
                          positions=[h.position for h in _mh])
         if mv.recommendation != "neutral" or mv.finisher_runs or mv.non_finisher_runs:
             lines.append(f"        manner read (#1): {mv.recommendation} — {mv.reason}")
+        # THE FINDING-TOOLS LINE (the master, 2026-07-26: 'how many races has the
+        # horse won at this distance, how many wins at that track, how many going
+        # left- or right-handed') — counted in code from same-code wins, so the
+        # reader judges facts, not impressions. Unknown handedness prints OWED.
+        _sc = same_code_runs(hist, race.code)
+        _wins = [h for h in _sc if h.position == 1]
+        if _wins:
+            _tw = sum(1 for h in _wins if h.course and race.course
+                      and h.course.strip().lower() == race.course.strip().lower())
+            _dw = sum(1 for h in _wins if h.distance_f and race.distance_f
+                      and abs(h.distance_f - race.distance_f) <= 1.0)
+            _lh = sum(1 for h in _wins if handedness(h.course) == "left")
+            _rh = sum(1 for h in _wins if handedness(h.course) == "right")
+            _uh = len(_wins) - _lh - _rh
+            _today = handedness(race.course)
+            hand = f"{_lh}L/{_rh}R" + (f"/{_uh}?" if _uh else "")
+            note = ""
+            if _today and (_lh + _rh) >= 2:
+                one_way = ("left" if _rh == 0 else "right" if _lh == 0 else "")
+                if one_way and one_way != _today:
+                    note = (f" ⚠ all handed wins {one_way.upper()}-handed — today "
+                            f"{_today.upper()}-handed")
+                elif _today:
+                    note = f" (today {_today}-handed)"
+            elif _today:
+                note = f" (today {_today}-handed)"
+            lines.append(f"        wins: {_tw} at this track | {_dw} at ~this trip | "
+                         f"by hand {hand}{note}")
         spot = r.spotlight.strip()
         if spot:
             lines.append(f"        spotlight: {spot[:200]}")

@@ -147,3 +147,30 @@ def _main() -> int:
 
 if __name__ == "__main__":
     sys.exit(_main())
+
+
+def test_the_finding_tools_line_counts_track_trip_and_handedness_wins() -> None:
+    """The master, 2026-07-26: 'how many wins at this distance, how many at that
+    track, how many going left- or right-handed' — counted in code, printed per
+    horse in the pre-race readout, with a warning when every handed win came the
+    OTHER way to today's track. Unknown courses stay honest ('?')."""
+    from racing_edge.data.normalise import past_runs_from_raw
+    from racing_edge.domain.courses import handedness
+    from racing_edge.domain.models import Odds, Race, Runner
+    from racing_edge.report.restudy import render_preread
+    assert handedness("Uttoxeter") == "left" and handedness("Ascot") == "right"
+    assert handedness("Fontwell") is None            # figure-eight — honest OWED
+    race = Race(race_id="r", course="Uttoxeter", off_time="4:12",
+                date=date(2026, 7, 26), race_type="Hurdle", is_handicap=True,
+                distance_f=23.0,
+                runners=(Runner(horse_id="A", horse="Gem", official_rating=110,
+                                odds=Odds(consensus=3.5)),))
+    rows = [
+        {"date": "2026-07-01", "course": "Ascot", "type": "Hurdle", "dist_f": "23.0",
+         "runners": [{"horse_id": "A", "position": "1", "or": "108"}]},
+        {"date": "2026-06-01", "course": "Sandown", "type": "Hurdle", "dist_f": "20.0",
+         "runners": [{"horse_id": "A", "position": "1", "or": "104"}]},
+    ]
+    out = render_preread(race, {"A": past_runs_from_raw(rows, "A")})
+    assert "wins: 0 at this track | 1 at ~this trip | by hand 0L/2R" in out
+    assert "all handed wins RIGHT-handed — today LEFT-handed" in out
