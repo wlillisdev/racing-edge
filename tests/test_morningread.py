@@ -21,7 +21,8 @@ def test_the_system_prompt_carries_the_masters_discipline() -> None:
     # least-bad picks on bad cards — the genesis of both losers)
     for phrase in ("RACE FIRST", "FORM FIRST, ODDS LAST", "ELIMINATE", "LOOK HARDER",
                    "a pass is CORRECT", "Never force the least-bad pick",
-                   "never let the price pick", "WINNING PROFILE"):
+                   "never let the price pick", "THE WHOLE JIGSAW",
+                   "ONE piece", "VETO only"):
         assert phrase in NAP_SYSTEM
     assert "lazy student" not in NAP_SYSTEM          # the anti-pass shaming is gone
 
@@ -93,7 +94,7 @@ def test_the_student_takes_its_notes_into_the_exam() -> None:
                                  "- OPPOSE King Of The Story: erratic jumper")
     assert "LESSONS & LEADS" in p and "manner outranks" in p and "OPPOSE King" in p
     assert "LESSONS & LEADS" not in build_nap_prompt([("T", "R")])   # empty = no block
-    assert "WINNING PROFILE" in NAP_SYSTEM and "unverified lead" in NAP_SYSTEM
+    assert "THE WHOLE JIGSAW" in NAP_SYSTEM and "unverified lead" in NAP_SYSTEM
 
 
 def test_the_learning_loop_reaches_the_exam() -> None:

@@ -46,11 +46,12 @@ def _rank_key(p: NapPick) -> tuple[int, int, int, int, int, float]:
     # poor classes, anything could win"): between equal convictions, the pick in the
     # BETTER-CLASS race wins. A readable Class 3 beats a Class 6 scramble every time.
     # score is lens FAMILIES (coarse, honest); raw label count breaks family ties.
-    # WELL-IN ranks first among equals (2026-07-25 audit: a mark-OWED conv-4 outranked
-    # well-in conv-3 horses — wasting candidate slots and fallback places on picks the
-    # sacred floor can never bank; the decisive lens now carries rank weight).
-    return (int(p.conviction.confident), int(p.conviction.well_in), p.conviction.score,
-            len(p.conviction.aligned), -(p.race.race_class or 6), -(p.price or 999.0))
+    # a READABLE mark ranks ahead of an OWED one (slot efficiency: the floor can't
+    # bank mark-OWED picks) — but well-in itself carries no extra rank weight (the
+    # master, 2026-07-26: the mark is one jigsaw piece and a veto, never a magnet).
+    return (int(p.conviction.confident), int(p.conviction.mark_known),
+            p.conviction.score, len(p.conviction.aligned),
+            -(p.race.race_class or 6), -(p.price or 999.0))
 
 
 def evaluate_field(client: _Client, day: str = "today",

@@ -90,12 +90,15 @@ def test_the_im_next_lesson_fair_fav_with_intent_outranks_bare_sweet_spot() -> N
                     market_rank=2, field_size=5)
     assert c.score > cf.score                            # the jigsaw now outranks it
 
-    # magnitude: -9lb is its own signal, not the same dot as 0lb
+    # the magnitude shows inside the verdict but mints NO second label (the master,
+    # 2026-07-26: 'the well-in claim is skewing all your picks — ONE piece of the
+    # jigsaw'; the old 'heavily treated' label was the bigger-gap-better magnet)
     gh = Runner(horse_id="GH", horse="GiantHaystacks", official_rating=95,
                 odds=Odds(consensus=4.4))
     cg = conviction(gh, race, (_won_cdg(date(2026, 5, 1), 104),),
                     market_rank=1, field_size=8)
-    assert any("heavily treated" in a for a in cg.aligned)
+    assert any("-9lb" in a for a in cg.aligned)           # the delta stays visible
+    assert not any("heavily treated" in a for a in cg.aligned)
     assert any("#19" in a for a in cg.aligned)
     # a CRAMPED fav still earns nothing — #19 is about fair prices, not all favs
     cramped = conviction(im_next, race, hist, market_rank=1, field_size=8)
