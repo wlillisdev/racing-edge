@@ -64,23 +64,71 @@ class NuanceLog:
         for col in ("sceptic_ground", "sceptic_reason"):
             with contextlib.suppress(sqlite3.OperationalError):   # column may exist
                 self._conn.execute(f"ALTER TABLE nuance ADD COLUMN {col} TEXT DEFAULT ''")
+        # migration 2026-07-25 (the self-study value audit): lessons carry a THEME
+        # (fixed taxonomy), a MECHANISM (why it transfers) and a FAILS_WHEN (the kill
+        # test); re-proposals become VOTES (seen_count) instead of new rows — the
+        # loop was rediscovering the same lesson nightly with no memory of itself
+        for col, typ in (("theme", "TEXT DEFAULT ''"), ("mechanism", "TEXT DEFAULT ''"),
+                         ("fails_when", "TEXT DEFAULT ''"),
+                         ("seen_count", "INTEGER DEFAULT 1"),
+                         ("last_seen", "TEXT DEFAULT ''")):
+            with contextlib.suppress(sqlite3.OperationalError):
+                self._conn.execute(f"ALTER TABLE nuance ADD COLUMN {col} {typ}")
+        for col, typ in (("theme", "TEXT DEFAULT ''"), ("held", "INTEGER")):
+            with contextlib.suppress(sqlite3.OperationalError):
+                self._conn.execute(f"ALTER TABLE tracked ADD COLUMN {col} {typ}")
         self._conn.commit()
+
+    @staticmethod
+    def _tokens(s: str) -> set:
+        import re as _re
+        stop = {"when", "that", "with", "this", "from", "have", "their", "there",
+                "which", "into", "over", "than", "then", "them", "were", "does"}
+        return set(_re.findall(r"[a-z]{4,}", s.lower())) - stop
+
+    def find_duplicate(self, nuance: str, threshold: float = 0.6) -> dict | None:
+        """The earlier lesson this nuance re-states, if any — token-Jaccard on
+        content words (catches #190 re-proposing the Hoodie Hoo lesson verbatim-ish)."""
+        a = self._tokens(nuance)
+        if not a:
+            return None
+        for row in self.all():
+            if row["status"] == "refuted":
+                continue
+            b = self._tokens(row["nuance"])
+            if b and len(a & b) / len(a | b) >= threshold:
+                return row
+        return None
 
     def record(self, *, day: date, race_id: str, course: str, winner: str,
                blind_pick: str, nuance: str, what_missed: str, cite: str,
                owed: str, confidence: str, status: str = "proposed",
-               sceptic_ground: str = "", sceptic_reason: str = "") -> None:
-        """Bank a nuance (proposed, or refuted-with-the-kill-reason). Idempotent on
-        (date, race, nuance text)."""
+               sceptic_ground: str = "", sceptic_reason: str = "",
+               theme: str = "", mechanism: str = "", fails_when: str = "") -> int | None:
+        """Bank a nuance — or, if it re-states an earlier non-refuted lesson, count
+        it as a VOTE on that lesson (seen_count += 1) instead of minting a row
+        (2026-07-25 value audit: the loop proposed the same lesson nightly with no
+        memory of itself — repetition is CONVERGENCE evidence, not new insight).
+        Returns the id of the earlier lesson when merged, else None."""
+        if status != "refuted":
+            dup = self.find_duplicate(nuance)
+            if dup is not None:
+                self._conn.execute(
+                    "UPDATE nuance SET seen_count = COALESCE(seen_count, 1) + 1, "
+                    "last_seen = ? WHERE id = ?", (day.isoformat(), dup["id"]))
+                self._conn.commit()
+                return int(dup["id"])
         self._conn.execute(
             "INSERT OR IGNORE INTO nuance (date, race_id, course, winner, blind_pick, "
             "nuance, what_missed, cite, owed, confidence, status, sceptic_ground, "
-            "sceptic_reason) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
+            "sceptic_reason, theme, mechanism, fails_when) "
+            "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
             (day.isoformat(), race_id, course, winner, blind_pick, nuance,
              what_missed, cite, owed, confidence, status, sceptic_ground,
-             sceptic_reason),
+             sceptic_reason, theme, mechanism, fails_when),
         )
         self._conn.commit()
+        return None
 
     def proposed(self) -> list[dict]:
         rows = self._conn.execute(
@@ -106,13 +154,13 @@ class NuanceLog:
         self._conn.commit()
 
     def track(self, *, day: date, race_id: str, horse: str, horse_id: str,
-              angle: str, note: str, conditions: str) -> None:
+              angle: str, note: str, conditions: str, theme: str = "") -> None:
         """Bank a forward clue mined from a result — a horse to follow or oppose
         NEXT time (#27). Surfaced automatically when the horse reappears on a card."""
         self._conn.execute(
             "INSERT OR IGNORE INTO tracked (date, race_id, horse, horse_id, angle, "
-            "note, conditions, status) VALUES (?,?,?,?,?,?,?, 'active')",
-            (day.isoformat(), race_id, horse, horse_id, angle, note, conditions),
+            "note, conditions, status, theme) VALUES (?,?,?,?,?,?,?, 'active', ?)",
+            (day.isoformat(), race_id, horse, horse_id, angle, note, conditions, theme),
         )
         self._conn.commit()
 
@@ -151,17 +199,59 @@ class NuanceLog:
             (cutoff,)).fetchone()
         return int(row["n"])
 
-    def settle_tracked(self, horse_id: str, *, outcome: str) -> int:
+    def settle_tracked(self, horse_id: str, *, outcome: str,
+                       held: bool | None = None) -> int:
         """The clue's horse RAN — the clue is spent. Mark every active row for the
-        horse 'done' and stamp how it worked out, so follow/oppose leads accumulate
-        a record instead of silting up unverified. Returns rows settled."""
+        horse 'done', stamp how it worked out, and store HELD/missed (the clue
+        stream's own strike rate — the most direct measure of study value).
+        Returns rows settled."""
         cur = self._conn.execute(
-            "UPDATE tracked SET status = 'done', "
+            "UPDATE tracked SET status = 'done', held = ?, "
             "note = note || '  [settled: ' || ? || ']' "
             "WHERE horse_id = ? AND status = 'active'",
-            (outcome, horse_id))
+            (None if held is None else int(held), outcome, horse_id))
         self._conn.commit()
         return cur.rowcount
+
+    def clue_scoreboard(self, since: str = "2026-07-22") -> dict:
+        """Follow/oppose hit rates over SETTLED clues (since the fair-court +
+        settle-on-run era; older rows are structurally unsettled). Baselines the
+        report must print beside them: a random runner wins ~10-11% (follow must
+        beat that to mean anything); 'oppose succeeded' is nearly free against
+        outsiders, so judge oppose only against fancied runners over time."""
+        rows = self._conn.execute(
+            "SELECT angle, held FROM tracked WHERE status = 'done' "
+            "AND held IS NOT NULL AND date >= ?", (since,)).fetchall()
+        out = {"follow": {"n": 0, "hits": 0}, "oppose": {"n": 0, "hits": 0}}
+        for r in rows:
+            b = out.get(r["angle"])
+            if b is None:
+                continue
+            b["n"] += 1
+            b["hits"] += int(r["held"])
+        for b in out.values():
+            b["rate"] = (b["hits"] / b["n"]) if b["n"] else None
+        return out
+
+    def field_test_themes(self, min_n: int = 5, min_rate: float = 0.6) -> list[str]:
+        """RECORD-BASED promotion (the design's own law: 'the TRIAL RECORD or the
+        MASTER promotes'): when a theme's settled clues prove out (>= min_n settled,
+        >= min_rate held), its proposed nuances become 'field-tested' — earned by
+        results, never by the model's say-so; 'validated' stays master-only."""
+        rows = self._conn.execute(
+            "SELECT theme, COUNT(*) AS n, SUM(held) AS h FROM tracked "
+            "WHERE status = 'done' AND held IS NOT NULL AND theme != '' "
+            "GROUP BY theme").fetchall()
+        promoted = []
+        for r in rows:
+            if r["n"] >= min_n and (r["h"] or 0) / r["n"] >= min_rate:
+                cur = self._conn.execute(
+                    "UPDATE nuance SET status = 'field-tested' "
+                    "WHERE theme = ? AND status = 'proposed'", (r["theme"],))
+                if cur.rowcount:
+                    promoted.append(f"{r['theme']} ({r['h']}/{r['n']} clues held)")
+        self._conn.commit()
+        return promoted
 
     def rule_tally(self) -> list[dict]:
         """Per-rule evidence counts: how often results supported vs contradicted each

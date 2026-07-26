@@ -79,5 +79,8 @@ case "${1:-nap}" in
   all)     "$PY" -m racing_edge.cli.nap     --day today --both --email
            echo
            "${SDK_OFF[@]}" "$PY" -m racing_edge.cli.dissect --day today         --email ;;
-  *) echo "usage: ./trial.sh [nap|dissect|settle|restudy|learn|synth|night|guard|health|all]"; exit 1 ;;
+  read)    # ON-DEMAND READ (2026-07-25): ./trial.sh read "Salisbury 7:15" prints the
+           # full pre-race form readout for one race — paste it to the reader in chat
+           "${SDK_OFF[@]}" "$PY" -m racing_edge.cli.brief --race "${2:?usage: ./trial.sh read \"Course H:MM\"}" ;;
+  *) echo "usage: ./trial.sh [nap|dissect|settle|restudy|learn|synth|night|guard|health|read|all]"; exit 1 ;;
 esac

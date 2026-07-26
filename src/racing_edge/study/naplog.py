@@ -50,21 +50,23 @@ class NapLog:
         # migration: the CASE rides with the pick (audit 2026-07-05: the night study
         # was critiquing a pick whose reasoning it could not see — "a self-critique of
         # an invented memory"). Older ledgers gain the columns in place.
-        for col in ("case_text", "deep_conf"):
+        # 'aligned' (2026-07-25, the dial-in gauges): the lenses that fired at
+        # banking, stored so wins/losses can be ATTRIBUTED per lens family
+        for col in ("case_text", "deep_conf", "aligned"):
             with contextlib.suppress(sqlite3.OperationalError):   # column may exist
                 self._conn.execute(f"ALTER TABLE nap ADD COLUMN {col} TEXT DEFAULT ''")
         self._conn.commit()
 
     def record(self, *, day: date, race_id: str, course: str, horse: str, horse_id: str,
                price: float | None, score: int, confident: bool,
-               case: str = "", deep_conf: str = "") -> None:
+               case: str = "", deep_conf: str = "", aligned: str = "") -> None:
         """Bank the morning's nap (unsettled), WITH its reasoning. Idempotent on the day."""
         self._conn.execute(
             "INSERT OR REPLACE INTO nap (date, race_id, course, horse, horse_id, price, "
-            "score, confident, won, sp_dec, case_text, deep_conf) "
-            "VALUES (?,?,?,?,?,?,?,?,NULL,NULL,?,?)",
+            "score, confident, won, sp_dec, case_text, deep_conf, aligned) "
+            "VALUES (?,?,?,?,?,?,?,?,NULL,NULL,?,?,?)",
             (day.isoformat(), race_id, course, horse, horse_id, price, score,
-             int(confident), case, deep_conf),
+             int(confident), case, deep_conf, aligned),
         )
         self._conn.commit()
 
@@ -94,6 +96,38 @@ class NapLog:
         settled = int(self._conn.execute(q).fetchone()[0])
         wins = int(self._conn.execute(q + " AND won = 1").fetchone()[0])
         return wins, settled
+
+    def profit_loss(self) -> tuple[float, int]:
+        """(level-stakes P/L at SP, bets counted). THE money gauge (2026-07-25, the
+        master: 'now we have the problem of picking winners' — a strike rate without
+        prices measures nothing; 44% at 4.5s is an edge, 44% at 2.2s is ruin)."""
+        rows = self._conn.execute(
+            "SELECT won, sp_dec FROM nap WHERE won IN (0, 1)").fetchall()
+        pnl, n = 0.0, 0
+        for r in rows:
+            if r["won"] == 1 and r["sp_dec"]:
+                pnl += float(r["sp_dec"]) - 1.0
+                n += 1
+            elif r["won"] in (0, 1):
+                pnl -= 1.0 if r["won"] == 0 else 0.0
+                n += 1 if r["won"] == 0 else 0
+        return pnl, n
+
+    def lens_attribution(self) -> list[dict]:
+        """Per lens-label: how many settled WINNERS vs LOSERS carried it at banking.
+        The dial-in gauge: a lens that keeps appearing on losers and never winners is
+        a knob to turn DOWN — by evidence, not by last week's mood."""
+        rows = self._conn.execute(
+            "SELECT won, aligned FROM nap WHERE won IN (0, 1) "
+            "AND aligned IS NOT NULL AND aligned != ''").fetchall()
+        tally: dict[str, list[int]] = {}
+        for r in rows:
+            for label in (x.strip() for x in r["aligned"].split("|") if x.strip()):
+                key = label.split(" (")[0]          # collapse detail: 'well-in (…)'
+                t = tally.setdefault(key, [0, 0])
+                t[0 if r["won"] == 1 else 1] += 1
+        return [{"lens": k, "wins": v[0], "losses": v[1]}
+                for k, v in sorted(tally.items(), key=lambda kv: -sum(kv[1]))]
 
     def pending(self) -> list[dict]:
         rows = self._conn.execute("SELECT * FROM nap WHERE won IS NULL ORDER BY date").fetchall()

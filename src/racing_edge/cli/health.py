@@ -105,14 +105,32 @@ def main() -> int:
     # THE DOORBELL (coroner 2026-07-21: 0 validated / 104 refuted — nuances have no
     # path to 'validated' without the master's ruling, and nothing ever ASKED him).
     # The freshest proposals ring here daily, with the exact commands to rule.
-    pending = [n for n in nuances if n["status"] == "proposed"][-3:]
+    pending = sorted((n for n in nuances if n["status"] == "proposed"),
+                     key=lambda n: -(n.get("seen_count") or 1))[:3]
     if pending:
         lines.append(f"  AWAITING YOUR RULING ({sum(1 for n in nuances if n['status'] == 'proposed')} "
-                     "proposed nuance(s) — promote what your eye confirms, bin the rest):")
+                     "proposed nuance(s) — strongest first; promote what your eye "
+                     "confirms, bin the rest):")
         for n in pending:
-            lines.append(f"    #{n['id']}: {n['nuance'][:120]}")
+            seen = n.get("seen_count") or 1
+            tag = f" [RECURRING — independently re-derived {seen}x]" if seen >= 3 else                   (f" [seen {seen}x]" if seen > 1 else "")
+            lines.append(f"    #{n['id']}{tag}: {n['nuance'][:120]}")
             lines.append(f"        promote: python -m racing_edge.cli.learn --promote {n['id']}"
                          f"   |   bin: --bin {n['id']}")
+    # THE CLUE SCOREBOARD (value audit: the study bets its judgment forward nightly;
+    # settlement closes each bet — this is the most direct measure of study value)
+    nlog_cs = open_nuance_log()
+    cs = nlog_cs.clue_scoreboard()
+    nlog_cs.close()
+    f, o = cs["follow"], cs["oppose"]
+    if f["n"] or o["n"]:
+        lines.append(
+            "  clue scoreboard: follow "
+            + (f"{f['hits']}/{f['n']} ({100 * f['rate']:.0f}% vs ~11% random-runner base)"
+               if f["n"] else "0 settled")
+            + " | oppose "
+            + (f"{o['hits']}/{o['n']} ({100 * o['rate']:.0f}% — judge vs fancied only)"
+               if o["n"] else "0 settled"))
 
     # THE FLIGHT RECORDER — did the scheduler actually LAUNCH anything today?
     # (2026-07-21: the ledger proved scheduled runs weren't happening; this separates
@@ -160,8 +178,9 @@ def main() -> int:
     w, n = log2.strike_rate()                      # correct: pass days (won=-1) excluded
     sw, sn = log2.shadow_strike()
     log2.close()
+    pnl, _pn = log2.profit_loss() if hasattr(log2, "profit_loss") else (0.0, 0)
     lines.append(f"  record: {w}/{n} settled naps won"
-                 + (f" ({100 * w / n:.0f}%)" if n else ""))
+                 + (f" ({100 * w / n:.0f}%), level stakes at SP {pnl:+.1f}pt" if n else ""))
     # LOSS-STREAK ALARM (coroner fix 1: six losses passed with no alarm anywhere)
     real = [x for x in naps if x["won"] in (0, 1)]
     streak = 0

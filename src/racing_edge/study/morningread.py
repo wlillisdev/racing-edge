@@ -153,8 +153,18 @@ def build_lessons(nap_history: list[dict], strike: tuple[int, int],
                      + (f": missed — {missed}" if missed else ""))
     lines += [f"- MASTER-VALIDATED: {nu['nuance']}"
               for nu in nuances if nu["status"] == "validated"]
-    lines += [f"- UNPROVEN nuance (weigh lightly): {nu['nuance'][:140]}"
-              for nu in nuances if nu["status"] == "proposed"][-3:]
+    # record-earned tier (2026-07-25): themes whose settled clues proved out
+    lines += [f"- FIELD-TESTED by results: {nu['nuance'][:140]}"
+              for nu in nuances if nu["status"] == "field-tested"][:4]
+    # the STRONGEST unproven lessons ride, not the newest (value audit: recency was
+    # the only filter and it is uncorrelated with lesson strength; seen_count is
+    # convergence — the same lesson independently re-derived from different races)
+    _prop = sorted((nu for nu in nuances if nu["status"] == "proposed"),
+                   key=lambda nu: -(nu.get("seen_count") or 1))[:3]
+    lines += [f"- UNPROVEN nuance (weigh lightly"
+              + (f", seen {nu['seen_count']}x" if (nu.get("seen_count") or 1) > 1
+                 else "") + f"): {nu['nuance'][:140]}"
+              for nu in _prop]
     # tracked clues are UNVERIFIED leads (2026-07-21: two losers were built on tracked
     # clues the old header mislabelled 'master validated' — the model believed the
     # label). Honest label + explicit weight instruction. The clue's DATE prints too
@@ -171,10 +181,17 @@ def build_lessons(nap_history: list[dict], strike: tuple[int, int],
         lines.append("UNVERIFIED TRACKED LEADS — colour only, weigh lightly, "
                      "NEVER the foundation of a case:")
         lines += tracked_lines
-    lines += [f"- RULE UNDER FIRE: {t['rule']} contradicted "
-              f"{t['contradicts']}-{t['supports']} by results — weigh it lightly"
-              for t in rule_tally
-              if t["contradicts"] >= 3 and t["contradicts"] > t["supports"]]
+    # significance-gated (ROI audit: contradicts>=3 flagged ~2-3 innocent rules at
+    # any moment across 22 on trial — 2-sigma on a fair coin, and n>=10, or silence)
+    for t in rule_tally:
+        n = t["contradicts"] + t["supports"]
+        if n >= 10 and (t["contradicts"] - t["supports"]) >= 2 * (n ** 0.5):
+            lines.append(f"- RULE UNDER FIRE: {t['rule']} contradicted "
+                         f"{t['contradicts']}-{t['supports']} over {n} races — "
+                         f"weigh it lightly")
+        elif n >= 10 and (t["supports"] - t["contradicts"]) >= 2 * (n ** 0.5):
+            lines.append(f"- RULE EARNING: {t['rule']} supported "
+                         f"{t['supports']}-{t['contradicts']} over {n} races")
     return lines
 
 

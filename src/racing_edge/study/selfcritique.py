@@ -43,10 +43,15 @@ SYSTEM = (
     "4. A nuance is a PROPOSAL to be tested, not a law. State what is OWED to confirm it "
     "and how confident you are.\n"
     "5. DISSECT EVERY HORSE, not just the winner (#27) — the running line is a read for "
-    "NEXT time. Mine the beaten horses for forward clues: an EXCUSE (hampered, short of "
-    "room, wrong pace/trip/ground) = one to FOLLOW next start; an eye-catcher finishing "
-    "powerfully = follow (unless the market has already eaten it); an exposed one "
-    "flattered by the run, or repeatedly finding little = one to OPPOSE at short prices. "
+    "NEXT time. But CLUES ARE ADMITTED, NOT SPRAYED (2026-07-25 value audit: 934 banked "
+    "clues, ~37% signal): at most TWO to_follow entries per race, and each MUST have "
+    "(a) a QUOTED comment or cited fact as its mechanism — bare form figures or 'ran "
+    "well' are inadmissible; (b) a SPECIFIC condition (trip/ground/class/price band) — "
+    "vague or empty conditions means OMIT the clue; (c) a doctrine check: a FOLLOW "
+    "whose profile matches a standing AVOID law (serial placer/bottler — repeated 2nds; "
+    "well-in but repeatedly beaten) must NAME the overriding factor or must not be "
+    "given; (d) the market test: if the market has already eaten the clue (heavily "
+    "backed on the strength of it), say so — a known clue is not an edge. "
     "Read the race SHAPE too (#20): if the comments show the race was run to suit "
     "(soft lead, prominent-dominated), say who was flattered and who ran better than "
     "the bare result.\n"
@@ -57,6 +62,13 @@ SYSTEM = (
     "money/gamble; #19 don't fear a fair-priced fav; #20 pace shapes the race; "
     "#22 mark vs price gap; #24/#25 evaluate all, eliminate first; #26 facts not "
     "assumptions; #29 form first, odds last.\n"
+    "A NUANCE MUST BE NEW (2026-07-25: the loop was re-proposing the same lesson "
+    "nightly): if your lesson is a restatement or mere conjunction of the indexed "
+    "rules, or of an OPEN PROPOSAL supplied in the prompt, do NOT mint it as a "
+    "nuance — write 'covered by #N' in the nuance field's place and file the race as "
+    "rule_evidence support instead. Every genuine nuance must state its MECHANISM "
+    "(WHY it transfers — the causal reason it will repeat) and FAILS_WHEN (the "
+    "future observable that would falsify it); no mechanism = not a lesson.\n"
     "If a SYSTEM PRE-RACE READ is supplied, mark it like a teacher: did the rules find "
     "the winner, and if not, WHICH lens failed or was missing?\n"
     "If lookup TOOLS are available, INVESTIGATE like a detective before answering: pull "
@@ -73,7 +85,13 @@ _SCHEMA_HINT = (
     '\\"n/a\\"",\n'
     '  "what_i_missed": "what in the WINNER\'s full form pointed to it that a form-first '
     'read should have caught (cite the facts)",\n'
-    '  "nuance": "one transferable sentence — the pattern to watch next time",\n'
+    '  "nuance": "one transferable sentence that is NOT a restatement of the rule '
+    'index or an open proposal — else \\"covered by #N\\"",\n'
+    '  "theme": "ONE of: trouble-in-running-upgrade | stale-mark | beaten-fav-oppose | '
+    'pace-collapse | franking | well-in-insufficient | serial-placer | market-move | '
+    'data-gap | other",\n'
+    '  "mechanism": "WHY this transfers — the causal reason it repeats",\n'
+    '  "fails_when": "the future observable that would falsify it",\n'
     '  "cite": ["the exact readout facts this rests on"],\n'
     '  "owed": "what was blank/OWED that would confirm or kill this",\n'
     '  "confidence": "low | medium | high",\n'
@@ -82,8 +100,9 @@ _SCHEMA_HINT = (
     '  "rule_evidence": [{"rule": "#22", "verdict": "supports|contradicts", '
     '"note": "the fact"}],\n'
     '  "to_follow": [{"horse": "name exactly as in the readout", '
-    '"angle": "follow|oppose", "note": "the clue, citing the comment", '
-    '"conditions": "when it applies (trip up / better ground / fair price...)"}]\n'
+    '"angle": "follow|oppose", "note": "the clue, QUOTING the comment (mechanism '
+    'required)", "conditions": "SPECIFIC: trip/ground/class/price band — vague = omit '
+    'the clue", "theme": "same taxonomy as above"}]\n'
     '}'
 )
 
@@ -93,12 +112,15 @@ class Critique:
     why_i_picked: str = ""
     what_i_missed: str = ""
     nuance: str = ""
+    theme: str = ""
+    mechanism: str = ""
+    fails_when: str = ""
     cite: tuple[str, ...] = field(default_factory=tuple)
     owed: str = ""
     confidence: str = ""
     system_verdict: str = ""                                  # marking the rules' own read
     rule_evidence: tuple[tuple[str, str, str], ...] = ()      # (rule, verdict, note)
-    to_follow: tuple[tuple[str, str, str, str], ...] = ()     # (horse, angle, note, conditions)
+    to_follow: tuple[tuple[str, str, str, str, str], ...] = ()  # (horse, angle, note, conditions, theme)
     raw: str = ""            # the model's raw text, kept if parsing fails
 
     @property
@@ -114,11 +136,15 @@ class Critique:
             "cite": " | ".join(self.cite),
             "owed": self.owed,
             "confidence": self.confidence,
+            "theme": self.theme,
+            "mechanism": self.mechanism,
+            "fails_when": self.fails_when,
         }
 
 
 def build_prompt(readout: str, winner: str, blind_pick: str | None = None,
-                 system_read: str = "", blind_case: str = "") -> str:
+                 system_read: str = "", blind_case: str = "",
+                 open_proposals: str = "") -> str:
     """The self-prompt: the real readout + the master's questions + the output shape.
     `system_read` is what the RULES said pre-race; `blind_case` is the pick's OWN
     banked reasoning — so the critique marks the real case, not a guess at it (the
@@ -133,10 +159,15 @@ def build_prompt(readout: str, winner: str, blind_pick: str | None = None,
         f"\nSYSTEM PRE-RACE READ (what the rules said BEFORE the off — mark it like a "
         f"teacher):\n{system_read}\n" if system_read else ""
     )
+    props_block = (
+        f"\nOPEN PROPOSALS (your own earlier lessons — do NOT re-propose one; a "
+        f"repeat is a VOTE: write 'covered by #N' instead):\n{open_proposals}\n"
+        if open_proposals.strip() else ""
+    )
     return (
         f"{pick_line}"
         f"The winner was **{winner}**.\n"
-        f"{sys_block}\n"
+        f"{sys_block}{props_block}\n"
         f"FULL-FORM READOUT (the only facts you may use):\n"
         f"-----------------------------------------------\n{readout}\n"
         f"-----------------------------------------------\n\n"
@@ -167,13 +198,17 @@ def parse_critique(text: str) -> Critique:
     tf = d.get("to_follow")
     follows = tuple(
         (str(e.get("horse", "")), str(e.get("angle", "")).lower().strip(),
-         str(e.get("note", "")), str(e.get("conditions", "")))
+         str(e.get("note", "")), str(e.get("conditions", "")),
+         str(e.get("theme", "")).lower().strip())
         for e in tf if isinstance(e, dict)
     ) if isinstance(tf, list) else ()
     return Critique(
         why_i_picked=str(d.get("why_i_picked", "")),
         what_i_missed=str(d.get("what_i_missed", "")),
         nuance=str(d.get("nuance", "")),
+        theme=str(d.get("theme", "")).lower().strip(),
+        mechanism=str(d.get("mechanism", "")),
+        fails_when=str(d.get("fails_when", "")),
         cite=cites,
         owed=str(d.get("owed", "")),
         confidence=str(d.get("confidence", "")).lower().strip(),
@@ -274,7 +309,7 @@ def render_critique(c: Critique, race_label: str, winner: str) -> str:
     for rule, verdict, note in c.rule_evidence:
         sign = "✓" if verdict == "supports" else "✗"
         lines.append(f"    {sign} {rule} {verdict}: {note}")
-    for horse, angle, note, conditions in c.to_follow:
+    for horse, angle, note, conditions, _theme in c.to_follow:
         arrow = "→ FOLLOW" if angle == "follow" else "→ OPPOSE"
         cond = f"  [{conditions}]" if conditions else ""
         lines.append(f"    {arrow} {horse}: {note}{cond}")

@@ -100,8 +100,14 @@ def _learn_one(st: Restudy, study, sceptic, day_iso: str) -> str:
     blind_case = (row.get("case_text") or "") if row else ""
     # the detective marks its OWN homework: what the rules said pre-race AND the
     # pick's banked case both go in — the critique judges the real reasoning
+    _pl = open_nuance_log()
+    _open = sorted(_pl.proposed(), key=lambda r: -(r.get("seen_count") or 1))[:12]
+    _pl.close()
+    open_props = "\n".join(
+        f"#{r['id']} (seen {r.get('seen_count') or 1}x): {r['nuance'][:110]}"
+        for r in _open)
     prompt = build_prompt(readout, st.winner, blind, system_read=st.system_read(),
-                          blind_case=blind_case)
+                          blind_case=blind_case, open_proposals=open_props)
     result = study(SYSTEM, prompt)
     # the investigator returns (text, trail); a plain reasoner returns text
     text, trail = result if isinstance(result, tuple) else (result, [])
@@ -120,16 +126,20 @@ def _learn_one(st: Restudy, study, sceptic, day_iso: str) -> str:
             if rule and verdict in ("supports", "contradicts"):
                 log.record_evidence(day=st.race.date, race_id=st.race.race_id,
                                     rule=rule, verdict=verdict, note=note)
-        # intake capped (coroner 2026-07-21: 872 tracked clues, none ever settled —
-        # an unbounded intake with no outflow is silt, not a follow list)
+        # intake capped (coroner 2026-07-21: 872 tracked clues, none ever settled)
+        # AND conditioned (value audit 2026-07-25: ~37% signal — a clue without a
+        # SPECIFIC condition is tipster noise and is refused at the door)
         banked_clues = 0
-        for horse, angle, note, conditions in crit.to_follow:
+        for horse, angle, note, conditions, theme in crit.to_follow:
             if banked_clues >= 3:
                 break
             hid = ids.get(horse.strip().lower(), "")
+            if len(conditions.strip()) < 8:
+                continue                       # no named condition = inadmissible
             if horse and angle in ("follow", "oppose") and hid:   # only horses ON the card
                 log.track(day=st.race.date, race_id=st.race.race_id, horse=horse,
-                          horse_id=hid, angle=angle, note=note, conditions=conditions)
+                          horse_id=hid, angle=angle, note=note, conditions=conditions,
+                          theme=theme)
                 banked_clues += 1
         log.close()
 
@@ -153,9 +163,13 @@ def _learn_one(st: Restudy, study, sceptic, day_iso: str) -> str:
         return (out + f"\n    ✗ REFUTED by the sceptic ({ref.ground or '?'}) — "
                       f"banked as refuted:\n      {ref.reason}")
     log = open_nuance_log()
-    log.record(day=st.race.date, race_id=st.race.race_id, course=st.race.course,
-               winner=st.winner, blind_pick=blind or "", **crit.record_fields())
+    merged = log.record(day=st.race.date, race_id=st.race.race_id,
+                        course=st.race.course, winner=st.winner,
+                        blind_pick=blind or "", **crit.record_fields())
     log.close()
+    if merged is not None:
+        out += (f"\n    ↻ VOTE: this lesson re-states banked #{merged} — "
+                f"seen_count incremented, no new row (convergence, not repetition)")
     if ref.answered and ref.ground == "triviality":
         survived = (f"sceptic: restates a known rule ({ref.reason}) — filed as "
                     f"support, not slaughtered")
@@ -316,35 +330,42 @@ def main() -> int:
     def _progress(line: str) -> None:
         print(line, flush=True)
 
-    studies = gather(client, ds, course=args.course, time=args.time, progress=_progress)
+    # FOCUSED CURRICULUM (design audit 2026-07-25): the nap race ALWAYS (the
+    # autopsy marks the real banked case) + the day's most SURPRISING result (the
+    # winner the market rated least — by definition the race with the most to
+    # teach a form-first reader). Chosen BEFORE the per-runner fetch, so the API
+    # bill is 2 races, not the whole card's. --full/--time restore the old sweeps.
+    naplog = open_nap_log()
+    nap_races = {n["race_id"] for n in naplog.history() if n["date"] == ds}
+    naplog.close()
+
+    def _surprise(st) -> tuple:
+        winner = next((rr for rr in st.result.runners if rr.position == 1), None)
+        if winner is None or not winner.sp_dec:
+            return (0, 0.0)
+        priced = sorted((rr.sp_dec for rr in st.result.runners
+                         if rr.sp_dec and rr.sp_dec > 1))
+        rank = priced.index(winner.sp_dec) + 1 if winner.sp_dec in priced else 0
+        return (rank, float(winner.sp_dec))
+
+    def _select(thin):
+        if args.full or args.time:
+            return thin
+        keep = [st for st in thin if st.race.race_id in nap_races]
+        rest = sorted((st for st in thin if st.race.race_id not in nap_races),
+                      key=_surprise, reverse=True)
+        keep += rest[:max(0, 2 - len(keep))]
+        if len(thin) > len(keep):
+            print(f"  FOCUSED study: {len(keep)} of {len(thin)} race(s) "
+                  f"(nap autopsy + the day's most surprising result; --full sweeps "
+                  f"everything). {len(thin) - len(keep)} skipped.", flush=True)
+        return keep
+
+    studies = gather(client, ds, course=args.course, time=args.time,
+                     progress=_progress, select=_select)
     if not studies:
         print(f"  Nothing to self-study for {ds} (no readable handicap with a result matched).")
         return 0
-
-    # FOCUSED STUDY (the master, 2026-07-08: "I cannot afford the large API fees on
-    # learning"). The full-card study burned ~90% of the model bill on races that
-    # taught little. Default: the NAP race (the mandatory autopsy) + races where a
-    # TRACKED horse ran, capped at 2/night. --full restores the old sweep.
-    if not args.full and not args.time and len(studies) > 4:
-        nlog4 = open_nuance_log()
-        tracked_ids = {t["horse_id"] for t in nlog4.tracked_active()}
-        nlog4.close()
-        naplog = open_nap_log()
-        nap_races = {n["race_id"] for n in naplog.history() if n["date"] == ds}
-        naplog.close()
-
-        def _priority(st) -> tuple[bool, bool]:
-            return (st.race.race_id in nap_races,
-                    any(r.horse_id in tracked_ids for r in st.race.runners))
-
-        prioritised = sorted(studies, key=_priority, reverse=True)
-        kept = [st for st in prioritised if _priority(st) != (False, False)][:2]
-        if not kept:
-            kept = prioritised[:2]        # quiet day: still study a couple, cheaply
-        print(f"  FOCUSED study: {len(kept)} of {len(studies)} race(s) "
-              f"(nap race + tracked runners; --full sweeps everything). "
-              f"{len(studies) - len(kept)} skipped to cap the model bill.", flush=True)
-        studies = kept
 
     out: list[str] = []
     for st in studies:

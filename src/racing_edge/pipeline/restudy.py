@@ -60,7 +60,13 @@ class Restudy:
 
 
 def gather(client: _Client, day_iso: str, course: str | None = None,
-           time: str | None = None, progress: Callable[[str], None] | None = None) -> list[Restudy]:
+           time: str | None = None, progress: Callable[[str], None] | None = None,
+           select=None) -> list[Restudy]:
+    """`select`, if given, is called with the UNHYDRATED Restudy list (race + result,
+    empty histories) and returns the subset to hydrate — SELECT BEFORE YOU FETCH
+    (2026-07-25 design audit: the focused study was doing one history fetch per
+    runner for EVERY readable race, then discarding all but 2 — the token cap
+    worked, the API-call cap didn't)."""
     results = {r.race_id: r for r in results_from_raw(client.results_by_date(day_iso))}
     cards = racecards_from_raw(client.racecards(day_iso))
 
@@ -72,11 +78,16 @@ def gather(client: _Client, day_iso: str, course: str | None = None,
         return not (time and time not in c.off_time)
 
     races = [c for c in cards if _match(c)]
+    thin = [Restudy(race=race, result=results[race.race_id], histories={})
+            for race in races]
+    if select is not None:
+        thin = select(thin)
     if progress:
-        progress(f"  re-studying {len(races)} finished race(s) off the full form "
+        progress(f"  re-studying {len(thin)} finished race(s) off the full form "
                  f"(one history fetch per runner; --time focuses one)…")
     out: list[Restudy] = []
-    for race in races:
+    for st in thin:
+        race = st.race
         if progress:
             progress(f"    · {race.course} {race.off_time} — pulling "
                      f"{race.field_size} runners' history")
@@ -91,5 +102,5 @@ def gather(client: _Client, day_iso: str, course: str | None = None,
             )
             for r in race.runners if r.horse_id
         }
-        out.append(Restudy(race=race, result=results[race.race_id], histories=histories))
+        out.append(Restudy(race=race, result=st.result, histories=histories))
     return out
