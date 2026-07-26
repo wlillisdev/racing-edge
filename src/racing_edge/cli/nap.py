@@ -388,59 +388,38 @@ def main() -> int:
         all_by_race: dict[str, list] = {}
         for p in field:
             all_by_race.setdefault(p.race.race_id, []).append(p)
+        # NEUTRAL EYES IN THE READING ROOM (the master, 2026-07-26: 'every race is
+        # unique... you create a concrete rule and then rule out everything — look at
+        # all the horses properly with a neutral lens and you might find a gem').
+        # Candidacy is no longer survivors-only: the top races by best pick enter the
+        # exam REGARDLESS of flags — the flags ride along as printed WARNINGS the case
+        # must answer. Laws stay at the betting window (the floor, the LEAN cap, the
+        # mechanical fallback's gates), never over the reader's eyes. This replaces
+        # the survivors-only rule and the narrow top-class door it made necessary.
         cand_order: list[str] = []
-        for p in survivors:
+        for p in field:                      # field is rank-sorted, flagged included
             if p.race.race_id not in cand_order:
                 cand_order.append(p.race.race_id)
-        # survivors take at most 3 slots; the 4th is RESERVED for a FOLLOW or
-        # top-class-door promotion (2026-07-25 adversarial review: on a busy
-        # Saturday survivors alone spanned 4 races, so both promotions appended
-        # past the slice and were silently dropped — while claiming they worked)
-        cand_order = cand_order[:3]
-        # a race carrying an active FOLLOW horse earns a candidate slot (audit: tracked
-        # clues could never promote a race into the shortlist)
+            if len(cand_order) >= 3:
+                break
+        # a race carrying an active FOLLOW horse earns the 4th candidate slot (audit:
+        # tracked clues could never promote a race into the shortlist)
         for _hid, (tp, t) in seen.items():
             if (t["angle"] == "follow" and tp.race.race_id not in cand_order
                     and len(cand_order) < 4):
                 cand_order.append(tp.race.race_id)
-        # THE TOP-CLASS DOOR (2026-07-25 Saturday audit: every York and Ascot race was
-        # gated and the reader never saw the week's best racing). One slot is reserved
-        # for the best Cl<=3, sub-16-field race whose ONLY race-level flag is the open
-        # market, carrying a well-in mark-read pick with 3+ families — rule #22: a
-        # beatable favourite is the green light to study the FIELD. The reader must
-        # still argue it; the engine fallback still can't touch it (survivors only).
-        for p in sorted(crossed, key=lambda p: (p.conviction.score,
-                                                -(p.race.race_class or 6)),
-                        reverse=True):
-            r = p.race
-            gates = _race_gate_flags(p.conviction.flags)
-            # only the class-tier fav bar is forgivable — an "in a 12+ field" open
-            # market is the crowd rule, not rule #22's quality-field green light;
-            # and the carrier horse itself must be clean of the Woodstock profile
-            if (r.race_id not in cand_order and len(cand_order) < 4
-                    and r.race_class is not None and r.race_class <= 3
-                    and r.field_size < 16
-                    and gates
-                    and all("open market" in f and "12+ field" not in f
-                            for f in gates)
-                    and p.conviction.mark_known and p.conviction.score >= 3
-                    and p.conviction.well_in
-                    and not p.conviction.stale_anchor
-                    and not p.conviction.placer_risk):
-                cand_order.append(r.race_id)
-                emit(f"  ⚠ top-class door: {r.course} {r.off_time} (Cl{r.race_class}, "
-                     f"open market) earns a candidate slot on {p.runner.horse} — "
-                     f"the reader must argue past the flag.")
-                break
-        # slice widened [:3]->[:4] (audit: with 3 survivor races the FOLLOW/top-class
-        # appends could never actually get in — dead promotions)
         cand_races = [all_by_race[rid] for rid in cand_order[:4]]
         candidates = []
         for picks in cand_races:
             r0 = picks[0].race
             label = f"{r0.course} {r0.off_time}"
             hists = {p.runner.horse_id: p.history for p in picks}
-            candidates.append((label, render_preread(r0, hists)))
+            race_flags = sorted({f for p in picks
+                                 for f in _race_gate_flags(p.conviction.flags)})
+            warn = ("  ⚠ RACE WARNINGS (cautions, not blindfolds — a pick here must "
+                    "ANSWER each one in its case, and is LEAN at best): "
+                    + "; ".join(race_flags) + "\n" if race_flags else "")
+            candidates.append((label, warn + render_preread(r0, hists)))
         # max_steps=6 (2026-07-25 audit: rules 4+8 demand ~2 lookups per candidate
         # race — franking the key form AND checking the danger — and at 4 the model
         # ran dry mid-frank on a 3-race Saturday shortlist)
