@@ -24,7 +24,7 @@ from racing_edge.domain.tells import match_tells
 # Distinct FAMILIES restore the old meaning: two labels saying the same thing —
 # "well-in" + "heavily treated", or course winner + course jockey — count once.
 _FAMILIES: tuple[tuple[str, tuple[str, ...]], ...] = (
-    ("mark", ("well-in", "heavily treated")),
+    ("mark", ("well-in",)),
     ("manner", ("finisher", "excuse last time")),
     ("momentum", ("RED-HOT", "won last time out")),
     ("course", ("course winner", "local master yard", "local course master",
@@ -100,11 +100,19 @@ def conviction(runner: Runner, race: Race, history: tuple[PastRun, ...],
     mr = mark_read(runner.official_rating, history, code=race.code)
     if mr.delta is not None:
         if mr.delta <= 0:
-            aligned.append(f"well-in ({mr.verdict})")
-            if mr.delta <= -5:
-                # MAGNITUDE matters: a 5lb+ gap is its own signal, not the same dot
-                # twice (Giant Haystacks won off -9; it had scored level with a 0lb)
-                aligned.append(f"heavily treated ({mr.delta}lb below last winning mark)")
+            # ONE label, whatever the gap (the master, 2026-07-26: 'the well-in claim
+            # is skewing all your picks — it is ONE piece of the jigsaw'). The former
+            # 'heavily treated' magnitude label was the bigger-gap-is-better magnet in
+            # print; the delta still shows inside the verdict for the honest reader.
+            # UP IN GRADE rides inside the label (the master, 2026-07-26): a mark
+            # earned beating Cl6 horses says little about beating Cl4 ones — the
+            # reader weighs it as one dot of the jigsaw, eyes open
+            grade = ""
+            if (mr.win_class and race.race_class
+                    and race.race_class < mr.win_class):
+                grade = (f" but UP IN GRADE — won in Cl{mr.win_class}, "
+                         f"today Cl{race.race_class}")
+            aligned.append(f"well-in ({mr.verdict}{grade})")
             if mr.stale:
                 # THE WOODSTOCK LESSON (2026-07-25 audit): an exposed loser's mark
                 # erodes BECAUSE it keeps losing — 'well-in' against a win 10+ runs

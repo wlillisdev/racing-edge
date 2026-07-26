@@ -33,6 +33,18 @@ class NapPick:
     history: tuple = ()          # the contender's past runs — for the morning deep read
 
 
+def market_shape(prices) -> tuple[str, float]:
+    """The market's SHAPE from top-3 concentration (sum of 1/price) — not a cliff
+    (the master, 2026-07-26: 'price threshold must not be so rigid'). A 4.9 fav with
+    5.0s behind it is an open race; a 4.9 fav clear of a 9.0 field is anchored —
+    same number, opposite meanings, and only the shape can tell them apart.
+    >= 0.62 anchored | >= 0.52 loose | else OPEN."""
+    top = sorted(p for p in prices if p and p > 1)[:3]
+    conc = sum(1.0 / p for p in top)
+    band = "anchored" if conc >= 0.62 else ("loose" if conc >= 0.52 else "OPEN")
+    return band, conc
+
+
 def anchor_bar(race_class: int | None) -> float:
     """The fav price at which a race's market counts as ANCHORLESS — defined ONCE
     (2026-07-25: the gate was class-tiered to 6.0 for Cl<=3 while the profile floor
@@ -46,11 +58,12 @@ def _rank_key(p: NapPick) -> tuple[int, int, int, int, int, float]:
     # poor classes, anything could win"): between equal convictions, the pick in the
     # BETTER-CLASS race wins. A readable Class 3 beats a Class 6 scramble every time.
     # score is lens FAMILIES (coarse, honest); raw label count breaks family ties.
-    # WELL-IN ranks first among equals (2026-07-25 audit: a mark-OWED conv-4 outranked
-    # well-in conv-3 horses — wasting candidate slots and fallback places on picks the
-    # sacred floor can never bank; the decisive lens now carries rank weight).
-    return (int(p.conviction.confident), int(p.conviction.well_in), p.conviction.score,
-            len(p.conviction.aligned), -(p.race.race_class or 6), -(p.price or 999.0))
+    # a READABLE mark ranks ahead of an OWED one (slot efficiency: the floor can't
+    # bank mark-OWED picks) — but well-in itself carries no extra rank weight (the
+    # master, 2026-07-26: the mark is one jigsaw piece and a veto, never a magnet).
+    return (int(p.conviction.confident), int(p.conviction.mark_known),
+            p.conviction.score, len(p.conviction.aligned),
+            -(p.race.race_class or 6), -(p.price or 999.0))
 
 
 def evaluate_field(client: _Client, day: str = "today",
@@ -153,20 +166,15 @@ def evaluate_field(client: _Client, day: str = "today",
         # 2. grade: bottom-class racing is inconsistent animals — the form doesn't hold
         if race.race_class and race.race_class >= 6:
             race_flags.append("bottom-grade race (Cl6) — inconsistent animals (#3)")
-        # 3. market shape: a race with NO ANCHOR (big fav price / open field) is the
-        #    market itself saying anything could win — the blanket-finish lottery.
-        #    Loosened 2026-07-21 (regression audit): fav>=4.0 in ANY 8+ field was
-        #    crossing off the exact competitive Cl3/4 handicaps the banked winners
-        #    came from (2nd/3rd fav at 4.5-6.5); the 4.0 bar now needs a 12+ field.
-        #    Class-tiered 2026-07-25 (the Saturday audit): a 5.6 fav over ten exposed
-        #    Cl2/3 handicappers is rule #22's green light ("study the FIELD"), not a
-        #    lottery — top-class races get a 6.0 bar; everything else keeps 5.0.
+        # 3. market shape: a race with NO ANCHOR is the market itself saying anything
+        #    could win. Rewritten 2026-07-26 on the master's ruling ('price threshold
+        #    must not be so rigid'): the SHAPE decides, not a fav-price cliff — the
+        #    top-3 concentration tells an anchored 4.9 from an open one.
         fav = min((p.price for p in race_picks if p.price), default=None)
-        fav_bar = anchor_bar(race.race_class)
-        if fav and (fav >= fav_bar or (race.field_size >= 12 and fav >= 4.0)):
-            crowd = " in a 12+ field" if fav < fav_bar else ""
-            race_flags.append(f"open market (fav {fav}{crowd}) — "
-                              "anything-could-win race (#3)")
+        band, conc = market_shape([p.price for p in race_picks])
+        if fav and band == "OPEN":
+            race_flags.append(f"open market (fav {fav}, top-3 concentration "
+                              f"{conc:.2f}) — anything-could-win shape (#3)")
         if race_picks and race_flags:
             race_picks = [
                 replace(p, conviction=replace(

@@ -23,6 +23,10 @@ def test_system_prompt_forbids_inventing_facts() -> None:
     # the guardrail that rebuilds trust must be explicit in the system prompt
     assert "NEVER introduce a fact not present" in SYSTEM
     assert "OWED" in SYSTEM and "PROPOSAL" in SYSTEM
+    # Rule One frames the school (the master, 2026-07-26): was the winner the best
+    # horse, why was he best, and never learn a way-of-finding from a fluke
+    assert "THE BEST HORSE WINS THE RACE" in SYSTEM
+    assert "WHY was he the best" in SYSTEM and "fluke" in SYSTEM
 
 
 def test_build_prompt_carries_the_readout_and_the_blind_pick() -> None:
