@@ -54,6 +54,30 @@ _GREEN = (
 )
 
 
+_FRONT = ("made all", "made most", "made the running", "made running", "soon led",
+          "led for", "led until", "led early", "set the pace", "took the field",
+          "jumped off in front", "pace-setter", "disputed the lead early")
+_HELD_UP = ("held up", "in rear", "towards rear", "raced in last", "waited with",
+            "at the back", "detached in last")
+
+
+def run_style(recent_comments: list[str]) -> tuple[str, int, int]:
+    """(style, front_runs, held_runs) from recent comments — 'front' | 'held up' |
+    'mixed/unknown'. The silliest blind spot (the master, 2026-07-26): the morning
+    read stamped 'run-style OWED' daily while HOLDING the comments that answer it —
+    who leads is written in the running lines the machine already fetches."""
+    fronts = sum(1 for c in recent_comments
+                 if c and any(k in c.lower() for k in _FRONT))
+    helds = sum(1 for c in recent_comments
+                if c and any(k in c.lower() for k in _HELD_UP))
+    read = sum(1 for c in recent_comments if c and c.strip())
+    if read >= 2 and fronts >= 2 and fronts > helds:
+        return "front", fronts, helds
+    if read >= 2 and helds >= 2 and helds > fronts:
+        return "held up", fronts, helds
+    return "mixed/unknown", fronts, helds
+
+
 def read_manner(comment: str) -> tuple[Manner, str]:
     """Classify one running comment. Priority: a winning flourish first (it finished),
     then an excuse, then the nearly-type tell, then green. Returns (manner, phrase)."""
