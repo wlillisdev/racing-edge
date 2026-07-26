@@ -17,7 +17,7 @@ from racing_edge.cli._common import open_nap_log, open_nuance_log, resolve_date
 from racing_edge.data.client import get_client
 from racing_edge.data.evidence import build_evidence
 from racing_edge.data.normalise import results_from_raw
-from racing_edge.pipeline.nap import anchor_bar, evaluate_field
+from racing_edge.pipeline.nap import evaluate_field, market_shape
 from racing_edge.report.scorecard import build_scorecard, render_scorecard
 
 
@@ -608,23 +608,23 @@ def main() -> int:
     soft_fails = []
     if r.race_class is not None and r.race_class > 4:
         soft_fails.append(f"class Cl{r.race_class}")
-    if race_fav is None or race_fav >= anchor_bar(r.race_class):
-        soft_fails.append(f"no market anchor (fav {race_fav})")
+    _shape, _conc = market_shape([p.price for p in field
+                                  if p.race.race_id == r.race_id and p.price])
+    if race_fav is None or _shape == "OPEN":
+        soft_fails.append(f"no market anchor (fav {race_fav}, "
+                          f"top-3 concentration {_conc:.2f})")
     off_profile = bool(soft_fails)
     # the bypass needs more than eloquence (regression audit: an LLM cites 3 facts
     # every single time — the bar filtered nothing). An off-profile case is arguable
     # only in a race the gates did NOT flag: the Ebony Maw race was READABLE (a
     # rematch, a false favourite); a gated race arguing itself off-profile is exactly
     # the eloquent-loser signature.
-    # (2026-07-25: a top-class open market is NOT a licence-killer — rule #22 calls a
-    # beatable favourite in a Cl<=3 race the green light to study the field; the
-    # top-class door exists exactly so the reader can argue those. Every other gate
-    # still kills the licence.)
-    _top_class_open = (r.race_class is not None and r.race_class <= 3
-                       and r.field_size < 16)
-    race_gated = any(
-        not ("open market" in f and "12+ field" not in f and _top_class_open)
-        for f in _race_gate_flags(c.flags))
+    # only STRUCTURAL gates kill the off-profile licence (the master, 2026-07-26:
+    # price cautions are shape, not law — an argued case may answer an open market
+    # or a big field and bank as a LEAN; unexposed fields, bottom grade and the AW
+    # remain hard because no case can argue marks into existence)
+    _STRUCTURAL = ("novice in disguise", "bottom-grade", "all-weather")
+    race_gated = any(any(g in f for g in _STRUCTURAL) for f in c.flags)
     argued = (bool(deep_case) and mp is not None and len(mp.cite) >= 3
               and not race_gated)
     if off_profile and not argued:

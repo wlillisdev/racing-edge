@@ -24,7 +24,7 @@ from datetime import date, datetime, timedelta
 from racing_edge.data.client import get_client
 from racing_edge.data.normalise import results_from_raw
 from racing_edge.domain.mark import mark_read
-from racing_edge.pipeline.nap import anchor_bar, evaluate_field
+from racing_edge.pipeline.nap import anchor_bar, evaluate_field  # noqa: F401 — anchor_bar is the mechanical path's rail
 from racing_edge.study.frank import frank_form
 
 
