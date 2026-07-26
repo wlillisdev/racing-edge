@@ -19,7 +19,8 @@ def test_the_system_prompt_carries_the_masters_discipline() -> None:
     # race first, form first, eliminate, look harder — and the pass tilt is balanced:
     # a pass is CORRECT off-profile (the audit: the old "lazy student" shaming forced
     # least-bad picks on bad cards — the genesis of both losers)
-    for phrase in ("RACE FIRST", "FORM FIRST, ODDS LAST", "ELIMINATE", "LOOK HARDER",
+    for phrase in ("THE BEST HORSE WINS THE RACE. FIND THE BEST HORSE",
+                   "RACE FIRST", "FORM FIRST, ODDS LAST", "ELIMINATE", "LOOK HARDER",
                    "a pass is CORRECT", "Never force the least-bad pick",
                    "never let the price pick", "THE WHOLE JIGSAW",
                    "ONE piece", "VETO only"):
