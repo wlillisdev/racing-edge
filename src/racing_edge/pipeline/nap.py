@@ -33,6 +33,27 @@ class NapPick:
     history: tuple = ()          # the contender's past runs — for the morning deep read
 
 
+def ew_advice(price: float | None, field_size: int) -> str:
+    """Each-way as a CALCULATION, not the old 8.0 cliff (the master, 2026-07-26).
+    Standard handicap terms: 16+ runners = 1/4 odds 4 places; 12-15 = 1/4 odds
+    3 places; 8-11 = 1/5 odds 3 places. The place part stands on its own when
+    frac*(price-1) >= 1: ~5.0+ at 1/4 odds, ~6.0+ at 1/5. Below 8 runners the
+    terms rarely pay — win only."""
+    if not price:
+        return ""
+    if field_size >= 16 and price >= 5.0:
+        return (f"EACH-WAY (#28): {field_size} runners = 4 places at 1/4 odds — "
+                f"the place part pays its own way at {price}")
+    if field_size >= 12 and price >= 5.0:
+        return f"EACH-WAY (#28): 3 places at 1/4 odds — place part pays at {price}"
+    if field_size >= 8 and price >= 6.0:
+        return f"EACH-WAY (#28): 3 places at 1/5 odds — place part pays at {price}"
+    if price >= 8.0:
+        return (f"price {price} but only {field_size} runners — place terms thin; "
+                f"win single unless the book offers extra places")
+    return ""
+
+
 def market_shape(prices) -> tuple[str, float]:
     """The market's SHAPE from top-3 concentration (sum of 1/price) — not a cliff
     (the master, 2026-07-26: 'price threshold must not be so rigid'). A 4.9 fav with

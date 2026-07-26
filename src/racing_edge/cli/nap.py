@@ -17,7 +17,7 @@ from racing_edge.cli._common import open_nap_log, open_nuance_log, resolve_date
 from racing_edge.data.client import get_client
 from racing_edge.data.evidence import build_evidence
 from racing_edge.data.normalise import results_from_raw
-from racing_edge.pipeline.nap import evaluate_field, market_shape
+from racing_edge.pipeline.nap import evaluate_field, ew_advice, market_shape
 from racing_edge.report.scorecard import build_scorecard, render_scorecard
 
 
@@ -150,7 +150,16 @@ def _guard() -> int:
         print(f"  price OWED (banked {banked}, now {now}) — cannot judge the move.")
         return 0
     from racing_edge.report.mail import send
-    if now >= banked * 1.2:
+    if banked * 1.10 <= now < banked * 1.2:
+        # graded bands, not one cliff (the master, 2026-07-26): 10-20% is the money
+        # cooling — said out loud before it becomes a stand-off
+        msg = (f"⚠ drifting: {n['horse']} {banked} -> {now} (10-20%) — not a stand-off "
+               f"yet, but the money is cooling; watch before the off.")
+        print(f"  {msg}")
+        ok = send(f"Drift caution: {n['horse']} ({banked}->{now})", msg,
+                  title="Drift guard", subtitle="racing-edge form trial")
+        print(f"  email: {ok or 'FAILED'}")
+    elif now >= banked * 1.2:
         msg = (f"⚠ STAND OFF — {n['horse']} has DRIFTED {banked} -> {now}. "
                f"The drift rule has been right every time (Perfidia, Artiste d'Ainay): "
                f"the money is leaving. Keep the stake in your pocket. "
@@ -529,35 +538,17 @@ def main() -> int:
     # FRANK = VETO, not a downgrade (audit fix 2: under the old code a hollow-win pick
     # still got banked as a "declinable lean" — Chepstow would have banked even without
     # the exposure gate). A thin frank crosses the pick off and we fall to the next.
+    # FRANK = TIEBREAKER, restored to the master's #15 (2026-07-26: 'franking is a
+    # tiebreaker' — the student had promoted it to an executioner; the Saturday
+    # wipe-out was the price). A thin frank is a stated CON on the ledger — it
+    # caps confidence at LEAN — never a veto, never a re-pick.
     from racing_edge.study.frank import frank_form
-    fr = None
     frank_thin_deep = False
-    fallbacks = [nap] + [s for s in survivors if s is not nap]
-    for cand in fallbacks[:3]:
-        f = frank_form(client, cand.runner.horse_id, cand.history,
-                       code=cand.race.code)
-        if f.is_thin:
-            if cand is fallbacks[0] and deep_case:
-                # THE READER OUTRANKS THE MECHANICAL FRANK (2026-07-25, the Saturday
-                # wipe-out): an argued deep case — which franks its own key form with
-                # tools, rule 4 — is downgraded to LEAN by a thin frank, never killed.
-                # The veto stays for engine picks: no case argues for those.
-                emit(f"  ⚠ FRANK THIN on the deep pick ({f.note}) — the argued case "
-                     f"stands, but LEAN only, never confident against a hollow frank.")
-                nap, fr, frank_thin_deep = cand, f, True
-                break
-            emit(f"  ✗ FRANK VETO: {cand.runner.horse} — {f.note} "
-                 f"(a win in a bad race is a mirage; re-picking)")
-            if cand is nap:
-                deep_case = []          # the vetoed pick's case no longer applies
-            continue
-        nap, fr = cand, f
-        break
-    if fr is None:
-        emit("  No nap — every candidate's form franked HOLLOW. Discipline is a position.")
-        _bank_pass(resolve_date(args.day), "all candidates franked hollow")
-        _maybe_email(out, "Nap — no bet today (franked hollow)", args.email)
-        return 0
+    fr = frank_form(client, nap.runner.horse_id, nap.history, code=nap.race.code)
+    if fr.is_thin:
+        frank_thin_deep = True
+        emit(f"  ⚠ FRANK THIN ({fr.note}) — a con on the ledger: LEAN at best, "
+             f"and the case must carry the form question openly.")
 
     c, r = nap.conviction, nap.race
 
@@ -650,9 +641,9 @@ def main() -> int:
              f"may overrule, but never at full confidence. LEAN only.")
     confident = ((deep_conf == "confident") if deep_case else c.confident) \
         and not off_profile and not c.flags and not frank_thin_deep
-    if nap.price and nap.price >= 8.0:
-        emit(f"  instrument (#28): EACH-WAY at {nap.price} — the place is the net, "
-             f"the win is the payday.")
+    _ew = ew_advice(nap.price, r.field_size)
+    if _ew:
+        emit(f"  instrument: {_ew}")
 
     tag = "CONFIDENT NAP" if confident else "best candidate — NOT confident (declinable)"
     emit(f"  {tag}: {nap.runner.horse}  —  {r.course} {r.off_time} ({r.race_type})")
