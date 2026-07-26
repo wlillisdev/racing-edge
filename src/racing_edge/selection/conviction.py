@@ -104,7 +104,15 @@ def conviction(runner: Runner, race: Race, history: tuple[PastRun, ...],
             # is skewing all your picks — it is ONE piece of the jigsaw'). The former
             # 'heavily treated' magnitude label was the bigger-gap-is-better magnet in
             # print; the delta still shows inside the verdict for the honest reader.
-            aligned.append(f"well-in ({mr.verdict})")
+            # UP IN GRADE rides inside the label (the master, 2026-07-26): a mark
+            # earned beating Cl6 horses says little about beating Cl4 ones — the
+            # reader weighs it as one dot of the jigsaw, eyes open
+            grade = ""
+            if (mr.win_class and race.race_class
+                    and race.race_class < mr.win_class):
+                grade = (f" but UP IN GRADE — won in Cl{mr.win_class}, "
+                         f"today Cl{race.race_class}")
+            aligned.append(f"well-in ({mr.verdict}{grade})")
             if mr.stale:
                 # THE WOODSTOCK LESSON (2026-07-25 audit): an exposed loser's mark
                 # erodes BECAUSE it keeps losing — 'well-in' against a win 10+ runs

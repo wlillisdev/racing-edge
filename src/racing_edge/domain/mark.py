@@ -19,6 +19,9 @@ class MarkRead:
     today: int | None
     last_won: int | None        # the OR it ran off when it LAST won (None = never won / unknown)
     since: int | None = None    # runs between today and that win (0 = won last time out)
+    win_class: int | None = None  # the CLASS that win came in — a well-in figure earned
+                                  # in Cl6 means little in Cl4 (the master, 2026-07-26:
+                                  # 'well-in can mean nothing if he is up in grade')
 
     @property
     def delta(self) -> int | None:
@@ -70,7 +73,8 @@ def mark_read(today_or: int | None, history: tuple[PastRun, ...],
                 and (code is None
                      or bool(h.race_type) and race_code(h.race_type) == code)):
             return MarkRead(today=today_or, last_won=h.official_rating,
-                            since=sum(1 for x in history[:i] if _counts(x)))
+                            since=sum(1 for x in history[:i] if _counts(x)),
+                            win_class=h.race_class)
     return MarkRead(today=today_or, last_won=None)
 
 

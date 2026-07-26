@@ -53,3 +53,29 @@ def _main() -> int:
 
 if __name__ == "__main__":
     sys.exit(_main())
+
+
+def test_the_anchor_win_carries_its_class_and_the_label_says_up_in_grade() -> None:
+    """The master, 2026-07-26: 'well-in can mean nothing if he is up in grade' — the
+    mark now remembers WHERE it was earned, and the well-in label says so out loud
+    when today's race is a higher class than the win that set the anchor."""
+    from racing_edge.domain.mark import mark_read
+    from racing_edge.domain.models import Odds, Race, Runner
+    from racing_edge.selection.conviction import conviction
+    hist = (PastRun(date=date(2026, 6, 1), position=1, official_rating=70,
+                    race_type="Flat", race_class=6),)
+    mr = mark_read(68, hist, code="flat")
+    assert mr.win_class == 6 and mr.delta == -2
+    race = Race(race_id="r", course="Thirsk", off_time="3:00", date=date(2026, 7, 1),
+                race_type="Flat", is_handicap=True, race_class=4)
+    c = conviction(Runner(horse_id="a", horse="Climber", official_rating=68,
+                          odds=Odds(consensus=5.0)), race, hist,
+                   market_rank=2, field_size=8)
+    assert any("UP IN GRADE — won in Cl6, today Cl4" in a for a in c.aligned)
+    # same class or a drop stays clean
+    race5 = Race(race_id="r", course="Thirsk", off_time="3:00", date=date(2026, 7, 1),
+                 race_type="Flat", is_handicap=True, race_class=6)
+    c2 = conviction(Runner(horse_id="a", horse="Climber", official_rating=68,
+                           odds=Odds(consensus=5.0)), race5, hist,
+                    market_rank=2, field_size=8)
+    assert not any("UP IN GRADE" in a for a in c2.aligned)
