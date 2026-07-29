@@ -405,19 +405,25 @@ def main() -> int:
         # must answer. Laws stay at the betting window (the floor, the LEAN cap, the
         # mechanical fallback's gates), never over the reader's eyes. This replaces
         # the survivors-only rule and the narrow top-class door it made necessary.
+        # three candidates, not four (2026-07-27 cost audit): the fourth race's
+        # full-field readout bought little and billed daily; a FOLLOW race takes
+        # the third slot when one runs
         cand_order: list[str] = []
         for p in field:                      # field is rank-sorted, flagged included
             if p.race.race_id not in cand_order:
                 cand_order.append(p.race.race_id)
-            if len(cand_order) >= 3:
+            if len(cand_order) >= 2:
                 break
-        # a race carrying an active FOLLOW horse earns the 4th candidate slot (audit:
-        # tracked clues could never promote a race into the shortlist)
         for _hid, (tp, t) in seen.items():
             if (t["angle"] == "follow" and tp.race.race_id not in cand_order
-                    and len(cand_order) < 4):
+                    and len(cand_order) < 3):
                 cand_order.append(tp.race.race_id)
-        cand_races = [all_by_race[rid] for rid in cand_order[:4]]
+        for p in field:
+            if len(cand_order) >= 3:
+                break
+            if p.race.race_id not in cand_order:
+                cand_order.append(p.race.race_id)
+        cand_races = [all_by_race[rid] for rid in cand_order[:3]]
         candidates = []
         for picks in cand_races:
             r0 = picks[0].race
@@ -432,9 +438,12 @@ def main() -> int:
         # max_steps=6 (2026-07-25 audit: rules 4+8 demand ~2 lookups per candidate
         # race — franking the key form AND checking the danger — and at 4 the model
         # ran dry mid-frank on a 3-race Saturday shortlist)
+        # max_tokens 6000 up front (2026-07-27 cost audit: the checklist-era cases
+        # outgrew 3000, so EVERY morning truncated and regenerated at double size —
+        # the flagship answer was being paid for twice, daily)
         deep = get_investigator("nap", TOOLS,
                                 make_executor(client, cand_races[0][0].race),
-                                max_steps=6)
+                                max_steps=6, max_tokens=6000)
         if deep is None:
             emit("  (deep read OFF — no ANTHROPIC_API_KEY; falling back to the "
                  "shallow engine pick)")
@@ -578,19 +587,51 @@ def main() -> int:
             return 0
 
     # THE MARK IS SACRED — never a pick that isn't well-in, and never one whose
-    # well-in anchor is from a dead era (2026-07-25 Woodstock audit: 'WELL-IN -7lb'
-    # against a win older than the visible history is a placer profile, not a
-    # missed handicapper). Non-negotiable.
+    # well-in anchor is from a dead era (2026-07-25 Woodstock audit). Non-negotiable
+    # for the BANK — but the reader's choice failing the floor must not kill the
+    # day while floor-fit survivors stand (2026-07-27, the master: 'no naps since
+    # all of this' — Monday passed with two conv-4 well-in survivors on the sheet).
+    def _floor_fit_survivor():
+        for sv in survivors:
+            if not (sv.conviction.well_in and sv.conviction.mark_known
+                    and sv.conviction.score >= 4):
+                continue
+            if sv.race.race_class is not None and sv.race.race_class > 4:
+                continue
+            shape, _c2 = market_shape([p.price for p in field
+                                       if p.race.race_id == sv.race.race_id
+                                       and p.price])
+            if shape != "OPEN":
+                return sv
+        return None
+
     if delta is None or delta > 0 or _mr.stale:
         why_mark = ("STALE anchor — " + _mr.verdict if _mr.stale else
                     f"mark delta {delta if delta is not None else 'OWED'}")
-        emit(f"  ✗ PROFILE FLOOR: {nap.runner.horse} is not soundly WELL-IN "
-             f"({why_mark}) — no bet.")
-        _bank_pass(resolve_date(args.day),
-                   f"profile floor: {nap.runner.horse} not soundly well-in "
-                   f"({why_mark})")
-        _maybe_email(out, "Nap — no bet today (not well-in)", args.email)
-        return 0
+        fb = _floor_fit_survivor()
+        if fb is not None and fb.runner.horse_id != nap.runner.horse_id:
+            emit(f"  ✗ floor refused the reader's choice {nap.runner.horse} "
+                 f"({why_mark}) — falling back to the engine's best profile-fit "
+                 f"survivor, LEAN only:")
+            nap, deep_case, mp = fb, [], None
+            fr = frank_form(client, nap.runner.horse_id, nap.history,
+                            code=nap.race.code)
+            frank_thin_deep = fr.is_thin
+            c, r = nap.conviction, nap.race
+            _mr = mark_read(nap.runner.official_rating, nap.history,
+                            code=nap.race.code)
+            delta = _mr.delta
+            race_fav = min((p.price for p in field
+                            if p.race.race_id == r.race_id and p.price),
+                           default=None)
+        else:
+            emit(f"  ✗ PROFILE FLOOR: {nap.runner.horse} is not soundly WELL-IN "
+                 f"({why_mark}) — and no floor-fit survivor stands. No bet.")
+            _bank_pass(resolve_date(args.day),
+                       f"profile floor: {nap.runner.horse} not soundly well-in "
+                       f"({why_mark}); no floor-fit fallback")
+            _maybe_email(out, "Nap — no bet today (not well-in)", args.email)
+            return 0
     # class and anchor are ARGUABLE — an argued multi-fact deep case may override them
     # as a LEAN (Ebony Maw, 2026-07-06: the reader found the 12.0 rematch winner and
     # the fitted class/price floor threw it away — the number-cruncher overruling the
