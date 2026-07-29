@@ -17,7 +17,7 @@ from racing_edge.cli._common import open_nap_log, open_nuance_log, resolve_date
 from racing_edge.data.client import get_client
 from racing_edge.data.evidence import build_evidence
 from racing_edge.data.normalise import results_from_raw
-from racing_edge.pipeline.nap import evaluate_field, market_shape
+from racing_edge.pipeline.nap import evaluate_field, ew_advice, market_shape
 from racing_edge.report.scorecard import build_scorecard, render_scorecard
 
 
@@ -150,7 +150,16 @@ def _guard() -> int:
         print(f"  price OWED (banked {banked}, now {now}) — cannot judge the move.")
         return 0
     from racing_edge.report.mail import send
-    if now >= banked * 1.2:
+    if banked * 1.10 <= now < banked * 1.2:
+        # graded bands, not one cliff (the master, 2026-07-26): 10-20% is the money
+        # cooling — said out loud before it becomes a stand-off
+        msg = (f"⚠ drifting: {n['horse']} {banked} -> {now} (10-20%) — not a stand-off "
+               f"yet, but the money is cooling; watch before the off.")
+        print(f"  {msg}")
+        ok = send(f"Drift caution: {n['horse']} ({banked}->{now})", msg,
+                  title="Drift guard", subtitle="racing-edge form trial")
+        print(f"  email: {ok or 'FAILED'}")
+    elif now >= banked * 1.2:
         msg = (f"⚠ STAND OFF — {n['horse']} has DRIFTED {banked} -> {now}. "
                f"The drift rule has been right every time (Perfidia, Artiste d'Ainay): "
                f"the money is leaving. Keep the stake in your pocket. "
@@ -396,19 +405,25 @@ def main() -> int:
         # must answer. Laws stay at the betting window (the floor, the LEAN cap, the
         # mechanical fallback's gates), never over the reader's eyes. This replaces
         # the survivors-only rule and the narrow top-class door it made necessary.
+        # three candidates, not four (2026-07-27 cost audit): the fourth race's
+        # full-field readout bought little and billed daily; a FOLLOW race takes
+        # the third slot when one runs
         cand_order: list[str] = []
         for p in field:                      # field is rank-sorted, flagged included
             if p.race.race_id not in cand_order:
                 cand_order.append(p.race.race_id)
-            if len(cand_order) >= 3:
+            if len(cand_order) >= 2:
                 break
-        # a race carrying an active FOLLOW horse earns the 4th candidate slot (audit:
-        # tracked clues could never promote a race into the shortlist)
         for _hid, (tp, t) in seen.items():
             if (t["angle"] == "follow" and tp.race.race_id not in cand_order
-                    and len(cand_order) < 4):
+                    and len(cand_order) < 3):
                 cand_order.append(tp.race.race_id)
-        cand_races = [all_by_race[rid] for rid in cand_order[:4]]
+        for p in field:
+            if len(cand_order) >= 3:
+                break
+            if p.race.race_id not in cand_order:
+                cand_order.append(p.race.race_id)
+        cand_races = [all_by_race[rid] for rid in cand_order[:3]]
         candidates = []
         for picks in cand_races:
             r0 = picks[0].race
@@ -423,9 +438,12 @@ def main() -> int:
         # max_steps=6 (2026-07-25 audit: rules 4+8 demand ~2 lookups per candidate
         # race — franking the key form AND checking the danger — and at 4 the model
         # ran dry mid-frank on a 3-race Saturday shortlist)
+        # max_tokens 6000 up front (2026-07-27 cost audit: the checklist-era cases
+        # outgrew 3000, so EVERY morning truncated and regenerated at double size —
+        # the flagship answer was being paid for twice, daily)
         deep = get_investigator("nap", TOOLS,
                                 make_executor(client, cand_races[0][0].race),
-                                max_steps=6)
+                                max_steps=6, max_tokens=6000)
         if deep is None:
             emit("  (deep read OFF — no ANTHROPIC_API_KEY; falling back to the "
                  "shallow engine pick)")
@@ -529,35 +547,17 @@ def main() -> int:
     # FRANK = VETO, not a downgrade (audit fix 2: under the old code a hollow-win pick
     # still got banked as a "declinable lean" — Chepstow would have banked even without
     # the exposure gate). A thin frank crosses the pick off and we fall to the next.
+    # FRANK = TIEBREAKER, restored to the master's #15 (2026-07-26: 'franking is a
+    # tiebreaker' — the student had promoted it to an executioner; the Saturday
+    # wipe-out was the price). A thin frank is a stated CON on the ledger — it
+    # caps confidence at LEAN — never a veto, never a re-pick.
     from racing_edge.study.frank import frank_form
-    fr = None
     frank_thin_deep = False
-    fallbacks = [nap] + [s for s in survivors if s is not nap]
-    for cand in fallbacks[:3]:
-        f = frank_form(client, cand.runner.horse_id, cand.history,
-                       code=cand.race.code)
-        if f.is_thin:
-            if cand is fallbacks[0] and deep_case:
-                # THE READER OUTRANKS THE MECHANICAL FRANK (2026-07-25, the Saturday
-                # wipe-out): an argued deep case — which franks its own key form with
-                # tools, rule 4 — is downgraded to LEAN by a thin frank, never killed.
-                # The veto stays for engine picks: no case argues for those.
-                emit(f"  ⚠ FRANK THIN on the deep pick ({f.note}) — the argued case "
-                     f"stands, but LEAN only, never confident against a hollow frank.")
-                nap, fr, frank_thin_deep = cand, f, True
-                break
-            emit(f"  ✗ FRANK VETO: {cand.runner.horse} — {f.note} "
-                 f"(a win in a bad race is a mirage; re-picking)")
-            if cand is nap:
-                deep_case = []          # the vetoed pick's case no longer applies
-            continue
-        nap, fr = cand, f
-        break
-    if fr is None:
-        emit("  No nap — every candidate's form franked HOLLOW. Discipline is a position.")
-        _bank_pass(resolve_date(args.day), "all candidates franked hollow")
-        _maybe_email(out, "Nap — no bet today (franked hollow)", args.email)
-        return 0
+    fr = frank_form(client, nap.runner.horse_id, nap.history, code=nap.race.code)
+    if fr.is_thin:
+        frank_thin_deep = True
+        emit(f"  ⚠ FRANK THIN ({fr.note}) — a con on the ledger: LEAN at best, "
+             f"and the case must carry the form question openly.")
 
     c, r = nap.conviction, nap.race
 
@@ -587,19 +587,51 @@ def main() -> int:
             return 0
 
     # THE MARK IS SACRED — never a pick that isn't well-in, and never one whose
-    # well-in anchor is from a dead era (2026-07-25 Woodstock audit: 'WELL-IN -7lb'
-    # against a win older than the visible history is a placer profile, not a
-    # missed handicapper). Non-negotiable.
+    # well-in anchor is from a dead era (2026-07-25 Woodstock audit). Non-negotiable
+    # for the BANK — but the reader's choice failing the floor must not kill the
+    # day while floor-fit survivors stand (2026-07-27, the master: 'no naps since
+    # all of this' — Monday passed with two conv-4 well-in survivors on the sheet).
+    def _floor_fit_survivor():
+        for sv in survivors:
+            if not (sv.conviction.well_in and sv.conviction.mark_known
+                    and sv.conviction.score >= 4):
+                continue
+            if sv.race.race_class is not None and sv.race.race_class > 4:
+                continue
+            shape, _c2 = market_shape([p.price for p in field
+                                       if p.race.race_id == sv.race.race_id
+                                       and p.price])
+            if shape != "OPEN":
+                return sv
+        return None
+
     if delta is None or delta > 0 or _mr.stale:
         why_mark = ("STALE anchor — " + _mr.verdict if _mr.stale else
                     f"mark delta {delta if delta is not None else 'OWED'}")
-        emit(f"  ✗ PROFILE FLOOR: {nap.runner.horse} is not soundly WELL-IN "
-             f"({why_mark}) — no bet.")
-        _bank_pass(resolve_date(args.day),
-                   f"profile floor: {nap.runner.horse} not soundly well-in "
-                   f"({why_mark})")
-        _maybe_email(out, "Nap — no bet today (not well-in)", args.email)
-        return 0
+        fb = _floor_fit_survivor()
+        if fb is not None and fb.runner.horse_id != nap.runner.horse_id:
+            emit(f"  ✗ floor refused the reader's choice {nap.runner.horse} "
+                 f"({why_mark}) — falling back to the engine's best profile-fit "
+                 f"survivor, LEAN only:")
+            nap, deep_case, mp = fb, [], None
+            fr = frank_form(client, nap.runner.horse_id, nap.history,
+                            code=nap.race.code)
+            frank_thin_deep = fr.is_thin
+            c, r = nap.conviction, nap.race
+            _mr = mark_read(nap.runner.official_rating, nap.history,
+                            code=nap.race.code)
+            delta = _mr.delta
+            race_fav = min((p.price for p in field
+                            if p.race.race_id == r.race_id and p.price),
+                           default=None)
+        else:
+            emit(f"  ✗ PROFILE FLOOR: {nap.runner.horse} is not soundly WELL-IN "
+                 f"({why_mark}) — and no floor-fit survivor stands. No bet.")
+            _bank_pass(resolve_date(args.day),
+                       f"profile floor: {nap.runner.horse} not soundly well-in "
+                       f"({why_mark}); no floor-fit fallback")
+            _maybe_email(out, "Nap — no bet today (not well-in)", args.email)
+            return 0
     # class and anchor are ARGUABLE — an argued multi-fact deep case may override them
     # as a LEAN (Ebony Maw, 2026-07-06: the reader found the 12.0 rematch winner and
     # the fitted class/price floor threw it away — the number-cruncher overruling the
@@ -650,9 +682,9 @@ def main() -> int:
              f"may overrule, but never at full confidence. LEAN only.")
     confident = ((deep_conf == "confident") if deep_case else c.confident) \
         and not off_profile and not c.flags and not frank_thin_deep
-    if nap.price and nap.price >= 8.0:
-        emit(f"  instrument (#28): EACH-WAY at {nap.price} — the place is the net, "
-             f"the win is the payday.")
+    _ew = ew_advice(nap.price, r.field_size)
+    if _ew:
+        emit(f"  instrument: {_ew}")
 
     tag = "CONFIDENT NAP" if confident else "best candidate — NOT confident (declinable)"
     emit(f"  {tag}: {nap.runner.horse}  —  {r.course} {r.off_time} ({r.race_type})")

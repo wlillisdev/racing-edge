@@ -96,7 +96,7 @@ _SCHEMA_HINT = (
     '  "nuance": "one transferable sentence that is NOT a restatement of the rule '
     'index or an open proposal — else \\"covered by #N\\"",\n'
     '  "theme": "ONE of: trouble-in-running-upgrade | stale-mark | beaten-fav-oppose | '
-    'pace-collapse | franking | well-in-insufficient | serial-placer | market-move | '
+    'pace-collapse | franking | well-in-insufficient | serial-placer | market-move | trainer-pattern | '
     'data-gap | other",\n'
     '  "mechanism": "WHY this transfers — the causal reason it repeats",\n'
     '  "fails_when": "the future observable that would falsify it",\n'

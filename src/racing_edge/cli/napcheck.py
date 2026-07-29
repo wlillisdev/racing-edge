@@ -61,9 +61,7 @@ def main() -> int:
         for cand in survivors[:3]:
             fr = frank_form(client, cand.runner.horse_id, cand.history, as_of=day,
                             code=cand.race.code)
-            if fr.is_thin:
-                reason = f"frank veto on {cand.runner.horse}"
-                continue
+            # thin frank = a con, not a veto (the master's #15, 2026-07-26)
             delta = mark_read(cand.runner.official_rating, cand.history,
                               code=cand.race.code).delta
             fav = min((p.price for p in field

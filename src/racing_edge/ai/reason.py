@@ -88,8 +88,17 @@ def resolve_model(task: str) -> str:
     return os.environ.get("ANTHROPIC_MODEL") or _FALLBACK
 
 
-def _budget_spent_today() -> int:
-    """Total tokens (in+out) logged today. 0 if no ledger yet."""
+# PER-TASK DAILY CEILINGS (the master, 2026-07-27: 'we need to be lean, stop
+# wasting tokens, build a fail-safe in' — the global cap let one runaway path
+# drain the whole pool; now each task has its own hard ceiling, env-overridable
+# via NAP_TOKEN_BUDGET_<TASK>). Numbers sized ~2x normal daily use: headroom for
+# a heavy card, a hard stop on a runaway.
+_TASK_BUDGETS = {"nap": 80_000, "study": 60_000, "sceptic": 30_000,
+                 "synthesis": 40_000}
+
+
+def _budget_spent_today(task: str | None = None) -> int:
+    """Tokens (in+out) logged today — for one task, or all. 0 if no ledger yet."""
     try:
         import csv
         import datetime
@@ -99,18 +108,18 @@ def _budget_spent_today() -> int:
         _data_dir = Path(__file__).resolve().parents[3] / "data"
         with (_data_dir / "model_usage.csv").open() as f:
             for row in csv.DictReader(f):
-                if row["date"] == today:
+                if row["date"] == today and (task is None or row["task"] == task):
                     total += int(row["input_tokens"]) + int(row["output_tokens"])
         return total
     except Exception:
         return 0
 
 
-def budget_blown() -> int | None:
-    """The HARD daily token budget (env NAP_TOKEN_BUDGET, default 300k in+out/day —
-    'this has to stop', 2026-07-08). Returns the spend if over budget, else None.
-    Callers refuse further model calls for the day; the morning pick degrades to the
-    engine (shadow) method and says so, rather than burning past the cap."""
+def budget_blown(task: str | None = None) -> int | None:
+    """The HARD token fail-safe, two layers (2026-07-08 global; 2026-07-27 per-task):
+    the global day cap (env NAP_TOKEN_BUDGET, default 300k) AND each task's own
+    ceiling — so a runaway morning can never eat the night school's budget or vice
+    versa. Returns the offending spend if any cap is hit, else None."""
     try:
         cap = int(os.environ.get("NAP_TOKEN_BUDGET", "300000"))
     except ValueError:
@@ -118,7 +127,18 @@ def budget_blown() -> int | None:
     if cap <= 0:
         return _budget_spent_today() or 1          # 0 = model OFF entirely
     spent = _budget_spent_today()
-    return spent if spent >= cap else None
+    if spent >= cap:
+        return spent
+    if task and task in _TASK_BUDGETS:
+        try:
+            tcap = int(os.environ.get(f"NAP_TOKEN_BUDGET_{task.upper()}",
+                                      str(_TASK_BUDGETS[task])))
+        except ValueError:
+            tcap = _TASK_BUDGETS[task]
+        tspent = _budget_spent_today(task)
+        if tcap > 0 and tspent >= tcap:
+            return tspent
+    return None
 
 
 def _post_with_retry(headers: dict, body: dict) -> tuple[dict | None, int]:
@@ -165,7 +185,7 @@ def get_investigator(task: str, tools: list[dict],
                "content-type": "application/json"}
 
     def complete(system: str, prompt: str) -> tuple[str, list[str]]:
-        spent = budget_blown()
+        spent = budget_blown(task)
         if spent is not None:
             return "", [f"DAILY TOKEN BUDGET reached ({spent} used) — no more model "
                         f"calls today (raise NAP_TOKEN_BUDGET to override)"]
@@ -255,7 +275,7 @@ def get_reasoner(task: str = "study",
     }
 
     def complete(system: str, prompt: str) -> str:
-        if budget_blown() is not None:
+        if budget_blown(task) is not None:
             return ""                              # daily budget reached — hard stop
         body = {
             "model": model,

@@ -15,7 +15,7 @@ Pure: a race (card) + its result + each runner's history in, a readout out.
 
 from __future__ import annotations
 
-from racing_edge.domain.manner import nap_verdict
+from racing_edge.domain.manner import nap_verdict, run_style
 from racing_edge.domain.courses import handedness
 from racing_edge.domain.mark import mark_read, same_code_runs
 from racing_edge.domain.models import PastRun, Race, RaceResult, RunnerResult
@@ -63,6 +63,24 @@ def render_preread(race: Race, histories: dict[str, tuple[PastRun, ...]],
     if race.race_class:
         head += f" (Cl{race.race_class})"
     lines = [f"  PRE-RACE CARD: {head}  ({race.field_size} declared)"]
+    # THE PACE MAP (#20 — the master, 2026-07-26: fixed as one of 'the silliest
+    # things'): who is likely to LEAD, read from the comments already in hand.
+    # No leader = muddling-pace risk; several = a contested, honest gallop.
+    _leaders = []
+    for r in ordered:
+        _h = same_code_runs(histories.get(r.horse_id, ()), race.code)[:4]
+        if run_style([x.comment for x in _h])[0] == "front":
+            _leaders.append(r.horse)
+    if _leaders:
+        lines.append(f"  PACE MAP (#20): likely leader(s): {', '.join(_leaders[:4])}"
+                     + (" — contested pace likely" if len(_leaders) >= 2 else ""))
+    else:
+        lines.append("  PACE MAP (#20): no established front-runner found in the "
+                     "comments — muddling-pace risk, finishers may be inconvenienced")
+    # THE SCALES (the master: 'giving a horse that much weight at 3 miles is crazy'
+    # — the dot that decided Uttoxeter 07-26, previously invisible to every lens)
+    _wts = [r.weight_lbs for r in race.runners if r.weight_lbs]
+    _top = max(_wts) if _wts else None
     for r in ordered:
         hist = histories.get(r.horse_id, ())
         mark = mark_read(r.official_rating, hist, code=race.code)
@@ -72,14 +90,25 @@ def render_preread(race: Race, histories: dict[str, tuple[PastRun, ...]],
         gear = f" | headgear {r.headgear}{'(1st time)' if r.headgear_first_time else ''}" \
             if r.headgear else ""
         lines.append("")
-        lines.append(f"  {r.horse:22} {rank}  [id {r.horse_id}]")
+        tid = f" trainer {r.trainer or '?'} [tid {r.trainer_id}]" if r.trainer_id else ""
+        lines.append(f"  {r.horse:22} {rank}  [id {r.horse_id}]{tid}")
+        wt = ""
+        if r.weight_lbs and _top:
+            st, lb = divmod(r.weight_lbs, 14)
+            gap = _top - r.weight_lbs
+            wt = (f" | carries {st}-{lb}"
+                  + (f" ({gap}lb less than top weight)" if gap > 0 else " (TOP WEIGHT)"))
         lines.append(f"        mark: {marktxt}  | form {r.form or '?'} "
-                     f"| OR {r.official_rating or '?'} RPR {r.rpr or '?'}{gear}")
+                     f"| OR {r.official_rating or '?'} RPR {r.rpr or '?'}{gear}{wt}")
         _mh = same_code_runs(hist, race.code)[:4]
         mv = nap_verdict([h.comment for h in _mh],
                          positions=[h.position for h in _mh])
         if mv.recommendation != "neutral" or mv.finisher_runs or mv.non_finisher_runs:
             lines.append(f"        manner read (#1): {mv.recommendation} — {mv.reason}")
+        _st, _f, _hd = run_style([x.comment for x in _mh])
+        if _st != "mixed/unknown":
+            lines.append(f"        run-style (#20): {_st} "
+                         f"({_f if _st == 'front' else _hd} of last {len(_mh)} runs)")
         # THE FINDING-TOOLS LINE (the master, 2026-07-26: 'how many races has the
         # horse won at this distance, how many wins at that track, how many going
         # left- or right-handed') — counted in code from same-code wins, so the

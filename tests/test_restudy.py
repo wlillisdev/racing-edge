@@ -174,3 +174,32 @@ def test_the_finding_tools_line_counts_track_trip_and_handedness_wins() -> None:
     out = render_preread(race, {"A": past_runs_from_raw(rows, "A")})
     assert "wins: 0 at this track | 1 at ~this trip | by hand 0L/2R" in out
     assert "all handed wins RIGHT-handed — today LEFT-handed" in out
+
+
+def test_the_scales_and_the_pace_map_reach_the_readers_page() -> None:
+    """The two silliest blind spots (the master, 2026-07-26): the machine never
+    looked at the WEIGHT on a horse's back (the dot that decided Uttoxeter), and it
+    stamped 'run-style OWED' daily while holding the comments that answer it."""
+    from racing_edge.data.normalise import past_runs_from_raw
+    from racing_edge.domain.models import Odds, Race, Runner
+    from racing_edge.report.restudy import render_preread
+    race = Race(race_id="r", course="Uttoxeter", off_time="4:12",
+                date=date(2026, 7, 26), race_type="Hurdle", is_handicap=True,
+                distance_f=23.0,
+                runners=(Runner(horse_id="A", horse="TopWeight", official_rating=119,
+                                weight_lbs=157, odds=Odds(consensus=1.9)),
+                         Runner(horse_id="B", horse="LightLad", official_rating=110,
+                                weight_lbs=148, odds=Odds(consensus=3.5))))
+    rows_a = [{"date": f"2026-0{m}-01", "type": "Hurdle", "runners": [
+        {"horse_id": "A", "position": "1", "or": "115",
+         "comment": "made all, stayed on strongly"}]} for m in (6, 5)]
+    rows_b = [{"date": f"2026-0{m}-01", "type": "Hurdle", "runners": [
+        {"horse_id": "B", "position": "2", "or": "108",
+         "comment": "held up in rear, ran on"}]} for m in (6, 5)]
+    out = render_preread(race, {"A": past_runs_from_raw(rows_a, "A"),
+                                "B": past_runs_from_raw(rows_b, "B")})
+    assert "carries 11-3 (TOP WEIGHT)" in out
+    assert "carries 10-8 (9lb less than top weight)" in out
+    assert "PACE MAP (#20): likely leader(s): TopWeight" in out
+    assert "run-style (#20): front (2 of last 2 runs)" in out
+    assert "run-style (#20): held up (2 of last 2 runs)" in out

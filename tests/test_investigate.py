@@ -55,7 +55,11 @@ def test_executor_never_raises_and_tools_are_well_formed() -> None:
     assert "Unknown tool" in ex("bogus", {})
     assert ex("horse_runs", {}) is not None         # missing arg -> handled, not raised
     names = {t["name"] for t in TOOLS}
-    assert names == {"horse_runs", "race_result"}
+    # trainer_angle joined 2026-07-26 (the master: a trainer's amazing strike with
+    # today's TYPE of horse — e.g. his 4yo chasers — is a HUGE tick; the digger can
+    # now ask that exact question mid-read)
+    assert names == {"horse_runs", "race_result", "trainer_angle"}
+    assert "OWED" in ex("trainer_angle", {"trainer_id": "trn_x"})  # fake client: honest empty
     for t in TOOLS:
         assert t["input_schema"]["required"]        # schemas declare their args
 
