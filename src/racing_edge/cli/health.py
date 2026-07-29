@@ -154,6 +154,49 @@ def main() -> int:
     except Exception:
         lines.append("  flight recorder: log unreadable")
 
+    # WASTE TRIPWIRES (the master, 2026-07-27: 'stop wasting tokens, build a
+    # fail-safe in — this is ridiculous'). The double-billing truncation ran silent
+    # for days; now waste itself goes RED within 24 hours.
+    try:
+        from pathlib import Path as _P2
+        _log_txt = (_P2(__file__).resolve().parents[3] / "data"
+                    / "task_runs.log").read_text()
+        _today_block = _log_txt[_log_txt.rfind(today.isoformat()):] \
+            if today.isoformat() in _log_txt else ""
+        _truncs = _today_block.count("truncated at")
+        all_ok &= _check(
+            _truncs == 0,
+            "no truncation retries today (answers paid for once)",
+            f"{_truncs} truncation retr(y/ies) today — the model is PAYING TWICE "
+            "for its answers; raise that task's max_tokens",
+            lines)
+    except Exception:
+        pass
+    try:
+        import csv as _csv
+        from datetime import timedelta as _td2
+        from pathlib import Path as _P3
+        _by = {}
+        with (_P3(__file__).resolve().parents[3] / "data"
+              / "model_usage.csv").open() as _f:
+            for _row in _csv.DictReader(_f):
+                _by.setdefault(_row["date"], 0)
+                _by[_row["date"]] += (int(_row["input_tokens"])
+                                      + int(_row["output_tokens"]))
+        _t = _by.get(today.isoformat(), 0)
+        _prev = [_by[d] for d in _by if d != today.isoformat()
+                 and d >= (today - _td2(days=7)).isoformat()]
+        _avg = sum(_prev) / len(_prev) if _prev else 0
+        all_ok &= _check(
+            not (_avg and _t > 2 * _avg and _t > 100_000),
+            f"spend steady (today {_t / 1000:.0f}k vs 7d avg {_avg / 1000:.0f}k)",
+            f"SPEND SPIKE — today {_t / 1000:.0f}k tokens vs 7-day average "
+            f"{_avg / 1000:.0f}k: something is burning; check the task log before "
+            "it burns again tomorrow",
+            lines)
+    except Exception:
+        pass
+
     # THE MODEL BILL, counted by the machine itself (real token counts from every
     # API response, logged to data/model_usage.csv — multiply by your plan's rates)
     try:
