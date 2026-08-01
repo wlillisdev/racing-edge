@@ -95,12 +95,21 @@ def gather(client: _Client, day_iso: str, course: str | None = None,
         # returns the horse's runs INCLUDING today's — leave that in and the winner
         # always reads WELL-IN off its own win (the leak behind the binned nuance #1).
         # Re-study must read the form as it stood BEFORE the off.
-        histories = {
-            r.horse_id: tuple(
-                h for h in past_runs_from_raw(client.horse_results(r.horse_id), r.horse_id)
-                if h.date < race.date
-            )
-            for r in race.runners if r.horse_id
-        }
+        histories: dict[str, tuple] = {}
+        for r in race.runners:
+            if not r.horse_id:
+                continue
+            # one horse's fetch dying must not kill the whole night school
+            # (2026-07-31: an unguarded 401 here starved the nuance ledger for
+            # three nights straight) — degrade to history-OWED, say it out loud
+            try:
+                runs = past_runs_from_raw(client.horse_results(r.horse_id),
+                                          r.horse_id)
+            except Exception as exc:
+                if progress:
+                    progress(f"      ⚠ history OWED for {r.horse} — fetch failed: "
+                             f"{exc.__class__.__name__}: {str(exc)[:100]}")
+                runs = ()
+            histories[r.horse_id] = tuple(h for h in runs if h.date < race.date)
         out.append(Restudy(race=race, result=st.result, histories=histories))
     return out
