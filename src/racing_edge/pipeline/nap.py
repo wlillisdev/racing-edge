@@ -143,8 +143,16 @@ def evaluate_field(client: _Client, day: str = "today",
             oddsless += 1
         # as_of enforces NO LOOK-AHEAD for backtesting: histories cut strictly before
         # that date, current-stats intent lenses skipped (they know the future)
+        import time as _time
+        _t0 = _time.monotonic()
         evidence = {e.runner.horse_id: e
                     for e in build_evidence(race, client, as_of=as_of)}
+        _dt = _time.monotonic() - _t0
+        if progress and _dt > 30:
+            # slow must never masquerade as stuck (2026-08-01: the racecards
+            # results door carries whole past FIELDS per horse — fat payloads)
+            progress(f"      (slow, not stuck: those {race.field_size} runners "
+                     f"took {int(_dt)}s of API time)")
         priced = sorted([r for r in race.runners if r.odds.consensus and r.odds.consensus > 1],
                         key=lambda r: r.odds.consensus)        # type: ignore[arg-type,return-value]
         ranks = {r.horse_id: i + 1 for i, r in enumerate(priced)}
