@@ -198,6 +198,22 @@ def results_from_raw(doc: dict) -> list[RaceResult]:
 # --------------------------------------------------------------------------- #
 # a horse's past runs (from get_horse_results) -> PastRun, for the proven reads
 # --------------------------------------------------------------------------- #
+def _dist_f(r: dict) -> float | None:
+    """Distance in furlongs, robust to BOTH results doors (2026-08-01): the Pro
+    endpoint sends a number, the racecards door sends '5f' strings — which
+    _float rejected, silently blinding the trip lens. Falls back to yards/220."""
+    v = r.get("dist_f") or r.get("distance_f")
+    f = _float(v)
+    if f:
+        return f
+    if isinstance(v, str):
+        m = re.match(r"(\d+(?:\.\d+)?)f", v.strip())
+        if m:
+            return float(m.group(1))
+    y = _float(r.get("dist_y"))
+    return round(y / 220.0, 1) if y else None
+
+
 def past_runs_from_raw(rows: list[dict], horse_id: str = "") -> tuple[PastRun, ...]:
     """horse_results rows are RACE objects with a nested `runners` list — the
     horse's own position/weight live in there, keyed by horse_id. Pass horse_id to
@@ -214,7 +230,7 @@ def past_runs_from_raw(rows: list[dict], horse_id: str = "") -> tuple[PastRun, .
             position=pos,
             race_class=_class(r),
             going=_str(r.get("going")),
-            distance_f=_float(r.get("dist_f") or r.get("distance_f")),
+            distance_f=_dist_f(r),
             weight_lbs=_int(me.get("weight_lbs") or me.get("lbs")),
             official_rating=_int(me.get("or") or me.get("ofr") or me.get("official_rating")),
             course=_str(r.get("course")),
