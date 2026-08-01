@@ -127,7 +127,11 @@ def test_the_learning_loop_reaches_the_exam() -> None:
     assert "RECENT LOSS 2026-07-18 Rahmi (Ascot): missed — the winner was the in-form" in text
     assert "RECENT LOSS 2026-07-19 Kalokalo (Ripon)" in text
     assert "MASTER-VALIDATED: manner outranks bare mark" in text
-    assert "UNPROVEN nuance (weigh lightly): false favourites" in text
+    # THE CLOSED RULEBOOK (the master, 2026-08-01: 'the biggest problem is
+    # creating rules to fill gaps — wrong ones'): unproven proposals no longer
+    # ride to the exam AT ALL — a rule reaches the picker only taught,
+    # validated, or field-tested. Proposals still flow to the doorbell.
+    assert "false favourites" not in text
     assert "UNVERIFIED TRACKED LEADS" in text
     # the clue's DATE leads, the note is framed as THAT day's run, and a lead that
     # points against the engine's read carries its conflict (2026-07-25 audit)
