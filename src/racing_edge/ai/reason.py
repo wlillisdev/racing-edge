@@ -69,7 +69,12 @@ _TASK_MODELS = {
     "study": "claude-sonnet-5",       # per-race read: strong + affordable
     "sceptic": "claude-sonnet-5",     # cost cut 2026-07-08: sonnet vs sonnet is a fair fight
     "synthesis": "claude-sonnet-5",   # weekly; sonnet suffices for the summary
-    "nap": "claude-fable-5",          # THE pick: once a day, the only flagship call
+    # THE pick: once a day, the one flagship call. Opus 5 (2026-08-01 cost pass):
+    # flagship-class reasoning at HALF the premium tier's price ($5/$25 vs
+    # $10/$50 per MTok) — the pick call was ~90% of the whole model bill.
+    # Restore the premium tier with ANTHROPIC_MODEL_NAP=claude-fable-5.
+    # REVERT-IF: the next 8 settled picks strike below 25% (record to beat: 40%).
+    "nap": "claude-opus-5",
 }
 _FALLBACK = "claude-sonnet-5"
 

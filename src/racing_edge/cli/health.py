@@ -24,6 +24,60 @@ def _check(ok: bool, good: str, bad: str, lines: list[str]) -> bool:
     return ok
 
 
+def _engineer_sweep(log_text: str, today: str) -> tuple[bool, list[str]]:
+    """THE DAILY ENGINEER'S EYE (2026-08-01, the master: 'build in the senior
+    engineer to audit the system every day'). The checks an engineer would run
+    each morning over the flight recorder are MECHANICAL, so the free watchman
+    runs them — no model, no tokens. (Model-driven code review stays in the
+    monthly window, where code actually changes.)
+
+    Three checks: tracebacks in today's output (must be zero — the crash net
+    emails them; this is the belt to that braces), each task's runtime vs its
+    own 7-day norm (slow creep is tomorrow's outage), and warning volume."""
+    import re
+    from datetime import datetime
+    pat = re.compile(r"^=== (\S+) (\S+) UTC :: trial\.sh (\S+) (START|EXIT)")
+    runs: list[tuple[str, str, float]] = []          # (date, task, seconds)
+    open_runs: dict[str, tuple[str, datetime]] = {}
+    for ln in log_text.splitlines():
+        m = pat.match(ln)
+        if not m:
+            continue
+        d, t, task, kind = m.groups()
+        try:
+            stamp = datetime.strptime(f"{d} {t}", "%Y-%m-%d %H:%M:%S")
+        except ValueError:
+            continue
+        if kind == "START":
+            open_runs[task] = (d, stamp)
+        elif task in open_runs and open_runs[task][0] == d:
+            runs.append((d, task, (stamp - open_runs.pop(task)[1]).total_seconds()))
+    ok = True
+    out: list[str] = []
+    idx = log_text.find(today)
+    today_block = log_text[idx:] if idx >= 0 else ""
+    tbs = today_block.count("Traceback (most recent call last)")
+    if tbs:
+        ok = False
+        out.append(f"  ✗ RED: {tbs} traceback(s) in today's runs — something died "
+                   "mid-task; the crash email names it, the log has the full story")
+    parts = []
+    for task in sorted({t for d, t, _ in runs if d == today}):
+        secs = [s for d, t, s in runs if d == today and t == task]
+        base = [s for d, t, s in runs if d < today and t == task][-7:]
+        cur, avg = max(secs), (sum(base) / len(base) if base else 0.0)
+        slow = avg and cur > 2 * avg and cur > 120
+        parts.append(f"{task} {cur:.0f}s" + (f" (7d~{avg:.0f}s)" if avg else ""))
+        if slow:
+            ok = False
+            out.append(f"  ✗ RED: '{task}' took {cur:.0f}s vs ~{avg:.0f}s norm — "
+                       "2x slow-down; find the drag before it becomes an outage")
+    if parts:
+        out.append(f"  engineer's eye: runtimes {', '.join(parts)}; "
+                   f"{today_block.count('⚠')} warning line(s) today")
+    return ok, out
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description="Loop health — red/green ledger report.")
     ap.add_argument("--email", action="store_true", help="email the report (SMTP env)")
@@ -154,6 +208,16 @@ def main() -> int:
     except Exception:
         lines.append("  flight recorder: log unreadable")
 
+    # THE DAILY ENGINEER'S EYE — mechanical audit of the flight recorder
+    try:
+        from pathlib import Path as _P3
+        _txt = (_P3(__file__).resolve().parents[3] / "data" / "task_runs.log").read_text()
+        _eok, _elines = _engineer_sweep(_txt, today.isoformat())
+        all_ok &= _eok
+        lines.extend(_elines)
+    except Exception:
+        pass
+
     # WASTE TRIPWIRES (the master, 2026-07-27: 'stop wasting tokens, build a
     # fail-safe in — this is ridiculous'). The double-billing truncation ran silent
     # for days; now waste itself goes RED within 24 hours.
@@ -220,8 +284,10 @@ def main() -> int:
     log2 = open_nap_log()
     w, n = log2.strike_rate()                      # correct: pass days (won=-1) excluded
     sw, sn = log2.shadow_strike()
-    log2.close()
+    # P/L must be read BEFORE close (2026-08-01: it sat after close() and the
+    # whole health report died on 'Cannot operate on a closed database')
     pnl, _pn = log2.profit_loss() if hasattr(log2, "profit_loss") else (0.0, 0)
+    log2.close()
     lines.append(f"  record: {w}/{n} settled naps won"
                  + (f" ({100 * w / n:.0f}%), level stakes at SP {pnl:+.1f}pt" if n else ""))
     # LOSS-STREAK ALARM (coroner fix 1: six losses passed with no alarm anywhere)
@@ -269,4 +335,5 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    from racing_edge.cli._common import run_guarded
+    raise SystemExit(run_guarded("health", main))

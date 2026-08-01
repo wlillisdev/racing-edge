@@ -136,6 +136,39 @@ def test_gather_excludes_todays_run_from_history_no_lookahead() -> None:
     assert mark_read(77, hist).verdict == "+3lb"
 
 
+def test_gather_survives_a_poisoned_history_fetch() -> None:
+    """2026-07-31: one unguarded 401 in gather() killed the night school three
+    nights straight. A horse whose fetch dies degrades to history-OWED and the
+    study CONTINUES — the same discipline evidence.py already has."""
+    from racing_edge.pipeline.restudy import gather
+
+    class _FakeClient:
+        def racecards(self, day="today"):
+            return {"racecards": [{
+                "race_id": "r1", "course": "Epsom", "off_time": "6:22",
+                "date": "2026-07-01", "type": "Flat", "race_name": "H'cap",
+                "runners": [{"horse_id": "H1", "horse": "Sir Garfield"},
+                            {"horse_id": "H2", "horse": "Bystander"}],
+            }]}
+
+        def results_by_date(self, ds):
+            return {"results": [{"race_id": "r1", "date": "2026-07-01",
+                                 "runners": [{"horse_id": "H1", "position": "1",
+                                              "sp_dec": "8.5"}]}]}
+
+        def horse_results(self, horse_id, limit=12):
+            if horse_id == "H1":
+                raise RuntimeError("HTTP 401 Pro Plan required")
+            return [{"date": "2026-04-08", "race_id": "r0", "runners": [
+                {"horse_id": "H2", "position": "2", "or": "70"}]}]
+
+    noise: list[str] = []
+    studies = gather(_FakeClient(), "2026-07-01", progress=noise.append)
+    assert studies[0].histories["H1"] == ()                 # OWED, not a crash
+    assert len(studies[0].histories["H2"]) == 1             # the rest still fetched
+    assert any("OWED" in s and "RuntimeError" in s for s in noise)  # said out loud
+
+
 def _main() -> int:
     fns = [v for k, v in sorted(globals().items()) if k.startswith("test_")]
     for fn in fns:

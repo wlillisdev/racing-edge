@@ -98,7 +98,15 @@ NAP_SYSTEM = (
     "less. Recommend the instrument in the case: win single in the fair band, "
     "each-way only when the PLACE TERMS pay — roughly 5.0+ in 12+ runner "
     "handicaps (1/4 odds), 6.0+ in 8-11 fields (1/5 odds), never by a price cliff.\n"
-    "IRON RULES: only facts from the readouts and tool results; cite the exact fact "
+    "IRON RULES: THE RULEBOOK IS CLOSED (the master, 2026-08-01: 'the biggest "
+    "problem is the system not following its rules and creating rules to fill in "
+    "gaps — wrong ones'): reason ONLY from the rules above, the MASTER-VALIDATED "
+    "and FIELD-TESTED lessons, and the evidence in front of you. If a situation "
+    "is not covered by a rule, SAY SO in the case and weigh the plain ledger of "
+    "pros and cons — NEVER coin a new principle, threshold, or pattern mid-read. "
+    "A rule is born in only three ways: the master teaches it, the master "
+    "validates it, or the record field-tests it. Only facts from the readouts "
+    "and tool results; cite the exact fact "
     "for every claim; a blank is OWED, never filled; never let the price pick. OWED "
     "IS SYMMETRIC (2026-07-25): a blank on a RIVAL is owed exactly as a blank on your "
     "pick — absence of evidence never counts AGAINST the danger; beat it only with "
@@ -191,15 +199,15 @@ def build_lessons(nap_history: list[dict], strike: tuple[int, int],
     # record-earned tier (2026-07-25): themes whose settled clues proved out
     lines += [f"- FIELD-TESTED by results: {nu['nuance'][:140]}"
               for nu in nuances if nu["status"] == "field-tested"][:4]
-    # the STRONGEST unproven lessons ride, not the newest (value audit: recency was
-    # the only filter and it is uncorrelated with lesson strength; seen_count is
-    # convergence — the same lesson independently re-derived from different races)
-    _prop = sorted((nu for nu in nuances if nu["status"] == "proposed"),
-                   key=lambda nu: -(nu.get("seen_count") or 1))[:3]
-    lines += [f"- UNPROVEN nuance (weigh lightly"
-              + (f", seen {nu['seen_count']}x" if (nu.get("seen_count") or 1) > 1
-                 else "") + f"): {nu['nuance'][:140]}"
-              for nu in _prop]
+    # UNPROVEN proposals NO LONGER RIDE to the morning pick (the master,
+    # 2026-08-01: 'the biggest problem is creating rules to fill in gaps that
+    # are wrong' — the machine's own untested theories were whispering in the
+    # picker's ear before he or the record ever ruled). The three roads a rule
+    # can still take to this prompt: the master TEACHES it (NAP_SYSTEM), the
+    # master VALIDATES it (doorbell), or the record FIELD-TESTS it (clues).
+    # Proposals keep flowing to the doorbell and the night clue-trial unchanged.
+    # REVERT-IF: 4+ weeks with zero promotions arriving by either road — then
+    # the pipeline, not this gate, is what needs fixing.
     # tracked clues are UNVERIFIED leads (2026-07-21: two losers were built on tracked
     # clues the old header mislabelled 'master validated' — the model believed the
     # label). Honest label + explicit weight instruction. The clue's DATE prints too
