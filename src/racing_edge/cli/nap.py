@@ -32,6 +32,27 @@ def _race_gate_flags(flags) -> list[str]:
     return [f for f in flags if any(g in f for g in _RACE_GATE_TERMS)]
 
 
+def _best_floor_fit(survivors, field):
+    """The engine's best PROFILE-FIT survivor — well-in, mark read, 4+ ticks,
+    decent class, market not OPEN. THE no-silent-week rule (2026-07-31, the
+    master: 'no naps all week — what has broken now'): NO pass is banked while
+    one of these stands, whichever path tried to pass — the reader's own pass,
+    the mark floor, or the class/anchor floor. The reader's reasoning still
+    rides in the case; the bank is always LEAN."""
+    from racing_edge.pipeline.nap import market_shape as _ms
+    for sv in survivors:
+        if not (sv.conviction.well_in and sv.conviction.mark_known
+                and sv.conviction.score >= 4):
+            continue
+        if sv.race.race_class is not None and sv.race.race_class > 4:
+            continue
+        shape, _ = _ms([p.price for p in field
+                        if p.race.race_id == sv.race.race_id and p.price])
+        if shape != "OPEN":
+            return sv
+    return None
+
+
 def _maybe_email(buf: list[str], subject: str, email: bool) -> None:
     """Email the buffered output if --email was set. Never crashes the run."""
     if not email:
@@ -369,17 +390,21 @@ def main() -> int:
     emit("")
 
     if not survivors:
-        emit("No nap — every contender crossed off. Discipline is a position.")
-        _bank_pass(resolve_date(args.day), "every contender crossed off by the gates")
-        _maybe_email(out, "Nap — no bet today", args.email)
-        return 0
+        # THE FOURTH TRAPDOOR (2026-08-01, found in the ledger's own words: 'every
+        # contender crossed off by the gates' — a Saturday passed before the reader
+        # ever opened its eyes). Neutral eyes mean the READER still reads: flags are
+        # cautions in its candidates, the floors still guard the bank, and with no
+        # survivors there is no fallback — the reader's case must stand alone or
+        # the day passes honestly AFTER the reading, never before it.
+        emit("  ⚠ every engine survivor crossed off — the reader reads the flagged "
+             "card regardless (cautions, not blindfolds); floors still guard the bank.")
 
     # THE MORNING DEEP READ (2026-07-05 — the master: "you can find a winner, just
     # look harder; stop stupid picks"). The engine only SHORTLISTS; the deep model
     # (with the franking tools) reads the candidate races form-first and picks THE
     # race and THE horse — or earns a pass race by race. Fallback: the engine's
     # strongest survivor, honestly labelled as the shallow pick.
-    nap = survivors[0]
+    nap = survivors[0] if survivors else field[0]
     deep_case: list[str] = []
     mp = None
     try:
@@ -490,12 +515,24 @@ def main() -> int:
                 print(f"      🔎 {t}", flush=True)
             mp = parse_morning_pick(text)
             if mp.ok and mp.is_pass:
-                emit("  DEEP READ: PASS earned, race by race:")
+                emit("  DEEP READ: argued a PASS, race by race:")
                 emit(f"    {mp.pass_reason}")
-                emit("  No nap today — a pass argued on facts beats a stupid pick.")
-                _bank_pass(resolve_date(args.day), f"deep-read pass: {mp.pass_reason}")
-                _maybe_email(out, "Nap — no bet today (pass earned)", args.email)
-                return 0
+                _fb = _best_floor_fit(survivors, field)
+                if _fb is not None:
+                    emit(f"  …but a floor-fit survivor stands: banking the engine's "
+                         f"{_fb.runner.horse} as the day's LEAN (the reader's pass "
+                         f"reasons ride in the case for the night study to judge).")
+                    nap = _fb
+                    deep_case = [f"  engine pick (the reader passed): "
+                                 f"{mp.pass_reason[:300]}"]
+                    mp = None
+                else:
+                    emit("  No nap today — a pass argued on facts, and no floor-fit "
+                         "survivor stands.")
+                    _bank_pass(resolve_date(args.day),
+                               f"deep-read pass: {mp.pass_reason}")
+                    _maybe_email(out, "Nap — no bet today (pass earned)", args.email)
+                    return 0
             # match the horse WITHIN the race the model named (2026-07-25 audit:
             # name-only matching across all candidates could bank a duplicate name
             # against the wrong race); fall back to name-only with a loud warning
@@ -576,7 +613,7 @@ def main() -> int:
     # carry a WINNING-ERA core (4+ lens FAMILIES including well-in — the banked
     # winners' shape: mark + course + market + one more) or the day is a pass.
     if not deep_case:
-        if nap.conviction.score < 4 or not nap.conviction.well_in:
+        if not survivors or nap.conviction.score < 4 or not nap.conviction.well_in:
             emit(f"  ✗ FALLBACK TOO THIN: deep read unavailable and the engine pick "
                  f"({nap.runner.horse}, conv {nap.conviction.score}) lacks the "
                  f"winning-era core — no bet without the reader.")
@@ -592,18 +629,7 @@ def main() -> int:
     # day while floor-fit survivors stand (2026-07-27, the master: 'no naps since
     # all of this' — Monday passed with two conv-4 well-in survivors on the sheet).
     def _floor_fit_survivor():
-        for sv in survivors:
-            if not (sv.conviction.well_in and sv.conviction.mark_known
-                    and sv.conviction.score >= 4):
-                continue
-            if sv.race.race_class is not None and sv.race.race_class > 4:
-                continue
-            shape, _c2 = market_shape([p.price for p in field
-                                       if p.race.race_id == sv.race.race_id
-                                       and p.price])
-            if shape != "OPEN":
-                return sv
-        return None
+        return _best_floor_fit(survivors, field)
 
     if delta is None or delta > 0 or _mr.stale:
         why_mark = ("STALE anchor — " + _mr.verdict if _mr.stale else
@@ -663,12 +689,30 @@ def main() -> int:
         why = ("the race itself is gated — no off-profile licence in a flagged race"
                if race_gated and deep_case else
                "no argued multi-fact case to override")
-        emit(f"  ✗ PROFILE FLOOR: {nap.runner.horse} — {'; '.join(soft_fails)} and "
-             f"{why}. No bet beats a stupid pick.")
-        _bank_pass(resolve_date(args.day),
-                   f"profile floor: {'; '.join(soft_fails)} — {why}")
-        _maybe_email(out, "Nap — no bet today (profile floor)", args.email)
-        return 0
+        _fb2 = _best_floor_fit(survivors, field)
+        if _fb2 is not None and _fb2.runner.horse_id != nap.runner.horse_id:
+            emit(f"  ✗ floor refused {nap.runner.horse} ({'; '.join(soft_fails)}; "
+                 f"{why}) — falling back to the engine's floor-fit "
+                 f"{_fb2.runner.horse}, LEAN only.")
+            nap, deep_case, mp = _fb2, [], None
+            fr = frank_form(client, nap.runner.horse_id, nap.history,
+                            code=nap.race.code)
+            frank_thin_deep = fr.is_thin
+            c, r = nap.conviction, nap.race
+            _mr = mark_read(nap.runner.official_rating, nap.history,
+                            code=nap.race.code)
+            delta = _mr.delta
+            race_fav = min((p.price for p in field
+                            if p.race.race_id == r.race_id and p.price),
+                           default=None)
+            soft_fails, off_profile = [], False
+        else:
+            emit(f"  ✗ PROFILE FLOOR: {nap.runner.horse} — {'; '.join(soft_fails)} "
+                 f"and {why}; no floor-fit fallback stands. No bet.")
+            _bank_pass(resolve_date(args.day),
+                       f"profile floor: {'; '.join(soft_fails)} — {why}")
+            _maybe_email(out, "Nap — no bet today (profile floor)", args.email)
+            return 0
     if off_profile:
         emit(f"  ⚠ OFF-PROFILE ({'; '.join(soft_fails)}) — allowed on an argued case "
              f"({len(mp.cite)} cited facts), as a LEAN only.")

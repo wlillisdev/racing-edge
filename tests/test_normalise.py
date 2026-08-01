@@ -169,3 +169,28 @@ def _main() -> int:
 
 if __name__ == "__main__":
     sys.exit(_main())
+
+
+def test_past_runs_racecards_door_shape() -> None:
+    # the Basic-tier /racecards/{horse_id}/results door (2026-08-01) sends
+    # dist_f as a '5f' STRING and class as 'Class 6' — both must still parse,
+    # and a missing dist_f must fall back to yards/220
+    rows = [
+        {"race_id": "rac_1", "date": "2026-07-20", "class": "Class 6",
+         "going": "Good To Firm", "dist_f": "5f", "dist_y": "1100",
+         "course": "Ayr", "type": "Flat",
+         "runners": [{"horse_id": "hrs_1", "position": "4", "weight_lbs": "135",
+                      "or": "65", "comment": "made the running early"}]},
+        {"race_id": "rac_2", "date": "2026-07-06", "class": "Class 6",
+         "going": "Good", "dist_y": "1320", "course": "Ripon", "type": "Flat",
+         "runners": [{"horse_id": "hrs_1", "position": "2", "weight_lbs": "135",
+                      "or": "–"}]},
+    ]
+    runs = past_runs_from_raw(rows, "hrs_1")
+    assert runs[0].distance_f == 5.0
+    assert runs[0].race_class == 6
+    assert runs[0].weight_lbs == 135
+    assert runs[0].official_rating == 65
+    assert "running early" in runs[0].comment
+    assert runs[1].distance_f == 6.0          # 1320y / 220 — the yards fallback
+    assert runs[1].official_rating is None    # '–' is an honest blank

@@ -139,9 +139,11 @@ def build_evidence(race: Race, client: _Fetcher, as_of: date | None = None) -> l
         try:
             history = past_runs_from_raw(client.horse_results(r.horse_id, limit=20),
                                          r.horse_id)
-        except Exception:
-            print(f"      ⚠ evidence OWED for {r.horse} — history fetch failed",
-                  flush=True)
+        except Exception as exc:
+            # NAME the failure (2026-08-01: a whole Saturday of 'history fetch
+            # failed' with the cause swallowed — an unnamed error is undiagnosable)
+            print(f"      ⚠ evidence OWED for {r.horse} — history fetch failed: "
+                  f"{exc.__class__.__name__}: {str(exc)[:100]}", flush=True)
             history = ()
         if as_of is not None:
             history = tuple(h for h in history if h.date < as_of)

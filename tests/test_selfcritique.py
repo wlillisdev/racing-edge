@@ -187,9 +187,13 @@ def test_critique_mines_forward_clues_and_the_tracker_stores_them() -> None:
     text = render_critique(c, "x", "y")
     assert "→ FOLLOW Crackerjack Queen" in text and "→ OPPOSE Phantom Gold" in text
     with tempfile.TemporaryDirectory() as d:
+        from datetime import timedelta
         log = NuanceLog(Path(d) / "n.db")
         for _ in range(2):     # idempotent on (date, horse, angle)
-            log.track(day=date(2026, 7, 1), race_id="r1", horse="Crackerjack Queen",
+            # relative date: a fixed 2026-07-01 aged past the 28-day window and the
+            # test started failing by calendar alone (caught 2026-07-31)
+            log.track(day=date.today() - timedelta(days=3), race_id="r1",
+                      horse="Crackerjack Queen",
                       horse_id="H9", angle="follow", note="pressed the winner",
                       conditions="decent pace")
         rows = log.tracked_active()

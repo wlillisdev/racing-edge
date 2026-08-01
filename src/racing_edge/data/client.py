@@ -35,6 +35,7 @@ class RacingAPIClient:
         self._session = requests.Session()
         self._session.auth = (self._cfg.api.username, self._cfg.api.password)  # Basic Auth
         self._last_request = 0.0
+        self._hr_demoted = False   # /horses/…/results plan-gated? remembered per process
 
     def _throttle(self) -> None:
         gap = time.monotonic() - self._last_request
@@ -120,15 +121,54 @@ class RacingAPIClient:
         return self._get(f"/results/{race_id}", allow_404=True)
 
     # ---- per-horse / per-trainer (for the evidence the method needs) --------
-    def horse_results(self, horse_id: str, limit: int = 12) -> list[dict]:
-        """A horse's past runs — the raw material for the proven-at-level reads."""
-        if not horse_id:
-            return []
-        doc = self._get(f"/horses/{horse_id}/results", params={"limit": limit}, allow_404=True)
+    @staticmethod
+    def _result_rows(doc: Any) -> list[dict]:
         if isinstance(doc, dict):
             rows = doc.get("results") or doc.get("data") or []
             return rows if isinstance(rows, list) else []
         return doc if isinstance(doc, list) else []
+
+    def horse_results(self, horse_id: str, limit: int = 12) -> list[dict]:
+        """A horse's past runs — the raw material for the proven-at-level reads.
+
+        TWO DOORS (2026-08-01, the blind Saturday: /horses/{id}/results is a PRO
+        endpoint and started answering 401 on the Standard plan — every history
+        died and the morning read went in blind). The Pro door is tried first;
+        on a plan-gate status (401/402/403) the client demotes itself for the
+        rest of the process to the Basic-tier /racecards/{horse_id}/results door
+        — the SAME race-shaped rows, but only for horses on today/tomorrow's
+        cards, which is exactly the morning's use. Histories are NOT an optional
+        lens, so plan-gates here fall through loudly instead of the silent
+        403-empty other endpoints get. Pin a door with
+        RACING_API_HORSE_RESULTS=pro|standard.
+        REVERT-IF: on-card horses come back history-empty two mornings running.
+        """
+        if not horse_id:
+            return []
+        import os
+        pin = (os.environ.get("RACING_API_HORSE_RESULTS", "") or "").strip().lower()
+        if pin != "standard" and not self._hr_demoted:
+            try:
+                doc = self._get(f"/horses/{horse_id}/results",
+                                params={"limit": limit}, allow_404=False)
+                return self._result_rows(doc)
+            except RacingAPIError as exc:
+                if exc.status_code == 404:
+                    return []                      # unknown horse — honest blank
+                if pin == "pro" or exc.status_code not in (401, 402, 403):
+                    raise
+                self._hr_demoted = True
+                print(f"      ⚠ /horses/…/results plan-gated (HTTP {exc.status_code})"
+                      " — switching to the racecards results door for this run",
+                      flush=True)
+        try:
+            doc = self._get(f"/racecards/{horse_id}/results",
+                            params={"limit": limit}, allow_404=False)
+        except RacingAPIError as exc:
+            if exc.status_code == 422:
+                return []          # not on today/tomorrow's cards — this door can't see it
+            raise                  # anything else (incl. 404) stays LOUD — see docstring
+        return self._result_rows(doc)
 
     def trainer_ages(self, trainer_id: str) -> list[dict]:
         """The trainer's record BY HORSE AGE — the specialty read (the master,
