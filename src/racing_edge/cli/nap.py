@@ -390,17 +390,21 @@ def main() -> int:
     emit("")
 
     if not survivors:
-        emit("No nap — every contender crossed off. Discipline is a position.")
-        _bank_pass(resolve_date(args.day), "every contender crossed off by the gates")
-        _maybe_email(out, "Nap — no bet today", args.email)
-        return 0
+        # THE FOURTH TRAPDOOR (2026-08-01, found in the ledger's own words: 'every
+        # contender crossed off by the gates' — a Saturday passed before the reader
+        # ever opened its eyes). Neutral eyes mean the READER still reads: flags are
+        # cautions in its candidates, the floors still guard the bank, and with no
+        # survivors there is no fallback — the reader's case must stand alone or
+        # the day passes honestly AFTER the reading, never before it.
+        emit("  ⚠ every engine survivor crossed off — the reader reads the flagged "
+             "card regardless (cautions, not blindfolds); floors still guard the bank.")
 
     # THE MORNING DEEP READ (2026-07-05 — the master: "you can find a winner, just
     # look harder; stop stupid picks"). The engine only SHORTLISTS; the deep model
     # (with the franking tools) reads the candidate races form-first and picks THE
     # race and THE horse — or earns a pass race by race. Fallback: the engine's
     # strongest survivor, honestly labelled as the shallow pick.
-    nap = survivors[0]
+    nap = survivors[0] if survivors else field[0]
     deep_case: list[str] = []
     mp = None
     try:
@@ -609,7 +613,7 @@ def main() -> int:
     # carry a WINNING-ERA core (4+ lens FAMILIES including well-in — the banked
     # winners' shape: mark + course + market + one more) or the day is a pass.
     if not deep_case:
-        if nap.conviction.score < 4 or not nap.conviction.well_in:
+        if not survivors or nap.conviction.score < 4 or not nap.conviction.well_in:
             emit(f"  ✗ FALLBACK TOO THIN: deep read unavailable and the engine pick "
                  f"({nap.runner.horse}, conv {nap.conviction.score}) lacks the "
                  f"winning-era core — no bet without the reader.")
