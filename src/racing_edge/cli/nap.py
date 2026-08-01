@@ -770,4 +770,5 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    from racing_edge.cli._common import run_guarded
+    raise SystemExit(run_guarded("nap", main))

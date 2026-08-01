@@ -1,0 +1,16 @@
+# THE GATE (2026-08-01 architecture pass): a red suite reached the live box
+# because a human piped pytest and lost its exit code. Machines don't pipe.
+# Every push runs the full suite; the branch page shows red before the box
+# ever pulls it.
+name: tests
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"   # matches the PythonAnywhere box
+      - run: pip install -r requirements.txt pytest
+      - run: PYTHONPATH=src python -m pytest tests/ -q

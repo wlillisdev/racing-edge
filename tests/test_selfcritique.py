@@ -312,3 +312,21 @@ def test_repetition_becomes_votes_and_the_record_promotes_themes() -> None:
         cs = log.clue_scoreboard(since="2026-07-01")
         assert cs["follow"]["n"] == 5 and cs["follow"]["hits"] == 4
         log.close()
+
+
+def test_run_guarded_crash_names_itself_and_exits_1(capsys) -> None:
+    """2026-08-01 architecture pass: a scheduled task's unhandled crash must
+    return 1 (honest exit for the flight recorder), print the full traceback,
+    and ATTEMPT the crash email — never invent success, never die silently."""
+    from racing_edge.cli._common import run_guarded
+
+    def _boom() -> int:
+        raise RuntimeError("HTTP 401 Pro Plan required")
+
+    assert run_guarded("night", _boom) == 1
+    outp = capsys.readouterr().out
+    assert "RuntimeError" in outp and "Pro Plan required" in outp   # named, loud
+    assert "crash email" in outp                                    # tried to tell
+
+    # a clean exit passes through untouched — the net never rewrites success
+    assert run_guarded("night", lambda: 0) == 0
