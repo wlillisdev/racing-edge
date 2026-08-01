@@ -220,8 +220,10 @@ def main() -> int:
     log2 = open_nap_log()
     w, n = log2.strike_rate()                      # correct: pass days (won=-1) excluded
     sw, sn = log2.shadow_strike()
-    log2.close()
+    # P/L must be read BEFORE close (2026-08-01: it sat after close() and the
+    # whole health report died on 'Cannot operate on a closed database')
     pnl, _pn = log2.profit_loss() if hasattr(log2, "profit_loss") else (0.0, 0)
+    log2.close()
     lines.append(f"  record: {w}/{n} settled naps won"
                  + (f" ({100 * w / n:.0f}%), level stakes at SP {pnl:+.1f}pt" if n else ""))
     # LOSS-STREAK ALARM (coroner fix 1: six losses passed with no alarm anywhere)
