@@ -330,3 +330,34 @@ def test_run_guarded_crash_names_itself_and_exits_1(capsys) -> None:
 
     # a clean exit passes through untouched — the net never rewrites success
     assert run_guarded("night", lambda: 0) == 0
+
+
+def test_engineer_sweep_flags_tracebacks_and_slow_creep() -> None:
+    """The daily engineer's eye (2026-08-01): mechanical, free, every morning.
+    A traceback in today's runs goes RED; a task running 2x its own 7-day norm
+    goes RED; a normal day reports runtimes and stays green."""
+    from racing_edge.cli.health import _engineer_sweep
+
+    def day(d, task, t0, t1, body=""):
+        return (f"=== {d} {t0} UTC :: trial.sh {task} START\n{body}"
+                f"=== {d} {t1} UTC :: trial.sh {task} EXIT 0\n")
+
+    # a week of ~6-minute naps, then today takes 20 minutes → RED slow creep
+    log = "".join(day(f"2026-07-{25 + i}", "nap", "07:30:00", "07:36:00")
+                  for i in range(5))
+    log += day("2026-08-01", "nap", "07:30:00", "07:50:00")
+    ok, out = _engineer_sweep(log, "2026-08-01")
+    assert not ok and any("2x slow-down" in ln for ln in out)
+
+    # same week, today normal → green, runtimes reported
+    log2 = "".join(day(f"2026-07-{25 + i}", "nap", "07:30:00", "07:36:00")
+                   for i in range(5))
+    log2 += day("2026-08-01", "nap", "07:30:00", "07:37:00")
+    ok2, out2 = _engineer_sweep(log2, "2026-08-01")
+    assert ok2 and any("runtimes" in ln for ln in out2)
+
+    # a traceback in today's block → RED even though exits look clean
+    log3 = log2 + day("2026-08-01", "health", "09:30:00", "09:30:05",
+                      "Traceback (most recent call last):\n  boom\n")
+    ok3, _ = _engineer_sweep(log3, "2026-08-01")
+    assert not ok3
