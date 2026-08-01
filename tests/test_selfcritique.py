@@ -86,7 +86,8 @@ def test_each_task_gets_the_right_brain_never_haiku() -> None:
     assert resolve_model("study") == "claude-sonnet-5"
     assert resolve_model("sceptic") == "claude-sonnet-5"
     assert resolve_model("synthesis") == "claude-sonnet-5"
-    assert resolve_model("nap") == "claude-fable-5"       # the one flagship call a day
+    assert resolve_model("nap") == "claude-opus-5"        # the one flagship call a day
+    # (2026-08-01 cost pass: Opus 5 — flagship reasoning at half the premium price)
     for task in ("study", "sceptic", "synthesis", "nap"):
         assert "haiku" not in resolve_model(task)
     # THE TRAP IS DEAD: a global override no longer hijacks known tasks...
