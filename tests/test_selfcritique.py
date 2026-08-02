@@ -361,3 +361,15 @@ def test_engineer_sweep_flags_tracebacks_and_slow_creep() -> None:
                       "Traceback (most recent call last):\n  boom\n")
     ok3, _ = _engineer_sweep(log3, "2026-08-01")
     assert not ok3
+
+
+def test_night_school_thinking_is_capped_by_effort() -> None:
+    """2026-08-01 night: Sonnet 5 thinks by default and thinking bills from
+    max_tokens — the study spent its ENTIRE allowance thinking and returned
+    empty text for both races. Effort 'low' caps the thinking for the night
+    school's mechanical reads; the nap keeps full deliberation (no override)."""
+    from racing_edge.ai.reason import _effort_config
+    assert _effort_config("study") == {"output_config": {"effort": "low"}}
+    assert _effort_config("sceptic") == {"output_config": {"effort": "low"}}
+    assert _effort_config("synthesis") == {"output_config": {"effort": "medium"}}
+    assert _effort_config("nap") == {}          # the pick thinks at full depth
