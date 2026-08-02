@@ -146,6 +146,24 @@ def budget_blown(task: str | None = None) -> int | None:
     return None
 
 
+# THINKING vs THE ANSWER (2026-08-01 night, the empty study: the Claude 5
+# family THINKS by default, and thinking bills from the same max_tokens as the
+# answer — the study spent its whole 3000-then-6000 allowance thinking and
+# returned `blocks=['thinking']` with NO text, twice, both races. Effort caps
+# the thinking: 'low' for the night school's per-race reads (mechanical
+# questionnaire over supplied facts — deep deliberation isn't what we pay it
+# for), default for the nap (the one call where deliberation IS the product,
+# paired with real max_tokens headroom).
+# REVERT-IF: study output quality visibly collapses (vacuous nuances) — then
+# raise effort back and pay for headroom instead.
+_TASK_EFFORT = {"study": "low", "sceptic": "low", "synthesis": "medium"}
+
+
+def _effort_config(task: str) -> dict:
+    eff = _TASK_EFFORT.get(task)
+    return {"output_config": {"effort": eff}} if eff else {}
+
+
 def _post_with_retry(headers: dict, body: dict) -> tuple[dict | None, int]:
     """POST to the Messages API with backoff on transient failures (429 / 5xx /
     network) — the same courtesy the Racing API client already gets. Returns
@@ -213,7 +231,8 @@ def get_investigator(task: str, tools: list[dict],
             body = {"model": model, "max_tokens": budget,
                     "system": [{"type": "text", "text": system,
                                 "cache_control": {"type": "ephemeral"}}],
-                    "messages": messages, "tools": tools}
+                    "messages": messages, "tools": tools,
+                    **_effort_config(task)}
             data, status = _post_with_retry(headers, body)
             if data is None:
                 trail.append(f"API error {status or 'network'} — gave up after retries")
@@ -287,6 +306,7 @@ def get_reasoner(task: str = "study",
             "max_tokens": max_tokens,
             "system": system,
             "messages": [{"role": "user", "content": prompt}],
+            **_effort_config(task),
         }
         data, _status = _post_with_retry(headers, body)
         if data is None:

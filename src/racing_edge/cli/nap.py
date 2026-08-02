@@ -468,7 +468,7 @@ def main() -> int:
         # the flagship answer was being paid for twice, daily)
         deep = get_investigator("nap", TOOLS,
                                 make_executor(client, cand_races[0][0].race),
-                                max_steps=6, max_tokens=6000)
+                                max_steps=6, max_tokens=16000)
         if deep is None:
             emit("  (deep read OFF — no ANTHROPIC_API_KEY; falling back to the "
                  "shallow engine pick)")
