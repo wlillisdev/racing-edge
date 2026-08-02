@@ -373,3 +373,33 @@ def test_night_school_thinking_is_capped_by_effort() -> None:
     assert _effort_config("sceptic") == {"output_config": {"effort": "low"}}
     assert _effort_config("synthesis") == {"output_config": {"effort": "medium"}}
     assert _effort_config("nap") == {}          # the pick thinks at full depth
+
+
+def test_broom_alarm_only_reds_on_sweep_survivors() -> None:
+    """2026-08-02: the July-4 clue flood crossed the 28-day line each dawn and
+    the health alarm cried 'broom dead' at a broom that had swept 71 rows hours
+    earlier. The alarm now judges at 29 days — rows the broom had its chance at
+    — so a working broom with a daily expiry wave stays green."""
+    import tempfile
+    from datetime import date, timedelta
+    from pathlib import Path
+    from racing_edge.study.nuances import NuanceLog
+
+    with tempfile.TemporaryDirectory() as td:
+        log = NuanceLog(Path(td) / "n.db")
+        # a clue 29 days old — crossed the line since last night's sweep:
+        # today's wave, tonight's broom's job, not a dead-broom signal
+        log.track(day=date.today() - timedelta(days=29), race_id="r1",
+                  horse="Wave", horse_id="h1", angle="follow", note="x",
+                  conditions="c")
+        assert log.tracked_stale(28) == 1      # visible as today's wave...
+        assert log.tracked_stale(29) == 0      # ...but NOT a dead-broom signal
+        # a clue 40 days old that a running broom would have swept: real signal
+        log.track(day=date.today() - timedelta(days=40), race_id="r2",
+                  horse="Relic", horse_id="h2", angle="follow", note="y",
+                  conditions="c")
+        assert log.tracked_stale(29) == 1
+        # and the broom itself clears it
+        log.expire_tracked()
+        assert log.tracked_stale(29) == 0
+        log.close()

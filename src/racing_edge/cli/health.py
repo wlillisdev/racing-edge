@@ -146,15 +146,22 @@ def main() -> int:
     # from the working lists — an alarm nobody can silence teaches people to ignore
     # alarms). Stale = rows STILL 'active' in the DB beyond 28 days: ~0 while the
     # nightly expire_tracked broom runs; growing = the broom is dead.
+    # Count only rows that SURVIVED last night's sweep (2026-08-02: the July-4
+    # clue flood crossed the 28-day line at dawn — after the 22:00 broom, before
+    # tonight's — and the alarm cried 'broom dead' at a broom that had verifiably
+    # swept 71 rows hours earlier. Judged at 29 days: anything still active past
+    # THAT line was there when the broom last ran, which is the real dead-broom
+    # signal. The daily wave gets swept tonight and is reported, not redded.)
     nlog_stale = open_nuance_log()
-    stale_clues = nlog_stale.tracked_stale()
+    stale_clues = nlog_stale.tracked_stale(29)
+    todays_wave = nlog_stale.tracked_stale(28) - stale_clues
     nlog_stale.close()
     all_ok &= _check(
         stale_clues < 10,
-        f"tracked list healthy ({len(tracked)} live clue(s); {stale_clues} awaiting "
-        "the nightly broom)",
-        f"{stale_clues} clues sitting active beyond the 28-day expiry — the nightly "
-        "broom (expire_tracked in --settle) is not running",
+        f"tracked list healthy ({len(tracked)} live clue(s); {todays_wave} newly "
+        "expired awaiting tonight's broom)",
+        f"{stale_clues} clues survived last night's broom beyond the 28-day expiry "
+        "— the nightly broom (expire_tracked in --settle) is genuinely not running",
         lines)
     # THE DOORBELL (coroner 2026-07-21: 0 validated / 104 refuted — nuances have no
     # path to 'validated' without the master's ruling, and nothing ever ASKED him).
