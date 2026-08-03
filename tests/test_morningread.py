@@ -159,3 +159,15 @@ def _main() -> int:
 
 if __name__ == "__main__":
     sys.exit(_main())
+
+
+def test_the_masters_glance_rides_in_the_rulebook() -> None:
+    """Taught 2026-08-03 after the Galway 5:00 loss ('bang average horse, hard
+    to read form — I would never have looked at it'): the nap comes only from
+    races a handicapper would actually study; wrong-type races are a PASS."""
+    from racing_edge.study.morningread import NAP_SYSTEM
+    assert "THE MASTER'S GLANCE" in NAP_SYSTEM
+    assert "never have "
+    assert "would actually STUDY" in NAP_SYSTEM
+    assert "NEVER a nap candidate" in NAP_SYSTEM
+    assert "correct nap is a PASS" in NAP_SYSTEM
