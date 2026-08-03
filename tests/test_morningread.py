@@ -171,3 +171,14 @@ def test_the_masters_glance_rides_in_the_rulebook() -> None:
     assert "would actually STUDY" in NAP_SYSTEM
     assert "NEVER a nap candidate" in NAP_SYSTEM
     assert "correct nap is a PASS" in NAP_SYSTEM
+
+
+def test_stack_the_cards_rides_beside_the_glance() -> None:
+    """Taught 2026-08-03 — 'stack the cards in your favour... focus on races
+    where you can join the dots': the record's winning profile and the 11/2+
+    price tripwire ride in the rulebook, explicitly NOT overturning #12."""
+    from racing_edge.study.morningread import NAP_SYSTEM
+    assert "STACK THE CARDS" in NAP_SYSTEM
+    assert "PRICE TRIPWIRE" in NAP_SYSTEM
+    assert "does NOT overturn #12" in NAP_SYSTEM
+    assert "the pass is the professional play" in NAP_SYSTEM
