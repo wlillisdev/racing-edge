@@ -403,3 +403,36 @@ def test_broom_alarm_only_reds_on_sweep_survivors() -> None:
         log.expire_tracked()
         assert log.tracked_stale(29) == 0
         log.close()
+
+
+def test_a_vote_counts_as_fresh_learning() -> None:
+    """2026-08-03: the night school ran perfectly and banked its lessons as
+    VOTES on existing rows (convergence) — and the freshness alarm cried 'not
+    running' because votes mint no new row. A vote stamps last_seen; the
+    ledger's view must carry it so health can honour re-derived learning."""
+    import tempfile
+    from datetime import date
+    from pathlib import Path
+    from racing_edge.study.nuances import NuanceLog
+
+    with tempfile.TemporaryDirectory() as td:
+        log = NuanceLog(Path(td) / "n.db")
+        old = date(2026, 7, 1)
+        log.record(day=old, race_id="r1", course="Youghal", winner="W",
+                   blind_pick="", nuance="manner outranks the bare figure",
+                   what_missed="", cite="", owed="", confidence="medium",
+                   status="proposed", sceptic_ground="", sceptic_reason="",
+                   theme="manner", mechanism="m", fails_when="f")
+        # tonight the study re-derives it: a VOTE, not a row
+        merged = log.record(day=date.today(), race_id="r2", course="X",
+                            winner="W2", blind_pick="",
+                            nuance="manner outranks the bare figure",
+                            what_missed="", cite="", owed="",
+                            confidence="medium", status="proposed",
+                            sceptic_ground="", sceptic_reason="",
+                            theme="manner", mechanism="m", fails_when="f")
+        assert merged is not None                      # merged as a vote
+        rows = log.all()
+        assert len(rows) == 1                          # no new row minted
+        assert rows[0]["last_seen"] == date.today().isoformat()  # learning visible
+        log.close()

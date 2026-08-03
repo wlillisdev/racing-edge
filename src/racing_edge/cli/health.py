@@ -127,7 +127,13 @@ def main() -> int:
     tracked = nlog.tracked_active()
     nlog.close()
     fresh_cut = (today - timedelta(days=2)).isoformat()
-    fresh_nu = [n for n in nuances if n["date"] >= fresh_cut]
+    # A RE-DERIVED lesson is learning too (2026-08-03: the night school ran
+    # perfectly — both studies re-stated banked #194, stamped as VOTES with
+    # 'seen_count incremented, no new row' — and this alarm cried 'not running'
+    # because it only counted NEW rows. Convergence stamps last_seen; freshness
+    # honours either.)
+    fresh_nu = [n for n in nuances
+                if n["date"] >= fresh_cut or (n.get("last_seen") or "") >= fresh_cut]
     all_ok &= _check(
         bool(fresh_nu) or not naps,
         f"self-study flowing ({len(fresh_nu)} nuance row(s) in the last 2 days; "
