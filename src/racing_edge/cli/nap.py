@@ -66,6 +66,12 @@ def _maybe_email(buf: list[str], subject: str, email: bool) -> None:
     print(f"  email to {recipient() or '?'}: {ok if ok else 'FAILED — check the SMTP env'}")
 
 
+class _EngineBankNow(Exception):
+    """Control-flow sentinel (engine-first mode): the case is written, the pick
+    is fixed — jump straight from the reader to the bank, skipping every
+    reader-mode floor and fallback below the try block."""
+
+
 def _bank_pass(day, reason: str) -> None:
     """A no-bet day is still a ledger day — banked with its reason (never overwrites
     a real pick: record_pass only fires on paths where none was banked)."""
@@ -389,7 +395,29 @@ def main() -> int:
              f"conv {c.score}{mark}: {', '.join(c.aligned) or 'thin'}")
     emit("")
 
-    if not survivors:
+    # ═══ THE FLIP (the master, 2026-08-08: 'flip it — what we are doing clearly
+    # is not working... our shadow selections were at least placing'). The
+    # record's A/B agreed: the mechanical engine's top survivor (the shadow
+    # column) out-struck the deep reader's chosen picks. So the ENGINE now
+    # SELECTS — the exact selection the shadow scored with, no floors, no
+    # re-picks — and the reader is demoted to CASE-WRITER with one power: a
+    # veto on a cited disqualifying fact. Restore the old reader-selects mode
+    # with NAP_MODE=reader. REVERT-IF: engine-led naps go 0/8, or strike below
+    # the reader era's 36% over the next 15 settled.
+    import os as _os
+    engine_mode = _os.environ.get("NAP_MODE", "engine").strip().lower() != "reader"
+    if engine_mode:
+        emit("  MODE: ENGINE-FIRST — the engine selects (the shadow method, "
+             "promoted by the record); the reader writes the case and may only "
+             "veto on a cited disqualifying fact.")
+        if not survivors:
+            emit("  ENGINE-FIRST: no survivor stands — the engine has no pick. "
+                 "Discipline is a position.")
+            _bank_pass(resolve_date(args.day), "engine-first: no survivors")
+            _maybe_email(out, "Nap — no bet today (engine: no survivors)",
+                         args.email)
+            return 0
+    elif not survivors:
         # THE FOURTH TRAPDOOR (2026-08-01, found in the ledger's own words: 'every
         # contender crossed off by the gates' — a Saturday passed before the reader
         # ever opened its eyes). Neutral eyes mean the READER still reads: flags are
@@ -433,21 +461,27 @@ def main() -> int:
         # three candidates, not four (2026-07-27 cost audit): the fourth race's
         # full-field readout bought little and billed daily; a FOLLOW race takes
         # the third slot when one runs
-        cand_order: list[str] = []
-        for p in field:                      # field is rank-sorted, flagged included
-            if p.race.race_id not in cand_order:
-                cand_order.append(p.race.race_id)
-            if len(cand_order) >= 2:
-                break
-        for _hid, (tp, t) in seen.items():
-            if (t["angle"] == "follow" and tp.race.race_id not in cand_order
-                    and len(cand_order) < 3):
-                cand_order.append(tp.race.race_id)
-        for p in field:
-            if len(cand_order) >= 3:
-                break
-            if p.race.race_id not in cand_order:
-                cand_order.append(p.race.race_id)
+        if engine_mode:
+            # ENGINE-FIRST: one race — the engine's pick's race. The reader
+            # reads it in full to write the case (or find a disqualifier); it
+            # chooses nothing.
+            cand_order: list[str] = [nap.race.race_id]
+        else:
+            cand_order = []
+            for p in field:                  # field is rank-sorted, flagged included
+                if p.race.race_id not in cand_order:
+                    cand_order.append(p.race.race_id)
+                if len(cand_order) >= 2:
+                    break
+            for _hid, (tp, t) in seen.items():
+                if (t["angle"] == "follow" and tp.race.race_id not in cand_order
+                        and len(cand_order) < 3):
+                    cand_order.append(tp.race.race_id)
+            for p in field:
+                if len(cand_order) >= 3:
+                    break
+                if p.race.race_id not in cand_order:
+                    cand_order.append(p.race.race_id)
         cand_races = [all_by_race[rid] for rid in cand_order[:3]]
         candidates = []
         for picks in cand_races:
@@ -509,11 +543,69 @@ def main() -> int:
             print(f"  deep read: {resolve_model('nap')} on "
                   f"{len(candidates)} candidate race(s), "
                   f"{len(lesson_lines)} banked lesson(s) in hand…", flush=True)
-            text, trail = deep(NAP_SYSTEM,
-                               build_nap_prompt(candidates, "\n".join(lesson_lines)))
+            if engine_mode:
+                from racing_edge.study.morningread import VETO_SYSTEM
+                _fixed = (f"\n\nTHE ENGINE'S PICK (FIXED — you do not choose): "
+                          f"{nap.runner.horse} in {nap.race.course} "
+                          f"{nap.race.off_time}. Write its case with that exact "
+                          f"race and horse, or veto (pass=true) with the cited "
+                          f"disqualifying fact as pass_reason.")
+                text, trail = deep(VETO_SYSTEM,
+                                   build_nap_prompt(candidates,
+                                                    "\n".join(lesson_lines))
+                                   + _fixed)
+            else:
+                text, trail = deep(NAP_SYSTEM,
+                                   build_nap_prompt(candidates,
+                                                    "\n".join(lesson_lines)))
             for t in trail:
                 print(f"      🔎 {t}", flush=True)
             mp = parse_morning_pick(text)
+            if engine_mode and mp.ok and mp.is_pass:
+                # THE VETO — one power, one duty: the fact rides in the ledger,
+                # and the vetoed engine pick banks in the shadow column so the
+                # RECORD judges every veto (a veto that keeps killing winners
+                # will hang by its own rope).
+                emit(f"  READER VETO (cited disqualifying fact): {mp.pass_reason}")
+                _vday = resolve_date(args.day)
+                _bank_pass(_vday, f"reader veto of engine pick "
+                                  f"{nap.runner.horse}: {mp.pass_reason}")
+                _vlog = open_nap_log()
+                _vlog.record_shadow(day=_vday, race_id=nap.race.race_id,
+                                    course=nap.race.course,
+                                    horse=nap.runner.horse,
+                                    horse_id=nap.runner.horse_id,
+                                    price=nap.price,
+                                    score=nap.conviction.score)
+                _vlog.close()
+                emit("  (the vetoed pick banks in the shadow column — the "
+                     "record judges the veto itself)")
+                _maybe_email(out, "Nap — no bet today (reader veto)", args.email)
+                return 0
+            if engine_mode:
+                # agreement path: the pick is FIXED — the case attaches only if
+                # the reader wrote it for the engine's horse; a re-pick attempt
+                # is not a power it has.
+                if (mp.ok and mp.horse and mp.horse.strip().lower()
+                        == nap.runner.horse.strip().lower()):
+                    deep_case = [
+                        f"  DEEP READ ({resolve_model('nap')}) — the case for "
+                        f"the ENGINE'S pick:",
+                        f"    {mp.case}",
+                        f"    THE DANGER: {mp.danger_horse} — {mp.danger_case}",
+                        f"    beaten because: {mp.danger_beaten}"]
+                    if mp.cite:
+                        deep_case.append(f"    rests on: {' | '.join(mp.cite)}")
+                    if mp.owed:
+                        deep_case.append(f"    OWED: {mp.owed}")
+                elif mp.ok and mp.horse:
+                    emit(f"  ⚠ reader attempted a re-pick ('{mp.horse}') — not "
+                         f"its power in engine mode; the engine pick banks "
+                         f"with the mechanical case.")
+                else:
+                    emit("  (no usable case from the reader — the engine pick "
+                         "banks with the mechanical case)")
+                raise _EngineBankNow                     # skip reader-mode logic below
             if mp.ok and mp.is_pass:
                 emit("  DEEP READ: argued a PASS, race by race:")
                 emit(f"    {mp.pass_reason}")
@@ -572,6 +664,8 @@ def main() -> int:
                 emit("  (deep read gave no usable pick — falling back to the shallow "
                      "engine pick; raw kept in the task log)")
                 print(f"  raw: {mp.raw[:300]}", flush=True)
+    except _EngineBankNow:
+        pass                       # engine mode: case written (or not) — bank the pick
     except Exception as exc:                      # the deep read must never kill the bank
         emit(f"  (deep read failed: {exc.__class__.__name__} — shallow engine pick used)")
 
@@ -612,7 +706,7 @@ def main() -> int:
     # banked when the deep read errored). Reader unavailable => the engine pick must
     # carry a WINNING-ERA core (4+ lens FAMILIES including well-in — the banked
     # winners' shape: mark + course + market + one more) or the day is a pass.
-    if not deep_case:
+    if (not engine_mode) and not deep_case:
         if not survivors or nap.conviction.score < 4 or not nap.conviction.well_in:
             emit(f"  ✗ FALLBACK TOO THIN: deep read unavailable and the engine pick "
                  f"({nap.runner.horse}, conv {nap.conviction.score}) lacks the "
@@ -631,7 +725,7 @@ def main() -> int:
     def _floor_fit_survivor():
         return _best_floor_fit(survivors, field)
 
-    if delta is None or delta > 0 or _mr.stale:
+    if (not engine_mode) and (delta is None or delta > 0 or _mr.stale):
         why_mark = ("STALE anchor — " + _mr.verdict if _mr.stale else
                     f"mark delta {delta if delta is not None else 'OWED'}")
         fb = _floor_fit_survivor()
@@ -664,11 +758,11 @@ def main() -> int:
     # form reader, the exact thing the master said he does not want). Never CONFIDENT
     # off-profile, and the shallow engine pick gets no such licence.
     soft_fails = []
-    if r.race_class is not None and r.race_class > 4:
+    if (not engine_mode) and r.race_class is not None and r.race_class > 4:
         soft_fails.append(f"class Cl{r.race_class}")
     _shape, _conc = market_shape([p.price for p in field
                                   if p.race.race_id == r.race_id and p.price])
-    if race_fav is None or _shape == "OPEN":
+    if (not engine_mode) and (race_fav is None or _shape == "OPEN"):
         soft_fails.append(f"no market anchor (fav {race_fav}, "
                           f"top-3 concentration {_conc:.2f})")
     off_profile = bool(soft_fails)
@@ -756,10 +850,11 @@ def main() -> int:
     # THE SHADOW: the mechanical engine's own top survivor, banked silently for the
     # A/B record (one machine, two ledgers — the record decides which method earns
     # the stakes). Costs nothing: it was already computed.
-    eng = survivors[0]
-    log.record_shadow(day=day, race_id=eng.race.race_id, course=eng.race.course,
-                      horse=eng.runner.horse, horse_id=eng.runner.horse_id,
-                      price=eng.price, score=eng.conviction.score)
+    eng = survivors[0] if survivors else nap
+    if (not engine_mode) or eng.runner.horse_id != nap.runner.horse_id:
+        log.record_shadow(day=day, race_id=eng.race.race_id, course=eng.race.course,
+                          horse=eng.runner.horse, horse_id=eng.runner.horse_id,
+                          price=eng.price, score=eng.conviction.score)
     if eng.runner.horse_id != nap.runner.horse_id:
         emit(f"  shadow (engine method): {eng.runner.horse} — {eng.race.course} "
              f"{eng.race.off_time} (paper only, banked for the A/B record)")

@@ -67,6 +67,9 @@ and selection are pure (no I/O) — that's what makes them testable and safe.
 - `ANTHROPIC_MODEL_<TASK>` > table > `ANTHROPIC_MODEL` — model per task.
 - `NAP_TOKEN_BUDGET` (global day cap) / `NAP_TOKEN_BUDGET_<TASK>` — hard stops.
 - `EMAIL_SENDER` / `EMAIL_PASSWORD` / `EMAIL_RECIPIENT` / `SMTP_HOST` / `SMTP_PORT`.
+- `NAP_MODE` — `engine` (default since 2026-08-08, THE FLIP: the engine's
+  mechanical top survivor is the nap; the reader writes the case and can only
+  veto on a cited disqualifying fact) | `reader` (pre-flip: reader selects).
 - `TRIAL_BRANCH` — branch trial.sh follows.
 
 ## Engineering rules of the road

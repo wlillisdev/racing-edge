@@ -182,3 +182,31 @@ def test_stack_the_cards_rides_beside_the_glance() -> None:
     assert "PRICE TRIPWIRE" in NAP_SYSTEM
     assert "does NOT overturn #12" in NAP_SYSTEM
     assert "the pass is the professional play" in NAP_SYSTEM
+
+
+def test_the_flip_veto_system_fixes_the_pick_and_limits_the_reader() -> None:
+    """THE FLIP (the master, 2026-08-08: 'flip it — what we are doing clearly
+    is not working... our shadow selections were at least placing'): the engine
+    selects; the reader writes the case and may only veto on a cited
+    disqualifying fact. No pick of its own, no preference, no doubt-vetoes."""
+    from racing_edge.study.morningread import VETO_SYSTEM
+    assert "NOT the selector" in VETO_SYSTEM
+    assert "FIXED" in VETO_SYSTEM
+    assert "DISQUALIFYING FACT" in VETO_SYSTEM
+    assert "'I prefer another horse' is not a veto" in VETO_SYSTEM
+    assert "Doubt without a fact is not a veto" in VETO_SYSTEM
+
+
+def test_engine_mode_is_the_default_and_reader_mode_survives() -> None:
+    """The flip defaults ON; NAP_MODE=reader restores the old hierarchy (the
+    one-switch revert the protocol demands for a behaviour change this size)."""
+    import os
+    from racing_edge.cli.nap import _EngineBankNow           # sentinel exists
+    assert issubclass(_EngineBankNow, Exception)
+    # the mode parse: anything but 'reader' means engine-first
+    for val, engine in (("", True), ("engine", True), ("READER", False),
+                        ("reader", False)):
+        os.environ["NAP_MODE"] = val
+        assert (os.environ.get("NAP_MODE", "engine").strip().lower()
+                != "reader") is engine
+    os.environ.pop("NAP_MODE", None)
