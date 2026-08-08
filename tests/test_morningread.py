@@ -195,6 +195,10 @@ def test_the_flip_veto_system_fixes_the_pick_and_limits_the_reader() -> None:
     assert "DISQUALIFYING FACT" in VETO_SYSTEM
     assert "'I prefer another horse' is not a veto" in VETO_SYSTEM
     assert "Doubt without a fact is not a veto" in VETO_SYSTEM
+    # taught 2026-08-08: the case OPENS with the reader's own tissue price —
+    # 'a different way of looking at it — why would you back a 50/1 shot?'
+    assert "YOUR OWN PRICE" in VETO_SYSTEM
+    assert "no bet at ANY odds" in VETO_SYSTEM
 
 
 def test_engine_mode_is_the_default_and_reader_mode_survives() -> None:
