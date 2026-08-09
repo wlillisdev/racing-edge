@@ -160,6 +160,25 @@ class NapLog:
                            (int(won), sp_dec, day.isoformat()))
         self._conn.commit()
 
+    def veto_watch(self, days: int = 7) -> tuple[int, int]:
+        """THE VETO TRIPWIRE (2026-08-08, the flip — the master: 'how do we
+        build a fail safe to stop you departing from it'). The reader's one
+        remaining power is the veto; over-use is departure by the back door,
+        and a veto that killed a WINNER must surface by name. Returns
+        (vetoes banked in the window, vetoed picks that then won — joined
+        against the shadow column where every vetoed pick banks)."""
+        from datetime import timedelta
+        cut = (date.today() - timedelta(days=days)).isoformat()
+        v = int(self._conn.execute(
+            "SELECT COUNT(*) FROM nap WHERE won = -1 AND date >= ? "
+            "AND case_text LIKE 'reader veto%'", (cut,)).fetchone()[0])
+        k = int(self._conn.execute(
+            "SELECT COUNT(*) FROM nap n JOIN shadow s ON s.date = n.date "
+            "WHERE n.won = -1 AND n.date >= ? "
+            "AND n.case_text LIKE 'reader veto%' AND s.won = 1",
+            (cut,)).fetchone()[0])
+        return v, k
+
     def shadow_strike(self) -> tuple[int, int]:
         settled = int(self._conn.execute(
             "SELECT COUNT(*) FROM shadow WHERE won IS NOT NULL").fetchone()[0])

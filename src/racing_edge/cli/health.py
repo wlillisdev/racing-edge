@@ -297,6 +297,20 @@ def main() -> int:
     log2 = open_nap_log()
     w, n = log2.strike_rate()                      # correct: pass days (won=-1) excluded
     sw, sn = log2.shadow_strike()
+    # THE VETO TRIPWIRE (2026-08-08, the flip): the reader's only power,
+    # watched daily — a veto that killed a winner is RED by name; a veto
+    # habit (3+/week) is the old departing-from-the-rules disease back in
+    # its last hiding place.
+    if hasattr(log2, "veto_watch"):
+        _vn, _vk = log2.veto_watch()
+        if _vn:
+            all_ok &= _check(
+                _vk == 0 and _vn <= 2,
+                f"reader vetoes in check ({_vn} this week, none killed a winner)",
+                f"VETO ALARM — {_vn} veto(es) this week, {_vk} killed a WINNER: "
+                "the reader is departing by the back door; audit every veto "
+                "fact against the results before trusting the next one",
+                lines)
     # P/L must be read BEFORE close (2026-08-01: it sat after close() and the
     # whole health report died on 'Cannot operate on a closed database')
     pnl, _pn = log2.profit_loss() if hasattr(log2, "profit_loss") else (0.0, 0)
