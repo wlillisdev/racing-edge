@@ -214,3 +214,16 @@ def test_engine_mode_is_the_default_and_reader_mode_survives() -> None:
         assert (os.environ.get("NAP_MODE", "engine").strip().lower()
                 != "reader") is engine
     os.environ.pop("NAP_MODE", None)
+
+
+def test_the_flip_flopping_favourite_rides_in_both_rulebooks() -> None:
+    # taught 2026-08-15: Centurion's Sister won the Market Rasen 5:30 by ten
+    # lengths while the flip-flopping favourite finished nowhere. The master:
+    # "favourite was flip flopping never goes well". The warning applies only
+    # where price movement is visible — otherwise it is OWED, never guessed.
+    from racing_edge.study.morningread import NAP_SYSTEM, VETO_SYSTEM
+
+    for rulebook in (NAP_SYSTEM, VETO_SYSTEM):
+        assert "flip flopping never goes well" in rulebook
+        assert "money arguing with itself" in rulebook
+        assert "OWED, never guessed" in rulebook

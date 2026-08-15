@@ -32,3 +32,19 @@ marked exams (one-offs are variance: logged, nothing changed).
    evidence stacks: market-respected AND in-form AND course/distance/class
    suited. Most races are 2-3. A messy race is a 1 — still pick, stake
    nothing on the number.
+
+## v2 (2026-08-15) — corrections
+
+9. **The flip-flopping favourite** (taught by the master directly, so exempt
+   from the 3+ rule — his words after Centurion's Sister won the Market
+   Rasen 5:30 maiden by ten lengths while the favourite finished nowhere:
+   "favourite was flip flopping never goes well"): where price movement is
+   visible, a favourite bouncing up and down is money arguing with itself —
+   a warning against him, and a mark FOR the proven, exposed rival.
+10. **In a MAIDEN, verify the sphere of every "win"** (first offence logged
+    2026-08-15, the same race — rule 4 already required this and the sitter
+    broke it): a "1" earned in a bumper or points is not hurdles form. In
+    maidens the most proven at TODAY'S discipline often beats the unproven
+    "winner"; a consistent placer with the field's best discipline form is
+    a live win candidate there, not a wall — rule 7 applies to handicaps,
+    not maidens.
