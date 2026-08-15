@@ -87,3 +87,30 @@ def test_month_stability_flags_sign_flip():
     c.add(r_lose)  # April ROI -100%
     assert not c.stable()
     assert c.min_month_roi() == -100.0
+
+
+def test_daily_grader_scores_every_race_not_one_nap(tmp_path):
+    # the master, 2026-08-15: "we keep saying wait 50 races to see, there
+    # are 50 races every day" — the grader takes one pick per 5+ runner
+    # race across the whole card.
+    from racing_edge.school.daily import grade, pick_for
+    from racing_edge.school.mine import featurise, load_corpus
+
+    rows = []
+    for i in range(3):  # three 5-runner races on one day
+        rid = f"r{i}"
+        rows += [_row("2026-03-02", rid, f"h{i}a", "2.0", "1"),
+                 _row("2026-03-02", rid, f"h{i}b", "3.0", "2"),
+                 _row("2026-03-02", rid, f"h{i}c", "5.0", "3"),
+                 _row("2026-03-02", rid, f"h{i}d", "9.0", "4"),
+                 _row("2026-03-02", rid, f"h{i}e", "17.0", "5")]
+    scored = featurise(load_corpus(_corpus(tmp_path, rows)), "2026-03-01")
+    by_race = {}
+    for r in scored:
+        by_race.setdefault(r.race_id, []).append(r)
+    graded = grade({"2026-03-02": list(by_race.values())}, ["fav"])
+    n, wins, ret = graded["fav"]["2026-03-02"]
+    assert n == 3 and wins == 3 and ret == 6.0  # fav won all three at 2.0
+
+    # cell policy skips races with no matching runner
+    assert pick_for("cell:p11plus+mr1", list(by_race.values())[0]) is None
