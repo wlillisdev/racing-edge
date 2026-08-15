@@ -94,3 +94,4 @@ archive/external_exports/*.tar.gz
 # Claude Code — commit project settings, ignore local overrides and worktrees
 .claude/settings.local.json
 .claude/worktrees/
+data/school/
