@@ -1,7 +1,43 @@
 # HANDOFF — the apprenticeship's living memory
 
-Last updated: **2026-08-09** (update this file whenever state changes — it is
+Last updated: **2026-08-15** (update this file whenever state changes — it is
 how every new chat remembers everything).
+
+## 2026-08-15 — THE SCHOOL (new standing method, master-dictated)
+
+The master dictated a self-testing method, adopted exactly (see
+`docs/SCHOOL_BRIEF.md`, `src/racing_edge/school/`): Phase 1 mines every
+stored result leakage-guarded (signals alone and in pairs, n/strike/ROI at
+SP, month-split — sign-flippers discarded; most stable positive cell at
+n>=800 becomes THE RULE). Phase 2 sits daily exams on past cards with
+results withheld, marks against the SP-favourite benchmark, categorises
+misses, appends numbered brief corrections only for 3+ repeat faults
+(master-taught corrections are exempt). Standing laws in his prompt of
+2026-08-15: nothing graduates to real selections without beating the SP-fav
+benchmark over 500+ unseen races (or a Phase-1 cell at n>=800
+month-stable); judge nothing under 50 picks; every mechanical rule gets
+coded and run for free; one line per exam day in docs/SCHOOL_RECORD.md.
+
+State: tooling committed and tested (mine/pack/mark/fetch). Corpus fetch
+via MCP haiku agents STALLED at 46/226 days (rate-limit collision from
+launching 13 at once — Aug 2-11 "empty" files are that bug, not no-racing).
+CHEAPEST PATH: run `school/fetch.py` on PythonAnywhere (direct API, already
+paid) instead of re-fetching through credits. Phase 1 mine + exam round 1
+NOT yet run.
+
+Two taught laws born tonight (Market Rasen 5:30, Centurion's Sister won by
+10L, flip-flopping fav nowhere): 4b THE FLIP-FLOPPING FAVOURITE
+('favourite was flip flopping never goes well') and 4c THE SHAPE WE HUNT
+('type of race we can get value and winners... short favourite flip
+flopping, the rest 3/1, 4/1') — both verbatim in morningread.py, pinned by
+tests. NOTE: live server runs branch claude/tender-wright-kbn1h6; tonight's
+work is on claude/resume-handoff-docs-ayas2r — the 07:30 nap will NOT carry
+these laws until merged and deployed.
+
+Freehand paper picks today (grade separately, not ledger): Ghasham 7/2,
+Market Rasen 6:34 (result unknown at write time); Park Hall read in the
+5:30 LOST to Centurion's Sister — sitter's fault logged in brief v2 #10
+(maiden 'wins' not verified by sphere).
 
 ## Who and what
 
