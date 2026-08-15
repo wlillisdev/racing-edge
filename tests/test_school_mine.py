@@ -114,3 +114,31 @@ def test_daily_grader_scores_every_race_not_one_nap(tmp_path):
 
     # cell policy skips races with no matching runner
     assert pick_for("cell:p11plus+mr1", list(by_race.values())[0]) is None
+
+
+def test_ladder_change_tack_and_hold_and_silence_under_50():
+    # the master, 2026-08-15: "if its failing, we evolve change tack, no
+    # point in repeating something that is not working". His own bars rule:
+    # under 50 picks no verdict; below the fav benchmark = CHANGE TACK.
+    from racing_edge.school.ladder import verdict
+
+    def days(policy, n_days, picks, wins, ret_per_day):
+        return [(f"2026-03-{d + 1:02d}", picks, wins, ret_per_day)
+                for d in range(n_days)]
+
+    # under 50 picks: arithmetic, not evidence
+    rows = {"fav": days("fav", 10, 10, 3, 9.0),
+            "champ": days("champ", 2, 10, 3, 9.0)}
+    assert verdict(rows, "champ").startswith("NO VERDICT")
+
+    # champion below the benchmark: CHANGE TACK, challenger named
+    rows = {"fav": days("fav", 10, 10, 3, 9.0),          # ROI -10%
+            "champ": days("champ", 10, 10, 2, 6.0),      # ROI -40%
+            "cell:x": days("cell:x", 10, 10, 4, 12.0)}   # ROI +20%
+    v = verdict(rows, "champ")
+    assert v.startswith("CHANGE TACK") and "cell:x" in v
+
+    # champion beating benchmark, no qualifying challenger: HOLD
+    rows = {"fav": days("fav", 10, 10, 3, 9.0),
+            "champ": days("champ", 10, 10, 4, 11.0)}
+    assert verdict(rows, "champ").startswith("HOLD")
