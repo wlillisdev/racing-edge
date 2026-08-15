@@ -48,3 +48,14 @@ marked exams (one-offs are variance: logged, nothing changed).
     "winner"; a consistent placer with the field's best discipline form is
     a live win candidate there, not a wall — rule 7 applies to handicaps,
     not maidens.
+
+## v3 (2026-08-15) — corrections
+
+11. **The shape we hunt** (the master, same race: "that was an easy winner
+    missed, this is the type of race we can get value and winners... short
+    favourite flip flopping in odds, and the rest 3/1, 4/1"): a wobbling
+    short favourite with the rest bunched behind is the market admitting
+    the favourite is beatable without knowing who beats him. Target these
+    races: eliminate, take the most proven horse in the bunch at today's
+    discipline and conditions — value and winners live here. The shape is
+    a reason to look, never a pick by itself.

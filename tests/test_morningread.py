@@ -227,3 +227,16 @@ def test_the_flip_flopping_favourite_rides_in_both_rulebooks() -> None:
         assert "flip flopping never goes well" in rulebook
         assert "money arguing with itself" in rulebook
         assert "OWED, never guessed" in rulebook
+
+
+def test_the_shape_we_hunt_rides_in_the_rulebook() -> None:
+    # taught 2026-08-15, same race: "that was an easy winner missed, this is
+    # the type of race we can get value and winners... short favourite flip
+    # flopping in odds, and the rest 3/1, 4/1". A hunting-ground rule: the
+    # shape earns study, never an automatic pick.
+    from racing_edge.study.morningread import NAP_SYSTEM
+
+    assert "THE SHAPE WE HUNT" in NAP_SYSTEM
+    assert "type of race we can get value and winners" in NAP_SYSTEM
+    assert "the rest 3/1, 4/1" in NAP_SYSTEM
+    assert "still needs its own full case" in NAP_SYSTEM
