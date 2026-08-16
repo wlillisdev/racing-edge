@@ -263,3 +263,15 @@ def test_how_the_bookies_play_the_punters_rides_in_the_rulebook() -> None:
     assert "HOW THE BOOKIES PLAY THE PUNTERS" in NAP_SYSTEM
     assert "a horse mid odds will win this" in NAP_SYSTEM
     assert "The shape read NOMINATES" in NAP_SYSTEM
+
+
+def test_the_shape_reads_first_and_reorders_but_does_not_dethrone_form() -> None:
+    # taught 2026-08-16: "there is a reason the bookies never go broke...
+    # you need to read the shape of the race." The board is read first as
+    # the opponent's hand; form still builds and owns the case.
+    from racing_edge.study.morningread import NAP_SYSTEM
+
+    assert "THE SHAPE READS FIRST" in NAP_SYSTEM
+    assert "bookies never go broke" in NAP_SYSTEM
+    assert "prices the punters, not the horses" in NAP_SYSTEM
+    assert "amends the ORDER of #29" in NAP_SYSTEM
