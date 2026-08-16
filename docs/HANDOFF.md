@@ -114,11 +114,14 @@ closed rulebook; own-price opens the case.
 
 ## OPEN QUESTIONS (chase these)
 
-1. **2026-08-09 veto** — day one of the flip, the reader vetoed the engine
-   pick on the week's best card (master furious). The vetoed horse banks in
-   shadow and settles tonight; if it ran well the veto power gets cut/removed
-   (pre-agreed). GET the veto lines from the master's email, grade the cited
-   fact, act on the verdict.
+1. RESOLVED 2026-08-16 (health email): the veto trial settled in the
+   reader's favour on outcome — 4 vetoes this week, ZERO killed a winner,
+   and shadow (where vetoed picks bank) runs 5/17 vs live 10/32. The veto
+   POWER survives per the pre-agreement. But the RATE (4/week vs tripwire
+   2) is the old departing disease — flagged red, master aware; if a week
+   shows 3+ vetoes again the audit re-opens regardless of outcomes.
+   Record as of 2026-08-16: 10/32 (31%), +13.4pt; cold week 1/7; the
+   losing week ran on the pre-2026-08-15 rulebook (new laws not deployed).
 2. **2026-08-03 ledger row** — Poet's Dawn won at 2/1 but a force-rebank may
    have replaced him intraday with a loser. Never resolved: check
    `nap --record` for what stands. LESSON (proposed law): the nap banks once,
