@@ -1,7 +1,11 @@
-"""PHASE 1 — THE MINE (master's method, 2026-08-15).
+"""PHASE 1 — THE MINE (master's method, 2026-08-15; amended 2026-08-16).
 
 Backtest every stored historical result, leakage-guarded: every feature is
-computed from runs strictly BEFORE the race date. Test features alone and in
+computed from runs strictly BEFORE the race date. The original 5,000-race
+corpus floor is GONE (the master, 2026-08-16: '5000 is gone, we need to be
+agile, if we consistently see something not working we cant wait 5000
+races to fix it') — the mine reports at whatever sample exists, always
+with n attached, and consistent failure is acted on at the 50-pick bar. Test features alone and in
 pairs; report n / strike% / ROI at SP per cell; split promising cells BY
 MONTH — a cell whose ROI sign flips month to month is noise and is discarded.
 The single most stable positive-ROI cell with n>=800 becomes THE RULE.

@@ -39,6 +39,35 @@ Market Rasen 6:34 (result unknown at write time); Park Hall read in the
 5:30 LOST to Centurion's Sister — sitter's fault logged in brief v2 #10
 (maiden 'wins' not verified by sphere).
 
+AMENDMENT — AGILITY OVER SAMPLE PURITY (the master, 2026-08-16, verbatim:
+'no 5000 is gone, we need to be agile, if we consistinctly see something
+not working we can twait 5000 races to fix it'): the mine's 5,000-race
+corpus floor is REVOKED. Verdicts issue at the sample we hold, n always
+attached; consistent failure is fixed at the 50-pick bar, never deferred
+to big-sample purity. Unchanged by this ruling: judge nothing under 50
+picks, and graduation to REAL selections still needs the fav benchmark
+beaten over 500+ unseen races — those are his floors and only he moves
+them. First rulings under the amendment (2,247 graded races): no
+single/pair cell is month-stable (no mechanical RULE — the edge must come
+from reading); fav-at-2.0-3.5 is the least-losing cell (-4.2% vs -10.1%
+benchmark) and goes on the night-school trial list; tight2 is 43 picks at
+-41% — bin it at 50 if it stays consistent.
+
+STANDING LAW — THE CURRICULUM & THE CREDIT ECONOMY (the master,
+2026-08-16, verbatim: 'the goal here also is to expedite his process we
+are currently a third year student level knowledge wise nearly there, we
+have enough races every day that we can learn from, and we dont, we need
+to do this economical with credits also'): learning runs in three tiers —
+(1) FREE, nightly, unlimited: school/night.py on the server (fetch
+yesterday on the paid API sub -> grade every policy on every race ->
+ladder verdict into health). Challengers are one line in
+data/school/policies.txt. (2) CHEAP, bounded: at most ONE deep exam
+sitting per night (pack a past day, sit under the brief, mark, teach) —
+that is where reading skill grows. (3) EXPENSIVE, rationed: deep-read
+credits go ONLY to genuinely contested races on live cards — never to
+questions a mechanical policy can answer. Spend flows down the tiers,
+never up.
+
 STANDING LAW — THE EVOLUTION LAW (the master, 2026-08-15, verbatim: 'we
 need a system that if its failing, we evolve change tack, no point in
 repeating something that is not working, i am at this 3 months and so far
@@ -114,11 +143,14 @@ closed rulebook; own-price opens the case.
 
 ## OPEN QUESTIONS (chase these)
 
-1. **2026-08-09 veto** — day one of the flip, the reader vetoed the engine
-   pick on the week's best card (master furious). The vetoed horse banks in
-   shadow and settles tonight; if it ran well the veto power gets cut/removed
-   (pre-agreed). GET the veto lines from the master's email, grade the cited
-   fact, act on the verdict.
+1. RESOLVED 2026-08-16 (health email): the veto trial settled in the
+   reader's favour on outcome — 4 vetoes this week, ZERO killed a winner,
+   and shadow (where vetoed picks bank) runs 5/17 vs live 10/32. The veto
+   POWER survives per the pre-agreement. But the RATE (4/week vs tripwire
+   2) is the old departing disease — flagged red, master aware; if a week
+   shows 3+ vetoes again the audit re-opens regardless of outcomes.
+   Record as of 2026-08-16: 10/32 (31%), +13.4pt; cold week 1/7; the
+   losing week ran on the pre-2026-08-15 rulebook (new laws not deployed).
 2. **2026-08-03 ledger row** — Poet's Dawn won at 2/1 but a force-rebank may
    have replaced him intraday with a loser. Never resolved: check
    `nap --record` for what stands. LESSON (proposed law): the nap banks once,

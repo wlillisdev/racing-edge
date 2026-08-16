@@ -39,6 +39,17 @@ CREATE TABLE IF NOT EXISTS shadow (
     sp_dec      REAL,
     PRIMARY KEY (date)
 );
+CREATE TABLE IF NOT EXISTS favline (
+    date        TEXT NOT NULL,
+    race_id     TEXT NOT NULL,
+    course      TEXT NOT NULL DEFAULT '',
+    horse       TEXT NOT NULL DEFAULT '',
+    horse_id    TEXT NOT NULL DEFAULT '',
+    price       REAL,
+    won         INTEGER,
+    sp_dec      REAL,
+    PRIMARY KEY (date)
+);
 """
 
 
@@ -178,6 +189,36 @@ class NapLog:
             "AND n.case_text LIKE 'reader veto%' AND s.won = 1",
             (cut,)).fetchone()[0])
         return v, k
+
+    # THE FAV LINE (the master, 2026-08-16: 'ok lets do favourite and value
+    # bet, what have we got to lose the information is there'): the market's
+    # own pick in the nap's race, banked beside ours every day — two bets,
+    # one record, and the ledger says which one earns real stakes.
+    def record_favline(self, *, day: date, race_id: str, course: str, horse: str,
+                       horse_id: str, price: float | None) -> None:
+        self._conn.execute(
+            "INSERT OR REPLACE INTO favline (date, race_id, course, horse, "
+            "horse_id, price) VALUES (?, ?, ?, ?, ?, ?)",
+            (day.isoformat(), race_id, course, horse, horse_id, price))
+        self._conn.commit()
+
+    def pending_favline(self) -> list[dict]:
+        return [dict(r) for r in self._conn.execute(
+            "SELECT * FROM favline WHERE won IS NULL ORDER BY date").fetchall()]
+
+    def settle_favline(self, day: date, won: bool, sp_dec: float | None = None) -> None:
+        self._conn.execute("UPDATE favline SET won = ?, sp_dec = ? WHERE date = ?",
+                           (1 if won else 0, sp_dec, day.isoformat()))
+        self._conn.commit()
+
+    def favline_record(self) -> tuple[int, int, float]:
+        """(wins, settled, level-stakes P/L at SP) for the favourite line."""
+        rows = self._conn.execute(
+            "SELECT won, sp_dec FROM favline WHERE won IS NOT NULL").fetchall()
+        wins = sum(1 for r in rows if r["won"] == 1)
+        pnl = sum((r["sp_dec"] - 1.0) if r["won"] == 1 and r["sp_dec"] else -1.0
+                  for r in rows)
+        return wins, len(rows), pnl
 
     def shadow_strike(self) -> tuple[int, int]:
         settled = int(self._conn.execute(

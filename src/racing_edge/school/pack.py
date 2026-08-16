@@ -65,7 +65,7 @@ def build(day: str, raw: Path, names_file: Path | None,
         from datetime import date, timedelta
         lo = (date(lo_y, lo_m, lo_d) - timedelta(days=14)).isoformat()
         rows = [w for (d, w) in jt.get(key, ()) if lo <= d < before]
-        return len(rows), sum(w for _, w in rows)
+        return len(rows), sum(rows)
 
     lines, key_rows = [], []
     lines.append(f"# EXAM PACKET — {day} (results withheld; SP shown per the "

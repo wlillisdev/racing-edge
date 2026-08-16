@@ -1,0 +1,3 @@
+cell:tight2
+cell:mr1+ltowin
+cell:mr1+p35

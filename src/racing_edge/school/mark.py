@@ -7,8 +7,15 @@ benchmark on the same races (the pass mark). Every miss categorised:
   (c) winner unconsidered      (picked non-fav, favourite lost too)
 Plus the with-fav v against-fav split.
 
-picks CSV: race_id,horse_id,confidence,dots
+picks CSV: race_id,horse_id,confidence,dots[,second_id]
 key   CSV: race_id,winner_horse,winner_sp,fav_horse   (from pack.py)
+
+The optional 5th column is the sitter's named danger — the second horse of
+the final-two shortlist. The master, 2026-08-16: 'every race you have the
+winner most of the time on the short list and you just pick the wrong one,
+your gut is nearly there it just needs honing and calibrating.' So the
+mark separates the two skills: SHORTLIST-2 HIT (winner was pick or named
+danger) versus WRONG TWIN (the danger won — right pair, wrong choice).
 
 Usage: PYTHONPATH=src python -m racing_edge.school.mark
        --picks data/school/picks/DAY.csv --key data/school/keys/DAY.csv
@@ -57,15 +64,24 @@ def mark(picks_file: Path, key_file: Path, raw: Path) -> str:
     miss = {"a": 0, "b": 0, "c": 0}
     unmatched = []
 
+    pair_races = pair_hits = wrong_twin = 0
     with open(picks_file, newline="") as fh:
         rows = [r for r in csv.reader(fh) if r and len(r) >= 3]
-    for race_id, pick, conf, *_ in rows:
+    for row in rows:
+        race_id, pick, conf = row[0], row[1], row[2]
+        second = row[4].strip() if len(row) > 4 else ""
         k = key.get(race_id)
         if k is None:
             unmatched.append(race_id)
             continue
         sp = sp_of.get((race_id, pick), 0.0)
         won = pick == k["winner"]
+        if second:
+            pair_races += 1
+            if won or second == k["winner"]:
+                pair_hits += 1
+            if not won and second == k["winner"]:
+                wrong_twin += 1
         overall.add(won, sp)
         by_conf.setdefault(conf, Bucket()).add(won, sp)
         fav_sp = sp_of.get((race_id, k["fav"]), 0.0)
@@ -99,6 +115,11 @@ def mark(picks_file: Path, key_file: Path, raw: Path) -> str:
         f"(b) took fav, fav lost = {miss['b']}   "
         f"(c) winner unconsidered = {miss['c']}",
     ]
+    if pair_races:
+        out.append(
+            f"CALIBRATION: shortlist-2 hit {pair_hits}/{pair_races} "
+            f"({100.0 * pair_hits / pair_races:.1f}%) | wrong twin "
+            f"(danger won, we chose the other) = {wrong_twin}")
     if unmatched:
         out.append(f"UNMATCHED race_ids (not in key): {', '.join(unmatched)}")
     return "\n".join(out)

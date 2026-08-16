@@ -426,3 +426,25 @@ def test_the_dial_in_gauges_pnl_and_lens_attribution() -> None:
         assert attr["market sweet spot"] == (1, 0)
         assert attr["fair-priced favourite"] == (0, 1)
         log.close()
+
+
+def test_favline_banks_and_settles_beside_the_nap(tmp_path):
+    # the master, 2026-08-16: "ok lets do favourite and value bet, what have
+    # we got to lose the information is there" — the market's pick banks
+    # beside ours and settles into its own record line.
+    from datetime import date as _date
+
+    from racing_edge.study.naplog import NapLog
+
+    log = NapLog(tmp_path / "nap.db")
+    d = _date(2026, 8, 17)
+    log.record_favline(day=d, race_id="r1", course="Ripon",
+                       horse="Steady Eddie", horse_id="h9", price=2.5)
+    assert log.pending_favline()[0]["horse"] == "Steady Eddie"
+    log.settle_favline(d, won=True, sp_dec=2.5)
+    wins, settled, pnl = log.favline_record()
+    assert (wins, settled) == (1, 1)
+    assert abs(pnl - 1.5) < 1e-9          # 2.5 SP winner = +1.5pt level stakes
+    log.settle_favline(d, won=True, sp_dec=2.5)  # idempotent on the day
+    assert log.favline_record()[1] == 1
+    log.close()

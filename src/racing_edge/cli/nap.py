@@ -280,6 +280,19 @@ def _settle(day_str: str, email: bool) -> int:
             log.settle_shadow(day, won=shm.position == 1, sp_dec=shm.sp_dec)
             out.append(f"  shadow settled: {sh['horse']} "
                        f"{'WON' if shm.position == 1 else 'lost'}")
+    if hasattr(log, "pending_favline"):
+        fv = next((x for x in log.pending_favline()
+                   if x["date"] == day.isoformat()), None)
+        if fv is not None:
+            fvr = next((r for r in results if r.race_id == fv["race_id"]), None)
+            fvm = next((rr for rr in fvr.runners
+                        if rr.horse_id == fv["horse_id"]), None) if fvr else None
+            if fvm is not None:
+                log.settle_favline(day, won=fvm.position == 1, sp_dec=fvm.sp_dec)
+                fw, fn, fpnl = log.favline_record()
+                emit(f"  FAV LINE settled: {fv['horse']} "
+                     f"{'WON' if fvm.position == 1 else 'lost'} — fav line record "
+                     f"{fw}/{fn}, {fpnl:+.1f}pt")
     w, n = log.strike_rate()
     cw, cn = log.strike_rate(confident_only=True)
     flag = "WON" if won else f"unplaced ({me.position or me.status})"
@@ -858,6 +871,20 @@ def main() -> int:
     if eng.runner.horse_id != nap.runner.horse_id:
         emit(f"  shadow (engine method): {eng.runner.horse} — {eng.race.course} "
              f"{eng.race.off_time} (paper only, banked for the A/B record)")
+    # THE FAV LINE (the master, 2026-08-16: 'lets do favourite and value bet,
+    # what have we got to lose the information is there'): the favourite of
+    # the nap's own race banks beside the pick — two bets, same race, and the
+    # record judges both. No new selection rule: the market names this horse.
+    fav = min((p for p in field if p.race.race_id == r.race_id and p.price),
+              key=lambda p: (p.price, p.runner.horse_id), default=None)
+    if fav is not None and hasattr(log, "record_favline"):
+        log.record_favline(day=day, race_id=r.race_id, course=r.course,
+                           horse=fav.runner.horse, horse_id=fav.runner.horse_id,
+                           price=fav.price)
+        emit(f"  FAV LINE: {fav.runner.horse} at {fav.price} — "
+             + ("same horse as the nap today"
+                if fav.runner.horse_id == nap.runner.horse_id
+                else "the market's answer in the same race, banked beside ours"))
     log.close()
     emit(f"\n  banked the nap for {day} — settle it tomorrow with --settle {day}.")
     _maybe_email(out, f"{tag}: {nap.runner.horse} — {r.course} {r.off_time} ({day})", args.email)

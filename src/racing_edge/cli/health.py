@@ -314,9 +314,17 @@ def main() -> int:
     # P/L must be read BEFORE close (2026-08-01: it sat after close() and the
     # whole health report died on 'Cannot operate on a closed database')
     pnl, _pn = log2.profit_loss() if hasattr(log2, "profit_loss") else (0.0, 0)
+    # favline read BEFORE close too (same trap as P/L, 2026-08-01)
+    _fav = log2.favline_record() if hasattr(log2, "favline_record") else (0, 0, 0.0)
     log2.close()
     lines.append(f"  record: {w}/{n} settled naps won"
                  + (f" ({100 * w / n:.0f}%), level stakes at SP {pnl:+.1f}pt" if n else ""))
+    # THE FAV LINE beside the value line (the master, 2026-08-16: 'lets do
+    # favourite and value bet') — both bets, one glance, every day.
+    fw, fn, fpnl = _fav
+    if fn:
+        lines.append(f"  fav line: {fw}/{fn} won ({100 * fw / fn:.0f}%), "
+                     f"level stakes at SP {fpnl:+.1f}pt")
     # LOSS-STREAK ALARM (coroner fix 1: six losses passed with no alarm anywhere)
     real = [x for x in naps if x["won"] in (0, 1)]
     streak = 0
