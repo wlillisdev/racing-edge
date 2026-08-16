@@ -35,7 +35,7 @@ def _won(pos: str) -> bool:
 
 class Runner:
     __slots__ = ("date", "race_id", "course", "region", "rtype", "rclass",
-                 "dist", "horse", "sp", "pos", "jockey", "trainer",
+                 "dist", "horse", "sp", "pos", "btn", "jockey", "trainer",
                  "month", "feats")
 
     def __init__(self, row):
@@ -54,6 +54,10 @@ class Runner:
         except ValueError:
             self.sp = 0.0
         self.pos = row[9]
+        try:
+            self.btn = float(row[10])
+        except ValueError:
+            self.btn = -1.0  # unknown margin
         self.jockey = row[11]
         self.trainer = row[12]
         self.month = self.date[:7]
@@ -153,6 +157,15 @@ def featurise(races: list[list[Runner]], score_from: str) -> list[Runner]:
                     if any(h["won"] and h["course"] == r.course
                            and h["dist"] == r.dist for h in hist):
                         f.append("cdwin")
+                    # tight2 — the Gower Prince nuance (self-study
+                    # 2026-08-15, PROPOSED, testing only): last two runs
+                    # both runner-up with the margin tightening — a
+                    # progressive finisher, not a stale placer.
+                    if len(hist) >= 2:
+                        a, b = hist[-2], hist[-1]
+                        if (a["pos"] == "2" and b["pos"] == "2"
+                                and 0 <= b["btn"] < a["btn"]):
+                            f.append("tight2")
                 js = jky.strike(r.jockey, r.date, STRIKE_WINDOW_DAYS)
                 if js is not None and js >= 15.0:
                     f.append("jky15")
@@ -171,7 +184,8 @@ def featurise(races: list[list[Runner]], score_from: str) -> list[Runner]:
                 won = _won(r.pos)
                 horse_hist[r.horse].append(
                     {"date": r.date, "course": r.course, "dist": r.dist,
-                     "rclass": r.rclass, "won": won})
+                     "rclass": r.rclass, "won": won, "pos": r.pos,
+                     "btn": r.btn})
                 if r.jockey != "0":
                     jky.add(r.jockey, r.date, won)
                 if r.trainer != "0":
@@ -185,7 +199,8 @@ def featurise(races: list[list[Runner]], score_from: str) -> list[Runner]:
 
 FAMILY = {  # a pair must cross families or it is the same fact twice
     "mr1": "mr", "mr2": "mr", "mr3": "mr",
-    "ltowin": "lto", "dsl14": "dsl", "dsl30": "dsl", "dsl31": "dsl",
+    "ltowin": "lto", "tight2": "t2",
+    "dsl14": "dsl", "dsl30": "dsl", "dsl31": "dsl",
     "cdwin": "cd", "jky15": "jky", "trn15": "trn",
     "clsdrop": "cls", "clsrise": "cls", "clssame": "cls",
     "p20": "p", "p35": "p", "p60": "p", "p110": "p", "p11plus": "p",

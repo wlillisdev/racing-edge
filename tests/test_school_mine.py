@@ -87,3 +87,84 @@ def test_month_stability_flags_sign_flip():
     c.add(r_lose)  # April ROI -100%
     assert not c.stable()
     assert c.min_month_roi() == -100.0
+
+
+def test_daily_grader_scores_every_race_not_one_nap(tmp_path):
+    # the master, 2026-08-15: "we keep saying wait 50 races to see, there
+    # are 50 races every day" — the grader takes one pick per 5+ runner
+    # race across the whole card.
+    from racing_edge.school.daily import grade, pick_for
+    from racing_edge.school.mine import featurise, load_corpus
+
+    rows = []
+    for i in range(3):  # three 5-runner races on one day
+        rid = f"r{i}"
+        rows += [_row("2026-03-02", rid, f"h{i}a", "2.0", "1"),
+                 _row("2026-03-02", rid, f"h{i}b", "3.0", "2"),
+                 _row("2026-03-02", rid, f"h{i}c", "5.0", "3"),
+                 _row("2026-03-02", rid, f"h{i}d", "9.0", "4"),
+                 _row("2026-03-02", rid, f"h{i}e", "17.0", "5")]
+    scored = featurise(load_corpus(_corpus(tmp_path, rows)), "2026-03-01")
+    by_race = {}
+    for r in scored:
+        by_race.setdefault(r.race_id, []).append(r)
+    graded = grade({"2026-03-02": list(by_race.values())}, ["fav"])
+    n, wins, ret = graded["fav"]["2026-03-02"]
+    assert n == 3 and wins == 3 and ret == 6.0  # fav won all three at 2.0
+
+    # cell policy skips races with no matching runner
+    assert pick_for("cell:p11plus+mr1", list(by_race.values())[0]) is None
+
+
+def test_ladder_change_tack_and_hold_and_silence_under_50():
+    # the master, 2026-08-15: "if its failing, we evolve change tack, no
+    # point in repeating something that is not working". His own bars rule:
+    # under 50 picks no verdict; below the fav benchmark = CHANGE TACK.
+    from racing_edge.school.ladder import verdict
+
+    def days(policy, n_days, picks, wins, ret_per_day):
+        return [(f"2026-03-{d + 1:02d}", picks, wins, ret_per_day)
+                for d in range(n_days)]
+
+    # under 50 picks: arithmetic, not evidence
+    rows = {"fav": days("fav", 10, 10, 3, 9.0),
+            "champ": days("champ", 2, 10, 3, 9.0)}
+    assert verdict(rows, "champ").startswith("NO VERDICT")
+
+    # champion below the benchmark: CHANGE TACK, challenger named
+    rows = {"fav": days("fav", 10, 10, 3, 9.0),          # ROI -10%
+            "champ": days("champ", 10, 10, 2, 6.0),      # ROI -40%
+            "cell:x": days("cell:x", 10, 10, 4, 12.0)}   # ROI +20%
+    v = verdict(rows, "champ")
+    assert v.startswith("CHANGE TACK") and "cell:x" in v
+
+    # champion beating benchmark, no qualifying challenger: HOLD
+    rows = {"fav": days("fav", 10, 10, 3, 9.0),
+            "champ": days("champ", 10, 10, 4, 11.0)}
+    assert verdict(rows, "champ").startswith("HOLD")
+
+
+def test_tight2_reads_direction_not_state(tmp_path):
+    # the Gower Prince nuance (self-study 2026-08-15, PROPOSED): two
+    # runner-up finishes with the margin tightening = progressive finisher.
+    # A placer whose margins DRIFT must not get the flag.
+    rows = [
+        _row("2026-03-02", "r1", "h1", "3.0", "2", btn="4"),
+        _row("2026-03-02", "r1", "hx", "2.0", "1"),
+        _row("2026-03-12", "r2", "h1", "3.0", "2", btn="0.7"),
+        _row("2026-03-12", "r2", "hy", "2.0", "1"),
+        _row("2026-03-22", "r3", "h1", "3.0", "3", btn="1"),
+        _row("2026-03-22", "r3", "hz", "2.0", "1"),
+        # h2: margins drifting (0.5 then 6) — no flag
+        _row("2026-03-02", "r4", "h2", "3.0", "2", btn="0.5"),
+        _row("2026-03-02", "r4", "hp", "2.0", "1"),
+        _row("2026-03-12", "r5", "h2", "3.0", "2", btn="6"),
+        _row("2026-03-12", "r5", "hq", "2.0", "1"),
+        _row("2026-03-22", "r6", "h2", "3.0", "4", btn="9"),
+        _row("2026-03-22", "r6", "hr", "2.0", "1"),
+    ]
+    scored = featurise(load_corpus(_corpus(tmp_path, rows)), "2026-03-01")
+    h1_last = next(r for r in scored if r.horse == "h1" and r.date == "2026-03-22")
+    h2_last = next(r for r in scored if r.horse == "h2" and r.date == "2026-03-22")
+    assert "tight2" in h1_last.feats
+    assert "tight2" not in h2_last.feats

@@ -39,6 +39,30 @@ Market Rasen 6:34 (result unknown at write time); Park Hall read in the
 5:30 LOST to Centurion's Sister — sitter's fault logged in brief v2 #10
 (maiden 'wins' not verified by sphere).
 
+STANDING LAW — THE EVOLUTION LAW (the master, 2026-08-15, verbatim: 'we
+need a system that if its failing, we evolve change tack, no point in
+repeating something that is not working, i am at this 3 months and so far
+have achieved nothing spent thousands on claude'): school/ladder.py reads
+the daily grind and rules with HIS bars only (no verdict under 50 picks;
+rolling window up to 500): champion below the fav benchmark = CHANGE TACK,
+best challenger named; challenger beating champion AND benchmark = CHANGE
+TACK, doorbell. Evolution proposes, the master disposes — promotion into
+live selections is his word. PENDING WIRING (needs deploy): ladder verdict
+into the daily health email, and the weekly synthesis must show CREDITS
+SPENT (data/model_usage.csv) beside paper P/L — the bottom line he feels
+is cost-vs-return, and the record must show it.
+
+STANDING LAW — THE DAILY GRIND (the master, 2026-08-15, verbatim: 'as a
+system we need to progress and not stagnate, we have enough data and power
+every day to accelerate the learning and honing of the system which we
+dont use, we keep saying wait 50 races to see, there are 50 races every
+day'): learning consumes the WHOLE card daily — school/daily.py grades any
+mechanical policy on every 5+ runner race vs the SP-fav benchmark, free,
+so graduation bars fill in days not months. Staking is still judged ONLY
+on the banked ledger. First real number, 2026-08-15, partial corpus (19
+days, 672 races): SP favourite = 33.2% strike, -15.6% ROI — the pass mark
+every policy must beat.
+
 ## Who and what
 
 - **William** (williamlillis100@gmail.com) — the master. 30 years' form
