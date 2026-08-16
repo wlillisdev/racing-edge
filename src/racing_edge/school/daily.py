@@ -36,6 +36,19 @@ from racing_edge.school.mine import Runner, featurise, load_corpus
 def pick_for(policy: str, race: list[Runner]) -> Runner | None:
     if policy == "fav":
         cands = [r for r in race if "mr1" in r.feats]
+    elif policy == "shape:crowdfav":
+        # TRIAL (taught 2026-08-16, Southwell 1:30): in a big field whose
+        # favourite has been crunched to a price the race shape can't
+        # justify, take the firm mid-price horse instead. Corpus proxy
+        # (no movement data at SP): 10+ runners, fav SP <= 2.5 -> shortest
+        # runner in the 5.0-10.0 band. A school policy on trial, not a rule.
+        if len(race) < 10:
+            return None
+        fav = min((r for r in race if r.sp > 0), key=lambda r: (r.sp, r.horse),
+                  default=None)
+        if fav is None or fav.sp > 2.5:
+            return None
+        cands = [r for r in race if 5.0 <= r.sp <= 10.0]
     else:
         want = set(policy.split(":", 1)[1].split("+"))
         cands = [r for r in race if want <= set(r.feats)]

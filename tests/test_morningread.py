@@ -252,3 +252,14 @@ def test_direction_outranks_state_at_the_cross_off() -> None:
     assert "Gower Prince" in NAP_SYSTEM
     assert "NOT fact enough" in NAP_SYSTEM
     assert "at the cross-off too" in NAP_SYSTEM
+
+
+def test_how_the_bookies_play_the_punters_rides_in_the_rulebook() -> None:
+    # taught 2026-08-16, Southwell 1:30: crowd crunched the obvious horse to
+    # 2.38 (second); the bottom-rated winner sat firm at 7.0. The shape read
+    # nominates; the case still gets built.
+    from racing_edge.study.morningread import NAP_SYSTEM
+
+    assert "HOW THE BOOKIES PLAY THE PUNTERS" in NAP_SYSTEM
+    assert "a horse mid odds will win this" in NAP_SYSTEM
+    assert "The shape read NOMINATES" in NAP_SYSTEM
