@@ -275,3 +275,15 @@ def test_the_shape_reads_first_and_reorders_but_does_not_dethrone_form() -> None
     assert "bookies never go broke" in NAP_SYSTEM
     assert "prices the punters, not the horses" in NAP_SYSTEM
     assert "amends the ORDER of #29" in NAP_SYSTEM
+
+
+def test_the_each_way_insurance_rides_in_the_rulebook() -> None:
+    # taught 2026-08-16, Cliff Danger 7.0: "he would have placed at worse i
+    # would have had an insurance bet and if he wins its a bonus, a short
+    # price favourite in a big field is a danger too many risks."
+    from racing_edge.study.morningread import NAP_SYSTEM
+
+    assert "THE EACH-WAY INSURANCE" in NAP_SYSTEM
+    assert "if he wins its a bonus" in NAP_SYSTEM
+    assert "the place is the insurance" in NAP_SYSTEM
+    assert "BLINDED by the top of the market" in NAP_SYSTEM
