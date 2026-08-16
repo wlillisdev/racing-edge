@@ -178,3 +178,34 @@ def test_night_school_policies_file_one_line_per_challenger(tmp_path):
     (tmp_path / "policies.txt").write_text(
         "# challengers on trial\ncell:tight2\n\nfav\ncell:mr1+ltowin\n")
     assert trial_policies(tmp_path) == ["fav", "cell:tight2", "cell:mr1+ltowin"]
+
+
+def test_mark_calibration_shortlist2_and_wrong_twin(tmp_path):
+    # the master, 2026-08-16: "you have the winner most of the time on the
+    # short list and you just pick the wrong one" — so the mark separates
+    # shortlist-2 hits from wrong-twin choices.
+    import csv as _csv
+    from racing_edge.school.mark import mark
+
+    rows = [
+        _row("2026-03-02", "r1", "w1", "3.0", "1"),  # winner
+        _row("2026-03-02", "r1", "p1", "2.0", "2"),  # our pick (fav)
+        _row("2026-03-02", "r1", "x1", "9.0", "3"),
+        _row("2026-03-02", "r2", "p2", "2.0", "1"),  # our pick wins
+        _row("2026-03-02", "r2", "d2", "4.0", "2"),
+        _row("2026-03-02", "r2", "x2", "9.0", "3"),
+    ]
+    raw = _corpus(tmp_path, rows)
+    keys = tmp_path / "keys.csv"
+    with open(keys, "w", newline="") as fh:
+        _csv.writer(fh).writerows(
+            [["r1", "w1", "3.0", "p1"], ["r2", "p2", "2.0", "p2"]])
+    picks = tmp_path / "picks.csv"
+    with open(picks, "w", newline="") as fh:
+        _csv.writer(fh).writerows([
+            ["r1", "p1", "3", "fav respected", "w1"],  # danger won: wrong twin
+            ["r2", "p2", "4", "clear form pick", "d2"],
+        ])
+    out = mark(picks, keys, raw)
+    assert "shortlist-2 hit 2/2 (100.0%)" in out
+    assert "wrong twin (danger won, we chose the other) = 1" in out
