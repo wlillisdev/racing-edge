@@ -346,6 +346,23 @@ def main() -> int:
             lines)
     elif sn:
         lines.append(f"  shadow A/B: {sw}/{sn} (needs 7+ settled for the alarm)")
+    # THE EVOLUTION LAW in the daily eye (2026-08-16, the master closing the
+    # loop on 'the machine finds these things and then nothing changes'): the
+    # school ladder's verdict rides in health — a CHANGE TACK is RED and
+    # impossible to miss. Quiet when the school isn't deployed here.
+    import os as _os
+    from pathlib import Path as _Path
+    _lcsv = _Path("data/school/daily_policy.csv")
+    _champ = _os.environ.get("SCHOOL_CHAMPION")
+    if _lcsv.exists() and _champ:
+        from racing_edge.school.ladder import load_rows as _lr
+        from racing_edge.school.ladder import verdict as _lv
+        _v = _lv(_lr(_lcsv), _champ)
+        all_ok &= _check(
+            not _v.startswith("CHANGE TACK"),
+            f"school ladder: {_v}",
+            f"SCHOOL LADDER: {_v}",
+            lines)
     verdict = "ALL GREEN — the loop is running and feeding itself." if all_ok else \
         "RED LINES ABOVE — a part of the loop is silently dead. Fix before trusting a pick."
     lines.append(f"\n  {verdict}")

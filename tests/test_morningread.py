@@ -240,3 +240,15 @@ def test_the_shape_we_hunt_rides_in_the_rulebook() -> None:
     assert "type of race we can get value and winners" in NAP_SYSTEM
     assert "the rest 3/1, 4/1" in NAP_SYSTEM
     assert "still needs its own full case" in NAP_SYSTEM
+
+
+def test_direction_outranks_state_at_the_cross_off() -> None:
+    # taught 2026-08-15/16, master-validated ("i 100% agree"): Gower Prince
+    # (won 13.0, crossed as placer-risk) and Centurion's Sister (won by 10L,
+    # crossed as serial placer). A bare flag never crosses off an improver.
+    from racing_edge.study.morningread import NAP_SYSTEM
+
+    assert "DIRECTION OUTRANKS STATE AT THE CROSS-OFF" in NAP_SYSTEM
+    assert "Gower Prince" in NAP_SYSTEM
+    assert "NOT fact enough" in NAP_SYSTEM
+    assert "at the cross-off too" in NAP_SYSTEM
