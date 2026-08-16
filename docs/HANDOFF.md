@@ -39,6 +39,21 @@ Market Rasen 6:34 (result unknown at write time); Park Hall read in the
 5:30 LOST to Centurion's Sister — sitter's fault logged in brief v2 #10
 (maiden 'wins' not verified by sphere).
 
+STANDING LAW — THE CURRICULUM & THE CREDIT ECONOMY (the master,
+2026-08-16, verbatim: 'the goal here also is to expedite his process we
+are currently a third year student level knowledge wise nearly there, we
+have enough races every day that we can learn from, and we dont, we need
+to do this economical with credits also'): learning runs in three tiers —
+(1) FREE, nightly, unlimited: school/night.py on the server (fetch
+yesterday on the paid API sub -> grade every policy on every race ->
+ladder verdict into health). Challengers are one line in
+data/school/policies.txt. (2) CHEAP, bounded: at most ONE deep exam
+sitting per night (pack a past day, sit under the brief, mark, teach) —
+that is where reading skill grows. (3) EXPENSIVE, rationed: deep-read
+credits go ONLY to genuinely contested races on live cards — never to
+questions a mechanical policy can answer. Spend flows down the tiers,
+never up.
+
 STANDING LAW — THE EVOLUTION LAW (the master, 2026-08-15, verbatim: 'we
 need a system that if its failing, we evolve change tack, no point in
 repeating something that is not working, i am at this 3 months and so far

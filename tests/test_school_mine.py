@@ -168,3 +168,13 @@ def test_tight2_reads_direction_not_state(tmp_path):
     h2_last = next(r for r in scored if r.horse == "h2" and r.date == "2026-03-22")
     assert "tight2" in h1_last.feats
     assert "tight2" not in h2_last.feats
+
+
+def test_night_school_policies_file_one_line_per_challenger(tmp_path):
+    # adding a challenger is one line in policies.txt — no code, no credits
+    from racing_edge.school.night import trial_policies
+
+    assert trial_policies(tmp_path) == ["fav"]
+    (tmp_path / "policies.txt").write_text(
+        "# challengers on trial\ncell:tight2\n\nfav\ncell:mr1+ltowin\n")
+    assert trial_policies(tmp_path) == ["fav", "cell:tight2", "cell:mr1+ltowin"]
