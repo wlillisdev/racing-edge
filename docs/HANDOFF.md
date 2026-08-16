@@ -39,6 +39,20 @@ Market Rasen 6:34 (result unknown at write time); Park Hall read in the
 5:30 LOST to Centurion's Sister — sitter's fault logged in brief v2 #10
 (maiden 'wins' not verified by sphere).
 
+AMENDMENT — AGILITY OVER SAMPLE PURITY (the master, 2026-08-16, verbatim:
+'no 5000 is gone, we need to be agile, if we consistinctly see something
+not working we can twait 5000 races to fix it'): the mine's 5,000-race
+corpus floor is REVOKED. Verdicts issue at the sample we hold, n always
+attached; consistent failure is fixed at the 50-pick bar, never deferred
+to big-sample purity. Unchanged by this ruling: judge nothing under 50
+picks, and graduation to REAL selections still needs the fav benchmark
+beaten over 500+ unseen races — those are his floors and only he moves
+them. First rulings under the amendment (2,247 graded races): no
+single/pair cell is month-stable (no mechanical RULE — the edge must come
+from reading); fav-at-2.0-3.5 is the least-losing cell (-4.2% vs -10.1%
+benchmark) and goes on the night-school trial list; tight2 is 43 picks at
+-41% — bin it at 50 if it stays consistent.
+
 STANDING LAW — THE CURRICULUM & THE CREDIT ECONOMY (the master,
 2026-08-16, verbatim: 'the goal here also is to expedite his process we
 are currently a third year student level knowledge wise nearly there, we
