@@ -142,3 +142,29 @@ def test_ladder_change_tack_and_hold_and_silence_under_50():
     rows = {"fav": days("fav", 10, 10, 3, 9.0),
             "champ": days("champ", 10, 10, 4, 11.0)}
     assert verdict(rows, "champ").startswith("HOLD")
+
+
+def test_tight2_reads_direction_not_state(tmp_path):
+    # the Gower Prince nuance (self-study 2026-08-15, PROPOSED): two
+    # runner-up finishes with the margin tightening = progressive finisher.
+    # A placer whose margins DRIFT must not get the flag.
+    rows = [
+        _row("2026-03-02", "r1", "h1", "3.0", "2", btn="4"),
+        _row("2026-03-02", "r1", "hx", "2.0", "1"),
+        _row("2026-03-12", "r2", "h1", "3.0", "2", btn="0.7"),
+        _row("2026-03-12", "r2", "hy", "2.0", "1"),
+        _row("2026-03-22", "r3", "h1", "3.0", "3", btn="1"),
+        _row("2026-03-22", "r3", "hz", "2.0", "1"),
+        # h2: margins drifting (0.5 then 6) — no flag
+        _row("2026-03-02", "r4", "h2", "3.0", "2", btn="0.5"),
+        _row("2026-03-02", "r4", "hp", "2.0", "1"),
+        _row("2026-03-12", "r5", "h2", "3.0", "2", btn="6"),
+        _row("2026-03-12", "r5", "hq", "2.0", "1"),
+        _row("2026-03-22", "r6", "h2", "3.0", "4", btn="9"),
+        _row("2026-03-22", "r6", "hr", "2.0", "1"),
+    ]
+    scored = featurise(load_corpus(_corpus(tmp_path, rows)), "2026-03-01")
+    h1_last = next(r for r in scored if r.horse == "h1" and r.date == "2026-03-22")
+    h2_last = next(r for r in scored if r.horse == "h2" and r.date == "2026-03-22")
+    assert "tight2" in h1_last.feats
+    assert "tight2" not in h2_last.feats
