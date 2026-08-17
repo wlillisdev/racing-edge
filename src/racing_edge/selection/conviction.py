@@ -97,6 +97,7 @@ def conviction(runner: Runner, race: Race, history: tuple[PastRun, ...],
     # "course winner"). Filter FIRST, window after.
     hist = same_code_runs(history, race.code)
 
+    _well_in_pending = None
     mr = mark_read(runner.official_rating, history, code=race.code)
     if mr.delta is not None:
         if mr.delta <= 0:
@@ -112,13 +113,22 @@ def conviction(runner: Runner, race: Race, history: tuple[PastRun, ...],
                     and race.race_class < mr.win_class):
                 grade = (f" but UP IN GRADE — won in Cl{mr.win_class}, "
                          f"today Cl{race.race_class}")
-            aligned.append(f"well-in ({mr.verdict}{grade})")
+            # DEMOTED to a rough guide (the master, 2026-08-17: 'we base
+            # everything on well in? why... the well in has proven only a
+            # rough guide and has not been reliable'; his 2026-07-26 law: a
+            # well-in figure counts only with current form and manner behind
+            # it). A STALE well-in never counts; a fresh one is HELD here and
+            # joins the aligned lenses below only if current form or manner
+            # corroborates it. The mark can no longer be the spine of a score.
             if mr.stale:
                 # THE WOODSTOCK LESSON (2026-07-25 audit): an exposed loser's mark
                 # erodes BECAUSE it keeps losing — 'well-in' against a win 10+ runs
                 # back is a placer's profile wearing the winning profile's coat
                 flags.append(f"well-in anchor STALE (last win {mr.since} runs back) "
                              "— placer risk, not a missed handicapper")
+                _well_in_pending = None
+            else:
+                _well_in_pending = f"well-in ({mr.verdict}{grade})"
         else:
             flags.append(f"raised {mr.verdict} since last win")
     if len(hist) >= 6 and not any(h.position == 1 for h in hist):
@@ -149,6 +159,19 @@ def conviction(runner: Runner, race: Race, history: tuple[PastRun, ...],
         aligned.append("won last time out")
     if len(recent) >= 2 and all(p >= 6 for p in recent[:2]):
         flags.append(f"cold form ({'-'.join(str(p) for p in recent[:2])} last two)")
+
+    # the well-in verdict lands only NOW, corroboration known (2026-08-17):
+    # counted with current form or manner behind it, otherwise named as the
+    # rough guide it has proven to be — visible but scoreless.
+    if _well_in_pending:
+        corroborated = any(a.startswith(("finisher", "excuse last time",
+                                         "RED-HOT", "won last time out"))
+                           for a in aligned)
+        if corroborated:
+            aligned.append(_well_in_pending)
+        else:
+            flags.append("well-in NOT counted — no current form or manner "
+                         "behind it (rough guide only, the master 2026-08-17)")
 
     course_wins = sum(1 for h in hist if h.position == 1 and _same_course(h, race))
     if course_wins >= 2:

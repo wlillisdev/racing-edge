@@ -252,3 +252,38 @@ def test_direction_outranks_state_at_the_cross_off() -> None:
     assert "Gower Prince" in NAP_SYSTEM
     assert "NOT fact enough" in NAP_SYSTEM
     assert "at the cross-off too" in NAP_SYSTEM
+
+
+def test_how_the_bookies_play_the_punters_rides_in_the_rulebook() -> None:
+    # taught 2026-08-16, Southwell 1:30: crowd crunched the obvious horse to
+    # 2.38 (second); the bottom-rated winner sat firm at 7.0. The shape read
+    # nominates; the case still gets built.
+    from racing_edge.study.morningread import NAP_SYSTEM
+
+    assert "HOW THE BOOKIES PLAY THE PUNTERS" in NAP_SYSTEM
+    assert "a horse mid odds will win this" in NAP_SYSTEM
+    assert "The shape read NOMINATES" in NAP_SYSTEM
+
+
+def test_the_shape_reads_first_and_reorders_but_does_not_dethrone_form() -> None:
+    # taught 2026-08-16: "there is a reason the bookies never go broke...
+    # you need to read the shape of the race." The board is read first as
+    # the opponent's hand; form still builds and owns the case.
+    from racing_edge.study.morningread import NAP_SYSTEM
+
+    assert "THE SHAPE READS FIRST" in NAP_SYSTEM
+    assert "bookies never go broke" in NAP_SYSTEM
+    assert "prices the punters, not the horses" in NAP_SYSTEM
+    assert "amends the ORDER of #29" in NAP_SYSTEM
+
+
+def test_the_each_way_insurance_rides_in_the_rulebook() -> None:
+    # taught 2026-08-16, Cliff Danger 7.0: "he would have placed at worse i
+    # would have had an insurance bet and if he wins its a bonus, a short
+    # price favourite in a big field is a danger too many risks."
+    from racing_edge.study.morningread import NAP_SYSTEM
+
+    assert "THE EACH-WAY INSURANCE" in NAP_SYSTEM
+    assert "if he wins its a bonus" in NAP_SYSTEM
+    assert "the place is the insurance" in NAP_SYSTEM
+    assert "BLINDED by the top of the market" in NAP_SYSTEM

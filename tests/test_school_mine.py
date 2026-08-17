@@ -209,3 +209,45 @@ def test_mark_calibration_shortlist2_and_wrong_twin(tmp_path):
     out = mark(picks, keys, raw)
     assert "shortlist-2 hit 2/2 (100.0%)" in out
     assert "wrong twin (danger won, we chose the other) = 1" in out
+
+
+def test_self_auditor_three_strikes_appends_correction(tmp_path):
+    # the master, 2026-08-17: "you need to be able to find your own errors
+    # and fix them" — 3 strikes on a named fault auto-appends a numbered
+    # correction to the school brief (live rulebook still needs his word).
+    import csv as _csv
+    from racing_edge.school.audit import apply_corrections, tag_faults, update_ledger
+
+    rows = [
+        _row("2026-03-02", "r1", "w1", "3.0", "1"),
+        _row("2026-03-02", "r1", "f1", "2.0", "2"),
+        _row("2026-03-02", "r1", "x1", "9.0", "3"),
+    ]
+    raw = _corpus(tmp_path, rows)
+    key = tmp_path / "key.csv"
+    with open(key, "w", newline="") as fh:
+        _csv.writer(fh).writerows([["r1", "w1", "3.0", "f1"]])
+    picks = tmp_path / "2026-03-02.csv"
+    with open(picks, "w", newline="") as fh:
+        _csv.writer(fh).writerows([["r1", "f1", "3", "fav respected"]])
+
+    faults = tag_faults(picks, key, raw)
+    assert ("took_fav_fav_lost", "r1") in faults
+
+    school = tmp_path / "school"
+    school.mkdir()
+    brief = tmp_path / "BRIEF.md"
+    brief.write_text("# BRIEF\n\n1. rule one\n2. rule two\n")
+    # strikes 1 and 2: logged, nothing changes
+    for day in ("2026-03-02", "2026-03-03"):
+        counts = update_ledger(school, day, faults)
+        assert apply_corrections(school, brief, counts) == []
+    # strike 3: correction appended, numbered, earlier text untouched
+    counts = update_ledger(school, "2026-03-04", faults)
+    assert apply_corrections(school, brief, counts) == ["took_fav_fav_lost"]
+    text = brief.read_text()
+    assert "[auto-correction: took_fav_fav_lost]" in text
+    assert text.startswith("# BRIEF\n\n1. rule one\n2. rule two\n")
+    # idempotent: never appended twice
+    counts = update_ledger(school, "2026-03-05", faults)
+    assert apply_corrections(school, brief, counts) == []

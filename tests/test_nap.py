@@ -448,3 +448,62 @@ def test_favline_banks_and_settles_beside_the_nap(tmp_path):
     log.settle_favline(d, won=True, sp_dec=2.5)  # idempotent on the day
     assert log.favline_record()[1] == 1
     log.close()
+
+
+def test_well_in_is_a_rough_guide_without_current_form_behind_it() -> None:
+    # the master, 2026-08-17: "we base everything on well in? why... the
+    # well in has proven only a rough guide and has not been reliable"
+    # (his 2026-07-26 law: it counts only with current form and manner).
+    # A fresh well-in with NO corroborating form/manner lens must not score.
+    r = Runner(horse_id="u", horse="MarkOnly", official_rating=110,
+               odds=Odds(consensus=5.0))
+    hist = (
+        PastRun(date=date(2026, 6, 1), position=4, official_rating=112,
+                race_type="Chase"),
+        PastRun(date=date(2026, 5, 1), position=5, official_rating=114,
+                race_type="Chase"),
+        _won_cdg(date(2026, 4, 1), 114),   # won 3 back off a HIGHER mark
+    )
+    c = conviction(r, _race(), hist, market_rank=4, field_size=8)
+    assert not any("well-in" in a for a in c.aligned)
+    assert any("rough guide only" in f for f in c.flags)
+
+    # the same mark WITH a last-time-out win behind it still counts
+    hist_form = (_won_cdg(date(2026, 6, 1), 110),
+                 PastRun(date=date(2026, 5, 1), position=3,
+                         official_rating=112, race_type="Chase"),
+                 _won_cdg(date(2026, 4, 1), 114))
+    c2 = conviction(r, _race(), hist_form, market_rank=4, field_size=8)
+    assert any("well-in" in a for a in c2.aligned)
+
+
+def test_race_first_ranking_readable_handicap_beats_seductive_horse() -> None:
+    # the master, 2026-08-17: "one of the big problems is picking the right
+    # race i think this is a weak point in the system" — the race outranks
+    # the horse: a solid pick in a clean handicap beats a stronger-scored
+    # horse standing in a flagged or non-handicap race.
+    from racing_edge.pipeline.nap import NapPick, _rank_key
+    from racing_edge.selection.conviction import Conviction
+
+    STRONG = ("won last time out", "course winner", "in-form yard (20%)",
+              "market sweet spot (2nd/3rd fav)", "trip proven (30%)")
+    MODEST = ("won last time out", "in-form yard (18%)")
+
+    def pick(rq, aligned):
+        c = Conviction(aligned=aligned, flags=(), mark_known=True)
+        r = Runner(horse_id=f"h{rq}{len(aligned)}", horse="X", official_rating=80,
+                   odds=Odds(consensus=4.0))
+        return NapPick(race=_race(), runner=r, price=4.0, conviction=c,
+                       race_quality=rq)
+
+    clean_handicap_modest = pick(rq=1, aligned=MODEST)
+    flagged_race_star = pick(rq=-1, aligned=STRONG)
+    nonhandicap_star = pick(rq=0, aligned=STRONG)
+    ranked = sorted([flagged_race_star, clean_handicap_modest, nonhandicap_star],
+                    key=_rank_key, reverse=True)
+    assert ranked[0] is clean_handicap_modest
+    # within the SAME race quality, the better horse still wins
+    clean_handicap_star = pick(rq=1, aligned=STRONG)
+    ranked2 = sorted([clean_handicap_modest, clean_handicap_star],
+                     key=_rank_key, reverse=True)
+    assert ranked2[0] is clean_handicap_star

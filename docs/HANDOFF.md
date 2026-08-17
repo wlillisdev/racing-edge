@@ -39,6 +39,26 @@ Market Rasen 6:34 (result unknown at write time); Park Hall read in the
 5:30 LOST to Centurion's Sister — sitter's fault logged in brief v2 #10
 (maiden 'wins' not verified by sphere).
 
+THE MIDDLE-GROUND CHARTER (the master, 2026-08-17, verbatim: 'you have
+learned so much since the start good and bad, you are in a lot better
+place now to evolve. i understand keep altering things was a problem but
+we need a middle ground we have spent a lot of time going no where').
+Three lanes govern who may change what:
+- LANE 1 — FREE, no permission needed: school-brief corrections (auto at
+  3 strikes), trial policies (one line, graded nightly), bug fixes pinned
+  by tests, and anything that only ADDS measurement (new record lines,
+  new marks). The record is the only judge here.
+- LANE 2 — EVOLVE THEN TELL (the new grant): behaviour changes to PAPER
+  systems (school, shadow, fav line, grading, alarms) may be made without
+  waiting — each ships with a REVERT-IF and is reported to the master in
+  the same breath; his one word rolls it back. Time is no longer lost
+  waiting where only paper is at stake.
+- LANE 3 — THE MASTER'S WORD FIRST, always: the live pick path (NAP and
+  VETO prompts — the taught laws are HIS words), staking, anything with
+  real money, deleting or rewriting history. This lane never widens
+  without him widening it.
+The charter itself is Lane 3: he may strike or redraw it with a word.
+
 AMENDMENT — AGILITY OVER SAMPLE PURITY (the master, 2026-08-16, verbatim:
 'no 5000 is gone, we need to be agile, if we consistinctly see something
 not working we can twait 5000 races to fix it'): the mine's 5,000-race
