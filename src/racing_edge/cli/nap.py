@@ -258,19 +258,12 @@ def _settle(day_str: str, email: bool) -> int:
         emit(f"  ({swept} stale clue(s) expired unverified — 28-day broom)")
 
     log = open_nap_log()
-    nap = next((n for n in log.pending() if n["date"] == day.isoformat()), None)
-    if nap is None:
-        print(f"No unsettled nap for {day} (pass day or already settled).")
-        log.close()
-        return 0
-    race = next((r for r in results if r.race_id == nap["race_id"]), None)
-    me = next((rr for rr in race.runners if rr.horse_id == nap["horse_id"]), None) if race else None
-    if me is None:
-        print(f"Result for {nap['horse']} not in yet for {day}.")
-        log.close()
-        return 0
-    won = me.position == 1
-    log.settle(day, won=won, sp_dec=me.sp_dec)
+    # SHADOW and FAV LINE settle FIRST, independently of the nap row.
+    # LATENT BUG (found 2026-08-17): on veto/pass days there is no pending
+    # nap, and the early return below meant vetoed picks banked in shadow
+    # NEVER settled — the veto tripwire's 'killed a winner' count was blind,
+    # so its reassurance was unfalsifiable, exactly the disease health exists
+    # to catch. These two settle before the nap-existence check, always.
     sh = next((x for x in log.pending_shadow() if x["date"] == day.isoformat()), None)
     if sh is not None:
         shr = next((r for r in results if r.race_id == sh["race_id"]), None)
@@ -293,6 +286,19 @@ def _settle(day_str: str, email: bool) -> int:
                 emit(f"  FAV LINE settled: {fv['horse']} "
                      f"{'WON' if fvm.position == 1 else 'lost'} — fav line record "
                      f"{fw}/{fn}, {fpnl:+.1f}pt")
+    nap = next((n for n in log.pending() if n["date"] == day.isoformat()), None)
+    if nap is None:
+        print(f"No unsettled nap for {day} (pass day or already settled).")
+        log.close()
+        return 0
+    race = next((r for r in results if r.race_id == nap["race_id"]), None)
+    me = next((rr for rr in race.runners if rr.horse_id == nap["horse_id"]), None) if race else None
+    if me is None:
+        print(f"Result for {nap['horse']} not in yet for {day}.")
+        log.close()
+        return 0
+    won = me.position == 1
+    log.settle(day, won=won, sp_dec=me.sp_dec)
     w, n = log.strike_rate()
     cw, cn = log.strike_rate(confident_only=True)
     flag = "WON" if won else f"unplaced ({me.position or me.status})"
@@ -593,6 +599,25 @@ def main() -> int:
                 _vlog.close()
                 emit("  (the vetoed pick banks in the shadow column — the "
                      "record judges the veto itself)")
+                # THE FAV LINE survives a veto (the master, 2026-08-17, after
+                # a veto day left the record empty: 'no pick again today...
+                # a system that cant find 1 horse, is not a system'): the
+                # market's answer in the engine's race still banks, so no day
+                # ends with zero lines on the record.
+                _vfav = min((p for p in field
+                             if p.race.race_id == nap.race.race_id and p.price),
+                            key=lambda p: (p.price, p.runner.horse_id),
+                            default=None)
+                if _vfav is not None:
+                    _vflog = open_nap_log()
+                    if hasattr(_vflog, "record_favline"):
+                        _vflog.record_favline(
+                            day=_vday, race_id=nap.race.race_id,
+                            course=nap.race.course, horse=_vfav.runner.horse,
+                            horse_id=_vfav.runner.horse_id, price=_vfav.price)
+                        emit(f"  FAV LINE (banks despite the veto): "
+                             f"{_vfav.runner.horse} at {_vfav.price}")
+                    _vflog.close()
                 _maybe_email(out, "Nap — no bet today (reader veto)", args.email)
                 return 0
             if engine_mode:
