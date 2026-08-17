@@ -37,6 +37,37 @@ class NapPick:
                                  # -1 per race gate flag. The RACE outranks the horse.
 
 
+def race_quality_score(*, is_handicap: bool, concentration: float,
+                       race_class: int | None, race_type: str,
+                       field_size: int, n_race_flags: int) -> int:
+    """THE BETTING-RACE FINGERPRINT (the master, 2026-08-17: 'we need to give
+    ourself the best chance of winning consistently... lets go'), every term
+    receipted by the 1,978-race study of that date:
+      +1 honest handicap        (the record's winning profile, 6 of 8 winners)
+      +1 concentrated market    (top-3 conc > 0.75: winner in front three 79%
+                                 vs 45-55% in open markets — the strongest
+                                 race-reading signal measured)
+      +1 Class 3-4              (fav 38.2%, top-3 73% — the sweet spot)
+      -1 hurdles                (fav ROI -26.5%, the quietly terrible code)
+      -1 unclassed              (IRE unclassed: hierarchy weakest, fav -22.6%)
+      -1 field of 12+           (front-three coverage collapses to ~55% —
+                                 shape-bet territory, not form-bet)
+      -1 per race gate flag     (the taught laws: novice-in-disguise, Cl6,
+                                 anything-could-win shape)
+    The score picks the RACE; the trap-avoidance discipline (my price first,
+    defection rule) still picks the horse — nothing here nudges toward the
+    favourite standing in the bookies' trap."""
+    q = 0
+    q += 1 if is_handicap else 0
+    q += 1 if concentration > 0.75 else 0
+    q += 1 if race_class in (3, 4) else 0
+    q -= 1 if "hurdle" in (race_type or "").lower() else 0
+    q -= 1 if not race_class else 0
+    q -= 1 if field_size >= 12 else 0
+    q -= n_race_flags
+    return q
+
+
 def ew_advice(price: float | None, field_size: int) -> str:
     """Each-way as a CALCULATION, not the old 8.0 cliff (the master, 2026-07-26).
     Standard handicap terms: 16+ runners = 1/4 odds 4 places; 12-15 = 1/4 odds
@@ -220,11 +251,14 @@ def evaluate_field(client: _Client, day: str = "today",
                     p.conviction, flags=(*p.conviction.flags, *race_flags)))
                 for p in race_picks
             ]
-        # RACE QUALITY, scored not just flagged (2026-08-17): honest handicaps
-        # are the record's winning profile (+1); every race gate flag is a
-        # taught reason the race resists reading (-1 each). Rides on every
-        # pick so the ranking can put the race before the horse.
-        rq = (1 if race.is_handicap else 0) - len(race_flags)
+        # RACE QUALITY, scored not just flagged (2026-08-17, extended same day
+        # on the master's word with the 1,978-race fingerprint study). Rides
+        # on every pick so the ranking puts the race before the horse.
+        rq = race_quality_score(is_handicap=race.is_handicap, concentration=conc,
+                                race_class=race.race_class,
+                                race_type=race.race_type or "",
+                                field_size=len(race_picks),
+                                n_race_flags=len(race_flags))
         race_picks = [replace(p, race_quality=rq) for p in race_picks]
         out.extend(race_picks)
     if oddsless and progress:

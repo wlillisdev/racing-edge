@@ -507,3 +507,29 @@ def test_race_first_ranking_readable_handicap_beats_seductive_horse() -> None:
     ranked2 = sorted([clean_handicap_modest, clean_handicap_star],
                      key=_rank_key, reverse=True)
     assert ranked2[0] is clean_handicap_star
+
+
+def test_race_quality_score_carries_the_fingerprint_study() -> None:
+    # the master, 2026-08-17: "we need to give ourself the best chance of
+    # winning consistently and if you think the above is the right way and
+    # type of race lets go" — every term receipted by the 1,978-race study.
+    from racing_edge.pipeline.nap import race_quality_score
+
+    # the dream betting race: concentrated Cl4 handicap chase, 8 runners
+    best = race_quality_score(is_handicap=True, concentration=0.8,
+                              race_class=4, race_type="Handicap Chase",
+                              field_size=8, n_race_flags=0)
+    assert best == 3
+    # the walk-past: unclassed open-market hurdle, 14 runners, flagged
+    worst = race_quality_score(is_handicap=False, concentration=0.4,
+                               race_class=None, race_type="Maiden Hurdle",
+                               field_size=14, n_race_flags=1)
+    assert worst == -4
+    # concentration is the strongest single signal — it alone separates
+    mid_locked = race_quality_score(is_handicap=True, concentration=0.8,
+                                    race_class=5, race_type="Handicap",
+                                    field_size=9, n_race_flags=0)
+    mid_open = race_quality_score(is_handicap=True, concentration=0.5,
+                                  race_class=5, race_type="Handicap",
+                                  field_size=9, n_race_flags=0)
+    assert mid_locked > mid_open

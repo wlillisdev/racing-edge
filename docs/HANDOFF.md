@@ -39,6 +39,22 @@ Market Rasen 6:34 (result unknown at write time); Park Hall read in the
 5:30 LOST to Centurion's Sister — sitter's fault logged in brief v2 #10
 (maiden 'wins' not verified by sphere).
 
+THE BETTING-RACE FINGERPRINT (2026-08-17, mined from 1,978 scored corpus
+races on the master's order — 'you can surely mine results to see what
+type of races worked best'; shipped on his word: 'lets go'): form holds
+where the market is CONCENTRATED (top-3 conc >0.75: winner in front three
+79% vs 45-55% open — the strongest signal), in Cl3-4 (fav 38.2%, top-3
+73%), in fields <=11 (12+ collapses to ~55% — shape-bet territory only),
+in chases and flat over hurdles (hurdle fav ROI -26.5%), and NOT in
+unclassed IRE races (fav -22.6%). Now scored in race_quality_score()
+(pipeline/nap.py) leading the engine's rank. THE TRAP CAVEAT (his words:
+'the bookies lay the traps for favourites... very few of your picks were
+favourites, many were second or third favourite — the benefit of reading
+the form finding the gems'): blind 2nd-favs lose -13.8%, ours built
++13.4pt — the ~50-point reading premium lives at ranks 2-3 behind the
+trapped fav. The score picks the RACE; my-price + defection pick the
+horse. Exposure split deferred (corpus too shallow to trust it yet).
+
 THE MIDDLE-GROUND CHARTER (the master, 2026-08-17, verbatim: 'you have
 learned so much since the start good and bad, you are in a lot better
 place now to evolve. i understand keep altering things was a problem but
