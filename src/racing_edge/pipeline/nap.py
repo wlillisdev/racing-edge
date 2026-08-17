@@ -31,6 +31,10 @@ class NapPick:
     price: float | None
     conviction: Conviction
     history: tuple = ()          # the contender's past runs — for the morning deep read
+    race_quality: int = 0        # race-first ranking (the master, 2026-08-17: 'picking
+                                 # the right race... is a weak point in the system'):
+                                 # +1 honest handicap (the record's winning profile),
+                                 # -1 per race gate flag. The RACE outranks the horse.
 
 
 def ew_advice(price: float | None, field_size: int) -> str:
@@ -82,7 +86,13 @@ def _rank_key(p: NapPick) -> tuple[int, int, int, int, int, float]:
     # a READABLE mark ranks ahead of an OWED one (slot efficiency: the floor can't
     # bank mark-OWED picks) — but well-in itself carries no extra rank weight (the
     # master, 2026-07-26: the mark is one jigsaw piece and a veto, never a magnet).
-    return (int(p.conviction.confident), int(p.conviction.mark_known),
+    # RACE FIRST (the master, 2026-08-17: 'one of the big problems is picking
+    # the right race i think this is a weak point in the system' — and his
+    # 2026-07-05 law finally reaches the RANKING, not just the flags): the
+    # readable race outranks the seductive horse. Within equal races, the
+    # old horse-first key decides as before.
+    return (p.race_quality,
+            int(p.conviction.confident), int(p.conviction.mark_known),
             p.conviction.score, len(p.conviction.aligned),
             -(p.race.race_class or 6), -(p.price or 999.0))
 
@@ -210,6 +220,12 @@ def evaluate_field(client: _Client, day: str = "today",
                     p.conviction, flags=(*p.conviction.flags, *race_flags)))
                 for p in race_picks
             ]
+        # RACE QUALITY, scored not just flagged (2026-08-17): honest handicaps
+        # are the record's winning profile (+1); every race gate flag is a
+        # taught reason the race resists reading (-1 each). Rides on every
+        # pick so the ranking can put the race before the horse.
+        rq = (1 if race.is_handicap else 0) - len(race_flags)
+        race_picks = [replace(p, race_quality=rq) for p in race_picks]
         out.extend(race_picks)
     if oddsless and progress:
         # AN OUTAGE MUST NEVER WEAR DISCIPLINE'S COAT (2026-07-25 reliability audit:
