@@ -46,7 +46,7 @@ SDK_OFF=(env ANTHROPIC_API_KEY=)
 
 # form-trial was MERGED (PR #39) — the trial now lives on the current dev branch.
 # Override with TRIAL_BRANCH=... if the branch moves again.
-BRANCH="${TRIAL_BRANCH:-claude/tender-wright-kbn1h6}"
+BRANCH="${TRIAL_BRANCH:-main}"  # ONE BRAIN (2026-08-18): the trial moved to main — this bridge walks the server there
 echo ">> updating to the latest trial branch ($BRANCH)..."
 # BEST-EFFORT update (2026-07-21): under set -e a git/network hiccup at 08:30 killed
 # the entire run before it banked anything. Stale code running beats no run.
