@@ -286,6 +286,41 @@ def _settle(day_str: str, email: bool) -> int:
                 emit(f"  FAV LINE settled: {fv['horse']} "
                      f"{'WON' if fvm.position == 1 else 'lost'} — fav line record "
                      f"{fw}/{fn}, {fpnl:+.1f}pt")
+    # MARK THE MORNING OPINIONS (the master, 2026-08-18: 'this is the test').
+    # Every race the engine studied this morning is graded against tonight's
+    # winners and fed to the ladder as the 'engine' policy.
+    try:
+        import csv as _csv
+        from pathlib import Path as _Path
+        _ofile = _Path("data/school/opinions") / f"{day.isoformat()}.csv"
+        if _ofile.exists():
+            _n = _w = 0
+            _ret = 0.0
+            with open(_ofile, newline="") as _fh:
+                for _row in _csv.reader(_fh):
+                    _r = next((x for x in results if x.race_id == _row[0]), None)
+                    _me = next((rr for rr in _r.runners
+                                if rr.horse_id == _row[3]), None) if _r else None
+                    if _me is None:
+                        continue
+                    _n += 1
+                    if _me.position == 1:
+                        _w += 1
+                        _ret += _me.sp_dec or 0.0
+            if _n:
+                _csvp = _Path("data/school/daily_policy.csv")
+                _new = not _csvp.exists()
+                _csvp.parent.mkdir(parents=True, exist_ok=True)
+                with open(_csvp, "a", newline="") as _fh:
+                    _wr = _csv.writer(_fh)
+                    if _new:
+                        _wr.writerow(["day", "policy", "picks", "wins", "returned"])
+                    _wr.writerow([day.isoformat(), "engine", _n, _w, f"{_ret:.2f}"])
+                emit(f"  MORNING OPINIONS marked: {_w}/{_n} races read right "
+                     f"({100.0 * _w / _n:.0f}%), level stakes {_ret - _n:+.1f}pt "
+                     f"— the day's full test, fed to the ladder")
+    except Exception as _e:
+        emit(f"  ⚠ morning opinions not marked: {_e}")
     nap = next((n for n in log.pending() if n["date"] == day.isoformat()), None)
     if nap is None:
         print(f"No unsettled nap for {day} (pass day or already settled).")
@@ -366,6 +401,36 @@ def main() -> int:
         print(line, flush=True)
 
     field = evaluate_field(client, day=args.day, codes=codes, progress=_progress)
+
+    # THE MORNING OPINIONS (the master, 2026-08-18: 'you should study the
+    # form of every race each day, then look at the winners in the evening,
+    # this is the test, and then learn from the results, it is not rocket
+    # science'): the engine already forms an opinion on EVERY race to choose
+    # its nap — from today it keeps all of them. One line per race (its
+    # top-ranked runner), banked pre-off, marked at settle, fed to the
+    # ladder as the 'engine' policy so the whole card grades the brain daily.
+    try:
+        import csv as _csv
+        from pathlib import Path as _Path
+        from racing_edge.pipeline.nap import _rank_key as _rk
+        _oday = resolve_date(args.day).isoformat()
+        _best: dict[str, object] = {}
+        for _p in field:
+            _cur = _best.get(_p.race.race_id)
+            if _cur is None or _rk(_p) > _rk(_cur):
+                _best[_p.race.race_id] = _p
+        _odir = _Path("data/school/opinions")
+        _odir.mkdir(parents=True, exist_ok=True)
+        with open(_odir / f"{_oday}.csv", "w", newline="") as _fh:
+            _w = _csv.writer(_fh)
+            for _p in _best.values():
+                _w.writerow([_p.race.race_id, _p.race.course, _p.race.off_time,
+                             _p.runner.horse_id, _p.runner.horse,
+                             _p.price or 0, _p.race_quality])
+        print(f"  morning opinions banked: {len(_best)} race(s) — marked at settle",
+              flush=True)
+    except Exception as _e:                                    # never kill the nap
+        print(f"  ⚠ morning opinions not banked: {_e}", flush=True)
 
     # THE FORWARD CLUES (#27): horses mined from past results that reappear TODAY.
     # This is the result-mining paying off on the card, not sitting in a database.
