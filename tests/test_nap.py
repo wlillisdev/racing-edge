@@ -533,3 +533,22 @@ def test_race_quality_score_carries_the_fingerprint_study() -> None:
                                   race_class=5, race_type="Handicap",
                                   field_size=9, n_race_flags=0)
     assert mid_locked > mid_open
+
+
+def test_terrible_race_lesson_aw_penalty_and_hollow_concentration() -> None:
+    # the master, 2026-08-19, after Percy's Lad ran 5th: "for the record
+    # that was a terrible race to pick in wolverhampton." Two teeth: AW
+    # costs a point (taught #14, receipted: concentrated AW top-3 71.9% vs
+    # 79.9% turf), and concentration earned by dead wood counts for nothing.
+    from racing_edge.pipeline.nap import race_quality_score
+
+    base = dict(is_handicap=True, concentration=0.8, race_class=4,
+                race_type="Handicap", field_size=9, n_race_flags=0)
+    turf_quality = race_quality_score(**base)
+    aw_same = race_quality_score(**base, is_aw=True)
+    aw_hollow = race_quality_score(**base, is_aw=True, hollow=True)
+    assert turf_quality == 3
+    assert aw_same == 2          # the surface taxes a point
+    assert aw_hollow == 1        # hollow field forfeits the conc bonus too
+    # yesterday's Wolves 6:30 under the corrected score: AW + hollow = +1,
+    # no longer the automatic race of the day

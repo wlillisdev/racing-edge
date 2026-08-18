@@ -39,7 +39,8 @@ class NapPick:
 
 def race_quality_score(*, is_handicap: bool, concentration: float,
                        race_class: int | None, race_type: str,
-                       field_size: int, n_race_flags: int) -> int:
+                       field_size: int, n_race_flags: int,
+                       is_aw: bool = False, hollow: bool = False) -> int:
     """THE BETTING-RACE FINGERPRINT (the master, 2026-08-17: 'we need to give
     ourself the best chance of winning consistently... lets go'), every term
     receipted by the 1,978-race study of that date:
@@ -59,11 +60,21 @@ def race_quality_score(*, is_handicap: bool, concentration: float,
     favourite standing in the bookies' trap."""
     q = 0
     q += 1 if is_handicap else 0
-    q += 1 if concentration > 0.75 else 0
+    # HOLLOW CONCENTRATION (the master, 2026-08-19, after Percy's Lad 5th:
+    # 'for the record that was a terrible race to pick in wolverhampton'):
+    # a market can be short at the front because everything behind it is
+    # dead wood — absentees, cold form, serial non-winners. That is a
+    # coin-flip in a phone box, not a readable hierarchy. The concentration
+    # bonus counts only when the field's QUALITY earned it.
+    q += 1 if concentration > 0.75 and not hollow else 0
     q += 1 if race_class in (3, 4) else 0
     q -= 1 if "hurdle" in (race_type or "").lower() else 0
     q -= 1 if not race_class else 0
     q -= 1 if field_size >= 12 else 0
+    # AW penalty — taught law #14, now receipted (2026-08-18 corpus split:
+    # concentrated AW holds the front three 71.9% vs 79.9% on turf, fav ROI
+    # -10.0% vs -6.6%): the surface itself taxes readability.
+    q -= 1 if is_aw else 0
     q -= n_race_flags
     return q
 
@@ -254,11 +265,16 @@ def evaluate_field(client: _Client, day: str = "today",
         # RACE QUALITY, scored not just flagged (2026-08-17, extended same day
         # on the master's word with the 1,978-race fingerprint study). Rides
         # on every pick so the ranking puts the race before the horse.
+        _dead = sum(1 for p in race_picks
+                    if any(("cold form" in f) or ("no win in" in f)
+                           or ("STALE" in f) for f in p.conviction.flags))
         rq = race_quality_score(is_handicap=race.is_handicap, concentration=conc,
                                 race_class=race.race_class,
                                 race_type=race.race_type or "",
                                 field_size=len(race_picks),
-                                n_race_flags=len(race_flags))
+                                n_race_flags=len(race_flags),
+                                is_aw="(AW)" in (race.course or ""),
+                                hollow=_dead * 2 > len(race_picks))
         race_picks = [replace(p, race_quality=rq) for p in race_picks]
         out.extend(race_picks)
     if oddsless and progress:
