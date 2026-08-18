@@ -44,9 +44,11 @@ PY="venv/bin/python"
 # lobotomise the scheduled runs while manual runs kept working.)
 SDK_OFF=(env ANTHROPIC_API_KEY=)
 
-# form-trial was MERGED (PR #39) — the trial now lives on the current dev branch.
-# Override with TRIAL_BRANCH=... if the branch moves again.
-BRANCH="${TRIAL_BRANCH:-claude/tender-wright-kbn1h6}"
+# ONE BRAIN (PR #56, 2026-08-18, the master: 'is the system fixed now one
+# brain, one goal') — the trial lives on main. Override with TRIAL_BRANCH=...
+BRANCH="${TRIAL_BRANCH:-main}"
+# the school ladder's champion policy: the engine's own whole-card reading
+export SCHOOL_CHAMPION="${SCHOOL_CHAMPION:-engine}"
 echo ">> updating to the latest trial branch ($BRANCH)..."
 # BEST-EFFORT update (2026-07-21): under set -e a git/network hiccup at 08:30 killed
 # the entire run before it banked anything. Stale code running beats no run.
@@ -74,6 +76,14 @@ case "${1:-nap}" in
            fi
            echo
            "$PY" -m racing_edge.cli.learn   --day today --email
+           # THE NIGHT SCHOOL (2026-08-18, the master: 'study the form of every
+           # race each day, then look at the winners in the evening, this is
+           # the test'): grow the corpus with today's results (free on the API
+           # sub), grade every policy on every race, ladder verdict for health.
+           # Best-effort: a school crash must never cancel the self-study chain.
+           if ! "${SDK_OFF[@]}" "$PY" -m racing_edge.school.night --day "$(date +%F)" --champion "$SCHOOL_CHAMPION"; then
+             echo "WARNING: night school FAILED — the grind misses a day, nothing else"
+           fi
            # Sunday: the weekly synthesis rides in the same slot (no weekly task needed)
            if [ "$(date +%u)" = "7" ]; then echo; "$PY" -m racing_edge.cli.learn --synthesise --email; fi ;;
   all)     "$PY" -m racing_edge.cli.nap     --day today --both --email
