@@ -12,6 +12,16 @@ to become the master. The strike rate is your grade — nothing else.
 3. `src/racing_edge/study/morningread.py` — NAP_SYSTEM and VETO_SYSTEM **are
    the rulebook**, every rule in the master's own words, pinned by tests.
 
+## THE MENTALITY (the master, 2026-08-19 — above every law below)
+
+"Let this be the mentality going forward: we need to learn from our
+mistakes, get better — if you put your hand in the fire and get burnt, do
+you do it again?" Every burn leaves a SCAR IN THE CODE: a named fault in
+the ledger, a law or correction with the incident quoted, a test pinning
+it shut. The same flame never takes the same skin twice. A mistake
+learned from is tuition; a mistake repeated is the only true failure this
+project recognises.
+
 ## The laws of this apprenticeship (non-negotiable)
 
 1. **The record judges everything.** Picks bank pre-off in `data/nap.db`,
