@@ -650,41 +650,26 @@ def main() -> int:
                 # and the vetoed engine pick banks in the shadow column so the
                 # RECORD judges every veto (a veto that keeps killing winners
                 # will hang by its own rope).
-                emit(f"  READER VETO (cited disqualifying fact): {mp.pass_reason}")
-                _vday = resolve_date(args.day)
-                _bank_pass(_vday, f"reader veto of engine pick "
-                                  f"{nap.runner.horse}: {mp.pass_reason}")
-                _vlog = open_nap_log()
-                _vlog.record_shadow(day=_vday, race_id=nap.race.race_id,
-                                    course=nap.race.course,
-                                    horse=nap.runner.horse,
-                                    horse_id=nap.runner.horse_id,
-                                    price=nap.price,
-                                    score=nap.conviction.score)
-                _vlog.close()
-                emit("  (the vetoed pick banks in the shadow column — the "
-                     "record judges the veto itself)")
-                # THE FAV LINE survives a veto (the master, 2026-08-17, after
-                # a veto day left the record empty: 'no pick again today...
-                # a system that cant find 1 horse, is not a system'): the
-                # market's answer in the engine's race still banks, so no day
-                # ends with zero lines on the record.
-                _vfav = min((p for p in field
-                             if p.race.race_id == nap.race.race_id and p.price),
-                            key=lambda p: (p.price, p.runner.horse_id),
-                            default=None)
-                if _vfav is not None:
-                    _vflog = open_nap_log()
-                    if hasattr(_vflog, "record_favline"):
-                        _vflog.record_favline(
-                            day=_vday, race_id=nap.race.race_id,
-                            course=nap.race.course, horse=_vfav.runner.horse,
-                            horse_id=_vfav.runner.horse_id, price=_vfav.price)
-                        emit(f"  FAV LINE (banks despite the veto): "
-                             f"{_vfav.runner.horse} at {_vfav.price}")
-                    _vflog.close()
-                _maybe_email(out, "Nap — no bet today (reader veto)", args.email)
-                return 0
+                # THE VETO IS CUT TO AN OBJECTION (the master, 2026-08-19:
+                # 'your vetos are crippling us' and 'if you put your hand in
+                # the fire and get burnt do you do it again' — the pre-agreed
+                # trigger fired the same day: vetoed King Roly WON at 6.0
+                # after six kill-vetoes in ten days, five of them citing the
+                # SAME stale-anchor fact the engine can no longer even
+                # nominate on since the well-in demotion). The reader keeps
+                # its voice and loses the handbrake: pass=true now RECORDS a
+                # strong objection, the engine's pick banks and emails
+                # regardless at LEAN, and the record judges whether the
+                # reader's doubts predict losses. No more no-bet days by
+                # reader's hand — the record starves without picks.
+                emit(f"  READER OBJECTION (recorded — the pick STANDS, LEAN): "
+                     f"{mp.pass_reason}")
+                deep_case = [
+                    "  READER OBJECTION (2026-08-19 law: objection recorded, "
+                    "pick stands at LEAN — the record judges the doubt):",
+                    f"    {mp.pass_reason}"]
+                mp = None
+                raise _EngineBankNow
             if engine_mode:
                 # agreement path: the pick is FIXED — the case attaches only if
                 # the reader wrote it for the engine's horse; a re-pick attempt

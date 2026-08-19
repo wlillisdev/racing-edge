@@ -193,8 +193,13 @@ def test_the_flip_veto_system_fixes_the_pick_and_limits_the_reader() -> None:
     assert "NOT the selector" in VETO_SYSTEM
     assert "FIXED" in VETO_SYSTEM
     assert "DISQUALIFYING FACT" in VETO_SYSTEM
-    assert "'I prefer another horse' is not a veto" in VETO_SYSTEM
-    assert "Doubt without a fact is not a veto" in VETO_SYSTEM
+    # 2026-08-19, the master: 'your vetos are crippling us' — the kill-switch
+    # became a recorded objection the day vetoed King Roly won at 6.0.
+    assert "'I prefer another horse' is not an objection" in VETO_SYSTEM
+    assert "Doubt without a fact is not an objection" in VETO_SYSTEM
+    assert "the pick STANDS" in VETO_SYSTEM or "banks and emails regardless" in VETO_SYSTEM
+    assert "King Roly" in VETO_SYSTEM
+    assert "stale well-in anchor is NO LONGER a ground" in VETO_SYSTEM
     # taught 2026-08-08: the case OPENS with the reader's own tissue price —
     # 'a different way of looking at it — why would you back a 50/1 shot?'
     assert "YOUR OWN PRICE" in VETO_SYSTEM
