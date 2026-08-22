@@ -292,3 +292,16 @@ def test_the_each_way_insurance_rides_in_the_rulebook() -> None:
     assert "if he wins its a bonus" in NAP_SYSTEM
     assert "the place is the insurance" in NAP_SYSTEM
     assert "BLINDED by the top of the market" in NAP_SYSTEM
+
+
+def test_law_3c_class_is_permanent() -> None:
+    """Taught 2026-08-22 (Notable Speech, City Of York): 'class horse form is
+    temp class is permanent'. Pattern races are not handicaps — a rating-clear,
+    respected horse is a live pick despite layoff and a beaten last run; the
+    handicap walk-past laws must not bin a class race. Paper trial gates the
+    stakes, not the read."""
+    from racing_edge.study.morningread import NAP_SYSTEM
+    assert "FORM IS TEMPORARY, CLASS IS PERMANENT" in NAP_SYSTEM
+    assert "Notable Speech" in NAP_SYSTEM
+    assert "HANDICAP laws" in NAP_SYSTEM
+    assert "paper trial" in NAP_SYSTEM
