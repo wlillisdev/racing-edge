@@ -552,3 +552,25 @@ def test_terrible_race_lesson_aw_penalty_and_hollow_concentration() -> None:
     assert aw_hollow == 1        # hollow field forfeits the conc bonus too
     # yesterday's Wolves 6:30 under the corrected score: AW + hollow = +1,
     # no longer the automatic race of the day
+
+
+def test_raised_lb_is_a_caution_not_a_cross_off() -> None:
+    """THE OPPOSITE (the master, 2026-08-22: 'just do the opposite and see how
+    it goes... dont go all nuclear on the system'). 'Raised N lb since last
+    win' had no master quote and no receipts (RULE_AUDIT row); it crossed Too
+    Much Trevor, who won at 10/1, and on 2026-08-22 it was the sole cross-off
+    on dozens of horses — erasing the day's best race. Demoted: it now WARNS
+    (a caution the case must answer) and never ERASES — flags stay clean so
+    the horse survives, but confidence stays blocked. REVERT-IF: a week of
+    marked mornings reads worse than the week before this shipped."""
+    r = Runner(horse_id="t", horse="Too Much Trevor", official_rating=80,
+               odds=Odds(consensus=6.0))
+    hist = (PastRun(date=date(2026, 8, 1), position=1, official_rating=75,
+                    race_type="Flat"),
+            PastRun(date=date(2026, 7, 10), position=3, race_type="Flat"))
+    race = Race(race_id="r", course="Ripon", off_time="14:10",
+                date=date(2026, 8, 22), race_type="Flat", is_handicap=True)
+    c = conviction(r, race, hist, market_rank=3, field_size=8)
+    assert any("raised" in x for x in c.cautions)      # the warning rides along
+    assert not any("raised" in f for f in c.flags)     # but it no longer erases
+    assert not c.confident                             # a raised horse is never a nap
