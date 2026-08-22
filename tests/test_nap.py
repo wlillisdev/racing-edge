@@ -574,3 +574,23 @@ def test_raised_lb_is_a_caution_not_a_cross_off() -> None:
     assert any("raised" in x for x in c.cautions)      # the warning rides along
     assert not any("raised" in f for f in c.flags)     # but it no longer erases
     assert not c.confident                             # a raised horse is never a nap
+
+
+def test_two_column_record_judges_betting_races_apart(tmp_path):
+    """THE TWO-COLUMN RECORD (the master, 2026-08-22: 'go for it' — opinion on
+    everything, money-shape on few). The fingerprint score banks WITH the pick;
+    record_split() judges betting races (rq >= 2) apart from forced dreck-day
+    picks. The mine's receipt: nothing wins blind everywhere — 'everywhere' is
+    the disease, so the record now says where the picks were made."""
+    from racing_edge.study.naplog import NapLog
+    log = NapLog(tmp_path / "nap.db")
+    log.record(day=date(2026, 8, 20), race_id="r1", course="Newmarket", horse="A",
+               horse_id="h1", price=5.0, score=3, confident=False, race_quality=3)
+    log.record(day=date(2026, 8, 21), race_id="r2", course="Killarney", horse="B",
+               horse_id="h2", price=4.0, score=2, confident=False, race_quality=0)
+    log.settle(date(2026, 8, 20), won=True, sp_dec=6.0)
+    log.settle(date(2026, 8, 21), won=False, sp_dec=None)
+    bet, dreck = log.record_split()
+    assert bet == (1, 1)         # the betting-race column: 1 pick, 1 winner
+    assert dreck == (0, 1)       # the dreck column: duty, not evidence
+    log.close()

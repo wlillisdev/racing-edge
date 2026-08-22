@@ -294,8 +294,8 @@ def _settle(day_str: str, email: bool) -> int:
         from pathlib import Path as _Path
         _ofile = _Path("data/school/opinions") / f"{day.isoformat()}.csv"
         if _ofile.exists():
-            _n = _w = 0
-            _ret = 0.0
+            _n = _w = _bn = _bw = _tw = _wt = 0
+            _ret = _bret = 0.0
             with open(_ofile, newline="") as _fh:
                 for _row in _csv.reader(_fh):
                     _r = next((x for x in results if x.race_id == _row[0]), None)
@@ -304,9 +304,27 @@ def _settle(day_str: str, email: bool) -> int:
                     if _me is None:
                         continue
                     _n += 1
+                    # the two-column record (2026-08-22): betting races
+                    # (fingerprint score >= 2) judged apart from the dreck
+                    _bet = len(_row) > 6 and str(_row[6]).lstrip("-").isdigit() \
+                        and int(_row[6]) >= 2
+                    if _bet:
+                        _bn += 1
+                    # the twin-choice gauge (2026-08-22): was the winner in my
+                    # two, and did I take the wrong twin?
+                    _winner = next((rr.horse_id for rr in _r.runners
+                                    if rr.position == 1), None)
+                    if _winner and _winner == _row[3]:
+                        _tw += 1
+                    elif _winner and len(_row) > 7 and _winner == _row[7]:
+                        _tw += 1
+                        _wt += 1
                     if _me.position == 1:
                         _w += 1
                         _ret += _me.sp_dec or 0.0
+                        if _bet:
+                            _bw += 1
+                            _bret += _me.sp_dec or 0.0
             if _n:
                 _csvp = _Path("data/school/daily_policy.csv")
                 _new = not _csvp.exists()
@@ -316,9 +334,18 @@ def _settle(day_str: str, email: bool) -> int:
                     if _new:
                         _wr.writerow(["day", "policy", "picks", "wins", "returned"])
                     _wr.writerow([day.isoformat(), "engine", _n, _w, f"{_ret:.2f}"])
+                    if _bn:
+                        _wr.writerow([day.isoformat(), "engine-bet", _bn, _bw,
+                                      f"{_bret:.2f}"])
                 emit(f"  MORNING OPINIONS marked: {_w}/{_n} races read right "
                      f"({100.0 * _w / _n:.0f}%), level stakes {_ret - _n:+.1f}pt "
                      f"— the day's full test, fed to the ladder")
+                if _bn:
+                    emit(f"  BETTING RACES (fingerprint >= 2): {_bw}/{_bn} read "
+                         f"right — the column the system is judged on")
+                emit(f"  TWIN CHOICE: winner in my two {_tw}/{_n}; wrong twin "
+                     f"taken {_wt} — close-and-fixable if the first number is "
+                     f"high, deeper if it is low")
     except Exception as _e:
         emit(f"  ⚠ morning opinions not marked: {_e}")
     nap = next((n for n in log.pending() if n["date"] == day.isoformat()), None)
@@ -414,19 +441,25 @@ def main() -> int:
         from pathlib import Path as _Path
         from racing_edge.pipeline.nap import _rank_key as _rk
         _oday = resolve_date(args.day).isoformat()
-        _best: dict[str, object] = {}
+        # keep the TOP TWO per race (2026-08-22, the twin-choice gauge — the
+        # master: the winner stands in a group of three or four; the skill
+        # that pays is taking the right one of the last two)
+        _byrace: dict[str, list] = {}
         for _p in field:
-            _cur = _best.get(_p.race.race_id)
-            if _cur is None or _rk(_p) > _rk(_cur):
-                _best[_p.race.race_id] = _p
+            _byrace.setdefault(_p.race.race_id, []).append(_p)
         _odir = _Path("data/school/opinions")
         _odir.mkdir(parents=True, exist_ok=True)
         with open(_odir / f"{_oday}.csv", "w", newline="") as _fh:
             _w = _csv.writer(_fh)
-            for _p in _best.values():
+            _best = {}
+            for _rid, _ps in _byrace.items():
+                _ps.sort(key=_rk, reverse=True)
+                _best[_rid] = _ps[0]
+                _p, _second = _ps[0], (_ps[1] if len(_ps) > 1 else None)
                 _w.writerow([_p.race.race_id, _p.race.course, _p.race.off_time,
                              _p.runner.horse_id, _p.runner.horse,
-                             _p.price or 0, _p.race_quality])
+                             _p.price or 0, _p.race_quality,
+                             _second.runner.horse_id if _second else ""])
         print(f"  morning opinions banked: {len(_best)} race(s) — marked at settle",
               flush=True)
     except Exception as _e:                                    # never kill the nap
@@ -939,7 +972,7 @@ def main() -> int:
     log.record(day=day, race_id=r.race_id, course=r.course, horse=nap.runner.horse,
                horse_id=nap.runner.horse_id, price=nap.price, score=c.score,
                confident=confident, case=case_text, deep_conf=deep_conf,
-               aligned=" | ".join(c.aligned))
+               aligned=" | ".join(c.aligned), race_quality=nap.race_quality)
     # THE SHADOW: the mechanical engine's own top survivor, banked silently for the
     # A/B record (one machine, two ledgers — the record decides which method earns
     # the stakes). Costs nothing: it was already computed.

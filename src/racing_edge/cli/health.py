@@ -316,9 +316,15 @@ def main() -> int:
     pnl, _pn = log2.profit_loss() if hasattr(log2, "profit_loss") else (0.0, 0)
     # favline read BEFORE close too (same trap as P/L, 2026-08-01)
     _fav = log2.favline_record() if hasattr(log2, "favline_record") else (0, 0, 0.0)
+    # the two-column record read BEFORE close (same closed-DB trap)
+    _bet, _dreck = (log2.record_split() if hasattr(log2, "record_split")
+                    else ((0, 0), (0, 0)))
     log2.close()
     lines.append(f"  record: {w}/{n} settled naps won"
                  + (f" ({100 * w / n:.0f}%), level stakes at SP {pnl:+.1f}pt" if n else ""))
+    if _bet[1] or _dreck[1]:
+        lines.append(f"  two-column record: BETTING races {_bet[0]}/{_bet[1]} · "
+                     f"forced/dreck days {_dreck[0]}/{_dreck[1]} — judge the first")
     # THE FAV LINE beside the value line (the master, 2026-08-16: 'lets do
     # favourite and value bet') — both bets, one glance, every day.
     fw, fn, fpnl = _fav
