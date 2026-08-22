@@ -66,20 +66,41 @@ class NapLog:
         for col in ("case_text", "deep_conf", "aligned"):
             with contextlib.suppress(sqlite3.OperationalError):   # column may exist
                 self._conn.execute(f"ALTER TABLE nap ADD COLUMN {col} TEXT DEFAULT ''")
+        # 'race_quality' (2026-08-22, the two-column record — the master: 'go for
+        # it'): the fingerprint score banks WITH the pick so the ledger can judge
+        # betting-race picks apart from forced dreck-day picks.
+        with contextlib.suppress(sqlite3.OperationalError):
+            self._conn.execute(
+                "ALTER TABLE nap ADD COLUMN race_quality INTEGER DEFAULT 0")
         self._conn.commit()
 
     def record(self, *, day: date, race_id: str, course: str, horse: str, horse_id: str,
                price: float | None, score: int, confident: bool,
-               case: str = "", deep_conf: str = "", aligned: str = "") -> None:
+               case: str = "", deep_conf: str = "", aligned: str = "",
+               race_quality: int = 0) -> None:
         """Bank the morning's nap (unsettled), WITH its reasoning. Idempotent on the day."""
         self._conn.execute(
             "INSERT OR REPLACE INTO nap (date, race_id, course, horse, horse_id, price, "
-            "score, confident, won, sp_dec, case_text, deep_conf, aligned) "
-            "VALUES (?,?,?,?,?,?,?,?,NULL,NULL,?,?,?)",
+            "score, confident, won, sp_dec, case_text, deep_conf, aligned, race_quality) "
+            "VALUES (?,?,?,?,?,?,?,?,NULL,NULL,?,?,?,?)",
             (day.isoformat(), race_id, course, horse, horse_id, price, score,
-             int(confident), case, deep_conf, aligned),
+             int(confident), case, deep_conf, aligned, int(race_quality)),
         )
         self._conn.commit()
+
+    def record_split(self, bar: int = 2) -> tuple[tuple[int, int], tuple[int, int]]:
+        """((wins, settled) in BETTING races, (wins, settled) in the rest).
+        The two-column record (the master, 2026-08-22: opinion on everything,
+        money-shape on few): a betting race carries fingerprint score >= bar
+        (concentrated quality handicap territory); the system is JUDGED on
+        that column — the forced dreck-day column is duty, not evidence."""
+        out = []
+        for cond in ("race_quality >= ?", "race_quality < ?"):
+            q = f"SELECT COUNT(*) FROM nap WHERE won IN (0, 1) AND {cond}"
+            settled = int(self._conn.execute(q, (bar,)).fetchone()[0])
+            wins = int(self._conn.execute(q + " AND won = 1", (bar,)).fetchone()[0])
+            out.append((wins, settled))
+        return out[0], out[1]
 
     def record_pass(self, *, day: date, reason: str) -> None:
         """Bank a NO-BET day as a first-class row (won=-1: settled as 'no bet').

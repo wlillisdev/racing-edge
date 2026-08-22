@@ -294,8 +294,8 @@ def _settle(day_str: str, email: bool) -> int:
         from pathlib import Path as _Path
         _ofile = _Path("data/school/opinions") / f"{day.isoformat()}.csv"
         if _ofile.exists():
-            _n = _w = 0
-            _ret = 0.0
+            _n = _w = _bn = _bw = 0
+            _ret = _bret = 0.0
             with open(_ofile, newline="") as _fh:
                 for _row in _csv.reader(_fh):
                     _r = next((x for x in results if x.race_id == _row[0]), None)
@@ -304,9 +304,18 @@ def _settle(day_str: str, email: bool) -> int:
                     if _me is None:
                         continue
                     _n += 1
+                    # the two-column record (2026-08-22): betting races
+                    # (fingerprint score >= 2) judged apart from the dreck
+                    _bet = len(_row) > 6 and str(_row[6]).lstrip("-").isdigit() \
+                        and int(_row[6]) >= 2
+                    if _bet:
+                        _bn += 1
                     if _me.position == 1:
                         _w += 1
                         _ret += _me.sp_dec or 0.0
+                        if _bet:
+                            _bw += 1
+                            _bret += _me.sp_dec or 0.0
             if _n:
                 _csvp = _Path("data/school/daily_policy.csv")
                 _new = not _csvp.exists()
@@ -316,9 +325,15 @@ def _settle(day_str: str, email: bool) -> int:
                     if _new:
                         _wr.writerow(["day", "policy", "picks", "wins", "returned"])
                     _wr.writerow([day.isoformat(), "engine", _n, _w, f"{_ret:.2f}"])
+                    if _bn:
+                        _wr.writerow([day.isoformat(), "engine-bet", _bn, _bw,
+                                      f"{_bret:.2f}"])
                 emit(f"  MORNING OPINIONS marked: {_w}/{_n} races read right "
                      f"({100.0 * _w / _n:.0f}%), level stakes {_ret - _n:+.1f}pt "
                      f"— the day's full test, fed to the ladder")
+                if _bn:
+                    emit(f"  BETTING RACES (fingerprint >= 2): {_bw}/{_bn} read "
+                         f"right — the column the system is judged on")
     except Exception as _e:
         emit(f"  ⚠ morning opinions not marked: {_e}")
     nap = next((n for n in log.pending() if n["date"] == day.isoformat()), None)
@@ -939,7 +954,7 @@ def main() -> int:
     log.record(day=day, race_id=r.race_id, course=r.course, horse=nap.runner.horse,
                horse_id=nap.runner.horse_id, price=nap.price, score=c.score,
                confident=confident, case=case_text, deep_conf=deep_conf,
-               aligned=" | ".join(c.aligned))
+               aligned=" | ".join(c.aligned), race_quality=nap.race_quality)
     # THE SHADOW: the mechanical engine's own top survivor, banked silently for the
     # A/B record (one machine, two ledgers — the record decides which method earns
     # the stakes). Costs nothing: it was already computed.
