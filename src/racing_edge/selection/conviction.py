@@ -38,8 +38,16 @@ _FAMILIES: tuple[tuple[str, tuple[str, ...]], ...] = (
 @dataclass(frozen=True)
 class Conviction:
     aligned: tuple[str, ...]    # learned lenses that fired FOR it
-    flags: tuple[str, ...]      # red flags AGAINST it
+    flags: tuple[str, ...]      # red flags AGAINST it — these DISQUALIFY
     mark_known: bool            # was the decisive lens (the mark) actually readable?
+    # CAUTIONS warn but never erase (the master, 2026-08-22: "just do the
+    # opposite... but dont go all nuclear on the system"). The audit's receipt:
+    # 'raised N lb since last win' had no quote and no receipts, crossed Too
+    # Much Trevor (won 10/1), and on 2026-08-22 was the sole cross-off on
+    # dozens of horses. A caution rides into the case as a warning the pick
+    # must answer; it still blocks CONFIDENT. REVERT-IF: a week of marked
+    # mornings reads worse than the week before this shipped.
+    cautions: tuple[str, ...] = ()
 
     @property
     def score(self) -> int:
@@ -51,7 +59,8 @@ class Conviction:
     def confident(self) -> bool:
         """A real nap: at least three FAMILIES align, the MARK was read, nothing
         flags it — the winning-era bar, meaningful again."""
-        return self.score >= 3 and self.mark_known and not self.flags
+        return (self.score >= 3 and self.mark_known
+                and not self.flags and not self.cautions)
 
     # the decisive-lens facts, exposed as PROPERTIES (2026-07-25 replication audit:
     # ranking, the top-class door and the fallback floor were each string-matching
@@ -90,6 +99,7 @@ def conviction(runner: Runner, race: Race, history: tuple[PastRun, ...],
     today's read?' — is answered by the three lenses added below."""
     aligned: list[str] = []
     flags: list[str] = []
+    cautions: list[str] = []
 
     # form lenses read SAME-CODE runs only (2026-07-21 contamination audit: a horse
     # that won two jumps races read "RED-HOT" for a flat handicap, a chase faller
@@ -130,7 +140,9 @@ def conviction(runner: Runner, race: Race, history: tuple[PastRun, ...],
             else:
                 _well_in_pending = f"well-in ({mr.verdict}{grade})"
         else:
-            flags.append(f"raised {mr.verdict} since last win")
+            # demoted to CAUTION 2026-08-22 (audit row: no master quote, no
+            # receipts; corpse: Too Much Trevor, crossed then won 10/1)
+            cautions.append(f"raised {mr.verdict} since last win")
     if len(hist) >= 6 and not any(h.position == 1 for h in hist):
         # comment-independent serial-placer catch (the audit's Giant/Woodstock pair:
         # the manner flag couldn't fire because every comment was missing)
@@ -236,4 +248,5 @@ def conviction(runner: Runner, race: Race, history: tuple[PastRun, ...],
     if field_size >= 16:
         flags.append("big-field lottery")
 
-    return Conviction(tuple(dict.fromkeys(aligned)), tuple(dict.fromkeys(flags)), mr.known)
+    return Conviction(tuple(dict.fromkeys(aligned)), tuple(dict.fromkeys(flags)),
+                      mr.known, tuple(dict.fromkeys(cautions)))

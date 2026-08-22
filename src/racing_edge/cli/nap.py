@@ -475,8 +475,10 @@ def main() -> int:
     for p in survivors:
         c = p.conviction
         mark = "" if c.mark_known else " [mark OWED]"
+        # a caution warns but no longer erases (2026-08-22) — the case must answer it
+        warn = f"  ⚠ must answer: {'; '.join(c.cautions)}" if c.cautions else ""
         emit(f"    • {p.runner.horse:22} {p.race.course} {p.race.off_time}  "
-             f"conv {c.score}{mark}: {', '.join(c.aligned) or 'thin'}")
+             f"conv {c.score}{mark}: {', '.join(c.aligned) or 'thin'}{warn}")
     emit("")
 
     # ═══ THE FLIP (the master, 2026-08-08: 'flip it — what we are doing clearly
@@ -907,7 +909,7 @@ def main() -> int:
         emit(f"  ⚠ the engine flags this horse ({', '.join(c.flags)}) — the reader "
              f"may overrule, but never at full confidence. LEAN only.")
     confident = ((deep_conf == "confident") if deep_case else c.confident) \
-        and not off_profile and not c.flags and not frank_thin_deep
+        and not off_profile and not c.flags and not c.cautions and not frank_thin_deep
     _ew = ew_advice(nap.price, r.field_size)
     if _ew:
         emit(f"  instrument: {_ew}")
@@ -920,6 +922,9 @@ def main() -> int:
     emit(f"  frank (#5/#15): {fr.note}")
     if c.flags:
         emit(f"  FLAGS: {', '.join(c.flags)}")
+    if c.cautions:
+        emit(f"  CAUTIONS (warn, never erase — 2026-08-22): {', '.join(c.cautions)}"
+             " — the case above must answer this or the pick is a lean, not a nap")
     if not c.mark_known:
         emit("  ⚠ the MARK was not readable — never a confident nap without it.")
     evidence = build_evidence(r, client)
