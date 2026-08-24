@@ -239,3 +239,73 @@ closed rulebook; own-price opens the case.
   wound — don't reopen it with promises; point at ledger numbers and dates.
 - Commit style: message quotes the incident/teaching + REVERT-IF; ends with
   the Co-Authored-By + Claude-Session lines (see git log).
+
+## STATE OF THE APPRENTICESHIP — week ending 2026-08-24 (append-only; newest state wins)
+
+**The turn.** This was the week the master changed how he teaches — frames,
+not corrections ("it's not as hard as you think", "just do the opposite...
+dont go all nuclear", "stop thinking with your heart", "class is permanent")
+— and the system started winning. Sat 2026-08-22: three reads, three
+winners — Notable Speech (class read), Daiquiri Bay 14/1 (called pre-off,
+Ebor), ARQOOB WON 15/2 (the banked duty pick, short head over the fav).
+He called it "a new plateau — the key is to maintain this."
+
+**Doctrine now in force (all merged to main, test-pinned):**
+- CAUTIONS vs flags: "raised N lb since last win" warns, never erases
+  (corpses: Too Much Trevor 10/1, the 08-22 Newmarket wipe-out). A caution
+  must be answered in the case or the pick is a lean. CONFIDENT still
+  requires zero cautions.
+- Law 3c FORM IS TEMPORARY, CLASS IS PERMANENT (Notable Speech corpse):
+  pattern races are not handicaps; rating-clear + books<=exchange = live
+  pick despite layoff/beaten LTO. Read law now; STAKES gated behind the
+  pre-registered class-line paper trial (data/school/preregistered.md,
+  frozen bar, 50 rows, currently 0/1 — Havana Anna 4th, Chantez 28/1 won).
+- Two-column record: race_quality banks with every nap; betting races
+  (fingerprint>=2) judged apart from forced dreck days — judge the first.
+- TWIN CHOICE gauge: opinions bank top-2 per race; nightly line counts
+  "winner in my two / wrong twin taken". THE shared disease (dog school
+  found it independently): we read right and rank wrong.
+- Homework format (the master's dog-school sitting, in the morning trigger):
+  counted-dots table, adjustments shown, the principle NOT used named, one
+  verdict + named danger, banked pre-off; at settle the error named in one
+  sentence. The master marks the read.
+- Morning-duty scars in the trigger itself: date -u FIRST (2026-08-24:
+  trigger delivered 12h late, pick banked post-off, VOIDED, fault named
+  banked_after_the_off); race_status=="result" card = contaminated.
+
+**Receipts that now anchor strategy (data/school/vision_report.md +
+mine_report.md, PROVISIONAL — corpus hole Apr–Jul):**
+- No mechanical cell survives blind (fav bench 35.2% / -11.5%; won-LTO
+  -21%, hot yard -26%). There is no green formula; stop looking.
+- Fingerprint races: fav 46.9% / -3.1% blind (only near-green cell);
+  blind ranks 2-3 REFUTED (-17/-22%) — against-the-fav needs an earned
+  reason, always. Class favourites small fields: +6.2% (n=36, the only
+  positive cells ever found).
+- One-fav-a-day (fingerprint fav <=5/2, else pass): 62% strike, -0.8% —
+  the master's frame, near break-even blind; his craft (flip-flop law)
+  is the missing 1-2 points. OFFERED as new FAV LINE definition — awaiting
+  his word.
+- The whole fight = ~3 winners per 200 bets. We start 97 yards ahead.
+
+**Dog school exchange (docs/DOG_MODEL_PLAYBOOK.md out,
+docs/DOG_LESSONS_RECEIVED.md in):** transfer the loop and the laws, never
+the flesh. Adopted from them: honest-half NOT WATCHED footer in health,
+pre-registration, PROVISIONAL stamping, one-lesson-one-place. Queued
+(tasks #5/#6): fetch-coverage vs independent card list; trouble-early-vs-
+late hypothesis. Sent back: cautions must never quietly erase.
+
+**Ledger snapshot (session-side duty picks, data/school/picks/):**
+Sat Arqoob WON 15/2 (+9.4pt EW) · Sun Sea Suite 5th (winner = named danger
+Knights Gold 2/1F — wrong_twin, fault named: crossed on state not
+direction) · Mon VOID (banked_after_the_off). Fav line: Goblet lost Sat,
+Knights Gold won Sun. Server engine runs its own book in nap.db daily
+(engine-first, objection era) — email checkpoints: (main) line, opinions
+banked N, FAV LINE, MORNING OPINIONS marked X/N + BETTING RACES + TWIN
+CHOICE lines since 08-24.
+
+**Open, awaiting the master:** RULE_AUDIT rulings (per-horse AW #14 kill;
+survivor-split ratification — cautions shipped for raised-lb only so far);
+new FAV LINE definition (one fingerprint fav/day); nuance promotions;
+server backfills (corpus via fetch.py, pre-08-19 shadow rows);
+healthchecks.io heartbeat. Paper stakes only — the record has not yet
+earned real money, and his family's food is the law behind that law.
