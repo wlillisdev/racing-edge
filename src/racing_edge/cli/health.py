@@ -383,8 +383,9 @@ def main() -> int:
     # when an item is fixed or a new blind spot is found — a stale honest
     # half is the dishonest kind.
     lines.append("\n  NOT WATCHED (the honest half — nobody is checking these):")
-    lines.append("    · night-fetch coverage vs the day's full card list "
-                 "(a quiet fetch that missed meetings still reads green)")
+    lines.append("    · morning card coverage — races never STUDIED at all "
+                 "(summaries vs opinions count); settle-side coverage of "
+                 "studied races is watched since 2026-08-24")
     lines.append("    · unsettled shadow rows before 2026-08-19 (backfill open "
                  "— shadow strike is PROVISIONAL until settled)")
     lines.append("    · corpus hole Apr–Jul (mine/vision figures PROVISIONAL)")
