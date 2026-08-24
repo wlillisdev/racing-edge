@@ -377,6 +377,20 @@ def main() -> int:
             f"school ladder: {_v}",
             f"SCHOOL LADDER: {_v}",
             lines)
+    # THE HONEST HALF (dog-school lesson, 2026-08-24: "a dashboard showing
+    # only what it measures is how a system looks healthy while rotting").
+    # Every report ends with what is NOT being watched. Update this list
+    # when an item is fixed or a new blind spot is found — a stale honest
+    # half is the dishonest kind.
+    lines.append("\n  NOT WATCHED (the honest half — nobody is checking these):")
+    lines.append("    · morning card coverage — races never STUDIED at all "
+                 "(summaries vs opinions count); settle-side coverage of "
+                 "studied races is watched since 2026-08-24")
+    lines.append("    · unsettled shadow rows before 2026-08-19 (backfill open "
+                 "— shadow strike is PROVISIONAL until settled)")
+    lines.append("    · corpus hole Apr–Jul (mine/vision figures PROVISIONAL)")
+    lines.append("    · external heartbeat (healthchecks.io) not configured — "
+                 "if the whole scheduler dies, no one is told")
     verdict = "ALL GREEN — the loop is running and feeding itself." if all_ok else \
         "RED LINES ABOVE — a part of the loop is silently dead. Fix before trusting a pick."
     lines.append(f"\n  {verdict}")

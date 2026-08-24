@@ -296,12 +296,18 @@ def _settle(day_str: str, email: bool) -> int:
         if _ofile.exists():
             _n = _w = _bn = _bw = _tw = _wt = 0
             _ret = _bret = 0.0
+            # COVERAGE (dog-school lesson 2026-08-24: "nothing recorded what
+            # the fetch MISSED"): a studied race with no result tonight was
+            # previously a silent `continue` — invisible rot. Now every one
+            # is named, loud, so a thin results feed can't read as green.
+            _missing: list[str] = []
             with open(_ofile, newline="") as _fh:
                 for _row in _csv.reader(_fh):
                     _r = next((x for x in results if x.race_id == _row[0]), None)
                     _me = next((rr for rr in _r.runners
                                 if rr.horse_id == _row[3]), None) if _r else None
                     if _me is None:
+                        _missing.append(f"{_row[1]} {_row[2]}")
                         continue
                     _n += 1
                     # the two-column record (2026-08-22): betting races
@@ -346,6 +352,12 @@ def _settle(day_str: str, email: bool) -> int:
                 emit(f"  TWIN CHOICE: winner in my two {_tw}/{_n}; wrong twin "
                      f"taken {_wt} — close-and-fixable if the first number is "
                      f"high, deeper if it is low")
+            if _missing:
+                emit(f"  ⚠ COVERAGE: {len(_missing)} studied race(s) got NO "
+                     f"result tonight — {', '.join(_missing[:8])}"
+                     + (" …" if len(_missing) > 8 else "")
+                     + " — a thin results feed, NOT an empty day. Marked "
+                     "figures above are PROVISIONAL until these settle.")
     except Exception as _e:
         emit(f"  ⚠ morning opinions not marked: {_e}")
     nap = next((n for n in log.pending() if n["date"] == day.isoformat()), None)
