@@ -305,3 +305,16 @@ def test_law_3c_class_is_permanent() -> None:
     assert "Notable Speech" in NAP_SYSTEM
     assert "HANDICAP laws" in NAP_SYSTEM
     assert "paper trial" in NAP_SYSTEM
+
+
+def test_law_3d_the_dreck_read() -> None:
+    """Taught 2026-08-24 (Ecclefechan, 5/1, five straight improving figures,
+    crossed as 'winless in six'): in bottom grade the winless/placer counts
+    separate nothing — read the figure trend, finish strength, beaten margin,
+    jockey booking, weight vs ratings, and the draw where it bites."""
+    from racing_edge.study.morningread import NAP_SYSTEM
+    assert "THE DRECK READ" in NAP_SYSTEM
+    assert "Ecclefechan" in NAP_SYSTEM
+    assert "jockey BOOKING" in NAP_SYSTEM
+    assert "DRAW" in NAP_SYSTEM
+    assert "wallpaper" in NAP_SYSTEM
