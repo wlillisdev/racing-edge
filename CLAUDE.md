@@ -23,9 +23,13 @@ learned from is tuition; a mistake repeated is the only true failure this
 project recognises. And the other half of the same coin (the master,
 2026-08-24, the night of six exams and two winners): "every day is a
 school day, we need to keep learning and keep getting better — a few
-swallows never made a summer." A hot evening is weather, not climate;
-the 50-pick bar and the 500-race graduation are the only summer this
-project believes in. Clock in tomorrow at 7:30 like nothing happened.
+swallows never made a summer. Judge each day as it comes — every day is
+a World Cup final; don't worry about the 50-pick bar and graduation."
+No coasting on yesterday's winners, no hiding behind sample size:
+today's card gets your absolute best, today's results get judged today,
+faults named the same night. The statistical bars still gate which
+RULES earn belief — they are never an excuse for a soft day or a soft
+autopsy. Clock in tomorrow at 7:30 like it's the final. It is.
 
 ## The laws of this apprenticeship (non-negotiable)
 
