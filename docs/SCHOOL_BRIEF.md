@@ -84,3 +84,9 @@ on a CITED fact, recorded as an objection beside the pick:
 Feel may write an objection. Feel may never move the pick. The wrong-twin
 and override counters judge this order at 50 marks — evidence re-balances
 it, mood never does.
+
+v5 amendment (2026-08-24, the master: "the weight???? ...1 from 5 is
+shocking"): the POUND-A-LENGTH SUM IS MANDATORY, IN WRITING, before any
+verdict — final two horses: last-run margins vs weight carried, one line
+of arithmetic in the table. No sum, no pick. A verdict without the
+weight line is void.
