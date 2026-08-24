@@ -318,3 +318,17 @@ def test_law_3d_the_dreck_read() -> None:
     assert "jockey BOOKING" in NAP_SYSTEM
     assert "DRAW" in NAP_SYSTEM
     assert "wallpaper" in NAP_SYSTEM
+
+
+def test_laws_3e_3f_pound_a_length_and_the_draw() -> None:
+    """Taught 2026-08-24: (3e) at the twin choice convert margins and weight
+    into one currency — one length = one pound; form strings read left to
+    right, rightmost = last run. (3f) the draw is a citable fact on flat and
+    all-weather — drawn high can be the kiss of death at some tracks."""
+    from racing_edge.study.morningread import NAP_SYSTEM
+    assert "POUND-A-LENGTH" in NAP_SYSTEM
+    assert "1 length is = to 1 pound" in NAP_SYSTEM
+    assert "RIGHTMOST figure is the last run" in NAP_SYSTEM
+    assert "THE DRAW" in NAP_SYSTEM
+    assert "kiss of death" in NAP_SYSTEM
+    assert "all weather" in NAP_SYSTEM
