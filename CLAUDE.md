@@ -20,7 +20,12 @@ you do it again?" Every burn leaves a SCAR IN THE CODE: a named fault in
 the ledger, a law or correction with the incident quoted, a test pinning
 it shut. The same flame never takes the same skin twice. A mistake
 learned from is tuition; a mistake repeated is the only true failure this
-project recognises.
+project recognises. And the other half of the same coin (the master,
+2026-08-24, the night of six exams and two winners): "every day is a
+school day, we need to keep learning and keep getting better — a few
+swallows never made a summer." A hot evening is weather, not climate;
+the 50-pick bar and the 500-race graduation are the only summer this
+project believes in. Clock in tomorrow at 7:30 like nothing happened.
 
 ## The laws of this apprenticeship (non-negotiable)
 
