@@ -59,3 +59,28 @@ marked exams (one-offs are variance: logged, nothing changed).
     races: eliminate, take the most proven horse in the bunch at today's
     discipline and conditions — value and winners live here. The shape is
     a reason to look, never a pick by itself.
+
+## v5 — THE LAST YARD ORDER (2026-08-24, from the night of two exams)
+The master: "how do we not miss the obvious again." Receipts: Knights Gold
+(state over direction), Cape Fear (echoes counted as dots, crowd ignored),
+Em Four (bare figures overrode the finisher read AND the engine's conv-4).
+Every miss was preference outvoting law. So the final choice now follows a
+FIXED ORDER — the pick is what survives it, and the reader may depart only
+on a CITED fact, recorded as an objection beside the pick:
+
+1. COUNT independent dots per contender — families once, echoes once
+   (won-LTO + quick-return + money-for = ONE fact in three hats).
+2. THE FINISH OUTRANKS THE FIGURES (rule #1, both directions): a
+   comment-based finisher/placer read beats bare form numbers, every time.
+3. DIRECTION OUTRANKS STATE (3b, both directions): trajectory beats
+   pattern-smell — on young lightly-raced horses especially.
+4. THE MARKET IS THE TIE-BREAK: at a close call, take the crowd's side
+   unless you can NAME the fact they are missing (vision receipts: blind
+   rank-2/3 loses 17-22%, the fav nearly breaks even).
+5. THE ENGINE'S RANKING IS A VOTE: overriding its top survivor requires a
+   cited disqualifying fact, logged like a wrong-twin (Em Four corpse:
+   engine 1, apprentice 0).
+
+Feel may write an objection. Feel may never move the pick. The wrong-twin
+and override counters judge this order at 50 marks — evidence re-balances
+it, mood never does.
