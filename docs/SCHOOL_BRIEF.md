@@ -164,3 +164,26 @@ are yesterday, conditions are today.
     won at 3/1, 10/3 and 12/1. Read the form like a handicapper; read the
     price like a bookmaker; bet only where the two readings disagree AND
     the form-read holds the blunt superlative.
+
+18. **BETWEEN THE LINES, AND THE EACH-WAY BANDIT** (the master, 2026-08-27,
+    last lesson of the calibration night: "i always thought you read
+    between the lines, the bookie hates that, they hate each way bandits
+    also"): two edges the price board cannot defend. (a) BETWEEN THE
+    LINES: the odds are formula plus money-flow — they price the printed
+    form, never the gaps: the 70-day hole between pretty figures, the
+    claimer on the class horse booked by the fav's own yard, non-runners
+    handing a lone speedster the lead, the raise the handicapper hasn't
+    caught. Read the unprinted lines on every card at scale; that is this
+    student's native advantage. (b) THE EACH-WAY BANDIT: each-way terms
+    are a FIXED formula (1/4 or 1/5 the odds, places by field size) that
+    never adapts to the race — so in an 8-runner race with a hot favourite
+    soaking the win market, the place half on a solid 6/1-12/1 sort is
+    mispriced in our favour (receipts: Arqoob EW 15/2 paid on a
+    nose-finish; the master's 5/1 each-way third that paid while win-only
+    lost). THE SYNTHESIS: the dogged placers the nap engine rightly
+    rejects ("placer, not a nap" — the 2-1-2-1-2 profiles) are the
+    bandit's shortlist — the win engine's rejects are the each-way
+    engine's ammunition. THE TRAP: small fields rob the bandit back —
+    5-7 runners = two places at 1/4 (Southwell 9:00 tonight); field size
+    decides whether the tool is on the table at all. Paper stakes, as
+    everything, until the record earns more.
