@@ -344,3 +344,29 @@ def test_law_2b_the_solid_favourite() -> None:
     assert "why take him on?" in NAP_SYSTEM
     assert "Thickthorn Tom" in NAP_SYSTEM
     assert "donation" in NAP_SYSTEM
+
+
+def test_law_2b_ii_the_five_part_solid_test() -> None:
+    """Record-born 2026-08-27, master's word same night ("do the above and do
+    them surgically"). Town Queen 15/8F passed the old solid test and trailed
+    home LAST (70 days off, first run off a raised mark); Ten Clarets, a
+    never-won BF favourite, was beaten by an earned departure. SOLID = all
+    five: short + in form + has won + race-fit + proven at the mark."""
+    from racing_edge.study.morningread import NAP_SYSTEM
+    assert "THE FIVE-PART SOLID TEST" in NAP_SYSTEM
+    assert "HAS ACTUALLY WON" in NAP_SYSTEM
+    assert "RACE-FIT" in NAP_SYSTEM
+    assert "PROVEN AT THE MARK" in NAP_SYSTEM
+    assert "why NOT take him on?" in NAP_SYSTEM
+    assert "Town Queen" in NAP_SYSTEM
+
+
+def test_law_3g_the_winning_mark() -> None:
+    """Record-born (week of 2026-08-24: first-run-off-a-raise 0-for-5 vs four
+    winners at/below a proven mark), promoted on the master's word 2026-08-27.
+    Today's mark vs the mark he last won off is a COUNTED dot, both ways."""
+    from racing_edge.study.morningread import NAP_SYSTEM
+    assert "THE WINNING MARK" in NAP_SYSTEM
+    assert "0-for-5" in NAP_SYSTEM
+    assert "COUNTED dot" in NAP_SYSTEM
+    assert "Rikki Tiki Tavi" in NAP_SYSTEM
