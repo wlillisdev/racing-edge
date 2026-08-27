@@ -198,3 +198,13 @@ are yesterday, conditions are today.
     honest place terms, a hot fav soaking the win market, and a placer
     whose form line says framing is his profession. No frame case, no
     bandit bet.
+
+    18c. THE FREE-KICK FLOOR (the master, same night: "even at 5/1 at one
+    fifth of the odds we can still break even and have a free kick at
+    the win"): the exact price where a FRAME refunds the whole stake —
+    1/5 terms: 5/1 floor (place pays evens). 1/4 terms: 4/1 floor. At or
+    above the floor with a real frame case, the win half is a free kick.
+    BELOW the floor, framing LOSES money — that is the bookie's quiet
+    tax on lazy each-way punters, and the floor is what separates the
+    calculated bandit from the mugs. Check the floor against the TERMS,
+    in writing, before any EW verdict.
