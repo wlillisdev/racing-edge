@@ -136,3 +136,15 @@ are yesterday, conditions are today.
     the candy gets handed back. Distinct from the 07-05 lottery law: bottom
     grade + BIG open field of unexposed horses = anything can win, stay
     out; bottom grade + SMALL field + one in-form standout = hoover it up.
+
+16. **THE ODDS-ON BAR** (the master, 2026-08-27, after Gore Point 5/6F
+    trailed in last of four, beaten 50 lengths: "5/6 fav loss as a pick is
+    catastrophic"): at odds-on the price pays nothing for the risk — you
+    must be right 6 times in 11 just to stand still — so the tolerance for
+    holes is ZERO. One citable hole in an odds-on favourite (a class hike,
+    a fitness query, a mark question, a figures gap) = PASS the race or
+    the hole IS the story and the value is against him. Gore Point had TWO
+    holes in writing at the lock and was backed anyway. The engine has had
+    this discipline since #19's counterweight — no market dot below 5/2;
+    the sitter must hold the same line at the table. A named pass on an
+    odds-on race is a win for the record.
