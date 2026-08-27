@@ -384,3 +384,14 @@ def test_law_3g_ii_the_developing_horse() -> None:
     assert "on the bounce" in NAP_SYSTEM.lower() or "th ebounce" in NAP_SYSTEM
     assert "Captain Cairney" in NAP_SYSTEM
     assert "raise lags the improvement" in NAP_SYSTEM
+
+
+def test_law_3g_ii_class_rider() -> None:
+    """Same night, two hours after 3g-ii shipped: Gore Point (2-1-1-1-1, back
+    out in 5 days) was sent off 5/6 in a Cl2 chase 12lb of class out of his
+    depth and trailed in LAST, beaten 50 lengths by the top-rated top weight.
+    The bounce carries a horse AT HIS OWN GRADE, never up one."""
+    from racing_edge.study.morningread import NAP_SYSTEM
+    assert "THE CLASS RIDER" in NAP_SYSTEM
+    assert "Gore Point" in NAP_SYSTEM
+    assert "AT HIS OWN GRADE" in NAP_SYSTEM

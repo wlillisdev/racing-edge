@@ -767,3 +767,36 @@ def test_candy_exemption_small_weak_field_lone_standout_gets_through() -> None:
                            codes=("flat",), now=MORNING)
     assert picks
     assert not any("bottom-grade" in f for p in picks for f in p.conviction.flags)
+
+
+def test_class_rider_rearms_the_raise_caution_on_a_hike() -> None:
+    """3g-ii's class rider (Gore Point, 2026-08-27): a rolling winner straight
+    back out keeps the bounce exemption AT HIS OWN GRADE — but a class hike
+    re-arms the first-run-off-a-raise caution and the shield hole, however
+    quick the return. His streak never sampled today's company."""
+    from racing_edge.selection.conviction import conviction
+    cl2 = Race(race_id="na", course="Newton Abbot", off_time="18:12",
+               date=date(2026, 8, 27), race_type="Handicap Chase",
+               is_handicap=True, race_class=2)
+    gp = Runner(horse_id="gp", horse="Gore Point", official_rating=117,
+                odds=Odds(consensus=1.83), days_since_run=5)
+    streak = (PastRun(date=date(2026, 8, 22), position=1, race_type="Chase",
+                      official_rating=113, race_class=3),
+              PastRun(date=date(2026, 8, 8), position=1, race_type="Chase",
+                      official_rating=108, race_class=3),
+              PastRun(date=date(2026, 7, 20), position=1, race_type="Chase",
+                      official_rating=103, race_class=4),
+              PastRun(date=date(2026, 6, 30), position=1, race_type="Chase",
+                      official_rating=99, race_class=4),
+              PastRun(date=date(2026, 6, 10), position=2, race_type="Chase",
+                      official_rating=99, race_class=4))
+    c = conviction(gp, cl2, streak, market_rank=1, field_size=4)
+    assert any("first run off a raised mark" in x for x in c.cautions)
+    assert any("never buys a hike" in x for x in c.cautions)
+    assert not any("#19" in a for a in c.aligned)      # shield off up a grade
+    # the same streak staying AT its grade keeps the bounce exemption
+    cl3 = Race(race_id="na3", course="Newton Abbot", off_time="18:12",
+               date=date(2026, 8, 27), race_type="Handicap Chase",
+               is_handicap=True, race_class=3)
+    c2 = conviction(gp, cl3, streak, market_rank=1, field_size=4)
+    assert not any("first run off a raised mark" in x for x in c2.cautions)
