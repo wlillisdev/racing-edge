@@ -466,7 +466,11 @@ def test_well_in_is_a_rough_guide_without_current_form_behind_it() -> None:
     )
     c = conviction(r, _race(), hist, market_rank=4, field_size=8)
     assert not any("well-in" in a for a in c.aligned)
-    assert any("rough guide only" in f for f in c.flags)
+    # 2026-08-27: the note moved channels (flag -> caution) so it can never
+    # ERASE a horse for the absence of a positive; the law itself is intact —
+    # an uncorroborated well-in still scores NOTHING and still warns.
+    assert any("rough guide only" in x for x in c.cautions)
+    assert not any("rough guide only" in f for f in c.flags)
 
     # the same mark WITH a last-time-out win behind it still counts
     hist_form = (_won_cdg(date(2026, 6, 1), 110),
@@ -605,3 +609,44 @@ def test_rising_mark_trap_is_a_caution_not_a_cross_off() -> None:
     src = inspect.getsource(_c)
     assert 'cautions.append("rising-mark trap")' in src
     assert 'flags.append("rising-mark trap")' not in src
+
+
+def test_stability_cuts_2026_08_27() -> None:
+    """The master, 2026-08-27: 'make adjustments so system is more stable and
+    consistent and accurate.' Four cuts, each with a corpse:
+    (1) young-field gate stands down when the whole field is 2-3yo (it erased
+        Carlisle's nursery wholesale — no disguise in a race OF novices);
+    (2) 'well-in NOT counted' informs, never erases (an informational note was
+        executing horses for the absence of a positive);
+    (3) bare cold-form warns, never erases (Ecclefechan, 5/1, the staircase);
+    (4) a chaser with no completed chase is a disqualifier (Lady Kara: hurdle
+        form does not buy fences)."""
+    import inspect
+    from racing_edge.pipeline import nap as _p
+    from racing_edge.selection import conviction as _c
+    psrc = inspect.getsource(_p)
+    csrc = inspect.getsource(_c)
+    assert "_age_restricted" in psrc and "not _age_restricted" in psrc
+    assert 'cautions.append("well-in NOT counted' in csrc
+    assert 'cautions.append(f"cold form' in csrc
+    assert "no completed chase" in csrc
+    assert 'flags.append("well-in NOT counted' not in csrc
+    assert 'flags.append(f"cold form' not in csrc
+
+
+def test_chase_without_completion_flags_but_hurdler_flat_untouched() -> None:
+    """The fences guard fires only in chases, only without a completed chase."""
+    from racing_edge.selection.conviction import conviction
+    r = Runner(horse_id="lk", horse="Lady Kara", official_rating=110,
+               odds=Odds(consensus=5.5))
+    hurdle_wins = (PastRun(date=date(2026, 6, 12), position=1, race_type="Hurdle"),
+                   PastRun(date=date(2026, 5, 27), position=1, race_type="Hurdle"),
+                   PastRun(date=date(2026, 6, 30), position=None, race_type="Chase"))
+    chase = Race(race_id="c", course="Newton Abbot", off_time="19:12",
+                 date=date(2026, 8, 27), race_type="Handicap Chase", is_handicap=True)
+    c = conviction(r, chase, hurdle_wins, market_rank=4, field_size=5)
+    assert any("no completed chase" in f for f in c.flags)
+    hurdle = Race(race_id="h", course="Newton Abbot", off_time="19:12",
+                  date=date(2026, 8, 27), race_type="Handicap Hurdle", is_handicap=True)
+    c2 = conviction(r, hurdle, hurdle_wins, market_rank=4, field_size=5)
+    assert not any("no completed chase" in f for f in c2.flags)

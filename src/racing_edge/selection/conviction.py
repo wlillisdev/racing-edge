@@ -143,6 +143,17 @@ def conviction(runner: Runner, race: Race, history: tuple[PastRun, ...],
             # demoted to CAUTION 2026-08-22 (audit row: no master quote, no
             # receipts; corpse: Too Much Trevor, crossed then won 10/1)
             cautions.append(f"raised {mr.verdict} since last win")
+    # THE FENCES ARE A DIFFERENT EXAM (2026-08-27, the Lady Kara corpse: every
+    # positive dot was hurdle form; her chase record was one start, one rider
+    # on the floor — she trailed in last at 5/2 as the engine's pick). In a
+    # CHASE, a horse with no completed chase anywhere in its visible history
+    # is a DISQUALIFIER-grade risk: hurdle class does not buy fences.
+    if "chase" in (race.race_type or "").lower():
+        _chase_runs = [h for h in history if "chase" in (h.race_type or "").lower()]
+        if not any(h.position is not None for h in _chase_runs):
+            flags.append("no completed chase — jumping unproven; hurdle form "
+                         "does not buy fences (Lady Kara, 2026-08-27)")
+
     if len(hist) >= 6 and not any(h.position == 1 for h in hist):
         # comment-independent serial-placer catch (the audit's Giant/Woodstock pair:
         # the manner flag couldn't fire because every comment was missing)
@@ -170,7 +181,10 @@ def conviction(runner: Runner, race: Race, history: tuple[PastRun, ...],
     elif recent and recent[0] == 1:
         aligned.append("won last time out")
     if len(recent) >= 2 and all(p >= 6 for p in recent[:2]):
-        flags.append(f"cold form ({'-'.join(str(p) for p in recent[:2])} last two)")
+        # demoted to CAUTION 2026-08-27 (audit rec: DEMOTE, no quote; corpse:
+        # Ecclefechan won 5/1 while "cold" — his 8-6-5-3 was an improving
+        # staircase; bare figures without the trend read are blind, law 3d)
+        cautions.append(f"cold form ({'-'.join(str(p) for p in recent[:2])} last two)")
 
     # the well-in verdict lands only NOW, corroboration known (2026-08-17):
     # counted with current form or manner behind it, otherwise named as the
@@ -182,8 +196,12 @@ def conviction(runner: Runner, race: Race, history: tuple[PastRun, ...],
         if corroborated:
             aligned.append(_well_in_pending)
         else:
-            flags.append("well-in NOT counted — no current form or manner "
-                         "behind it (rough guide only, the master 2026-08-17)")
+            # demoted to CAUTION 2026-08-27: this is an INFORMATIONAL note —
+            # "the mark earns no credit" — that was somehow EXECUTING horses
+            # (dozens crossed on 08-22 and 08-27 for the absence of a positive,
+            # which nobody ever taught as a fault). It informs; it never erases.
+            cautions.append("well-in NOT counted — no current form or manner "
+                            "behind it (rough guide only, the master 2026-08-17)")
 
     course_wins = sum(1 for h in hist if h.position == 1 and _same_course(h, race))
     if course_wins >= 2:

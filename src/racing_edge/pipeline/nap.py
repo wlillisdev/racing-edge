@@ -242,7 +242,15 @@ def evaluate_field(client: _Client, day: str = "today",
         # 1. exposure (Chepstow 17:10, 2026-07-03): a field dominated by young,
         #    lightly-raced horses is a novice race in disguise, whatever the title
         contenders = min(len(race_picks), 6)
-        if contenders and young_unexposed >= 2 and young_unexposed * 2 >= contenders:
+        # SCOPE FIX 2026-08-27 (Thickthorn Tom night): in an AGE-RESTRICTED race
+        # (whole field 2yo/3yo — nurseries, 3yo-only handicaps) EVERYONE is young,
+        # so "a novice in disguise" fires on 100% of them and erased Carlisle's
+        # nursery wholesale — the exact race type the weight doctrine wins in
+        # (Forest Berry, 2026-08-24). The gate's teaching (#13: young unexposed
+        # horses hiding AMONG ELDERS) only means something in open-age company.
+        _age_restricted = bool(priced) and all((r.age or 99) <= 3 for r in priced)
+        if (contenders and not _age_restricted
+                and young_unexposed >= 2 and young_unexposed * 2 >= contenders):
             race_flags.append("young-unexposed field — a novice in disguise (#13/#30)")
         # 2. grade: bottom-class racing is inconsistent animals — the form doesn't hold
         if race.race_class and race.race_class >= 6:
