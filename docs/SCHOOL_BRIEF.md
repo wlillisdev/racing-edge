@@ -148,3 +148,19 @@ are yesterday, conditions are today.
     this discipline since #19's counterweight — no market dot below 5/2;
     the sitter must hold the same line at the table. A named pass on an
     odds-on race is a win for the record.
+
+17. **THE BOOKMAKER'S QUESTION** (the master, 2026-08-27, closing the
+    calibration night after the student's lesson on story-priced markets:
+    "do you know what i think you summed up what a book maker dose?"): a
+    bookmaker does not predict races — he prices the CROWD. Story-horses
+    get cramped shorter than their true chance (streaks up in class,
+    hot-yard money, pretty figures over holes); blunt unfashionable facts
+    drift bigger than they should. So before any verdict, ask his
+    question, in writing with the MARK/FIT/weight lines: "WHOSE MONEY MADE
+    THIS PRICE?" If the answer is story-money, the price is a lie — and
+    the truth is standing elsewhere in the same race at a bigger price.
+    Tonight's card answered it three times: 5/6 streak-money (last), ~5/2
+    yard-money (beaten), 15/8 figures-money (last) — while the blunt facts
+    won at 3/1, 10/3 and 12/1. Read the form like a handicapper; read the
+    price like a bookmaker; bet only where the two readings disagree AND
+    the form-read holds the blunt superlative.
