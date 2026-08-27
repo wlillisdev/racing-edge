@@ -187,3 +187,14 @@ are yesterday, conditions are today.
     5-7 runners = two places at 1/4 (Southwell 9:00 tonight); field size
     decides whether the tool is on the table at all. Paper stakes, as
     everything, until the record earns more.
+
+    18b. THE BANDIT'S SUM (the master, same night: "a calculated bet on an
+    ew horse at 8/1 often pays great with minimum risk"): 1pt EW at 8/1,
+    1/4 odds, 3 places = 2pt staked. Frame only: +1pt. Win: +10pt. Miss:
+    -2pt. The place half breaks even at ~4 frames in 10 — and the dogged
+    placer profile in the right race frames 5-6 in 10. The bet is the
+    FRAME probability at a price built for win-dreamers; the win is a
+    freeroll. Bet test, in writing before any EW verdict: field 8+,
+    honest place terms, a hot fav soaking the win market, and a placer
+    whose form line says framing is his profession. No frame case, no
+    bandit bet.
