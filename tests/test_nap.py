@@ -712,3 +712,91 @@ def test_solid_fav_shield_gate_strips_the_market_dot_from_false_solids() -> None
     c2 = conviction(nw, flat, maiden_hist, market_rank=1, field_size=7)
     assert not any("#19" in a for a in c2.aligned)
     assert any("never won" in x for x in c2.cautions)
+
+
+def test_the_bounce_exempts_a_race_fit_winner_from_the_first_run_raise_read() -> None:
+    """Law 3g-ii (taught 2026-08-27, hours after 3g shipped — Captain Cairney,
+    3yo, won LTO, first run off a raise, 29 days, led start to finish): a
+    race-fit developing winner straight back out is ON the bounce — no
+    first-run-off-a-raise caution, and a fair-priced fav of that profile
+    keeps the #19 shield. The caution and the shield hole fire only when the
+    bounce is BROKEN by absence (Town Queen, 70 days — pinned above)."""
+    from racing_edge.selection.conviction import conviction
+    flat = Race(race_id="s", course="Southwell (AW)", off_time="21:00",
+                date=date(2026, 8, 27), race_type="Flat", is_handicap=True)
+    cc = Runner(horse_id="cc", horse="Captain Cairney", official_rating=62,
+                odds=Odds(consensus=4.33), days_since_run=29)
+    hist = (PastRun(date=date(2026, 7, 29), position=1, race_type="Flat",
+                    official_rating=58),
+            PastRun(date=date(2026, 7, 1), position=5, race_type="Flat",
+                    official_rating=59),
+            PastRun(date=date(2026, 6, 10), position=2, race_type="Flat",
+                    official_rating=59),
+            PastRun(date=date(2026, 5, 20), position=7, race_type="Flat",
+                    official_rating=60),
+            PastRun(date=date(2026, 4, 28), position=2, race_type="Flat",
+                    official_rating=60))
+    c = conviction(cc, flat, hist, market_rank=3, field_size=5)
+    assert not any("first run off a raised mark" in x for x in c.cautions)
+    # the same horse as a fair-priced favourite keeps the shield
+    c2 = conviction(cc, flat, hist, market_rank=1, field_size=5)
+    assert any("#19" in a for a in c2.aligned)
+    # unknown days since run stays cautious — fail loud, never assume fitness
+    unk = Runner(horse_id="u", horse="Unknown Days", official_rating=62,
+                 odds=Odds(consensus=4.33))
+    c3 = conviction(unk, flat, hist, market_rank=3, field_size=5)
+    assert any("first run off a raised mark" in x for x in c3.cautions)
+
+
+def test_candy_exemption_small_weak_field_lone_standout_gets_through() -> None:
+    """THE CANDY RACE (the master, 2026-08-27, Southwell 9:00: Captain Cairney
+    10/3, the only horse in winning form in a 5-runner Cl6, led start to
+    finish behind the bottom-grade wall; his word on the wall: "keep an open
+    mind as we recalibrate the system — if the opportunity is there we should
+    take"): bottom grade + small field + exactly ONE horse in winning form =
+    the wall stands down. The big open bottom-grade lottery stays walled
+    (pinned in test_race_selection_gates_bottom_grade_and_open_market — no
+    horse there won last time, so it is NOT candy)."""
+    class _CandyClient(_RaceClient):
+        def horse_results(self, hid, limit=12):
+            rows = super().horse_results(hid, limit)
+            if hid == "H0":
+                rows[0]["runners"][0]["position"] = "1"   # the lone standout
+            return rows
+    picks = evaluate_field(_CandyClient(race_class="6"), day="today",
+                           codes=("flat",), now=MORNING)
+    assert picks
+    assert not any("bottom-grade" in f for p in picks for f in p.conviction.flags)
+
+
+def test_class_rider_rearms_the_raise_caution_on_a_hike() -> None:
+    """3g-ii's class rider (Gore Point, 2026-08-27): a rolling winner straight
+    back out keeps the bounce exemption AT HIS OWN GRADE — but a class hike
+    re-arms the first-run-off-a-raise caution and the shield hole, however
+    quick the return. His streak never sampled today's company."""
+    from racing_edge.selection.conviction import conviction
+    cl2 = Race(race_id="na", course="Newton Abbot", off_time="18:12",
+               date=date(2026, 8, 27), race_type="Handicap Chase",
+               is_handicap=True, race_class=2)
+    gp = Runner(horse_id="gp", horse="Gore Point", official_rating=117,
+                odds=Odds(consensus=1.83), days_since_run=5)
+    streak = (PastRun(date=date(2026, 8, 22), position=1, race_type="Chase",
+                      official_rating=113, race_class=3),
+              PastRun(date=date(2026, 8, 8), position=1, race_type="Chase",
+                      official_rating=108, race_class=3),
+              PastRun(date=date(2026, 7, 20), position=1, race_type="Chase",
+                      official_rating=103, race_class=4),
+              PastRun(date=date(2026, 6, 30), position=1, race_type="Chase",
+                      official_rating=99, race_class=4),
+              PastRun(date=date(2026, 6, 10), position=2, race_type="Chase",
+                      official_rating=99, race_class=4))
+    c = conviction(gp, cl2, streak, market_rank=1, field_size=4)
+    assert any("first run off a raised mark" in x for x in c.cautions)
+    assert any("never buys a hike" in x for x in c.cautions)
+    assert not any("#19" in a for a in c.aligned)      # shield off up a grade
+    # the same streak staying AT its grade keeps the bounce exemption
+    cl3 = Race(race_id="na3", course="Newton Abbot", off_time="18:12",
+               date=date(2026, 8, 27), race_type="Handicap Chase",
+               is_handicap=True, race_class=3)
+    c2 = conviction(gp, cl3, streak, market_rank=1, field_size=4)
+    assert not any("first run off a raised mark" in x for x in c2.cautions)

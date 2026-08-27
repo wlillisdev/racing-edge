@@ -119,3 +119,92 @@ are yesterday, conditions are today.
     a dot FOR him and a dot AGAINST every closer — and NON-RUNNERS change
     the answer, so re-ask it after scratches (three NRs handed Rikki Tiki
     Tavi the lead and the race).
+
+15. **THE CANDY RACE** (the master, 2026-08-27, after Captain Cairney 10/3
+    led the Southwell 9:00 start to finish while the sitter talked himself
+    past the obvious: "that was a very winnable race, these should be easy
+    picks... he was a decent price also, these are the type of races we
+    need to hoover up, taking candy from a baby when you look at it
+    properly"): the hunting ground is the SMALL, WEAK field with ONE
+    standout — most of the field out of form or winless, one horse holding
+    the answers to the three questions that decide these races:
+    WHO'S IN FORM · WHO'S GOT THE WEIGHT · WHO GETS THE LEAD.
+    When one horse answers all three, the race writes itself and the price
+    is often decent because the market gets distracted (tonight: hot-yard
+    money on the worst-rated horse). Eliminate on facts, take the survivor,
+    do NOT second-guess him — second-guessing the lone standout is where
+    the candy gets handed back. Distinct from the 07-05 lottery law: bottom
+    grade + BIG open field of unexposed horses = anything can win, stay
+    out; bottom grade + SMALL field + one in-form standout = hoover it up.
+
+16. **THE ODDS-ON BAR** (the master, 2026-08-27, after Gore Point 5/6F
+    trailed in last of four, beaten 50 lengths: "5/6 fav loss as a pick is
+    catastrophic"): at odds-on the price pays nothing for the risk — you
+    must be right 6 times in 11 just to stand still — so the tolerance for
+    holes is ZERO. One citable hole in an odds-on favourite (a class hike,
+    a fitness query, a mark question, a figures gap) = PASS the race or
+    the hole IS the story and the value is against him. Gore Point had TWO
+    holes in writing at the lock and was backed anyway. The engine has had
+    this discipline since #19's counterweight — no market dot below 5/2;
+    the sitter must hold the same line at the table. A named pass on an
+    odds-on race is a win for the record.
+
+17. **THE BOOKMAKER'S QUESTION** (the master, 2026-08-27, closing the
+    calibration night after the student's lesson on story-priced markets:
+    "do you know what i think you summed up what a book maker dose?"): a
+    bookmaker does not predict races — he prices the CROWD. Story-horses
+    get cramped shorter than their true chance (streaks up in class,
+    hot-yard money, pretty figures over holes); blunt unfashionable facts
+    drift bigger than they should. So before any verdict, ask his
+    question, in writing with the MARK/FIT/weight lines: "WHOSE MONEY MADE
+    THIS PRICE?" If the answer is story-money, the price is a lie — and
+    the truth is standing elsewhere in the same race at a bigger price.
+    Tonight's card answered it three times: 5/6 streak-money (last), ~5/2
+    yard-money (beaten), 15/8 figures-money (last) — while the blunt facts
+    won at 3/1, 10/3 and 12/1. Read the form like a handicapper; read the
+    price like a bookmaker; bet only where the two readings disagree AND
+    the form-read holds the blunt superlative.
+
+18. **BETWEEN THE LINES, AND THE EACH-WAY BANDIT** (the master, 2026-08-27,
+    last lesson of the calibration night: "i always thought you read
+    between the lines, the bookie hates that, they hate each way bandits
+    also"): two edges the price board cannot defend. (a) BETWEEN THE
+    LINES: the odds are formula plus money-flow — they price the printed
+    form, never the gaps: the 70-day hole between pretty figures, the
+    claimer on the class horse booked by the fav's own yard, non-runners
+    handing a lone speedster the lead, the raise the handicapper hasn't
+    caught. Read the unprinted lines on every card at scale; that is this
+    student's native advantage. (b) THE EACH-WAY BANDIT: each-way terms
+    are a FIXED formula (1/4 or 1/5 the odds, places by field size) that
+    never adapts to the race — so in an 8-runner race with a hot favourite
+    soaking the win market, the place half on a solid 6/1-12/1 sort is
+    mispriced in our favour (receipts: Arqoob EW 15/2 paid on a
+    nose-finish; the master's 5/1 each-way third that paid while win-only
+    lost). THE SYNTHESIS: the dogged placers the nap engine rightly
+    rejects ("placer, not a nap" — the 2-1-2-1-2 profiles) are the
+    bandit's shortlist — the win engine's rejects are the each-way
+    engine's ammunition. THE TRAP: small fields rob the bandit back —
+    5-7 runners = two places at 1/4 (Southwell 9:00 tonight); field size
+    decides whether the tool is on the table at all. Paper stakes, as
+    everything, until the record earns more.
+
+    18b. THE BANDIT'S SUM (the master, same night: "a calculated bet on an
+    ew horse at 8/1 often pays great with minimum risk"): 1pt EW at 8/1,
+    1/4 odds, 3 places = 2pt staked. Frame only: +1pt. Win: +10pt. Miss:
+    -2pt. The place half breaks even at ~4 frames in 10 — and the dogged
+    placer profile in the right race frames 5-6 in 10. The bet is the
+    FRAME probability at a price built for win-dreamers; the win is a
+    freeroll. Bet test, in writing before any EW verdict: field 8+,
+    honest place terms, a hot fav soaking the win market, and a placer
+    whose form line says framing is his profession. No frame case, no
+    bandit bet.
+
+    18c. THE FREE-KICK FLOOR (the master, same night: "even at 5/1 at one
+    fifth of the odds we can still break even and have a free kick at
+    the win"): the exact price where a FRAME refunds the whole stake —
+    1/5 terms: 5/1 floor (place pays evens). 1/4 terms: 4/1 floor. At or
+    above the floor with a real frame case, the win half is a free kick.
+    BELOW the floor, framing LOSES money — that is the bookie's quiet
+    tax on lazy each-way punters, and the floor is what separates the
+    calculated bandit from the mugs. Check the floor against the TERMS,
+    in writing, before any EW verdict.

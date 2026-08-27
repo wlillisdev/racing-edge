@@ -253,7 +253,22 @@ def evaluate_field(client: _Client, day: str = "today",
                 and young_unexposed >= 2 and young_unexposed * 2 >= contenders):
             race_flags.append("young-unexposed field — a novice in disguise (#13/#30)")
         # 2. grade: bottom-class racing is inconsistent animals — the form doesn't hold
-        if race.race_class and race.race_class >= 6:
+        # THE CANDY EXEMPTION (the master, 2026-08-27, after Captain Cairney
+        # 10/3 led the Southwell 9:00 start to finish on the far side of this
+        # very wall: "that was a very winnable race, these should be easy
+        # picks... these are the type of races we need to hoover up, taking
+        # candy from a baby when you look at it properly"; and on the wall:
+        # "keep an open mind as we recalibrate the system — if the opportunity
+        # is there we should take"). Brief #15 splits the grade: bottom grade
+        # + BIG open field of unexposed animals = the 07-05 lottery, wall
+        # stands; bottom grade + SMALL field (the two-place each-way boundary,
+        # <=7) + exactly ONE horse in winning form = the candy race — the wall
+        # stands down and the read decides. REVERT-IF: a week of candy-race
+        # picks reads worse than the dreck column they came from.
+        _in_form = [p for p in race_picks
+                    if p.history and p.history[0].position == 1]
+        _candy = len(race_picks) <= 7 and len(_in_form) == 1
+        if race.race_class and race.race_class >= 6 and not _candy:
             race_flags.append("bottom-grade race (Cl6) — inconsistent animals (#3)")
         # 3. market shape: a race with NO ANCHOR is the market itself saying anything
         #    could win. Rewritten 2026-07-26 on the master's ruling ('price threshold

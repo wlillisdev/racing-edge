@@ -151,11 +151,34 @@ def conviction(runner: Runner, race: Race, history: tuple[PastRun, ...],
             # cohort 1-for-6 — enough to block CONFIDENT and strip the solid-
             # fav shield below, never enough to erase. The same flame never
             # takes the same skin twice, in either direction.
+            # ...and refined the SAME NIGHT it shipped, after Captain Cairney
+            # (3yo, won LTO, first run off a raise, quick return) led the
+            # Southwell 9:00 start to finish. Law 3g-ii, the master's words:
+            # a developing horse 'could win 2 or 3 on the bounce befire teh
+            # handicapper cathed them espicially on the all weather' — the
+            # raise LAGS the improvement. The against-read applies to a
+            # BROKEN bounce (a long absence, per 2b-ii's own race-fit line:
+            # Town Queen, 70 days, LAST) — never to a race-fit winner
+            # straight back out. Unknown days stay cautious: fail loud.
+            # THE CLASS RIDER (Gore Point, 2026-08-27, two hours after 3g-ii
+            # shipped: 2-1-1-1-1, back out in 5 days, 5/6F in a Cl2 chase
+            # 12lb of class out of his depth — LAST, beaten 50L by the
+            # top-rated top weight): the bounce carries a horse AT HIS OWN
+            # GRADE, never up one. A class hike re-arms the caution.
             if mr.since == 0:
-                cautions.append(f"first run off a raised mark ({mr.verdict}) "
-                                "— the handicapper's question unanswered; "
-                                "cohort 0-for-5 this week (Town Queen, "
-                                "2026-08-27, law 3g)")
+                _hike = (mr.win_class is not None
+                         and race.race_class is not None
+                         and race.race_class < mr.win_class)
+                _quick_return = (runner.days_since_run is not None
+                                 and runner.days_since_run < 60
+                                 and not _hike)
+                if not _quick_return:
+                    _why = ("up in class — the bounce never buys a hike "
+                            "(Gore Point" if _hike else
+                            "raise + absence (Town Queen")
+                    cautions.append(f"first run off a raised mark "
+                                    f"({mr.verdict}) with the bounce broken "
+                                    f"— {_why} 2026-08-27, laws 3g/3g-ii)")
             else:
                 cautions.append(f"raised {mr.verdict} since last win")
     # THE FENCES ARE A DIFFERENT EXAM (2026-08-27, the Lady Kara corpse: every
@@ -243,8 +266,17 @@ def conviction(runner: Runner, race: Race, history: tuple[PastRun, ...],
             _solid_holes.append("never won")
         if runner.days_since_run is not None and runner.days_since_run >= 60:
             _solid_holes.append(f"{runner.days_since_run} days off")
-        if mr.delta is not None and mr.delta > 0 and mr.since == 0:
-            _solid_holes.append("first run off a raised mark")
+        if (mr.delta is not None and mr.delta > 0 and mr.since == 0
+                and not (runner.days_since_run is not None
+                         and runner.days_since_run < 60
+                         and not (mr.win_class is not None
+                                  and race.race_class is not None
+                                  and race.race_class < mr.win_class))):
+            # law 3g-ii: a race-fit developing winner straight back out is
+            # ON the bounce — the raise lags him; the broken bounce (raise +
+            # absence) OR a class hike (Gore Point, 5/6F, last of 4 in a Cl2
+            # his streak never sampled) punches the hole in the shield
+            _solid_holes.append("first run off a raised mark, bounce broken")
         if _solid_holes:
             cautions.append("favourite but NOT solid ("
                             + ", ".join(_solid_holes)
