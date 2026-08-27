@@ -370,3 +370,17 @@ def test_law_3g_the_winning_mark() -> None:
     assert "0-for-5" in NAP_SYSTEM
     assert "COUNTED dot" in NAP_SYSTEM
     assert "Rikki Tiki Tavi" in NAP_SYSTEM
+
+
+def test_law_3g_ii_the_developing_horse() -> None:
+    """Taught 2026-08-27, the same night 3g shipped, after Captain Cairney led
+    the Southwell 9:00 start to finish as exactly the profile 3g crossed: a
+    developing horse can win 2 or 3 on the bounce before the handicapper
+    catches him, especially on the all-weather — the raise lags the
+    improvement. The against-read is for the broken bounce, not the rolling
+    horse."""
+    from racing_edge.study.morningread import NAP_SYSTEM
+    assert "THE DEVELOPING HORSE" in NAP_SYSTEM
+    assert "on the bounce" in NAP_SYSTEM.lower() or "th ebounce" in NAP_SYSTEM
+    assert "Captain Cairney" in NAP_SYSTEM
+    assert "raise lags the improvement" in NAP_SYSTEM
