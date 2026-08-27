@@ -90,3 +90,32 @@ shocking"): the POUND-A-LENGTH SUM IS MANDATORY, IN WRITING, before any
 verdict — final two horses: last-run margins vs weight carried, one line
 of arithmetic in the table. No sum, no pick. A verdict without the
 weight line is void.
+
+## v6 (2026-08-27) — the Town Queen night ("do the above and do them
+surgically"). Receipts: Town Queen 15/8F — staircase 2-2-2-1, then 70 days
+off and first run off a raised mark — trailed home LAST while Rikki Tiki
+Tavi (proven front-runner, back down to a mark he'd already won off, free
+lead on a plate) won at 12/1; same evening Ten Clarets, a never-won BF
+favourite, ran 3rd behind Bincimbal 9/4. The disease both times: figures
+are yesterday, conditions are today.
+
+12. **THE MARK LINE AND THE FIT LINE ARE MANDATORY, IN WRITING** — same
+    medicine as the weight sum. Before any verdict, two lines in the table
+    for every contender in the final two:
+    - MARK: runs off X today, last won off Y (state the delta and whether
+      today is the FIRST run at a raised mark).
+    - FIT: N days since last run (60+ on a form-built-on-quick-runs profile
+      is a hole, not a footnote).
+    No lines, no pick. A verdict missing either line is void.
+
+13. **BREAK BEATS STAIRCASE**: form built on quick back-to-back runs does
+    not survive a long absence. Read the GAPS between the form figures,
+    not just the figures — a fit-and-rolling profile plus 60+ days off is
+    a different horse today (Town Queen: "urged to keep tempo with 2f
+    left... trailed home well beaten").
+
+14. **READ THE PACE BEFORE THE RUNNERS**: after the dots, ask "who leads,
+    and who makes him work?" A lone confirmed front-runner in a sprint is
+    a dot FOR him and a dot AGAINST every closer — and NON-RUNNERS change
+    the answer, so re-ask it after scratches (three NRs handed Rikki Tiki
+    Tavi the lead and the race).
