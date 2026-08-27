@@ -309,3 +309,34 @@ new FAV LINE definition (one fingerprint fav/day); nuance promotions;
 server backfills (corpus via fetch.py, pre-08-19 shadow rows);
 healthchecks.io heartbeat. Paper stakes only — the record has not yet
 earned real money, and his family's food is the law behind that law.
+
+## 2026-08-27 night — the Town Queen cuts ("do the above and do them surgically")
+
+Homework night: two exam sittings on the run Carlisle card, both locked
+pre-result. 3:00 — Bincimbal WON 9/4 (earned departure from never-won BF
+fav Ten Clarets). 3:30 — Town Queen 15/8F ("solid" on the old test:
+staircase 2-2-2-1, won LTO) trailed in LAST; Rikki Tiki Tavi won 12/1 off
+a mark he'd already won off, free lead after 3 NRs. Autopsy in front of
+the master; his word given the same night. Four surgical cuts shipped,
+one per commit, suite green after each:
+
+1. **SCHOOL_BRIEF v6** — MARK line + FIT line mandatory in writing (no
+   lines, no pick); break-beats-staircase; read-the-pace-before-the-runners.
+2. **Law 2b-ii, THE FIVE-PART SOLID TEST** (rulebook, pinned): solid =
+   short + in form + HAS WON + RACE-FIT + PROVEN AT THE MARK; fail any
+   and the shield comes off — "why NOT take him on?"
+3. **Law 3g, THE WINNING MARK** (rulebook, pinned): today's mark vs the
+   mark last won off is a COUNTED dot both directions. Engine-side: first
+   run off a raised mark = DISTINCT NAMED caution (week cohort 0-for-5) —
+   NOT a flag, because Too Much Trevor (same profile, crossed 08-22, won
+   10/1) makes the honest cohort 1-for-6; the record argued back
+   mid-surgery and the demotion law held. Blocks CONFIDENT, never erases.
+4. **Solid-fav shield gate** (engine): a favourite failing has-won /
+   race-fit / proven-at-the-mark earns no #19 market dot; the named holes
+   ride in as a caution.
+
+Exam ledger to date: Mon 6 sittings 2 wins · Thu 2 sittings 1 win.
+New-mark-first-run cohort receipts: Vaguely Royal, Molly Mac, Is She Now,
+Kanzi, Town Queen — 0-for-5 the week; winners at/below proven mark:
+Gallus Norman, Ecclefechan, Cape Toronada, Rikki Tiki Tavi. All of it
+lands in the live engine only when PR #69 merges.
