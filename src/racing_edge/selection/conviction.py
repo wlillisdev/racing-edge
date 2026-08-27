@@ -140,9 +140,35 @@ def conviction(runner: Runner, race: Race, history: tuple[PastRun, ...],
             else:
                 _well_in_pending = f"well-in ({mr.verdict}{grade})"
         else:
-            # demoted to CAUTION 2026-08-22 (audit row: no master quote, no
-            # receipts; corpse: Too Much Trevor, crossed then won 10/1)
-            cautions.append(f"raised {mr.verdict} since last win")
+            # THE WINNING MARK, against-side (law 3g, record-born week of
+            # 2026-08-24, master's word 2026-08-27 'do the above'): the NARROW
+            # cohort — won last time, mark raised for it, today the FIRST look
+            # at the new mark — went 0-for-5 in a week of marked cards
+            # (Vaguely Royal, Molly Mac, Is She Now, Kanzi, Town Queen 15/8F
+            # trailed in LAST). It is a DISTINCT, NAMED caution — not a flag,
+            # because the same profile has a winner on the ledger: Too Much
+            # Trevor, crossed for this exact raise on 08-22, won 10/1. Honest
+            # cohort 1-for-6 — enough to block CONFIDENT and strip the solid-
+            # fav shield below, never enough to erase. The same flame never
+            # takes the same skin twice, in either direction.
+            if mr.since == 0:
+                cautions.append(f"first run off a raised mark ({mr.verdict}) "
+                                "— the handicapper's question unanswered; "
+                                "cohort 0-for-5 this week (Town Queen, "
+                                "2026-08-27, law 3g)")
+            else:
+                cautions.append(f"raised {mr.verdict} since last win")
+    # THE FENCES ARE A DIFFERENT EXAM (2026-08-27, the Lady Kara corpse: every
+    # positive dot was hurdle form; her chase record was one start, one rider
+    # on the floor — she trailed in last at 5/2 as the engine's pick). In a
+    # CHASE, a horse with no completed chase anywhere in its visible history
+    # is a DISQUALIFIER-grade risk: hurdle class does not buy fences.
+    if "chase" in (race.race_type or "").lower():
+        _chase_runs = [h for h in history if "chase" in (h.race_type or "").lower()]
+        if not any(h.position is not None for h in _chase_runs):
+            flags.append("no completed chase — jumping unproven; hurdle form "
+                         "does not buy fences (Lady Kara, 2026-08-27)")
+
     if len(hist) >= 6 and not any(h.position == 1 for h in hist):
         # comment-independent serial-placer catch (the audit's Giant/Woodstock pair:
         # the manner flag couldn't fire because every comment was missing)
@@ -170,7 +196,10 @@ def conviction(runner: Runner, race: Race, history: tuple[PastRun, ...],
     elif recent and recent[0] == 1:
         aligned.append("won last time out")
     if len(recent) >= 2 and all(p >= 6 for p in recent[:2]):
-        flags.append(f"cold form ({'-'.join(str(p) for p in recent[:2])} last two)")
+        # demoted to CAUTION 2026-08-27 (audit rec: DEMOTE, no quote; corpse:
+        # Ecclefechan won 5/1 while "cold" — his 8-6-5-3 was an improving
+        # staircase; bare figures without the trend read are blind, law 3d)
+        cautions.append(f"cold form ({'-'.join(str(p) for p in recent[:2])} last two)")
 
     # the well-in verdict lands only NOW, corroboration known (2026-08-17):
     # counted with current form or manner behind it, otherwise named as the
@@ -182,8 +211,12 @@ def conviction(runner: Runner, race: Race, history: tuple[PastRun, ...],
         if corroborated:
             aligned.append(_well_in_pending)
         else:
-            flags.append("well-in NOT counted — no current form or manner "
-                         "behind it (rough guide only, the master 2026-08-17)")
+            # demoted to CAUTION 2026-08-27: this is an INFORMATIONAL note —
+            # "the mark earns no credit" — that was somehow EXECUTING horses
+            # (dozens crossed on 08-22 and 08-27 for the absence of a positive,
+            # which nobody ever taught as a fault). It informs; it never erases.
+            cautions.append("well-in NOT counted — no current form or manner "
+                            "behind it (rough guide only, the master 2026-08-17)")
 
     course_wins = sum(1 for h in hist if h.position == 1 and _same_course(h, race))
     if course_wins >= 2:
@@ -198,7 +231,26 @@ def conviction(runner: Runner, race: Race, history: tuple[PastRun, ...],
         # rule #19 — don't fear a FAIR-priced fav: pick the winner, not the price.
         # The engine had #2 without its counterweight, so the strongest profile on
         # the card scored a lens BEHIND a weaker one sitting 2nd fav (I'm Next, 2/1F).
-        aligned.append("fair-priced favourite (#19 — the winner, not the price)")
+        # THE SHIELD GATE (law 2b-ii, record-born 2026-08-27, both edges on one
+        # Carlisle card: Town Queen 15/8F — 70 days off, first run off a raise —
+        # trailed in LAST; Ten Clarets, a never-won BF fav, beaten by an earned
+        # departure at 9/4): a favourite failing the engine-visible parts of the
+        # solid test — HAS WON, RACE-FIT, PROVEN AT THE MARK — earns no market
+        # dot; the shield comes off and the holes ride in as a caution the case
+        # must answer. It strips a dot, never erases the horse.
+        _solid_holes = []
+        if not any(h.position == 1 for h in hist):
+            _solid_holes.append("never won")
+        if runner.days_since_run is not None and runner.days_since_run >= 60:
+            _solid_holes.append(f"{runner.days_since_run} days off")
+        if mr.delta is not None and mr.delta > 0 and mr.since == 0:
+            _solid_holes.append("first run off a raised mark")
+        if _solid_holes:
+            cautions.append("favourite but NOT solid ("
+                            + ", ".join(_solid_holes)
+                            + ") — shield off: why NOT take him on? (2b-ii)")
+        else:
+            aligned.append("fair-priced favourite (#19 — the winner, not the price)")
 
     # INTENT (#5) — the yard's form and the booking. Half the winning jigsaw
     # (I'm Next: 17% yard + stable's #1 up) that conviction could never see.
@@ -238,7 +290,12 @@ def conviction(runner: Runner, race: Race, history: tuple[PastRun, ...],
         elif "headgear" in t.lower():
             aligned.append("headgear key")
         elif "distrust" in t:
-            flags.append("rising-mark trap")
+            # demoted to CAUTION 2026-08-27 (audit row: unreceipted squatter,
+            # TRIAL): it crossed Thickthorn Tom, the master's read-at-a-glance
+            # solid favourite, who won at 5/4 while the engine was cornered
+            # onto Lady Kara (last, 41L). Trial record 1-1 as of demotion —
+            # warns and counts, never erases (the master: "why take him on?")
+            cautions.append("rising-mark trap")
 
     # the profile that beat me twice — lightly raced, market leader, short price
     if len(history) <= 4 and market_rank == 1 and price and price <= 3.0:

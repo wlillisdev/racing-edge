@@ -564,6 +564,20 @@ def main() -> int:
     # race and THE horse — or earns a pass race by race. Fallback: the engine's
     # strongest survivor, honestly labelled as the shallow pick.
     nap = survivors[0] if survivors else field[0]
+    # THE CORNERED-DAY KLAXON (2026-08-27, the master: 'we need to fix this,
+    # selection was bizarre' — Lady Kara, last at 5/2, picked only because the
+    # gates had erased every flat race and left nothing but jumps dreck; same
+    # mechanism as Max Of Stars 08-22). When the best survivor's own race
+    # scores below the betting-race bar, the day is CORNERED, not chosen:
+    # the pick still banks (one pick a day, the master's standing order) but
+    # it is loudly labelled, never confident, and lands in the dreck column
+    # of the two-column record where the master said to judge it separately.
+    cornered = bool(survivors) and getattr(nap, "race_quality", 0) < 2
+    if cornered:
+        emit("  ⚠ CORNERED DAY: no betting race survived the gates — every "
+             "remaining candidate sits in a race type the record says to walk "
+             "past. This pick is DUTY ONLY (dreck column); the fav line is the "
+             "day's only serious interest. Never confident on a cornered day.")
     deep_case: list[str] = []
     mp = None
     try:
@@ -954,7 +968,8 @@ def main() -> int:
         emit(f"  ⚠ the engine flags this horse ({', '.join(c.flags)}) — the reader "
              f"may overrule, but never at full confidence. LEAN only.")
     confident = ((deep_conf == "confident") if deep_case else c.confident) \
-        and not off_profile and not c.flags and not c.cautions and not frank_thin_deep
+        and not off_profile and not c.flags and not c.cautions \
+        and not frank_thin_deep and not cornered
     _ew = ew_advice(nap.price, r.field_size)
     if _ew:
         emit(f"  instrument: {_ew}")

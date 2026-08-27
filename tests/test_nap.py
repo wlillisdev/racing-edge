@@ -466,7 +466,11 @@ def test_well_in_is_a_rough_guide_without_current_form_behind_it() -> None:
     )
     c = conviction(r, _race(), hist, market_rank=4, field_size=8)
     assert not any("well-in" in a for a in c.aligned)
-    assert any("rough guide only" in f for f in c.flags)
+    # 2026-08-27: the note moved channels (flag -> caution) so it can never
+    # ERASE a horse for the absence of a positive; the law itself is intact —
+    # an uncorroborated well-in still scores NOTHING and still warns.
+    assert any("rough guide only" in x for x in c.cautions)
+    assert not any("rough guide only" in f for f in c.flags)
 
     # the same mark WITH a last-time-out win behind it still counts
     hist_form = (_won_cdg(date(2026, 6, 1), 110),
@@ -594,3 +598,117 @@ def test_two_column_record_judges_betting_races_apart(tmp_path):
     assert bet == (1, 1)         # the betting-race column: 1 pick, 1 winner
     assert dreck == (0, 1)       # the dreck column: duty, not evidence
     log.close()
+
+
+def test_rising_mark_trap_is_a_caution_not_a_cross_off() -> None:
+    """Demoted 2026-08-27: the unreceipted rising-mark tell crossed Thickthorn
+    Tom (solid fav, won 5/4) and cornered the engine onto Lady Kara (last).
+    Trial record 1-1 at demotion — it warns and counts, never erases."""
+    import inspect
+    from racing_edge.selection import conviction as _c
+    src = inspect.getsource(_c)
+    assert 'cautions.append("rising-mark trap")' in src
+    assert 'flags.append("rising-mark trap")' not in src
+
+
+def test_stability_cuts_2026_08_27() -> None:
+    """The master, 2026-08-27: 'make adjustments so system is more stable and
+    consistent and accurate.' Four cuts, each with a corpse:
+    (1) young-field gate stands down when the whole field is 2-3yo (it erased
+        Carlisle's nursery wholesale — no disguise in a race OF novices);
+    (2) 'well-in NOT counted' informs, never erases (an informational note was
+        executing horses for the absence of a positive);
+    (3) bare cold-form warns, never erases (Ecclefechan, 5/1, the staircase);
+    (4) a chaser with no completed chase is a disqualifier (Lady Kara: hurdle
+        form does not buy fences)."""
+    import inspect
+    from racing_edge.pipeline import nap as _p
+    from racing_edge.selection import conviction as _c
+    psrc = inspect.getsource(_p)
+    csrc = inspect.getsource(_c)
+    assert "_age_restricted" in psrc and "not _age_restricted" in psrc
+    assert 'cautions.append("well-in NOT counted' in csrc
+    assert 'cautions.append(f"cold form' in csrc
+    assert "no completed chase" in csrc
+    assert 'flags.append("well-in NOT counted' not in csrc
+    assert 'flags.append(f"cold form' not in csrc
+
+
+def test_chase_without_completion_flags_but_hurdler_flat_untouched() -> None:
+    """The fences guard fires only in chases, only without a completed chase."""
+    from racing_edge.selection.conviction import conviction
+    r = Runner(horse_id="lk", horse="Lady Kara", official_rating=110,
+               odds=Odds(consensus=5.5))
+    hurdle_wins = (PastRun(date=date(2026, 6, 12), position=1, race_type="Hurdle"),
+                   PastRun(date=date(2026, 5, 27), position=1, race_type="Hurdle"),
+                   PastRun(date=date(2026, 6, 30), position=None, race_type="Chase"))
+    chase = Race(race_id="c", course="Newton Abbot", off_time="19:12",
+                 date=date(2026, 8, 27), race_type="Handicap Chase", is_handicap=True)
+    c = conviction(r, chase, hurdle_wins, market_rank=4, field_size=5)
+    assert any("no completed chase" in f for f in c.flags)
+    hurdle = Race(race_id="h", course="Newton Abbot", off_time="19:12",
+                  date=date(2026, 8, 27), race_type="Handicap Hurdle", is_handicap=True)
+    c2 = conviction(r, hurdle, hurdle_wins, market_rank=4, field_size=5)
+    assert not any("no completed chase" in f for f in c2.flags)
+
+
+def test_first_run_off_raised_mark_is_a_distinct_named_caution() -> None:
+    """Law 3g against-side (record-born, the master's word 2026-08-27): the
+    NARROW cohort — won last time, raised for it, first look at the new mark —
+    went 0-for-5 in a week (Town Queen 15/8F trailed in LAST). It is a
+    DISTINCT NAMED caution, never a flag: the same profile holds Too Much
+    Trevor (crossed for this exact raise 08-22, won 10/1) — honest cohort
+    1-for-6 blocks CONFIDENT but must never erase, in either direction."""
+    from racing_edge.selection.conviction import conviction
+    tq = Runner(horse_id="tq", horse="Town Queen", official_rating=75,
+                odds=Odds(consensus=2.88), days_since_run=70)
+    staircase = (PastRun(date=date(2026, 6, 18), position=1, race_type="Flat",
+                         official_rating=71),
+                 PastRun(date=date(2026, 6, 2), position=2, race_type="Flat",
+                         official_rating=71),
+                 PastRun(date=date(2026, 5, 20), position=2, race_type="Flat",
+                         official_rating=72))
+    flat = Race(race_id="f", course="Carlisle", off_time="15:30",
+                date=date(2026, 8, 27), race_type="Flat", is_handicap=True)
+    c = conviction(tq, flat, staircase, market_rank=1, field_size=7)
+    assert any("first run off a raised mark" in x for x in c.cautions)
+    assert not any("raised" in f for f in c.flags)     # never erases
+    assert not c.confident                             # never a confident nap
+    # the same raise, already run at the new mark once = the broad caution
+    proven = (PastRun(date=date(2026, 8, 1), position=3, race_type="Flat",
+                      official_rating=75),) + staircase
+    c2 = conviction(tq, flat, proven, market_rank=1, field_size=7)
+    assert not any("first run off a raised mark" in x for x in c2.cautions)
+    assert any("since last win" in x for x in c2.cautions)
+
+
+def test_solid_fav_shield_gate_strips_the_market_dot_from_false_solids() -> None:
+    """Law 2b-ii engine-side (record-born 2026-08-27): a favourite failing
+    HAS-WON / RACE-FIT / PROVEN-AT-THE-MARK earns no #19 market dot — the
+    shield comes off and the named holes ride in as a caution. Town Queen
+    (70 days off + first run off a raise) and a never-won fav both lose the
+    dot; I'm Next-shaped solid favs keep it (pinned above)."""
+    from racing_edge.selection.conviction import conviction
+    flat = Race(race_id="f", course="Carlisle", off_time="15:30",
+                date=date(2026, 8, 27), race_type="Flat", is_handicap=True)
+    tq = Runner(horse_id="tq", horse="Town Queen", official_rating=75,
+                odds=Odds(consensus=2.88), days_since_run=70)
+    hist = (PastRun(date=date(2026, 6, 18), position=1, race_type="Flat",
+                    official_rating=71),
+            PastRun(date=date(2026, 6, 2), position=2, race_type="Flat",
+                    official_rating=71))
+    c = conviction(tq, flat, hist, market_rank=1, field_size=7)
+    assert not any("#19" in a for a in c.aligned)
+    assert any("NOT solid" in x and "70 days off" in x for x in c.cautions)
+    assert not c.confident
+    # never-won favourite: shield off for the has-won hole
+    nw = Runner(horse_id="tc", horse="Ten Clarets", official_rating=None,
+                odds=Odds(consensus=2.6))
+    maiden_hist = (PastRun(date=date(2026, 8, 1), position=2, race_type="Flat"),
+                   PastRun(date=date(2026, 7, 12), position=3, race_type="Flat"),
+                   PastRun(date=date(2026, 6, 20), position=2, race_type="Flat"),
+                   PastRun(date=date(2026, 6, 1), position=4, race_type="Flat"),
+                   PastRun(date=date(2026, 5, 12), position=5, race_type="Flat"))
+    c2 = conviction(nw, flat, maiden_hist, market_rank=1, field_size=7)
+    assert not any("#19" in a for a in c2.aligned)
+    assert any("never won" in x for x in c2.cautions)

@@ -59,3 +59,63 @@ marked exams (one-offs are variance: logged, nothing changed).
     races: eliminate, take the most proven horse in the bunch at today's
     discipline and conditions — value and winners live here. The shape is
     a reason to look, never a pick by itself.
+
+## v5 — THE LAST YARD ORDER (2026-08-24, from the night of two exams)
+The master: "how do we not miss the obvious again." Receipts: Knights Gold
+(state over direction), Cape Fear (echoes counted as dots, crowd ignored),
+Em Four (bare figures overrode the finisher read AND the engine's conv-4).
+Every miss was preference outvoting law. So the final choice now follows a
+FIXED ORDER — the pick is what survives it, and the reader may depart only
+on a CITED fact, recorded as an objection beside the pick:
+
+1. COUNT independent dots per contender — families once, echoes once
+   (won-LTO + quick-return + money-for = ONE fact in three hats).
+2. THE FINISH OUTRANKS THE FIGURES (rule #1, both directions): a
+   comment-based finisher/placer read beats bare form numbers, every time.
+3. DIRECTION OUTRANKS STATE (3b, both directions): trajectory beats
+   pattern-smell — on young lightly-raced horses especially.
+4. THE MARKET IS THE TIE-BREAK: at a close call, take the crowd's side
+   unless you can NAME the fact they are missing (vision receipts: blind
+   rank-2/3 loses 17-22%, the fav nearly breaks even).
+5. THE ENGINE'S RANKING IS A VOTE: overriding its top survivor requires a
+   cited disqualifying fact, logged like a wrong-twin (Em Four corpse:
+   engine 1, apprentice 0).
+
+Feel may write an objection. Feel may never move the pick. The wrong-twin
+and override counters judge this order at 50 marks — evidence re-balances
+it, mood never does.
+
+v5 amendment (2026-08-24, the master: "the weight???? ...1 from 5 is
+shocking"): the POUND-A-LENGTH SUM IS MANDATORY, IN WRITING, before any
+verdict — final two horses: last-run margins vs weight carried, one line
+of arithmetic in the table. No sum, no pick. A verdict without the
+weight line is void.
+
+## v6 (2026-08-27) — the Town Queen night ("do the above and do them
+surgically"). Receipts: Town Queen 15/8F — staircase 2-2-2-1, then 70 days
+off and first run off a raised mark — trailed home LAST while Rikki Tiki
+Tavi (proven front-runner, back down to a mark he'd already won off, free
+lead on a plate) won at 12/1; same evening Ten Clarets, a never-won BF
+favourite, ran 3rd behind Bincimbal 9/4. The disease both times: figures
+are yesterday, conditions are today.
+
+12. **THE MARK LINE AND THE FIT LINE ARE MANDATORY, IN WRITING** — same
+    medicine as the weight sum. Before any verdict, two lines in the table
+    for every contender in the final two:
+    - MARK: runs off X today, last won off Y (state the delta and whether
+      today is the FIRST run at a raised mark).
+    - FIT: N days since last run (60+ on a form-built-on-quick-runs profile
+      is a hole, not a footnote).
+    No lines, no pick. A verdict missing either line is void.
+
+13. **BREAK BEATS STAIRCASE**: form built on quick back-to-back runs does
+    not survive a long absence. Read the GAPS between the form figures,
+    not just the figures — a fit-and-rolling profile plus 60+ days off is
+    a different horse today (Town Queen: "urged to keep tempo with 2f
+    left... trailed home well beaten").
+
+14. **READ THE PACE BEFORE THE RUNNERS**: after the dots, ask "who leads,
+    and who makes him work?" A lone confirmed front-runner in a sprint is
+    a dot FOR him and a dot AGAINST every closer — and NON-RUNNERS change
+    the answer, so re-ask it after scratches (three NRs handed Rikki Tiki
+    Tavi the lead and the race).

@@ -305,3 +305,68 @@ def test_law_3c_class_is_permanent() -> None:
     assert "Notable Speech" in NAP_SYSTEM
     assert "HANDICAP laws" in NAP_SYSTEM
     assert "paper trial" in NAP_SYSTEM
+
+
+def test_law_3d_the_dreck_read() -> None:
+    """Taught 2026-08-24 (Ecclefechan, 5/1, five straight improving figures,
+    crossed as 'winless in six'): in bottom grade the winless/placer counts
+    separate nothing — read the figure trend, finish strength, beaten margin,
+    jockey booking, weight vs ratings, and the draw where it bites."""
+    from racing_edge.study.morningread import NAP_SYSTEM
+    assert "THE DRECK READ" in NAP_SYSTEM
+    assert "Ecclefechan" in NAP_SYSTEM
+    assert "jockey BOOKING" in NAP_SYSTEM
+    assert "DRAW" in NAP_SYSTEM
+    assert "wallpaper" in NAP_SYSTEM
+
+
+def test_laws_3e_3f_pound_a_length_and_the_draw() -> None:
+    """Taught 2026-08-24: (3e) at the twin choice convert margins and weight
+    into one currency — one length = one pound; form strings read left to
+    right, rightmost = last run. (3f) the draw is a citable fact on flat and
+    all-weather — drawn high can be the kiss of death at some tracks."""
+    from racing_edge.study.morningread import NAP_SYSTEM
+    assert "POUND-A-LENGTH" in NAP_SYSTEM
+    assert "1 length is = to 1 pound" in NAP_SYSTEM
+    assert "RIGHTMOST figure is the last run" in NAP_SYSTEM
+    assert "THE DRAW" in NAP_SYSTEM
+    assert "kiss of death" in NAP_SYSTEM
+    assert "all weather" in NAP_SYSTEM
+
+
+def test_law_2b_the_solid_favourite() -> None:
+    """Taught 2026-08-27 (Thickthorn Tom corpse — crossed by a squatter, won
+    5/4 while the pick trailed in last): taking on a solid favourite requires
+    a stated overlay or a disqualifying fact on HIM; a lean with no overlay
+    against a solid favourite is a donation."""
+    from racing_edge.study.morningread import NAP_SYSTEM
+    assert "THE SOLID FAVOURITE" in NAP_SYSTEM
+    assert "why take him on?" in NAP_SYSTEM
+    assert "Thickthorn Tom" in NAP_SYSTEM
+    assert "donation" in NAP_SYSTEM
+
+
+def test_law_2b_ii_the_five_part_solid_test() -> None:
+    """Record-born 2026-08-27, master's word same night ("do the above and do
+    them surgically"). Town Queen 15/8F passed the old solid test and trailed
+    home LAST (70 days off, first run off a raised mark); Ten Clarets, a
+    never-won BF favourite, was beaten by an earned departure. SOLID = all
+    five: short + in form + has won + race-fit + proven at the mark."""
+    from racing_edge.study.morningread import NAP_SYSTEM
+    assert "THE FIVE-PART SOLID TEST" in NAP_SYSTEM
+    assert "HAS ACTUALLY WON" in NAP_SYSTEM
+    assert "RACE-FIT" in NAP_SYSTEM
+    assert "PROVEN AT THE MARK" in NAP_SYSTEM
+    assert "why NOT take him on?" in NAP_SYSTEM
+    assert "Town Queen" in NAP_SYSTEM
+
+
+def test_law_3g_the_winning_mark() -> None:
+    """Record-born (week of 2026-08-24: first-run-off-a-raise 0-for-5 vs four
+    winners at/below a proven mark), promoted on the master's word 2026-08-27.
+    Today's mark vs the mark he last won off is a COUNTED dot, both ways."""
+    from racing_edge.study.morningread import NAP_SYSTEM
+    assert "THE WINNING MARK" in NAP_SYSTEM
+    assert "0-for-5" in NAP_SYSTEM
+    assert "COUNTED dot" in NAP_SYSTEM
+    assert "Rikki Tiki Tavi" in NAP_SYSTEM
