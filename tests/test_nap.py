@@ -746,3 +746,24 @@ def test_the_bounce_exempts_a_race_fit_winner_from_the_first_run_raise_read() ->
                  odds=Odds(consensus=4.33))
     c3 = conviction(unk, flat, hist, market_rank=3, field_size=5)
     assert any("first run off a raised mark" in x for x in c3.cautions)
+
+
+def test_candy_exemption_small_weak_field_lone_standout_gets_through() -> None:
+    """THE CANDY RACE (the master, 2026-08-27, Southwell 9:00: Captain Cairney
+    10/3, the only horse in winning form in a 5-runner Cl6, led start to
+    finish behind the bottom-grade wall; his word on the wall: "keep an open
+    mind as we recalibrate the system — if the opportunity is there we should
+    take"): bottom grade + small field + exactly ONE horse in winning form =
+    the wall stands down. The big open bottom-grade lottery stays walled
+    (pinned in test_race_selection_gates_bottom_grade_and_open_market — no
+    horse there won last time, so it is NOT candy)."""
+    class _CandyClient(_RaceClient):
+        def horse_results(self, hid, limit=12):
+            rows = super().horse_results(hid, limit)
+            if hid == "H0":
+                rows[0]["runners"][0]["position"] = "1"   # the lone standout
+            return rows
+    picks = evaluate_field(_CandyClient(race_class="6"), day="today",
+                           codes=("flat",), now=MORNING)
+    assert picks
+    assert not any("bottom-grade" in f for p in picks for f in p.conviction.flags)
