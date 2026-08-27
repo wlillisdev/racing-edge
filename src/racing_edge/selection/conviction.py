@@ -231,7 +231,26 @@ def conviction(runner: Runner, race: Race, history: tuple[PastRun, ...],
         # rule #19 — don't fear a FAIR-priced fav: pick the winner, not the price.
         # The engine had #2 without its counterweight, so the strongest profile on
         # the card scored a lens BEHIND a weaker one sitting 2nd fav (I'm Next, 2/1F).
-        aligned.append("fair-priced favourite (#19 — the winner, not the price)")
+        # THE SHIELD GATE (law 2b-ii, record-born 2026-08-27, both edges on one
+        # Carlisle card: Town Queen 15/8F — 70 days off, first run off a raise —
+        # trailed in LAST; Ten Clarets, a never-won BF fav, beaten by an earned
+        # departure at 9/4): a favourite failing the engine-visible parts of the
+        # solid test — HAS WON, RACE-FIT, PROVEN AT THE MARK — earns no market
+        # dot; the shield comes off and the holes ride in as a caution the case
+        # must answer. It strips a dot, never erases the horse.
+        _solid_holes = []
+        if not any(h.position == 1 for h in hist):
+            _solid_holes.append("never won")
+        if runner.days_since_run is not None and runner.days_since_run >= 60:
+            _solid_holes.append(f"{runner.days_since_run} days off")
+        if mr.delta is not None and mr.delta > 0 and mr.since == 0:
+            _solid_holes.append("first run off a raised mark")
+        if _solid_holes:
+            cautions.append("favourite but NOT solid ("
+                            + ", ".join(_solid_holes)
+                            + ") — shield off: why NOT take him on? (2b-ii)")
+        else:
+            aligned.append("fair-priced favourite (#19 — the winner, not the price)")
 
     # INTENT (#5) — the yard's form and the booking. Half the winning jigsaw
     # (I'm Next: 17% yard + stable's #1 up) that conviction could never see.

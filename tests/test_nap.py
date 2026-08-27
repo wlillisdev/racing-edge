@@ -680,3 +680,35 @@ def test_first_run_off_raised_mark_is_a_distinct_named_caution() -> None:
     c2 = conviction(tq, flat, proven, market_rank=1, field_size=7)
     assert not any("first run off a raised mark" in x for x in c2.cautions)
     assert any("since last win" in x for x in c2.cautions)
+
+
+def test_solid_fav_shield_gate_strips_the_market_dot_from_false_solids() -> None:
+    """Law 2b-ii engine-side (record-born 2026-08-27): a favourite failing
+    HAS-WON / RACE-FIT / PROVEN-AT-THE-MARK earns no #19 market dot — the
+    shield comes off and the named holes ride in as a caution. Town Queen
+    (70 days off + first run off a raise) and a never-won fav both lose the
+    dot; I'm Next-shaped solid favs keep it (pinned above)."""
+    from racing_edge.selection.conviction import conviction
+    flat = Race(race_id="f", course="Carlisle", off_time="15:30",
+                date=date(2026, 8, 27), race_type="Flat", is_handicap=True)
+    tq = Runner(horse_id="tq", horse="Town Queen", official_rating=75,
+                odds=Odds(consensus=2.88), days_since_run=70)
+    hist = (PastRun(date=date(2026, 6, 18), position=1, race_type="Flat",
+                    official_rating=71),
+            PastRun(date=date(2026, 6, 2), position=2, race_type="Flat",
+                    official_rating=71))
+    c = conviction(tq, flat, hist, market_rank=1, field_size=7)
+    assert not any("#19" in a for a in c.aligned)
+    assert any("NOT solid" in x and "70 days off" in x for x in c.cautions)
+    assert not c.confident
+    # never-won favourite: shield off for the has-won hole
+    nw = Runner(horse_id="tc", horse="Ten Clarets", official_rating=None,
+                odds=Odds(consensus=2.6))
+    maiden_hist = (PastRun(date=date(2026, 8, 1), position=2, race_type="Flat"),
+                   PastRun(date=date(2026, 7, 12), position=3, race_type="Flat"),
+                   PastRun(date=date(2026, 6, 20), position=2, race_type="Flat"),
+                   PastRun(date=date(2026, 6, 1), position=4, race_type="Flat"),
+                   PastRun(date=date(2026, 5, 12), position=5, race_type="Flat"))
+    c2 = conviction(nw, flat, maiden_hist, market_rank=1, field_size=7)
+    assert not any("#19" in a for a in c2.aligned)
+    assert any("never won" in x for x in c2.cautions)
