@@ -119,3 +119,20 @@ are yesterday, conditions are today.
     a dot FOR him and a dot AGAINST every closer — and NON-RUNNERS change
     the answer, so re-ask it after scratches (three NRs handed Rikki Tiki
     Tavi the lead and the race).
+
+15. **THE CANDY RACE** (the master, 2026-08-27, after Captain Cairney 10/3
+    led the Southwell 9:00 start to finish while the sitter talked himself
+    past the obvious: "that was a very winnable race, these should be easy
+    picks... he was a decent price also, these are the type of races we
+    need to hoover up, taking candy from a baby when you look at it
+    properly"): the hunting ground is the SMALL, WEAK field with ONE
+    standout — most of the field out of form or winless, one horse holding
+    the answers to the three questions that decide these races:
+    WHO'S IN FORM · WHO'S GOT THE WEIGHT · WHO GETS THE LEAD.
+    When one horse answers all three, the race writes itself and the price
+    is often decent because the market gets distracted (tonight: hot-yard
+    money on the worst-rated horse). Eliminate on facts, take the survivor,
+    do NOT second-guess him — second-guessing the lone standout is where
+    the candy gets handed back. Distinct from the 07-05 lottery law: bottom
+    grade + BIG open field of unexposed horses = anything can win, stay
+    out; bottom grade + SMALL field + one in-form standout = hoover it up.
