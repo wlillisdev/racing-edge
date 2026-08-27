@@ -151,11 +151,23 @@ def conviction(runner: Runner, race: Race, history: tuple[PastRun, ...],
             # cohort 1-for-6 — enough to block CONFIDENT and strip the solid-
             # fav shield below, never enough to erase. The same flame never
             # takes the same skin twice, in either direction.
+            # ...and refined the SAME NIGHT it shipped, after Captain Cairney
+            # (3yo, won LTO, first run off a raise, quick return) led the
+            # Southwell 9:00 start to finish. Law 3g-ii, the master's words:
+            # a developing horse 'could win 2 or 3 on the bounce befire teh
+            # handicapper cathed them espicially on the all weather' — the
+            # raise LAGS the improvement. The against-read applies to a
+            # BROKEN bounce (a long absence, per 2b-ii's own race-fit line:
+            # Town Queen, 70 days, LAST) — never to a race-fit winner
+            # straight back out. Unknown days stay cautious: fail loud.
             if mr.since == 0:
-                cautions.append(f"first run off a raised mark ({mr.verdict}) "
-                                "— the handicapper's question unanswered; "
-                                "cohort 0-for-5 this week (Town Queen, "
-                                "2026-08-27, law 3g)")
+                _quick_return = (runner.days_since_run is not None
+                                 and runner.days_since_run < 60)
+                if not _quick_return:
+                    cautions.append(f"first run off a raised mark "
+                                    f"({mr.verdict}) with the bounce broken "
+                                    "— raise + absence (Town Queen "
+                                    "2026-08-27, laws 3g/3g-ii)")
             else:
                 cautions.append(f"raised {mr.verdict} since last win")
     # THE FENCES ARE A DIFFERENT EXAM (2026-08-27, the Lady Kara corpse: every
@@ -243,8 +255,13 @@ def conviction(runner: Runner, race: Race, history: tuple[PastRun, ...],
             _solid_holes.append("never won")
         if runner.days_since_run is not None and runner.days_since_run >= 60:
             _solid_holes.append(f"{runner.days_since_run} days off")
-        if mr.delta is not None and mr.delta > 0 and mr.since == 0:
-            _solid_holes.append("first run off a raised mark")
+        if (mr.delta is not None and mr.delta > 0 and mr.since == 0
+                and not (runner.days_since_run is not None
+                         and runner.days_since_run < 60)):
+            # law 3g-ii: a race-fit developing winner straight back out is
+            # ON the bounce — the raise lags him; only the broken bounce
+            # (raise + absence) punches a hole in a favourite's shield
+            _solid_holes.append("first run off a raised mark, bounce broken")
         if _solid_holes:
             cautions.append("favourite but NOT solid ("
                             + ", ".join(_solid_holes)

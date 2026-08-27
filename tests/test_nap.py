@@ -712,3 +712,37 @@ def test_solid_fav_shield_gate_strips_the_market_dot_from_false_solids() -> None
     c2 = conviction(nw, flat, maiden_hist, market_rank=1, field_size=7)
     assert not any("#19" in a for a in c2.aligned)
     assert any("never won" in x for x in c2.cautions)
+
+
+def test_the_bounce_exempts_a_race_fit_winner_from_the_first_run_raise_read() -> None:
+    """Law 3g-ii (taught 2026-08-27, hours after 3g shipped — Captain Cairney,
+    3yo, won LTO, first run off a raise, 29 days, led start to finish): a
+    race-fit developing winner straight back out is ON the bounce — no
+    first-run-off-a-raise caution, and a fair-priced fav of that profile
+    keeps the #19 shield. The caution and the shield hole fire only when the
+    bounce is BROKEN by absence (Town Queen, 70 days — pinned above)."""
+    from racing_edge.selection.conviction import conviction
+    flat = Race(race_id="s", course="Southwell (AW)", off_time="21:00",
+                date=date(2026, 8, 27), race_type="Flat", is_handicap=True)
+    cc = Runner(horse_id="cc", horse="Captain Cairney", official_rating=62,
+                odds=Odds(consensus=4.33), days_since_run=29)
+    hist = (PastRun(date=date(2026, 7, 29), position=1, race_type="Flat",
+                    official_rating=58),
+            PastRun(date=date(2026, 7, 1), position=5, race_type="Flat",
+                    official_rating=59),
+            PastRun(date=date(2026, 6, 10), position=2, race_type="Flat",
+                    official_rating=59),
+            PastRun(date=date(2026, 5, 20), position=7, race_type="Flat",
+                    official_rating=60),
+            PastRun(date=date(2026, 4, 28), position=2, race_type="Flat",
+                    official_rating=60))
+    c = conviction(cc, flat, hist, market_rank=3, field_size=5)
+    assert not any("first run off a raised mark" in x for x in c.cautions)
+    # the same horse as a fair-priced favourite keeps the shield
+    c2 = conviction(cc, flat, hist, market_rank=1, field_size=5)
+    assert any("#19" in a for a in c2.aligned)
+    # unknown days since run stays cautious — fail loud, never assume fitness
+    unk = Runner(horse_id="u", horse="Unknown Days", official_rating=62,
+                 odds=Odds(consensus=4.33))
+    c3 = conviction(unk, flat, hist, market_rank=3, field_size=5)
+    assert any("first run off a raised mark" in x for x in c3.cautions)
