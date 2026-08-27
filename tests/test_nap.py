@@ -594,3 +594,14 @@ def test_two_column_record_judges_betting_races_apart(tmp_path):
     assert bet == (1, 1)         # the betting-race column: 1 pick, 1 winner
     assert dreck == (0, 1)       # the dreck column: duty, not evidence
     log.close()
+
+
+def test_rising_mark_trap_is_a_caution_not_a_cross_off() -> None:
+    """Demoted 2026-08-27: the unreceipted rising-mark tell crossed Thickthorn
+    Tom (solid fav, won 5/4) and cornered the engine onto Lady Kara (last).
+    Trial record 1-1 at demotion — it warns and counts, never erases."""
+    import inspect
+    from racing_edge.selection import conviction as _c
+    src = inspect.getsource(_c)
+    assert 'cautions.append("rising-mark trap")' in src
+    assert 'flags.append("rising-mark trap")' not in src

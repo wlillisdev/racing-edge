@@ -332,3 +332,15 @@ def test_laws_3e_3f_pound_a_length_and_the_draw() -> None:
     assert "THE DRAW" in NAP_SYSTEM
     assert "kiss of death" in NAP_SYSTEM
     assert "all weather" in NAP_SYSTEM
+
+
+def test_law_2b_the_solid_favourite() -> None:
+    """Taught 2026-08-27 (Thickthorn Tom corpse — crossed by a squatter, won
+    5/4 while the pick trailed in last): taking on a solid favourite requires
+    a stated overlay or a disqualifying fact on HIM; a lean with no overlay
+    against a solid favourite is a donation."""
+    from racing_edge.study.morningread import NAP_SYSTEM
+    assert "THE SOLID FAVOURITE" in NAP_SYSTEM
+    assert "why take him on?" in NAP_SYSTEM
+    assert "Thickthorn Tom" in NAP_SYSTEM
+    assert "donation" in NAP_SYSTEM

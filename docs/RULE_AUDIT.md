@@ -42,7 +42,7 @@ Provenance classes:
 | improver-favourite | R | "the profile that beat me twice" (Loch Cuan / Who's Lope) | KEEP | |
 | **all-weather caution (#14) per HORSE** | **?** | **no quote anywhere in the code; now DOUBLE-TAXES with the receipted race-level AW −1; crossed ~40 horses/day and strangles AW cards into forced picks → this week's veto spiral** | **KILL the per-horse flag; keep race-level −1 (receipted)** | |
 | big-field lottery (16+) | R | fingerprint study: 12+ top-3 collapses | MOVE to race level only (already scored there) | |
-| rising-mark trap | ? | from a mined tell, unreceipted | TRIAL vs record | |
+| rising-mark trap | ? | trial 1-1: right on Molly Mac (11/8F beaten, 2026-08-24), WRONG on Thickthorn Tom (crossed the solid fav, won 5/4, engine cornered onto Lady Kara last, 2026-08-27) | DEMOTED to caution 2026-08-27 — warns and counts, never erases | |
 | jockey 0/N at course (#30) | M/? | #30 numbered; 25-ride cutoff invented | KEEP, receipt the cutoff | |
 
 ## Race gates (which races get studied)

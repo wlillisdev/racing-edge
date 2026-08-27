@@ -238,7 +238,12 @@ def conviction(runner: Runner, race: Race, history: tuple[PastRun, ...],
         elif "headgear" in t.lower():
             aligned.append("headgear key")
         elif "distrust" in t:
-            flags.append("rising-mark trap")
+            # demoted to CAUTION 2026-08-27 (audit row: unreceipted squatter,
+            # TRIAL): it crossed Thickthorn Tom, the master's read-at-a-glance
+            # solid favourite, who won at 5/4 while the engine was cornered
+            # onto Lady Kara (last, 41L). Trial record 1-1 as of demotion —
+            # warns and counts, never erases (the master: "why take him on?")
+            cautions.append("rising-mark trap")
 
     # the profile that beat me twice — lightly raced, market leader, short price
     if len(history) <= 4 and market_rank == 1 and price and price <= 3.0:
