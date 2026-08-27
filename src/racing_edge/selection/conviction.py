@@ -140,9 +140,24 @@ def conviction(runner: Runner, race: Race, history: tuple[PastRun, ...],
             else:
                 _well_in_pending = f"well-in ({mr.verdict}{grade})"
         else:
-            # demoted to CAUTION 2026-08-22 (audit row: no master quote, no
-            # receipts; corpse: Too Much Trevor, crossed then won 10/1)
-            cautions.append(f"raised {mr.verdict} since last win")
+            # THE WINNING MARK, against-side (law 3g, record-born week of
+            # 2026-08-24, master's word 2026-08-27 'do the above'): the NARROW
+            # cohort — won last time, mark raised for it, today the FIRST look
+            # at the new mark — went 0-for-5 in a week of marked cards
+            # (Vaguely Royal, Molly Mac, Is She Now, Kanzi, Town Queen 15/8F
+            # trailed in LAST). It is a DISTINCT, NAMED caution — not a flag,
+            # because the same profile has a winner on the ledger: Too Much
+            # Trevor, crossed for this exact raise on 08-22, won 10/1. Honest
+            # cohort 1-for-6 — enough to block CONFIDENT and strip the solid-
+            # fav shield below, never enough to erase. The same flame never
+            # takes the same skin twice, in either direction.
+            if mr.since == 0:
+                cautions.append(f"first run off a raised mark ({mr.verdict}) "
+                                "— the handicapper's question unanswered; "
+                                "cohort 0-for-5 this week (Town Queen, "
+                                "2026-08-27, law 3g)")
+            else:
+                cautions.append(f"raised {mr.verdict} since last win")
     # THE FENCES ARE A DIFFERENT EXAM (2026-08-27, the Lady Kara corpse: every
     # positive dot was hurdle form; her chase record was one start, one rider
     # on the floor — she trailed in last at 5/2 as the engine's pick). In a

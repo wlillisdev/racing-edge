@@ -650,3 +650,33 @@ def test_chase_without_completion_flags_but_hurdler_flat_untouched() -> None:
                   date=date(2026, 8, 27), race_type="Handicap Hurdle", is_handicap=True)
     c2 = conviction(r, hurdle, hurdle_wins, market_rank=4, field_size=5)
     assert not any("no completed chase" in f for f in c2.flags)
+
+
+def test_first_run_off_raised_mark_is_a_distinct_named_caution() -> None:
+    """Law 3g against-side (record-born, the master's word 2026-08-27): the
+    NARROW cohort — won last time, raised for it, first look at the new mark —
+    went 0-for-5 in a week (Town Queen 15/8F trailed in LAST). It is a
+    DISTINCT NAMED caution, never a flag: the same profile holds Too Much
+    Trevor (crossed for this exact raise 08-22, won 10/1) — honest cohort
+    1-for-6 blocks CONFIDENT but must never erase, in either direction."""
+    from racing_edge.selection.conviction import conviction
+    tq = Runner(horse_id="tq", horse="Town Queen", official_rating=75,
+                odds=Odds(consensus=2.88), days_since_run=70)
+    staircase = (PastRun(date=date(2026, 6, 18), position=1, race_type="Flat",
+                         official_rating=71),
+                 PastRun(date=date(2026, 6, 2), position=2, race_type="Flat",
+                         official_rating=71),
+                 PastRun(date=date(2026, 5, 20), position=2, race_type="Flat",
+                         official_rating=72))
+    flat = Race(race_id="f", course="Carlisle", off_time="15:30",
+                date=date(2026, 8, 27), race_type="Flat", is_handicap=True)
+    c = conviction(tq, flat, staircase, market_rank=1, field_size=7)
+    assert any("first run off a raised mark" in x for x in c.cautions)
+    assert not any("raised" in f for f in c.flags)     # never erases
+    assert not c.confident                             # never a confident nap
+    # the same raise, already run at the new mark once = the broad caution
+    proven = (PastRun(date=date(2026, 8, 1), position=3, race_type="Flat",
+                      official_rating=75),) + staircase
+    c2 = conviction(tq, flat, proven, market_rank=1, field_size=7)
+    assert not any("first run off a raised mark" in x for x in c2.cautions)
+    assert any("since last win" in x for x in c2.cautions)
