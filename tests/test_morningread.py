@@ -395,3 +395,27 @@ def test_law_3g_ii_class_rider() -> None:
     assert "THE CLASS RIDER" in NAP_SYSTEM
     assert "Gore Point" in NAP_SYSTEM
     assert "AT HIS OWN GRADE" in NAP_SYSTEM
+
+
+def test_law_3g_iii_the_answered_raise() -> None:
+    """The master's word 2026-08-28 ('implement'): Drymee won 11/8 by 5L but
+    banked NOT-confident on 'raised +4lb since last win' — while his record
+    held the answer, 3rd in a Class 3 off today's exact mark. A raise is a
+    question; a subsequent placing at-or-above today's class off at-or-above
+    today's mark answers it and the caution stands down."""
+    from racing_edge.study.morningread import NAP_SYSTEM
+    assert "THE ANSWERED RAISE" in NAP_SYSTEM
+    assert "NEVER GRANTED BY BARE FIGURES" in NAP_SYSTEM
+    assert "Machete Beach" in NAP_SYSTEM
+    assert "Drymee" in NAP_SYSTEM
+    assert "ANSWERED" in NAP_SYSTEM
+    assert "stands down" in NAP_SYSTEM
+
+
+def test_law_3h_the_track_knows_its_own() -> None:
+    """Taught 2026-08-28 (Saint Polo, 2nd at Sedgefield then won there at 3/1
+    while crossed): course experience and form are dots, not just wins."""
+    from racing_edge.study.morningread import NAP_SYSTEM
+    assert "THE TRACK KNOWS ITS OWN" in NAP_SYSTEM
+    assert "Saint Polo" in NAP_SYSTEM
+    assert "understimate" in NAP_SYSTEM   # the master's words, verbatim

@@ -12,7 +12,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from racing_edge.domain.manner import nap_verdict
+from racing_edge.domain.manner import nap_verdict, read_manner
 from racing_edge.domain.mark import mark_read, same_code_runs
 from racing_edge.domain.models import PastRun, Race, Runner
 from racing_edge.domain.tells import match_tells
@@ -27,8 +27,8 @@ _FAMILIES: tuple[tuple[str, tuple[str, ...]], ...] = (
     ("mark", ("well-in",)),
     ("manner", ("finisher", "excuse last time")),
     ("momentum", ("RED-HOT", "won last time out")),
-    ("course", ("course winner", "local master yard", "local course master",
-                "course jockey")),
+    ("course", ("course winner", "course form", "local master yard",
+                "local course master", "course jockey")),
     ("trip", ("trip proven",)),
     ("market", ("market sweet spot", "fair-priced favourite")),
     ("intent", ("in-form yard", "#1 rider", "headgear key")),
@@ -180,7 +180,39 @@ def conviction(runner: Runner, race: Race, history: tuple[PastRun, ...],
                                     f"({mr.verdict}) with the bounce broken "
                                     f"— {_why} 2026-08-27, laws 3g/3g-ii)")
             else:
-                cautions.append(f"raised {mr.verdict} since last win")
+                # THE ANSWERED RAISE (law 3g-iii, the master's word
+                # 2026-08-28 'implement': the engine's first-day nap Drymee
+                # WON 11/8 by 5L yet banked NOT-confident on this very
+                # caution — while his own record held the answer, 3rd in a
+                # CLASS 3 off today's exact mark). A raise is the
+                # handicapper's QUESTION; a run since the win that PLACED
+                # (top 3) at-or-above today's class, off at-or-above
+                # today's mark, is the ANSWER — the caution stands down.
+                # Unknown class or mark on the run never counts: fail loud.
+                _win_i = next((i for i, h in enumerate(hist)
+                               if h.position == 1 and h.official_rating),
+                              None)
+                # ...and the answer is read in the COMMENTS (same-day corpse,
+                # 2026-08-28 evening: Machete Beach 5/2F LAST beaten 38L —
+                # his 3rd-and-2nd 'answer' read 'toiling... well held' and
+                # 'lost the advantage': a surrender wearing frame digits,
+                # while Drymee's answering 3rd 'kept on to take third close
+                # home'. A placing whose comment classifies non_finisher is
+                # a REFUSAL, not an answer; a blank comment still counts
+                # here only because the feed often lacks them — the study
+                # table holds the stricter line: blank = OWED).
+                _answered = _win_i is not None and any(
+                    h.position is not None and h.position <= 3
+                    and h.official_rating is not None
+                    and runner.official_rating is not None
+                    and h.official_rating >= runner.official_rating
+                    and h.race_class is not None
+                    and race.race_class is not None
+                    and h.race_class <= race.race_class
+                    and read_manner(h.comment or "")[0] != "non_finisher"
+                    for h in hist[:_win_i])
+                if not _answered:
+                    cautions.append(f"raised {mr.verdict} since last win")
     # THE FENCES ARE A DIFFERENT EXAM (2026-08-27, the Lady Kara corpse: every
     # positive dot was hurdle form; her chase record was one start, one rider
     # on the floor — she trailed in last at 5/2 as the engine's pick). In a
@@ -246,6 +278,16 @@ def conviction(runner: Runner, race: Race, history: tuple[PastRun, ...],
         aligned.append("proven course winner (depth)")
     elif course_wins == 1:
         aligned.append("course winner")
+    elif any(h.position is not None and h.position <= 3 and _same_course(h, race)
+             for h in hist):
+        # THE TRACK KNOWS ITS OWN (law 3h, the master 2026-08-28 after Saint
+        # Polo — 2nd at Sedgefield 'locked together with winner', scored
+        # NOTHING here, then won there at 3/1 while crossed: 'bear in mind
+        # he had experience and form at this race track dont understimate
+        # that'): a placed run at today's course is course FORM, not
+        # nothing — one dot, same family as the win labels, so it can
+        # never stack with them (families count once).
+        aligned.append("course form (placed here — the track knows its own)")
 
     price = runner.odds.consensus
     if market_rank in (2, 3):

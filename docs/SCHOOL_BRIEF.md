@@ -208,3 +208,109 @@ are yesterday, conditions are today.
     tax on lazy each-way punters, and the floor is what separates the
     calculated bandit from the mugs. Check the floor against the TERMS,
     in writing, before any EW verdict.
+
+    17b. THE STORY-MONEY SPECIES LIST (running, receipts required to add):
+    streaks up in class (Gore Point 5/6, last) · hot-yard money
+    (Worlington) · pretty figures over holes (Town Queen 15/8, last) ·
+    THE FRAME-MACHINE BACKED TO WIN (Thursday Girl 11/8J, LAST beaten 40L,
+    2026-08-28: the crowd reads 2-2-2-1-2 as "solid", the pro reads
+    "loses to one every week" — the same horse is a bandit's each-way
+    friend at 8/1 and a donation at 11/8 win; the price decides which
+    side of the counter we stand) · STAR-JOCKEY MONEY (same race, the
+    master: "the second fav was well backed, Oisin Murphy jockey" — a big
+    name moves the price without moving the horse; the booking answers
+    "who's riding", never "who wins") · AND THE INVERSE TELL: the drift
+    away from the best figures (Hungarian, top-rated, won LTO, 18/1
+    friendless, 5th) — when money runs from the ratings, someone close
+    to the horse knows what the ratings don't. Respect the drift.
+
+19. **THE PLACED HORSES TEACH TOO** (the master, 2026-08-28, marking the
+    Drymee race: "not only the winner can teach you, but also look at the
+    second and third horses, they also have a world of learning you can
+    get insights from"): every settle reads THREE horses, not one. For
+    the 2nd and 3rd, ask in writing:
+    (a) WHAT DID THEY LACK vs the winner — the gap names the race's
+        decisive dot (Thursday Girl lacked a finish; Magic Trip lacked
+        only fitness and first run);
+    (b) WHICH LENS PUT THEM THERE — frank or refute it (Magic Trip 2nd
+        at 12/1 FRANKED the excuse-last-time lens; Tamzan 3rd at 12/1
+        calibrated the bounce-broken caution to the millimetre: warned,
+        ran well, didn't win — warn-never-erase in the flesh);
+    (c) FOLLOW/OPPOSE forward — the placed horse with a named excuse now
+        answered (fitness, trouble, wrong trip) is tomorrow's clue before
+        the market catches up (the dog-model tracked list, law #27);
+    (d) BANDIT INTEL — placed-at-a-price profiles above the free-kick
+        floor are the each-way column's ammunition (both placers today
+        were 12/1 in an 8-runner race: frame paid three times the floor).
+    The winner teaches what wins; the placed teach what ALMOST wins and
+    WHY it didn't — and that "why" is usually tomorrow's counted dot.
+
+    18d. THE BANDIT'S FIRST RECEIPT + SECOND AMMUNITION SPECIES (the
+    master, 2026-08-28, marking the Drymee race: "look at the second,
+    that horse was a perfect each way bandit bet"): Magic Trip, 2nd at
+    12/1 — all five beer-mat checks passed at declaration (8 runners, 3
+    places at 1/5; 12/1 v the 5/1 floor; TWO 11/8 favs soaking the win
+    market; frame case in writing = the engine's own excuse-last-time
+    lens + 17% yard). 1pt EW returned +1.4pt ON A BEATEN HORSE. So the
+    ammunition list is now TWO species: the frame-machine (professional
+    placer) AND the EXCUSE HORSE AT A PRICE (form understated by
+    trouble/absence, market asleep). And the bigger picture, named: ONE
+    race can pay through TWO doors — the win door on the blunt fact, the
+    bandit door on the mispriced frame. THE BANDIT PAPER COLUMN OPENS
+    2026-08-29: the sitter runs the five checks on every race read
+    anyway (duty, candy, exams) and banks qualifying paper EW lines in
+    data/school/picks/bandit-YYYY-MM-DD.csv — paper stakes, settled
+    honestly at SP, judged in its own column. REVERT-IF: 30 banked
+    bandit lines settle at a loss.
+
+## v7 amendment to THE LAST YARD ORDER (2026-08-28, the Sound And Vision
+wrong-twin — the sitter wrote a 3lb sum edge for the danger, then took
+the market tie-break against his own arithmetic; she won 100/30 with the
+pick 2nd by half a length): **THE SUM OUTRANKS THE TIE-BREAK.** Order
+step 4 is amended: at the twin choice, the MANDATORY WEIGHT SUM decides
+whenever it clearly favours one side (a length or more at the trip's
+scale) — the market tie-break applies ONLY when the sum is level. The
+sum is a named, citable fact, not a preference: when it favours one twin
+the crowd is missing it by definition. Receipts both ways in 24 hours:
+Drymee (sum LEVEL → finish + market decided → WON) and Sound And Vision
+(sum 3lb → the sum was the whole answer → WON while the tie-break lost).
+
+## v8 — THE FULL SHEET LAW (2026-08-28, the master, after Saint Polo 3/1:
+"that sums up the race in a nutshell, we need to figure out why we missed
+the obvious and make sure we don't do it again... the system needs to be
+consistent and accurate, no point in having a winner and then a howler")
+
+WHY THE OBVIOUS GETS MISSED, named: a rule fires and the looking stops —
+a threshold cross (66 days) or a granted label (an "answered" raise)
+REPLACES reading the horse. Rule One says every law is a way of LOOKING;
+a howler is a law used as a blindfold. And the winner-then-howler pattern
+has one cause: steps skipped under time or budget pressure. Consistency
+IS completeness. Therefore:
+
+20. **THE SHEET IS THE SAME EVERY RACE, AND A VERDICT OFF AN INCOMPLETE
+    SHEET IS VOID** (the weight-sum medicine, applied to everything):
+    THE THREE QUESTIONS first, in writing — WHO'S IN FORM · WHO'S GOT THE
+    WEIGHT · WHO GETS THE LEAD — then the dots, MARK line, FIT line,
+    weight sum, bookmaker's question, odds-on bar. No line, no pick.
+
+21. **THE OBVIOUS-HORSE PROTECTION**: any horse who is the SOLE answer to
+    one of the three questions can be crossed only by FACTS READ FROM HIS
+    OWN RECORD — history pulled, comments read — never by a bare
+    threshold or label. A rule may put a caution on the obvious horse;
+    only his own lines may cross him. (Saint Polo: sole answer to all
+    three questions, crossed by a threshold nobody read past. Town Queen:
+    the legitimate opposite — crossed BY her own record, read in full.)
+    The budget bends for this: one history pull on a question-winner is
+    never the economy to make — it is the whole cost of consistency.
+
+    v8b amendment (2026-08-28 late, the Sovereign View corpse — the class
+    top after a non-runner, crossed on a placer label, won at 7/2; second
+    class-top crossed-and-won in 24 hours after Breaking Cover): THE SHEET
+    GAINS ITS FOURTH QUESTION — WHO'S IN FORM · WHO'S GOT THE WEIGHT ·
+    WHO GETS THE LEAD · **WHO'S GOT THE CLASS** (the field's clear best
+    figures; law 3c made a standing question). The obvious-horse
+    protection (rule 21) covers its sole holder: the class-top is crossed
+    only by facts read from his own record, never by a pattern label.
+    AND THE NON-RUNNER RE-RUN: any NR re-deals the superlatives — the
+    sheet is re-run from the top after every scratch (Galyx out made
+    Sovereign View the class-top by 8lb and the read never updated).
