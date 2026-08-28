@@ -262,3 +262,15 @@ are yesterday, conditions are today.
     data/school/picks/bandit-YYYY-MM-DD.csv — paper stakes, settled
     honestly at SP, judged in its own column. REVERT-IF: 30 banked
     bandit lines settle at a loss.
+
+## v7 amendment to THE LAST YARD ORDER (2026-08-28, the Sound And Vision
+wrong-twin — the sitter wrote a 3lb sum edge for the danger, then took
+the market tie-break against his own arithmetic; she won 100/30 with the
+pick 2nd by half a length): **THE SUM OUTRANKS THE TIE-BREAK.** Order
+step 4 is amended: at the twin choice, the MANDATORY WEIGHT SUM decides
+whenever it clearly favours one side (a length or more at the trip's
+scale) — the market tie-break applies ONLY when the sum is level. The
+sum is a named, citable fact, not a preference: when it favours one twin
+the crowd is missing it by definition. Receipts both ways in 24 hours:
+Drymee (sum LEVEL → finish + market decided → WON) and Sound And Vision
+(sum 3lb → the sum was the whole answer → WON while the tie-break lost).
