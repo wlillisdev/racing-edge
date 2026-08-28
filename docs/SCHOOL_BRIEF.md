@@ -223,3 +223,24 @@ are yesterday, conditions are today.
     away from the best figures (Hungarian, top-rated, won LTO, 18/1
     friendless, 5th) — when money runs from the ratings, someone close
     to the horse knows what the ratings don't. Respect the drift.
+
+19. **THE PLACED HORSES TEACH TOO** (the master, 2026-08-28, marking the
+    Drymee race: "not only the winner can teach you, but also look at the
+    second and third horses, they also have a world of learning you can
+    get insights from"): every settle reads THREE horses, not one. For
+    the 2nd and 3rd, ask in writing:
+    (a) WHAT DID THEY LACK vs the winner — the gap names the race's
+        decisive dot (Thursday Girl lacked a finish; Magic Trip lacked
+        only fitness and first run);
+    (b) WHICH LENS PUT THEM THERE — frank or refute it (Magic Trip 2nd
+        at 12/1 FRANKED the excuse-last-time lens; Tamzan 3rd at 12/1
+        calibrated the bounce-broken caution to the millimetre: warned,
+        ran well, didn't win — warn-never-erase in the flesh);
+    (c) FOLLOW/OPPOSE forward — the placed horse with a named excuse now
+        answered (fitness, trouble, wrong trip) is tomorrow's clue before
+        the market catches up (the dog-model tracked list, law #27);
+    (d) BANDIT INTEL — placed-at-a-price profiles above the free-kick
+        floor are the each-way column's ammunition (both placers today
+        were 12/1 in an 8-runner race: frame paid three times the floor).
+    The winner teaches what wins; the placed teach what ALMOST wins and
+    WHY it didn't — and that "why" is usually tomorrow's counted dot.
