@@ -832,3 +832,35 @@ def test_answered_raise_stands_the_broad_caution_down() -> None:
                            race_type="Flat", official_rating=77),) + answered[1:]
     c3 = conviction(dry, cl4, unknown_cls, market_rank=1, field_size=6)
     assert any("since last win" in x for x in c3.cautions)
+
+
+def test_answered_raise_is_read_in_the_comments_not_the_figures() -> None:
+    """3g-iii's same-day corpse (Machete Beach, 5/2F, LAST beaten 38L): his
+    3rd-and-2nd 'answer' at the raised mark read in the comments as a
+    front-runner reeled in twice — 'toiling... well held', 'lost the
+    advantage'. A placing whose comment classifies non_finisher is a
+    REFUSAL: the caution stays. The same digits with an honest effort
+    comment (Drymee: 'kept on to take third close home') stay an answer."""
+    from racing_edge.selection.conviction import conviction
+    cl4 = Race(race_id="sg", course="Sedgefield", off_time="18:05",
+               date=date(2026, 8, 28), race_type="Handicap Hurdle",
+               is_handicap=True, race_class=4)
+    mb = Runner(horse_id="mb", horse="Machete Beach", official_rating=112,
+                odds=Odds(consensus=3.5), days_since_run=44)
+    surrender = (PastRun(date=date(2026, 7, 15), position=2, race_type="Hurdle",
+                         official_rating=112, race_class=4,
+                         comment="driven before 3 out - lost the advantage - well held"),
+                 PastRun(date=date(2026, 6, 20), position=3, race_type="Hurdle",
+                         official_rating=114, race_class=4,
+                         comment="toiling by 3 out - well held"),
+                 PastRun(date=date(2026, 5, 25), position=1, race_type="Hurdle",
+                         official_rating=108, race_class=4),
+                 PastRun(date=date(2026, 5, 1), position=1, race_type="Hurdle",
+                         official_rating=104, race_class=4))
+    c = conviction(mb, cl4, surrender, market_rank=1, field_size=6)
+    assert any("since last win" in x for x in c.cautions)   # refusal, not answer
+    honest = (PastRun(date=date(2026, 7, 15), position=3, race_type="Hurdle",
+                      official_rating=112, race_class=3,
+                      comment="kept on to take third close home"),) + surrender[2:]
+    c2 = conviction(mb, cl4, honest, market_rank=1, field_size=6)
+    assert not any("since last win" in x for x in c2.cautions)

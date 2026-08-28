@@ -405,6 +405,8 @@ def test_law_3g_iii_the_answered_raise() -> None:
     today's mark answers it and the caution stands down."""
     from racing_edge.study.morningread import NAP_SYSTEM
     assert "THE ANSWERED RAISE" in NAP_SYSTEM
+    assert "NEVER GRANTED BY BARE FIGURES" in NAP_SYSTEM
+    assert "Machete Beach" in NAP_SYSTEM
     assert "Drymee" in NAP_SYSTEM
     assert "ANSWERED" in NAP_SYSTEM
     assert "stands down" in NAP_SYSTEM

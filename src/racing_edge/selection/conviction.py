@@ -12,7 +12,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from racing_edge.domain.manner import nap_verdict
+from racing_edge.domain.manner import nap_verdict, read_manner
 from racing_edge.domain.mark import mark_read, same_code_runs
 from racing_edge.domain.models import PastRun, Race, Runner
 from racing_edge.domain.tells import match_tells
@@ -192,6 +192,15 @@ def conviction(runner: Runner, race: Race, history: tuple[PastRun, ...],
                 _win_i = next((i for i, h in enumerate(hist)
                                if h.position == 1 and h.official_rating),
                               None)
+                # ...and the answer is read in the COMMENTS (same-day corpse,
+                # 2026-08-28 evening: Machete Beach 5/2F LAST beaten 38L —
+                # his 3rd-and-2nd 'answer' read 'toiling... well held' and
+                # 'lost the advantage': a surrender wearing frame digits,
+                # while Drymee's answering 3rd 'kept on to take third close
+                # home'. A placing whose comment classifies non_finisher is
+                # a REFUSAL, not an answer; a blank comment still counts
+                # here only because the feed often lacks them — the study
+                # table holds the stricter line: blank = OWED).
                 _answered = _win_i is not None and any(
                     h.position is not None and h.position <= 3
                     and h.official_rating is not None
@@ -200,6 +209,7 @@ def conviction(runner: Runner, race: Race, history: tuple[PastRun, ...],
                     and h.race_class is not None
                     and race.race_class is not None
                     and h.race_class <= race.race_class
+                    and read_manner(h.comment or "")[0] != "non_finisher"
                     for h in hist[:_win_i])
                 if not _answered:
                     cautions.append(f"raised {mr.verdict} since last win")
