@@ -395,3 +395,16 @@ def test_law_3g_ii_class_rider() -> None:
     assert "THE CLASS RIDER" in NAP_SYSTEM
     assert "Gore Point" in NAP_SYSTEM
     assert "AT HIS OWN GRADE" in NAP_SYSTEM
+
+
+def test_law_3g_iii_the_answered_raise() -> None:
+    """The master's word 2026-08-28 ('implement'): Drymee won 11/8 by 5L but
+    banked NOT-confident on 'raised +4lb since last win' — while his record
+    held the answer, 3rd in a Class 3 off today's exact mark. A raise is a
+    question; a subsequent placing at-or-above today's class off at-or-above
+    today's mark answers it and the caution stands down."""
+    from racing_edge.study.morningread import NAP_SYSTEM
+    assert "THE ANSWERED RAISE" in NAP_SYSTEM
+    assert "Drymee" in NAP_SYSTEM
+    assert "ANSWERED" in NAP_SYSTEM
+    assert "stands down" in NAP_SYSTEM
