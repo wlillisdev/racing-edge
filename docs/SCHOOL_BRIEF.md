@@ -302,3 +302,15 @@ IS completeness. Therefore:
     the legitimate opposite — crossed BY her own record, read in full.)
     The budget bends for this: one history pull on a question-winner is
     never the economy to make — it is the whole cost of consistency.
+
+    v8b amendment (2026-08-28 late, the Sovereign View corpse — the class
+    top after a non-runner, crossed on a placer label, won at 7/2; second
+    class-top crossed-and-won in 24 hours after Breaking Cover): THE SHEET
+    GAINS ITS FOURTH QUESTION — WHO'S IN FORM · WHO'S GOT THE WEIGHT ·
+    WHO GETS THE LEAD · **WHO'S GOT THE CLASS** (the field's clear best
+    figures; law 3c made a standing question). The obvious-horse
+    protection (rule 21) covers its sole holder: the class-top is crossed
+    only by facts read from his own record, never by a pattern label.
+    AND THE NON-RUNNER RE-RUN: any NR re-deals the superlatives — the
+    sheet is re-run from the top after every scratch (Galyx out made
+    Sovereign View the class-top by 8lb and the read never updated).
