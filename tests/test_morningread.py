@@ -410,3 +410,12 @@ def test_law_3g_iii_the_answered_raise() -> None:
     assert "Drymee" in NAP_SYSTEM
     assert "ANSWERED" in NAP_SYSTEM
     assert "stands down" in NAP_SYSTEM
+
+
+def test_law_3h_the_track_knows_its_own() -> None:
+    """Taught 2026-08-28 (Saint Polo, 2nd at Sedgefield then won there at 3/1
+    while crossed): course experience and form are dots, not just wins."""
+    from racing_edge.study.morningread import NAP_SYSTEM
+    assert "THE TRACK KNOWS ITS OWN" in NAP_SYSTEM
+    assert "Saint Polo" in NAP_SYSTEM
+    assert "understimate" in NAP_SYSTEM   # the master's words, verbatim

@@ -27,8 +27,8 @@ _FAMILIES: tuple[tuple[str, tuple[str, ...]], ...] = (
     ("mark", ("well-in",)),
     ("manner", ("finisher", "excuse last time")),
     ("momentum", ("RED-HOT", "won last time out")),
-    ("course", ("course winner", "local master yard", "local course master",
-                "course jockey")),
+    ("course", ("course winner", "course form", "local master yard",
+                "local course master", "course jockey")),
     ("trip", ("trip proven",)),
     ("market", ("market sweet spot", "fair-priced favourite")),
     ("intent", ("in-form yard", "#1 rider", "headgear key")),
@@ -278,6 +278,16 @@ def conviction(runner: Runner, race: Race, history: tuple[PastRun, ...],
         aligned.append("proven course winner (depth)")
     elif course_wins == 1:
         aligned.append("course winner")
+    elif any(h.position is not None and h.position <= 3 and _same_course(h, race)
+             for h in hist):
+        # THE TRACK KNOWS ITS OWN (law 3h, the master 2026-08-28 after Saint
+        # Polo — 2nd at Sedgefield 'locked together with winner', scored
+        # NOTHING here, then won there at 3/1 while crossed: 'bear in mind
+        # he had experience and form at this race track dont understimate
+        # that'): a placed run at today's course is course FORM, not
+        # nothing — one dot, same family as the win labels, so it can
+        # never stack with them (families count once).
+        aligned.append("course form (placed here — the track knows its own)")
 
     price = runner.odds.consensus
     if market_rank in (2, 3):

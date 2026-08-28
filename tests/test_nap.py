@@ -864,3 +864,29 @@ def test_answered_raise_is_read_in_the_comments_not_the_figures() -> None:
                       comment="kept on to take third close home"),) + surrender[2:]
     c2 = conviction(mb, cl4, honest, market_rank=1, field_size=6)
     assert not any("since last win" in x for x in c2.cautions)
+
+
+def test_course_placed_form_earns_the_course_dot_once() -> None:
+    """Law 3h (the master, 2026-08-28): a placed run at today's course is
+    course FORM — one dot, same family as the win labels so it never
+    stacks. Saint Polo fixture: Sedgefield 2nd earns it; a horse with no
+    course line earns nothing."""
+    from racing_edge.selection.conviction import conviction
+    sedge = Race(race_id="sg", course="Sedgefield", off_time="18:05",
+                 date=date(2026, 8, 28), race_type="Handicap Hurdle",
+                 is_handicap=True, race_class=4)
+    sp = Runner(horse_id="sp", horse="Saint Polo", official_rating=106,
+                odds=Odds(consensus=4.0), days_since_run=66)
+    hist = (PastRun(date=date(2026, 6, 23), position=1, race_type="Hurdle",
+                    official_rating=99, course="Newton Abbot"),
+            PastRun(date=date(2026, 5, 30), position=1, race_type="Hurdle",
+                    official_rating=99, course="Stratford"),
+            PastRun(date=date(2026, 3, 10), position=2, race_type="Hurdle",
+                    official_rating=96, course="Sedgefield",
+                    comment="locked together with winner"),)
+    c = conviction(sp, sedge, hist, market_rank=2, field_size=6)
+    assert any("the track knows its own" in a for a in c.aligned)
+    # family dedup: course-form + a hypothetical course win never = 2
+    from racing_edge.selection.conviction import _FAMILIES
+    course_keys = dict((n, k) for n, k in _FAMILIES)["course"]
+    assert "course form" in course_keys and "course winner" in course_keys
