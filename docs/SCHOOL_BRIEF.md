@@ -274,3 +274,31 @@ sum is a named, citable fact, not a preference: when it favours one twin
 the crowd is missing it by definition. Receipts both ways in 24 hours:
 Drymee (sum LEVEL → finish + market decided → WON) and Sound And Vision
 (sum 3lb → the sum was the whole answer → WON while the tie-break lost).
+
+## v8 — THE FULL SHEET LAW (2026-08-28, the master, after Saint Polo 3/1:
+"that sums up the race in a nutshell, we need to figure out why we missed
+the obvious and make sure we don't do it again... the system needs to be
+consistent and accurate, no point in having a winner and then a howler")
+
+WHY THE OBVIOUS GETS MISSED, named: a rule fires and the looking stops —
+a threshold cross (66 days) or a granted label (an "answered" raise)
+REPLACES reading the horse. Rule One says every law is a way of LOOKING;
+a howler is a law used as a blindfold. And the winner-then-howler pattern
+has one cause: steps skipped under time or budget pressure. Consistency
+IS completeness. Therefore:
+
+20. **THE SHEET IS THE SAME EVERY RACE, AND A VERDICT OFF AN INCOMPLETE
+    SHEET IS VOID** (the weight-sum medicine, applied to everything):
+    THE THREE QUESTIONS first, in writing — WHO'S IN FORM · WHO'S GOT THE
+    WEIGHT · WHO GETS THE LEAD — then the dots, MARK line, FIT line,
+    weight sum, bookmaker's question, odds-on bar. No line, no pick.
+
+21. **THE OBVIOUS-HORSE PROTECTION**: any horse who is the SOLE answer to
+    one of the three questions can be crossed only by FACTS READ FROM HIS
+    OWN RECORD — history pulled, comments read — never by a bare
+    threshold or label. A rule may put a caution on the obvious horse;
+    only his own lines may cross him. (Saint Polo: sole answer to all
+    three questions, crossed by a threshold nobody read past. Town Queen:
+    the legitimate opposite — crossed BY her own record, read in full.)
+    The budget bends for this: one history pull on a question-winner is
+    never the economy to make — it is the whole cost of consistency.
