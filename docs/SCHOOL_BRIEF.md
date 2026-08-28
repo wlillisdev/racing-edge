@@ -244,3 +244,21 @@ are yesterday, conditions are today.
         were 12/1 in an 8-runner race: frame paid three times the floor).
     The winner teaches what wins; the placed teach what ALMOST wins and
     WHY it didn't — and that "why" is usually tomorrow's counted dot.
+
+    18d. THE BANDIT'S FIRST RECEIPT + SECOND AMMUNITION SPECIES (the
+    master, 2026-08-28, marking the Drymee race: "look at the second,
+    that horse was a perfect each way bandit bet"): Magic Trip, 2nd at
+    12/1 — all five beer-mat checks passed at declaration (8 runners, 3
+    places at 1/5; 12/1 v the 5/1 floor; TWO 11/8 favs soaking the win
+    market; frame case in writing = the engine's own excuse-last-time
+    lens + 17% yard). 1pt EW returned +1.4pt ON A BEATEN HORSE. So the
+    ammunition list is now TWO species: the frame-machine (professional
+    placer) AND the EXCUSE HORSE AT A PRICE (form understated by
+    trouble/absence, market asleep). And the bigger picture, named: ONE
+    race can pay through TWO doors — the win door on the blunt fact, the
+    bandit door on the mispriced frame. THE BANDIT PAPER COLUMN OPENS
+    2026-08-29: the sitter runs the five checks on every race read
+    anyway (duty, candy, exams) and banks qualifying paper EW lines in
+    data/school/picks/bandit-YYYY-MM-DD.csv — paper stakes, settled
+    honestly at SP, judged in its own column. REVERT-IF: 30 banked
+    bandit lines settle at a loss.
