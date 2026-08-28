@@ -208,3 +208,18 @@ are yesterday, conditions are today.
     tax on lazy each-way punters, and the floor is what separates the
     calculated bandit from the mugs. Check the floor against the TERMS,
     in writing, before any EW verdict.
+
+    17b. THE STORY-MONEY SPECIES LIST (running, receipts required to add):
+    streaks up in class (Gore Point 5/6, last) · hot-yard money
+    (Worlington) · pretty figures over holes (Town Queen 15/8, last) ·
+    THE FRAME-MACHINE BACKED TO WIN (Thursday Girl 11/8J, LAST beaten 40L,
+    2026-08-28: the crowd reads 2-2-2-1-2 as "solid", the pro reads
+    "loses to one every week" — the same horse is a bandit's each-way
+    friend at 8/1 and a donation at 11/8 win; the price decides which
+    side of the counter we stand) · STAR-JOCKEY MONEY (same race, the
+    master: "the second fav was well backed, Oisin Murphy jockey" — a big
+    name moves the price without moving the horse; the booking answers
+    "who's riding", never "who wins") · AND THE INVERSE TELL: the drift
+    away from the best figures (Hungarian, top-rated, won LTO, 18/1
+    friendless, 5th) — when money runs from the ratings, someone close
+    to the horse knows what the ratings don't. Respect the drift.
