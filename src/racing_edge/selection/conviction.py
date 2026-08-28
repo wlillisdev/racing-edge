@@ -180,7 +180,29 @@ def conviction(runner: Runner, race: Race, history: tuple[PastRun, ...],
                                     f"({mr.verdict}) with the bounce broken "
                                     f"— {_why} 2026-08-27, laws 3g/3g-ii)")
             else:
-                cautions.append(f"raised {mr.verdict} since last win")
+                # THE ANSWERED RAISE (law 3g-iii, the master's word
+                # 2026-08-28 'implement': the engine's first-day nap Drymee
+                # WON 11/8 by 5L yet banked NOT-confident on this very
+                # caution — while his own record held the answer, 3rd in a
+                # CLASS 3 off today's exact mark). A raise is the
+                # handicapper's QUESTION; a run since the win that PLACED
+                # (top 3) at-or-above today's class, off at-or-above
+                # today's mark, is the ANSWER — the caution stands down.
+                # Unknown class or mark on the run never counts: fail loud.
+                _win_i = next((i for i, h in enumerate(hist)
+                               if h.position == 1 and h.official_rating),
+                              None)
+                _answered = _win_i is not None and any(
+                    h.position is not None and h.position <= 3
+                    and h.official_rating is not None
+                    and runner.official_rating is not None
+                    and h.official_rating >= runner.official_rating
+                    and h.race_class is not None
+                    and race.race_class is not None
+                    and h.race_class <= race.race_class
+                    for h in hist[:_win_i])
+                if not _answered:
+                    cautions.append(f"raised {mr.verdict} since last win")
     # THE FENCES ARE A DIFFERENT EXAM (2026-08-27, the Lady Kara corpse: every
     # positive dot was hurdle form; her chase record was one start, one rider
     # on the floor — she trailed in last at 5/2 as the engine's pick). In a

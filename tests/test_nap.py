@@ -800,3 +800,35 @@ def test_class_rider_rearms_the_raise_caution_on_a_hike() -> None:
                is_handicap=True, race_class=3)
     c2 = conviction(gp, cl3, streak, market_rank=1, field_size=4)
     assert not any("first run off a raised mark" in x for x in c2.cautions)
+
+
+def test_answered_raise_stands_the_broad_caution_down() -> None:
+    """Law 3g-iii (the master, 2026-08-28): the Drymee fixture — won off 73,
+    raised to 77, then PLACED 3rd in a CLASS 3 off 77 — has answered the
+    handicapper's question: no raised-since-last-win caution, confidence
+    assessable on the dots. The same profile whose interim run was unplaced
+    (or whose run's class/mark is unknown) keeps the caution — fail loud."""
+    from racing_edge.selection.conviction import conviction
+    cl4 = Race(race_id="s", course="Sandown", off_time="16:10",
+               date=date(2026, 8, 28), race_type="Flat", is_handicap=True,
+               race_class=4)
+    dry = Runner(horse_id="dry", horse="Drymee", official_rating=77,
+                 odds=Odds(consensus=2.7), days_since_run=20)
+    answered = (PastRun(date=date(2026, 8, 8), position=3, race_type="Flat",
+                        official_rating=77, race_class=3),
+                PastRun(date=date(2026, 7, 2), position=1, race_type="Flat",
+                        official_rating=73, race_class=4),
+                PastRun(date=date(2026, 6, 6), position=1, race_type="Flat",
+                        official_rating=70, race_class=4))
+    c = conviction(dry, cl4, answered, market_rank=1, field_size=6)
+    assert not any("raised" in x for x in c.cautions)
+    # unplaced at the new mark = question still open, caution stays
+    unanswered = (PastRun(date=date(2026, 8, 8), position=6, race_type="Flat",
+                          official_rating=77, race_class=3),) + answered[1:]
+    c2 = conviction(dry, cl4, unanswered, market_rank=1, field_size=6)
+    assert any("since last win" in x for x in c2.cautions)
+    # placed but the run's class unknown = never counts, fail loud
+    unknown_cls = (PastRun(date=date(2026, 8, 8), position=3,
+                           race_type="Flat", official_rating=77),) + answered[1:]
+    c3 = conviction(dry, cl4, unknown_cls, market_rank=1, field_size=6)
+    assert any("since last win" in x for x in c3.cautions)
