@@ -169,3 +169,14 @@ banked — one afternoon, one race): the morning survey measures every
 race on the card including pattern races, and a pattern-race
 four-question sweep at a backable price outranks a handicap squeak.
 Observation and receipt today; doctrine on his word.
+
+### Receipt (2026-08-29, Sandown 3:30 Solario G3, 2yo): ALFRED WALLACE
+WON WELL at ~7/2 — the sitter's first winning telly-call of the day
+(after 0-for-4) and it came off the new kit working together: the
+yardstick over all eight (5b), the selection = the only PROVEN
+group-level figure (110) in a field of maybes; the crowd's horse
+Breacher (89 figure, one maiden win, 60 days, 5/2 fav) named as the
+bookies' trap pre-off — THIRD. The master: "nice studying." One
+swallow, not a summer: the same read loses when an unbeaten unknown
+fires (Sonic Angel risk was real). Logged as what it is — the taught
+laws applied on the day they were taught, graded by the result.
