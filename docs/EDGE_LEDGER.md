@@ -79,3 +79,15 @@ line is the sheet's weakest column — TO STRENGTHEN: going-form read
 sheet. Receipts to collect: today's five Segal tips settle as a live
 scoreboard v the ledger (Ghost Mode 2.00 already beaten — even the best
 run ~30% — while the drift tell opposed him).
+
+### TRIAL: THE CLASS RIDER IS FOR EXPOSED HORSES (2026-08-29, Sandown
+2:15: Kokbastau — 3yo, FOUR career runs, won his last two, hiking into a
+Cl2 ranked BOTTOM on perf figures — WON at ~10/3 while the sitter called
+him "the anti-edge" and opposed; Alcarath (Segal's excuse-read) 2nd on
+the line): on an UNEXPOSED improving 3yo the hike is part of the curve,
+not a wall — figures measure yesterday's horse. CONFIRMING TELL: OR far
+above perf figures on a young improver (102 v 89 = 13lb of official
+opinion above visible evidence) means the assessor has seen the curve.
+Receipts both sides: Gore Point (exposed 6yo, hike, LAST beaten 50L) v
+Kokbastau (unexposed 3yo, hike, WON). The class rider stands untouched
+for exposed profiles; the master's word decides the unexposed carve-out.
