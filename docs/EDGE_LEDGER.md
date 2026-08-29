@@ -130,3 +130,11 @@ stand untouched); DOCTRINE changes only by the master's word or by
 receipts clearing a bar across MANY days, never by one afternoon's
 swallows. The ledger keeps today's receipts; the rulebook keeps its
 nerve.
+
+### Receipt (2026-08-29, Sandown 2:50 G3, soft-ish): Love Dynasty WON
+33/1 — 2nd-best figures (113), winless-in-4 so the crowd sold her = the
+Fondo Blanco profile's THIRD receipt today (FB 2nd 14/1; Cash/
+Involvement pending); Kon Tiki (form+figures top, the sitter's
+"unassailable") beaten 11L — rain compresses class and punishes short
+certainty. Observation only; the bars decide. Sitter's telly-calls
+today: 0-for-4, the master's armchair ~6-for-6.
