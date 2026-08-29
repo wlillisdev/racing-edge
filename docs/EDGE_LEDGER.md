@@ -42,3 +42,21 @@ nobody. That is the edge.
   on the flat: Tall Trees, most proven in the maiden, beat the unproven
   on the line — in maidens the frame-machine read FLIPS (babies improve;
   four near-misses are education, not a profession).
+
+### OBSERVATIONS AWAITING THE MASTER'S WORD (2026-08-29, Goodwood 2:00:
+Forty Years On WON EASY at 6/4 off 79 days; Fondo Blanco 2nd 14/1)
+1. DOMINANCE ANSWERS ABSENCE (refinement candidate for 2b-ii race-fit):
+   three receipts — Town Queen (fragile quick-run staircase, 70d, LAST) v
+   Saint Polo (rolling jumper, 66d, WON) v Forty Years On (1112-1 serial
+   winner, 79d, WON EASY — the master live: "never a doubt, the kind of
+   horse you wish you had a fortune on"). Absence breaks FRAGILE form;
+   it does not dent DOMINANT form. The sitter talked the book off a 6/4
+   winner on questions a dominant profile answers.
+2. E1 EXTENDS TO THE PLACE BOOK (bandit selection rule, sitter's miss
+   named): Fondo Blanco was the FIGURES-TOP of the race (103) at 22/1 in
+   a 4-place bandit race and was left out while figures-2 and figures-3
+   were banked — the identical recent-form blemish was excused on one
+   and fatal on the other. Rule: in a places race the figures-top at the
+   biggest price is ALWAYS a candidate; broken recent form is what
+   CREATES his price. (2nd at 14/1 SP — the master: "ran great, nice EW
+   bet.")
