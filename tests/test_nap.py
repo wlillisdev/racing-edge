@@ -890,3 +890,36 @@ def test_course_placed_form_earns_the_course_dot_once() -> None:
     from racing_edge.selection.conviction import _FAMILIES
     course_keys = dict((n, k) for n, k in _FAMILIES)["course"]
     assert "course form" in course_keys and "course winner" in course_keys
+
+
+def test_dominant_profile_answers_the_absence_leg_of_the_bounce() -> None:
+    """Law 2b-iii engine-side (the master, 2026-08-29): two or more wins in
+    the last five same-code runs answers the absence question — Forty Years
+    On (1112-1, 79 days) carries no first-run-raise caution; Town Queen's
+    one-win staircase (70 days) keeps it. Dominance never buys a class hike
+    (Gore Point stays cautioned)."""
+    from racing_edge.selection.conviction import conviction
+    flat = Race(race_id="g", course="Goodwood", off_time="14:00",
+                date=date(2026, 8, 29), race_type="Flat", is_handicap=True,
+                race_class=2)
+    fyo = Runner(horse_id="fyo", horse="Forty Years On", official_rating=96,
+                 odds=Odds(consensus=2.5), days_since_run=79)
+    dominant = (PastRun(date=date(2026, 6, 11), position=1, race_type="Flat",
+                        official_rating=90, race_class=2),
+                PastRun(date=date(2026, 5, 20), position=2, race_type="Flat",
+                        official_rating=88, race_class=2),
+                PastRun(date=date(2026, 4, 30), position=1, race_type="Flat",
+                        official_rating=84, race_class=3),
+                PastRun(date=date(2026, 4, 10), position=1, race_type="Flat",
+                        official_rating=80, race_class=3),
+                PastRun(date=date(2026, 3, 20), position=1, race_type="Flat",
+                        official_rating=76, race_class=4))
+    c = conviction(fyo, flat, dominant, market_rank=1, field_size=12)
+    assert not any("first run off a raised mark" in x for x in c.cautions)
+    # the same absence on a one-win staircase keeps the caution (Town Queen
+    # is already pinned above); and dominance never buys a class hike:
+    cl1 = Race(race_id="g1", course="Goodwood", off_time="14:00",
+               date=date(2026, 8, 29), race_type="Flat", is_handicap=True,
+               race_class=1)
+    c2 = conviction(fyo, cl1, dominant, market_rank=1, field_size=12)
+    assert any("first run off a raised mark" in x for x in c2.cautions)

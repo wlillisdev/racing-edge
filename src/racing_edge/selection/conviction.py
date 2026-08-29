@@ -169,8 +169,21 @@ def conviction(runner: Runner, race: Race, history: tuple[PastRun, ...],
                 _hike = (mr.win_class is not None
                          and race.race_class is not None
                          and race.race_class < mr.win_class)
-                _quick_return = (runner.days_since_run is not None
-                                 and runner.days_since_run < 60
+                # THE BIG-YARD FRESHENER (law 2b-iii, taught 2026-08-29
+                # minutes after Forty Years On, 1112-1 and 79 days off, won
+                # easily at 6/4 while the absence scars talked the book off
+                # her: 'a big yard... they know what needs to be done to get
+                # a horse fit... class horses will run well fresh'): a
+                # DOMINANT profile — two or more wins in the last five
+                # same-code runs — answers the absence leg by itself
+                # (Forty Years On, Saint Polo, Notable Speech), while one
+                # win on a quick-run staircase does not (Town Queen, LAST).
+                # Dominance never buys the CLASS HIKE leg — Gore Point was
+                # 2-of-5 dominant and 12lb out of his depth.
+                _dominant = sum(1 for h in hist[:5] if h.position == 1) >= 2
+                _quick_return = (((runner.days_since_run is not None
+                                   and runner.days_since_run < 60)
+                                  or _dominant)
                                  and not _hike)
                 if not _quick_return:
                     _why = ("up in class — the bounce never buys a hike "
@@ -304,13 +317,19 @@ def conviction(runner: Runner, race: Race, history: tuple[PastRun, ...],
         # dot; the shield comes off and the holes ride in as a caution the case
         # must answer. It strips a dot, never erases the horse.
         _solid_holes = []
+        # law 2b-iii: a dominant profile (2+ wins in the last five same-code
+        # runs) answers the race-fit question wherever it is asked — Forty
+        # Years On, 1112-1 and 79 days, won easily at 6/4 while the absence
+        # hole talked the book off her. Dominance never waives a class hike.
+        _gate_dominant = sum(1 for h in hist[:5] if h.position == 1) >= 2
         if not any(h.position == 1 for h in hist):
             _solid_holes.append("never won")
-        if runner.days_since_run is not None and runner.days_since_run >= 60:
+        if (runner.days_since_run is not None and runner.days_since_run >= 60
+                and not _gate_dominant):
             _solid_holes.append(f"{runner.days_since_run} days off")
         if (mr.delta is not None and mr.delta > 0 and mr.since == 0
-                and not (runner.days_since_run is not None
-                         and runner.days_since_run < 60
+                and not (((runner.days_since_run is not None
+                           and runner.days_since_run < 60) or _gate_dominant)
                          and not (mr.win_class is not None
                                   and race.race_class is not None
                                   and race.race_class < mr.win_class))):
