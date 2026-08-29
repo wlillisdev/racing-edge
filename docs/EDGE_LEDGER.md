@@ -150,3 +150,22 @@ horse at a big price, USED or PASSED with reason, no line no verdict).
 Engine-level belief still waits on the record: every Blanco line from
 here is a logged receipt, and the bandit column tracks the P/L. The
 sheet obeys the master today; the bars grade the gem across the days.
+
+### FAULT NAMED (2026-08-29, Goodwood 3:10 G2): THE UNMEASURED RACE
+
+Zavateri CRUISED home at 6/4 — figures-top (120), OR-top (117) while
+RECEIVING 6lb WFA, class-dropper out of G1 company, fit off 7 days: a
+four-question sweep, read correctly on the live co-read minutes before
+the off. The master: "why wasn't he today's nap? proper horse, proper
+race." The answer, no excuse: the 3:10 was NEVER MEASURED at 7:30 —
+the morning survey only put handicaps through the sheet, and the duty
+pick was built in the 4:05 without the Group race ever reaching the
+table. Law 5b one floor up: the yardstick must pass over every RACE
+on the card, not just every horse in the races I habitually shop.
+Pattern races are FEWER variables, not more (the master, after the
+1:40 maiden: avoid too many variables — yet opportunities remain):
+exposed class, honest figures. PROPOSED FOR THE MASTER'S WORD (not
+banked — one afternoon, one race): the morning survey measures every
+race on the card including pattern races, and a pattern-race
+four-question sweep at a backable price outranks a handicap squeak.
+Observation and receipt today; doctrine on his word.
