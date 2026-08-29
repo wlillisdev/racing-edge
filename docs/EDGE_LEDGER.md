@@ -16,6 +16,14 @@ keeps a running score; the record promotes and demotes them, nothing else.)
 | E6 | THE EXCUSE HORSE EW AT A PRICE (bandit door; floor + terms gates) | Magic Trip 2nd 12/1 = +1.4pt | 1-0 |
 | E7 | RESPECT THE DRIFT (as a cross/never back) | Hungarian 18/1 5th; Fine Point 4th; Sharp Move 8th | 3-0 |
 
+THE CALIBRATION LAW (the master, 2026-08-29, after retracting the
+sitter’s same-day rule swing: "it needs surgical precision. you don’t
+calibrate with a sledgehammer"): every change is ONE incision — the
+smallest cut that closes the exact wound, its receipt quoted, a test
+pinning it, the rest of the body untouched. Sibling doctrine: "don’t go
+all nuclear on the system" (2026-08-22), "do them surgically"
+(2026-08-27). A swing after every result is vandalism, not calibration.
+
 RULES OF THE LEDGER: an edge is added only with two receipts or the
 master's word; scores update at every settle; an edge that goes 0-for-5
 live goes to trial review. The four-question sheet still runs in full —
