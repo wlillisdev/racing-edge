@@ -138,3 +138,15 @@ Involvement pending); Kon Tiki (form+figures top, the sitter's
 "unassailable") beaten 11L — rain compresses class and punishes short
 certainty. Observation only; the bars decide. Sitter's telly-calls
 today: 0-for-4, the master's armchair ~6-for-6.
+
+### THE BLANCO READ — the master's verdict (2026-08-29, after the 2:50)
+
+The master, on the three-races-in-a-row receipts (2:00 Fondo Blanco 2nd
+14/1, 2:35 the frame, 2:50 Love Dynasty WON 33/1): "well if it happened
+3 times in 3 races it's not a fluke, it looks like a gem we got from
+these lessons." His gem, his naming, his word — which is why THE BLANCO
+LINE is already law at sheet level (Brief #22: name the best-figured
+horse at a big price, USED or PASSED with reason, no line no verdict).
+Engine-level belief still waits on the record: every Blanco line from
+here is a logged receipt, and the bandit column tracks the P/L. The
+sheet obeys the master today; the bars grade the gem across the days.
