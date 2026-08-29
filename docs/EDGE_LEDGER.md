@@ -180,3 +180,8 @@ bookies' trap pre-off — THIRD. The master: "nice studying." One
 swallow, not a summer: the same read loses when an unbeaten unknown
 fires (Sonic Angel risk was real). Logged as what it is — the taught
 laws applied on the day they were taught, graded by the result.
+Blanco line same race: Green Sovereign ~25/1 (third-top figure, crowd
+sold on an 8th and a 7th) ran well, FOURTH — profile right, pocket
+empty (3 places in an 8-runner race; 4th pays nothing). Scored
+honestly as a near-miss: the read's fourth straight frank-or-near
+today, but only the settled P/L column earns the gem its bars.
