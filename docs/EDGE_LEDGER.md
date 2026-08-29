@@ -22,3 +22,9 @@ live goes to trial review. The four-question sheet still runs in full —
 guardrails intact — but the PICK leads with the edge, not the crosses.
 The bookmaker prices the crowd's stories; these seven are priced by
 nobody. That is the edge.
+
+## TRIAL EDGES (watch-list — promoted at two receipts or the master's word)
+
+| # | THE EDGE (trial) | Receipts | Status |
+|---|------------------|----------|--------|
+| E8 | THE SECOND-RUN LEAP (the master, 2026-08-29, watching the Goodwood 1:25 live: "no 12 Silverella won well... he was an EW bandit, he improved from first run, something to watch in future"): in juvenile/novice company, a debutant whose FIRST run read green-with-promise ("green", "will improve", "needed the run" — vocabulary already in the manner reader) leaps past the debut figure on run two; the crowd prices the visible debut number, the leap is invisible on paper. Primarily a BANDIT angle: EW at a price in maiden/novice fields, floor + terms gates as always. NOTE this opens the one readable line in the race type the book otherwise passes (unexposed babies): the improvement curve is readable even when the form is not. | Silverella, Goodwood 1:25 2026-08-29, won well per the master live | WATCHING |
