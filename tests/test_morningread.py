@@ -430,3 +430,12 @@ def test_law_2b_iii_the_big_yard_freshener() -> None:
     assert "THE BIG-YARD FRESHENER" in NAP_SYSTEM
     assert "class horses will run well fresh" in NAP_SYSTEM
     assert "Forty Years On" in NAP_SYSTEM
+
+
+def test_law_2b_iii_scope_today_must_be_the_fresh_run() -> None:
+    """Crown Of Oaks corpse (same afternoon the law shipped): dominance
+    answers the UNKNOWN of absence — once a comeback run exists it is
+    evidence, and a poor completed return outranks the presumption."""
+    from racing_edge.study.morningread import NAP_SYSTEM
+    assert "Crown Of Oaks corpse" in NAP_SYSTEM
+    assert "ONLY when TODAY is the fresh run" in NAP_SYSTEM
