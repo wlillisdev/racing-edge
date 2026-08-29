@@ -923,3 +923,26 @@ def test_dominant_profile_answers_the_absence_leg_of_the_bounce() -> None:
                race_class=1)
     c2 = conviction(fyo, cl1, dominant, market_rank=1, field_size=12)
     assert any("first run off a raised mark" in x for x in c2.cautions)
+
+
+def test_young_improver_carveout_hike_walls_exposed_horses_only() -> None:
+    """The master's word 2026-08-29 (Kokbastau, 3yo, 4 runs, won last two,
+    hiked to Cl2 bottom-figured, WON ~10/3): a young improver is still ahead
+    of the handicapper — the class hike does not re-arm his caution. Gore
+    Point (no age set = not young) keeps his (pinned above)."""
+    from racing_edge.selection.conviction import conviction
+    cl2 = Race(race_id="s215", course="Sandown", off_time="14:15",
+               date=date(2026, 8, 29), race_type="Flat", is_handicap=True,
+               race_class=2)
+    kok = Runner(horse_id="kok", horse="Kokbastau", official_rating=102,
+                 odds=Odds(consensus=4.33), days_since_run=17, age=3)
+    curve = (PastRun(date=date(2026, 8, 12), position=1, race_type="Flat",
+                     official_rating=95, race_class=3),
+             PastRun(date=date(2026, 7, 22), position=1, race_type="Flat",
+                     official_rating=90, race_class=4),
+             PastRun(date=date(2026, 6, 30), position=3, race_type="Flat",
+                     official_rating=90, race_class=4),
+             PastRun(date=date(2026, 6, 5), position=6, race_type="Flat",
+                     official_rating=92, race_class=4))
+    c = conviction(kok, cl2, curve, market_rank=2, field_size=13)
+    assert not any("first run off a raised mark" in x for x in c.cautions)

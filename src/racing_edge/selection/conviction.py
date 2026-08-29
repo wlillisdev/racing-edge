@@ -181,10 +181,15 @@ def conviction(runner: Runner, race: Race, history: tuple[PastRun, ...],
                 # Dominance never buys the CLASS HIKE leg — Gore Point was
                 # 2-of-5 dominant and 12lb out of his depth.
                 _dominant = sum(1 for h in hist[:5] if h.position == 1) >= 2
+                # THE YOUNG IMPROVER CARVE-OUT (the master's word 2026-08-29,
+                # Kokbastau: 'a young horse improving could be anything, he
+                # is still ahead of the handicapper'): the hike walls
+                # EXPOSED horses; a 3yo's figures measure yesterday's horse.
+                _young = runner.age is not None and runner.age <= 3
                 _quick_return = (((runner.days_since_run is not None
                                    and runner.days_since_run < 60)
                                   or _dominant)
-                                 and not _hike)
+                                 and (not _hike or _young))
                 if not _quick_return:
                     _why = ("up in class — the bounce never buys a hike "
                             "(Gore Point" if _hike else
