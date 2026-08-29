@@ -91,3 +91,18 @@ opinion above visible evidence) means the assessor has seen the curve.
 Receipts both sides: Gore Point (exposed 6yo, hike, LAST beaten 50L) v
 Kokbastau (unexposed 3yo, hike, WON). The class rider stands untouched
 for exposed profiles; the master's word decides the unexposed carve-out.
+
+### THE ABSENCE LINE DEMOTED AS A CROSS (2026-08-29, Goodwood 2:35: Too
+Soon — won LTO, joint-2nd figures, 84 days — WON WELL while the sitter
+opposed him on the absence line; High Degree (the pick) 2nd; the master:
+"I feel he was missed"): today's flat scoreboard for absence-as-a-cross:
+opposed Forty Years On (79d) — won easy; opposed Too Soon (84d) — won;
+Town Queen its only scalp, and she carried a raise + fragile staircase
+WITH it. RECEIPTS SAY: won-LTO + break is often a PLANNED CAMPAIGN (the
+yard banks the win, holidays the horse, targets the pot) = intent, not
+rust. RULE CHANGE (sitter's protocol, effective now): ABSENCE ALONE
+NEVER OPPOSES OR CROSSES A HORSE WHO WON LAST TIME — it downgrades
+confidence only; a cross needs corroborating negatives from his own
+record (Town Queen had two). RULE-21 EXTENSION: a horse holding TWO or
+more of the four question-columns cannot be crossed by any single
+threshold — his history gets read or he stays a contender.
