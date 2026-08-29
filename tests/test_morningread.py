@@ -439,3 +439,16 @@ def test_law_2b_iii_scope_today_must_be_the_fresh_run() -> None:
     from racing_edge.study.morningread import NAP_SYSTEM
     assert "Crown Of Oaks corpse" in NAP_SYSTEM
     assert "ONLY when TODAY is the fresh run" in NAP_SYSTEM
+
+
+def test_law_5b_the_yardstick_on_every_horse() -> None:
+    """Taught 2026-08-28 (Sedgefield 3:30 howler: a rule fired, the looking
+    stopped, the obvious 3/1 winner went unmeasured), confirmed 2026-08-29
+    (three ignored Blanco horses paid in three straight TV races): a rule
+    firing is where the work starts — no horse unmeasured, no verdict."""
+    from racing_edge.study.morningread import NAP_SYSTEM
+    assert "THE YARDSTICK ON EVERY HORSE" in NAP_SYSTEM
+    assert ("measured against the yardstick and not blinded by the shiny "
+            "light") in NAP_SYSTEM
+    assert "trap bookies set" in NAP_SYSTEM
+    assert "No horse unmeasured, no verdict" in NAP_SYSTEM
