@@ -60,3 +60,22 @@ Forty Years On WON EASY at 6/4 off 79 days; Fondo Blanco 2nd 14/1)
    biggest price is ALWAYS a candidate; broken recent form is what
    CREATES his price. (2nd at 14/1 SP — the master: "ran great, nice EW
    bet.")
+
+### THE PRICEWISE CROSS-VALIDATION (2026-08-29, the master shared Segal's
+full Saturday column to teach his logic): the Racing Post's top tipster
+of the era picks by OUR EDGES — E3 winning-mark (God Of War "4lb lower
+than when winning this race"; Rahmi "6lb lower"), the excuse lens x3
+(Alcarath missed-break; Mia Fantasia unlucky; God Of War draw/trip), the
+hyped-debutant fade (Solario: takes on both debut-win favs with the
+battle-hardened improver = the Tall Trees lesson at Group level), the
+improvement curves (2nd-run-after-absence, "only 7 runs"), and
+price-first always. Thirty years of Pricewise = independent validation
+that the ledger's edges are the professional toolkit, not this week's
+overfit. THE GAP HE EXPOSES IN US: **GROUND** — every Segal tip carries
+a conditions clause ("wants rain", "best with give", "provided the
+ground suits"); his bets are conditional on today's weather. Our going
+line is the sheet's weakest column — TO STRENGTHEN: going-form read
+(wins/places by going) joins the MARK and FIT lines on the mandatory
+sheet. Receipts to collect: today's five Segal tips settle as a live
+scoreboard v the ledger (Ghost Mode 2.00 already beaten — even the best
+run ~30% — while the drift tell opposed him).
