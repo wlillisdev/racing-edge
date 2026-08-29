@@ -71,7 +71,7 @@ def gather(client: _Client, day_iso: str, course: str | None = None,
     cards = racecards_from_raw(client.racecards(day_iso))
 
     def _match(c: Race) -> bool:
-        if not c.is_readable_handicap or c.race_id not in results:
+        if not c.is_readable or c.race_id not in results:
             return False
         if course and course.lower() not in c.course.lower():
             return False

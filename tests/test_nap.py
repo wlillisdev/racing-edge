@@ -946,3 +946,39 @@ def test_young_improver_carveout_hike_walls_exposed_horses_only() -> None:
                      official_rating=92, race_class=4))
     c = conviction(kok, cl2, curve, market_rank=2, field_size=13)
     assert not any("first run off a raised mark" in x for x in c.cautions)
+
+
+def test_zavateri_gate_pattern_races_enter_the_funnel() -> None:
+    """THE ZAVATERI GATE (the master, 2026-08-29: the Celebration Mile G2
+    winner cruised at 6/4 unseen because the funnel read handicaps only —
+    'proper horse, proper race... fix hole'): a Class 1-2 non-handicap with
+    exposed class is readable; maidens, Class 3+ conditions and amateur
+    races stay outside. REVERT-IF: first three pattern-race naps go 0-for-3."""
+    g2 = Race(race_id="g2", course="Goodwood", off_time="15:10",
+              date=date(2026, 8, 29), race_type="Flat",
+              is_handicap=False, race_class=1)
+    assert g2.is_readable_pattern and g2.is_readable
+
+    cl2_conditions = Race(race_id="c2", course="York", off_time="15:10",
+                          date=date(2026, 8, 29), race_type="Flat",
+                          is_handicap=False, race_class=2)
+    assert cl2_conditions.is_readable
+
+    cl2_maiden = Race(race_id="m", course="Goodwood", off_time="15:45",
+                      date=date(2026, 8, 29), race_type="Flat",
+                      is_handicap=False, is_novice=True, race_class=2)
+    assert not cl2_maiden.is_readable
+
+    cl3_conditions = Race(race_id="c3", course="Ripon", off_time="14:10",
+                          date=date(2026, 8, 29), race_type="Flat",
+                          is_handicap=False, race_class=3)
+    assert not cl3_conditions.is_readable
+
+    cl1_amateur = Race(race_id="am", course="Ascot", off_time="16:00",
+                       date=date(2026, 8, 29), race_type="Flat",
+                       is_handicap=False, is_amateur=True, race_class=1)
+    assert not cl1_amateur.is_readable
+
+    # the record's home ground is untouched: a readable handicap still enters
+    hcp = _race(race_class=4)
+    assert hcp.is_readable

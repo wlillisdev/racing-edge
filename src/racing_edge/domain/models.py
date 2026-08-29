@@ -132,6 +132,29 @@ class Race:
         rider, not the horse). Race selection comes first; this is what enforces it."""
         return self.is_handicap and not self.is_novice and not self.is_amateur
 
+    @property
+    def is_readable_pattern(self) -> bool:
+        """THE ZAVATERI GATE (the master, 2026-08-29, after the Celebration Mile
+        G2 winner cruised home at 6/4 unseen — figures-top, ratings-top while
+        receiving 6lb, class-dropper, fit — because the funnel read handicaps
+        only: 'proper horse, proper race... fix hole'): a Class 1-2 NON-handicap
+        with exposed class is MORE readable, not less — fewer variables, honest
+        figures, the best horse usually wins. Still excludes novice/maiden (form
+        book doesn't apply) and amateur races. The record's handicap preference
+        is untouched: pattern races enter the funnel, they get no handicap +1 in
+        race quality and face the top-class anchor bar. REVERT-IF: the first
+        three pattern-race naps go 0-for-3 — the funnel narrows back."""
+        return ((self.race_class or 9) <= 2 and not self.is_handicap
+                and not self.is_novice and not self.is_amateur)
+
+    @property
+    def is_readable(self) -> bool:
+        """THE FUNNEL — every race the system is allowed to read: readable
+        handicaps (the record's home ground) plus Class 1-2 pattern/conditions
+        races (the Zavateri gate). One property so the nap, the restudy and the
+        dissect all see the SAME world — a pick must never escape its autopsy."""
+        return self.is_readable_handicap or self.is_readable_pattern
+
 
 @dataclass(frozen=True)
 class RunnerResult:
