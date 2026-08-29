@@ -106,3 +106,19 @@ confidence only; a cross needs corroborating negatives from his own
 record (Town Queen had two). RULE-21 EXTENSION: a horse holding TWO or
 more of the four question-columns cannot be crossed by any single
 threshold — his history gets read or he stays a contender.
+
+### CORRECTION — RETRACTED (2026-08-29, minutes later, the master: "wow
+serious mistake there, your logic is flawed"): the sitter's unilateral
+"absence never opposes a won-LTO horse" rule and the rule-21 extension
+above are WITHDRAWN as doctrine. The flaw, named: doctrine was rewritten
+FOUR times today, each off the single race just run — a line redrawn
+through the afternoon's dots after every result, and the new rule would
+itself have endorsed Town Queen (LAST). That is curve-fitting, the
+punter's disease of betting whatever won last. STANDING ORDER restored:
+same-day results bank as OBSERVATIONS AND RECEIPTS only; the absence
+line remains what the master's laws made it (a caution the case must
+answer, weighed by dominance and yard per 2b-iii — his taught laws
+stand untouched); DOCTRINE changes only by the master's word or by
+receipts clearing a bar across MANY days, never by one afternoon's
+swallows. The ledger keeps today's receipts; the rulebook keeps its
+nerve.
