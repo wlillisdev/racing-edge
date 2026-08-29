@@ -314,3 +314,17 @@ IS completeness. Therefore:
     AND THE NON-RUNNER RE-RUN: any NR re-deals the superlatives — the
     sheet is re-run from the top after every scratch (Galyx out made
     Sovereign View the class-top by 8lb and the read never updated).
+
+22. **THE BLANCO LINE — MANDATORY ON EVERY SHEET** (the master's word,
+    2026-08-29, leaving for the day: "you need to stop ignoring the
+    Blanco read. It has been very costly this innings." Three receipts
+    in three hours, all in front of the sitter and all left off the
+    sheet after the first was banked: Fondo Blanco 2nd at 14/1 (figures-
+    top 103), Love Dynasty WON 33/1 (2nd-best figures 113), Tony Montana
+    the counter-example that keeps it honest): every sheet now carries,
+    in writing, THE BLANCO LINE — name the best-figured horse standing
+    at a big price (the crowd-sold class horse: near-top figures, ugly
+    recent digits, price built on the digits not the figures) and state
+    USED or PASSED with the reason. In places races he is an automatic
+    bandit candidate (rule 18-series). The read is never forced into the
+    pick — it is forced into CONSIDERATION: no Blanco line, no verdict.
