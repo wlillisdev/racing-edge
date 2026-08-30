@@ -350,3 +350,28 @@ stepping up in class on ground they'd never touched. First major
 frank for going-first reading. The pace line found in the pulled
 comments (two confirmed front-runners = contested lead = the
 creeper's race) had the winning shape before the off.
+
+### PROMOTED BY ITS OWN BAR (2026-08-30, Goodwood 3:45 seller): THE
+UNEXPOSED CARVE-OUT reaches two receipts — Kokbastau (4 career runs,
+bottom on perf figures, hiking, WON ~10/3, 2026-08-29) and now ITICA
+(4 career runs, perf 53 "bottom by 25lb", first try at 11f, soft,
+Oisin Murphy booked at 12/1 in a seller, WON WELL while the sitter
+crossed him on the number; Dunkeld Dreamer, the sum-and-stack
+convergence pick, 3rd; Gloryous beaten). The ledger's own rule: an
+edge is added at two receipts or the master's word — this one now has
+two. THE RULE AS PROMOTED: figures measure EXPOSED horses; on a
+lightly-raced improver (≤5-6 career runs) the figure is a FLOOR, and
+a bottom-figures cross is INVALID without asking the species first —
+sharpest in low-grade/seller company where every exposed rival's
+figure is a known CEILING: there, the unexposed runner with an
+intent tell (top jockey on an unfancied baby, trip/track switch with
+purpose) is the only unknown upside in a room full of known limits.
+The species question ("exposed or unexposed?") joins the floor of a
+read (#24) for every runner. Counter-receipt honestly held: the
+intent-tell alone is 1-1 (Buick/Swing Vote flopped, Murphy/Itica
+won) — the booking NOMINATES, the species decides. Convergence note
+for the scar file: sum+stack converged on Dunkeld and lost — the
+convergence law says ANSWER it or yield, and the answer that beat it
+today was the species question it didn't include; convergence of
+signals that all measure YESTERDAY loses to the horse with no
+yesterday to measure.
