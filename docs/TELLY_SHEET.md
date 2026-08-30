@@ -19,9 +19,13 @@ No filled sheet, no call: observations only.)
 7. MARK              raise/drop v last winning mark for the principals
 8. THE TRAVELLER     longest trip in the field; stack boxes ticked or
                      not (4f); "quiet" is a valid entry — after checking
-9. THE BOARD         live market: who's backed, who's drifting — ASK
-                     THE MASTER if not visible (#25); no-story money is
-                     the layers (4d)
+9. THE BOARD         live market CHARACTER, asked of the master (#25,
+                     4g — two snapshots cannot see it): backed CLEAN /
+                     drifting / FLIP-FLOPPING (uncertainty churn, no
+                     tell) / BOOSTED (the bookie's gift = the kiss of
+                     death — they boost what they want you on); a
+                     boosted or flip-flopping "positive" is a rotten
+                     stack leg, and no-story clean money is the layers
 10. THE BLANCO LINE  best figures at a big price: USED or PASSED with
                      the reason (#22) — no line, no verdict
 11. UNREAD           every horse whose record was not read, by name —

@@ -468,3 +468,29 @@ def test_law_4f_the_long_traveller() -> None:
     assert "best horse wins race" in NAP_SYSTEM
     assert ("don't let it blind you — check all horses") in NAP_SYSTEM
     assert "never instead of measuring them" in NAP_SYSTEM
+
+
+def test_law_4g_the_bookies_gift_and_the_flipflop() -> None:
+    """The master, Cork G3 2026-08-30 (fav flip-flopping + Bet365 boost,
+    finished nowhere): the flip-flopping favourite is uncertainty-money;
+    the bookie's boost is the kiss of death — they boost what they want
+    you on; market character is asked of the watcher, never inferred
+    from two snapshots."""
+    from racing_edge.study.morningread import NAP_SYSTEM
+    assert "THE BOOKIE'S GIFT AND THE FLIP-FLOP" in NAP_SYSTEM
+    assert "kiss of death" in NAP_SYSTEM
+    assert "flip-flopping in the market" in NAP_SYSTEM
+    assert "they boost what they want you on" in NAP_SYSTEM
+    assert "ASKED of the person watching" in NAP_SYSTEM
+
+
+def test_law_3i_the_species_question() -> None:
+    """The master's word 2026-08-30 ('important lesson here'), twin receipts
+    Kokbastau + Itica: figures are ceilings on the exposed, floors on
+    babies; the mismatched champion booking nominates, the species
+    decides; class rider untouched for exposed profiles."""
+    from racing_edge.study.morningread import NAP_SYSTEM
+    assert "THE SPECIES QUESTION AND THE MISMATCHED BOOKING" in NAP_SYSTEM
+    assert "CEILINGS on exposed horses and FLOORS on babies" in NAP_SYSTEM
+    assert "nobody books the champ to finish seventh" in NAP_SYSTEM
+    assert "the booking NOMINATES, the species DECIDES" in NAP_SYSTEM
