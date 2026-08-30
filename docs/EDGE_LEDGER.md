@@ -239,3 +239,22 @@ no — the contrast that will teach us what the lens is worth).
 Engine feature (needs a small course/yard distance table) waits
 for receipts across days and the master's word — surgical, not
 sledgehammer.
+
+THE STACK (the master, same morning, verbatim): "sometimes if it
+is a stable in form, good jockey booking, and the market is
+positive, it often stacks up to a winner. but again every case is
+different. but a good trainer sending one horse a huge distance
+can be a good signal." So the lens has its checklist — the trip
+alone is NOTHING; it stacks when: (1) LONG TRIP, ideally a LONE
+raider (one horse in the van, not a yard's away-day — a good
+trainer's single shipment is the tell); (2) STABLE IN FORM (the
+14-day column); (3) GOOD JOCKEY BOOKED (the stable's proper man
+or better travelled with it — nobody books Buick for a day out);
+(4) MARKET POSITIVE (backed or firm — 4d: the layers' respect,
+never story-money). Every case still different — the stack
+NOMINATES with force, the sheet still builds the case. Today's
+live exam: Inspired ticks the stack (280mi, Burke 20%, Clifford
+Lee = the yard's man, ~5.5 second-line of the market; lone-raider
+status and live move OWED, not guessed) — and he is the sheet's
+named danger against Principality's form-top case. The 2:00
+settles the first receipt either way.
