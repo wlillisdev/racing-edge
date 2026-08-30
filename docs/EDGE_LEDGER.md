@@ -375,3 +375,17 @@ convergence law says ANSWER it or yield, and the answer that beat it
 today was the species question it didn't include; convergence of
 signals that all measure YESTERDAY loses to the horse with no
 yesterday to measure.
+
+### WIN AUTOPSY #1 (Brief #26's first run — Light Of Dawn, verified):
+EARNED WIN, mechanism as written pre-off: class pillar (race-best 96
+in the G3), going pillar (both fast-ground market rivals Aperoll and
+Bayside View failed late/never fired), pace pillar (Redline burned in
+front, the creeper collected). Lines that carried it: GOING + COMPANY
+VERIFICATION (#24) — the pulled records built the hierarchy the race
+ran to; "the verification was the edge." Honesty clause finding:
+Eabha 2ND at 18/1 — the Blanco line's PASSED candidate (passed on
+the drift, E7). Second E7 dent of the day (Itica won drifting
+12s->22s). Pattern noted, NOT ruled: E7's 3-0 receipts were exposed
+handicappers; today's two dents were lightly-raced types — the drift
+may be weaker evidence on horses the crowd cannot price confidently.
+The column counts; the bars or the master's word decide.
