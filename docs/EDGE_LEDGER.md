@@ -185,3 +185,33 @@ sold on an 8th and a 7th) ran well, FOURTH — profile right, pocket
 empty (3 places in an 8-runner race; 4th pays nothing). Scored
 honestly as a near-miss: the read's fourth straight frank-or-near
 today, but only the settled P/L column earns the gem its bars.
+
+### SETTLE 2026-08-29 (the full six lines, at SP, verified)
+
+DUTY: Defence Minister 9/4, THIRD — E1 loss (E1 column 0-1 this
+week). Winner Storm Free 12/1: won-LTO improver off +3lb, in-form
+yard, never named in my argument. Error in one sentence: I argued
+the three market principals and never put the yardstick over Storm
+Free — the winner stood OUTSIDE my argument on the very day law 5b
+was pinned. BANDIT COLUMN day 1: -6.8pts (Monarch's Gold 6th -2,
+Mudamer 7th -2, Swift Salian 8th -2, Pellitory THIRD 11/1 +1.2,
+Galeron PU -2). Running bandit P/L: -6.8.
+
+### ENGINE 1, SITTER 0 (the master, 2026-08-30 morning: "why is
+email giving a nap that wins and the chat isn't?")
+
+Verified: the 07:30 production engine named Passing Diamond
+(Cartmel 4:25) — WON at 8/15F, led every yard, its named danger
+blundered away exactly as its case predicted. Same email, same
+morning, its survivors table held STORM FREE with the winning
+angles and warnings on all three of my 4:05 principals. The email
+mode line says it plainly: ENGINE-FIRST — the engine selects, the
+reader writes the case and may only veto on a cited disqualifying
+fact. I banked a different race with no veto written. counted:
+engine_override=1, engine right, sitter wrong. One day proves
+nothing either way (the calibration law) — but the override column
+now exists and gets counted at every settle. PROPOSED for the
+master's word: the chat duty lane obeys the same engine-first
+mode as production — the sitter reads the engine's morning output
+before banking, and departs from its candidate only with the
+cited veto in writing.
