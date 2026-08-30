@@ -258,3 +258,16 @@ Lee = the yard's man, ~5.5 second-line of the market; lone-raider
 status and live move OWED, not guessed) — and he is the sheet's
 named danger against Principality's form-top case. The 2:00
 settles the first receipt either way.
+
+THE LENS'S PLACE (the master, same morning, closing the loop):
+"in some cases... but let's say the form of your horse had the
+longest traveller profile also, I would be very interested. but
+remember every horse gets the yardstick and don't be blinded by
+the shiny thing." So the lens is a CORROBORATOR, never a
+selector: its highest-value firing is when the horse that ALREADY
+wins the four questions also owns the traveller stack — then the
+van is the yard agreeing with our own read. It never crowns a
+horse the yardstick didn't; law 5b governs the lens like it
+governs everything: measure all, fall for none. The traveller
+line joins the sheet as a corroboration column beside yard/jockey
+/market — a dot that counts once, not a torch that blinds.
