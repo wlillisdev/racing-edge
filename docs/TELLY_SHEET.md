@@ -9,6 +9,12 @@ No filled sheet, no call: observations only.)
 
 1. CARD PULLED?      yes/no — if no: STOP. Observations only (#25).
 2. GOING NOW         live going + who in the field is PROVEN on it
+2b. THE GLANCE       docs/SHAPE_BOOK.md, CITED: name this race's cell
+                     and its verdict (get on the jolly / gem behind
+                     the jolly / best avoided / full read) or write
+                     "no cell (n<30)" — a sheet with no book line is
+                     incomplete, and the settle grades the glance
+                     against the result so shelf-ware is impossible
 3. WHO'S IN FORM     won/placed LTO horses, with COMPANY (#24 — digits
                      without company are noise)
 4. WHO'S GOT CLASS   the figures-top; crossed ONLY by his own record
