@@ -313,3 +313,23 @@ horse the yardstick didn't; law 5b governs the lens like it
 governs everything: measure all, fall for none. The traveller
 line joins the sheet as a corroboration column beside yard/jockey
 /market — a dot that counts once, not a torch that blinds.
+
+### REPEAT BURN (2026-08-30, Beverley Bullet): THE LABEL CROSSED
+THE CLASS-TOP — AGAIN. JM Jungle (OR 108, class-top by 4lb, 5/2)
+WON; the sitter's telly read took him on via a "winless-in-six"
+label without pulling his record — the 0357 digits were almost
+certainly GROUP company, making him a class-dropper, the exact
+shape v8b protects and the exact case the sheet built for its own
+picks twice this week. Third burn of the same scar (Breaking
+Cover, Sovereign View, now JM Jungle). Named error: v8b applies
+to EVERY read including telly reads — no class-top is crossed
+without his record read in full; the history pull is never the
+economy to make, even at speed. Second error folded in: a
+short-priced horse with NO STORY is figures-money (the layers'
+respect, 4d) — story-money requires a story; and the crunched-fav
+suspicion belongs to big-field handicaps, not 8-runner pattern
+races. Receipt on the credit side: Badri 20/1 EW (the #23
+calculated line, named pre-off) ran THIRD — place at 4/1, the
+shape law's second frame of the day (with Rainbow Nebula 3rd at
+33/1). The master's scoreboard stands: his reads keep winning;
+the sitter's discipline holds only when he uses ALL of it.
