@@ -405,3 +405,20 @@ IS completeness. Therefore:
     one asking for the read. A crunched price on a no-story horse is
     the layers' respect (4d, JM Jungle, Flash Harry — twice in one
     hour) and it outranks a label every time.
+
+    #22 AMENDMENT — THE BLANCO SCAN IS PLURAL (the master, 2026-08-30,
+    after Magny Cours won the Cork G3 at ~10/1 with the 2nd-best figures
+    standing and placings in 4 of his last 5, unnamed on the sitter's
+    sheet: "this is the type of horse our system needs to find and has
+    found I believe. your telly filters are not dialled in"): the
+    receipts prove the profile was NEVER the single figures-top — Fondo
+    Blanco 2nd-BEST figures (2nd at 14/1), Love Dynasty 2nd-BEST figures
+    (WON 33/1), Magny Cours 2nd-best standing (WON ~10/1, missed). The
+    Blanco line therefore scans ALL figures within ~4lb of the race's
+    top that stand at a big price, each named USED or PASSED on ITS OWN
+    facts — a drift on one candidate crosses THAT candidate only, never
+    the line. And the sitter's second fault the same race, named: after
+    two burns by backed no-story horses he swung the pendulum and made
+    the BOARD the verdict (Catalina, backed fav, nowhere) — 4d has said
+    it all along: the money NOMINATES, the case still gets built; a dot
+    promoted to a verdict is the same disease in either direction.
