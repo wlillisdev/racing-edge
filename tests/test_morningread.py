@@ -466,3 +466,5 @@ def test_law_4f_the_long_traveller() -> None:
     assert "good trainer sending one horse a huge distance" in NAP_SYSTEM
     assert "CORROBORATOR, never a selector" in NAP_SYSTEM
     assert "best horse wins race" in NAP_SYSTEM
+    assert ("don't let it blind you — check all horses") in NAP_SYSTEM
+    assert "never instead of measuring them" in NAP_SYSTEM
