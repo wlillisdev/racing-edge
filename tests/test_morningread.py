@@ -468,3 +468,17 @@ def test_law_4f_the_long_traveller() -> None:
     assert "best horse wins race" in NAP_SYSTEM
     assert ("don't let it blind you — check all horses") in NAP_SYSTEM
     assert "never instead of measuring them" in NAP_SYSTEM
+
+
+def test_law_4g_the_bookies_gift_and_the_flipflop() -> None:
+    """The master, Cork G3 2026-08-30 (fav flip-flopping + Bet365 boost,
+    finished nowhere): the flip-flopping favourite is uncertainty-money;
+    the bookie's boost is the kiss of death — they boost what they want
+    you on; market character is asked of the watcher, never inferred
+    from two snapshots."""
+    from racing_edge.study.morningread import NAP_SYSTEM
+    assert "THE BOOKIE'S GIFT AND THE FLIP-FLOP" in NAP_SYSTEM
+    assert "kiss of death" in NAP_SYSTEM
+    assert "flip-flopping in the market" in NAP_SYSTEM
+    assert "they boost what they want you on" in NAP_SYSTEM
+    assert "ASKED of the person watching" in NAP_SYSTEM
