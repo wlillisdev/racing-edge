@@ -415,3 +415,43 @@ via "stop ignoring the blanco read" + "not dialled in"). Traveller
 mining run on the results corpus offered. GOING column now has its
 first major frank (Light Of Dawn). E8 watch: Victoria Night next run.
 Morning duty trigger unchanged; settle triggers self-managed per day.
+
+## THE WEEK PLAN — 2026-08-31 to 09-06 (graded next Sunday, against these numbers)
+
+The week's diagnosis in one line: the sitter delivers 80% of a known
+process under pressure, and the game pays nothing for 80%. Every item
+below attacks that, and every item has a COLUMN counted at settle.
+
+1. **ENGINE-FIRST, every morning** (the master: "possibly a good
+   approach" — the trial is live): the 7:30 duty STARTS from the
+   engine's email candidate. Master pastes it or the sheet records
+   "not sighted". Take the candidate, or write the cited veto — no
+   third option. COLUMN: alignment/override/veto-quality per day.
+   TARGET: zero silent overrides. (Receipt driving this: engine 2-0
+   on the weekend, sitter 0-2.)
+2. **THE PREP BLOCK on telly days**: every ITV/named-meeting card +
+   principal records pulled BEFORE the first off; telly sheets
+   pre-filled; the live board is the only line left for race-time.
+   Kills the scramble that produced Flash Harry and JM Jungle.
+3. **TELLY SHEET, 13 lines, or "observations only"**: no verdict
+   below the full form. COLUMN: completed-read %. TARGET: 100% —
+   the weekend's receipt is absolute (completed reads 2-0, label
+   reads 0-for-all).
+4. **ZERO REPEAT BURNS** — the only target that is pass/fail: no
+   class-top or question-winner crossed without his record read
+   (v8b), no read below the floor (#24), no verdict off a screenshot
+   (#25). One repeat burn = the week fails regardless of P/L.
+5. **THE BLANCO ENGINE CUT** (owed on the master's word): the plural
+   scan (all figures within ~4lb of top at a price) coded into the
+   engine readout + morning email this week — one surgical commit,
+   test-pinned, so the Magny Cours miss becomes impossible. Rides
+   into the PR.
+6. **SETTLE-SAME-DAY, ERROR-SAME-NIGHT**: unchanged and non-negotiable
+   — the one discipline that held all weekend stays perfect.
+7. **LEAN**: no new features beyond the Blanco cut without the
+   master's word; the traveller mining run only if he asks.
+
+GRADING NEXT SUNDAY, off columns only: duty strike rate (>0 or the
+named passes that earned their pass), completed-read %, engine
+alignment record, repeat burns (must be 0), bandit/telly/master
+columns P/L. The strike rate is the grade — nothing else.

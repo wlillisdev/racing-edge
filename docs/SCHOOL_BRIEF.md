@@ -422,3 +422,26 @@ IS completeness. Therefore:
     the BOARD the verdict (Catalina, backed fav, nowhere) — 4d has said
     it all along: the money NOMINATES, the case still gets built; a dot
     promoted to a verdict is the same disease in either direction.
+
+26. **THE WIN AUTOPSY — winners get dissected too** (the master,
+    2026-08-30, closing the weekend: "when we get the winner, we need
+    to look at why he was the winner, why he won, what we read well.
+    it's important as this system needs to be accurate, consistent,
+    reliable, and repeatable"): every WINNING line — duty, telly,
+    bandit, master's column — gets the same rigour at settle as a
+    loss, four questions in writing:
+    (a) WHY DID HE ACTUALLY WIN — the running line and race shape,
+        from the result comments, not from memory of the case;
+    (b) DID HE WIN THE WAY THE CASE PREDICTED — predicted mechanism v
+        actual mechanism, honestly: a case that said "class tells on
+        soft" and a win inherited from a pace collapse are NOT the
+        same result;
+    (c) WHICH LINES CARRIED IT — name the sheet lines that did the
+        work (the going line, the frank, the stack...) so the record
+        can promote the lines that keep carrying wins;
+    (d) WHAT WE READ WELL — the skill named in one sentence, so it
+        can be REPEATED on purpose next time, not rediscovered.
+    A win for the wrong reasons is logged as LUCKY WIN — it pays the
+    column and teaches nothing, and pretending otherwise is how a
+    streak gets mistaken for a system. Losses get Rule One; winners
+    get this; nothing settles unexamined.
