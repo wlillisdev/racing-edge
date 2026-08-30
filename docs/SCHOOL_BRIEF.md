@@ -383,3 +383,25 @@ IS completeness. Therefore:
     confidence. Question-winners and the class-top keep their v8b
     protection on top of the floor: full record, always. Depth leads
     the story; the story never rations the depth.
+
+25. **NO CARD, NO CALL — and ASK THE BOARD** (the master, 2026-08-30,
+    2:35 Goodwood, after Flash Harry — crossed by the sitter as "cold
+    digits" off a pasted screenshot — was backed from 15/2 into strong
+    favourite and WON WELL, having won THIS VERY RACE last year; Ardisia
+    the protected class-top ran 2nd; the master: "it seems the exact
+    same as last race... are you even looking at this race?" It WAS the
+    exact same as last race — JM Jungle's lesson, the backed no-story
+    horse, repeated within the hour. The sitter's confession, verbatim
+    truth: he never pulled the card; he read a photograph of the
+    morning): TWO HARD RULES. (a) NO CARD, NO CALL: no selection box,
+    no verdict, on any race whose card the sitter has not pulled —
+    course flags, comments, and going form live in the card, not in a
+    screenshot; if there is no time to pull it, the reply is
+    OBSERVATIONS WITHOUT A SELECTION, said plainly. (b) ASK THE BOARD:
+    in a live TV co-read the master is sitting in front of the live
+    market — the one decisive fact a stale paste can never show. Before
+    any verdict in an open race, ask him: "who's being backed?" The
+    market line is never OWED when the man watching the board is the
+    one asking for the read. A crunched price on a no-story horse is
+    the layers' respect (4d, JM Jungle, Flash Harry — twice in one
+    hour) and it outranks a label every time.
