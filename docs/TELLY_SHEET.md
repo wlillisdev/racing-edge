@@ -1,0 +1,31 @@
+# THE TELLY SHEET — the mandatory form for every live co-read
+(Born 2026-08-30, the master: "why don't you do this properly?" — after a
+day of chat reads dropping the lines the duty sheet never drops. The
+answer was the mechanism: the duty lane has an enforced form, the chat
+lane had memory. Memory under time pressure sheds items. So the chat
+lane gets the form. EVERY live read is this template, filled in, in
+order, before any verdict — a line that can't be filled says UNREAD.
+No filled sheet, no call: observations only.)
+
+1. CARD PULLED?      yes/no — if no: STOP. Observations only (#25).
+2. GOING NOW         live going + who in the field is PROVEN on it
+3. WHO'S IN FORM     won/placed LTO horses, with COMPANY (#24 — digits
+                     without company are noise)
+4. WHO'S GOT CLASS   the figures-top; crossed ONLY by his own record
+                     read in full (v8b) — no record, no cross
+5. WEIGHT SUM        in writing, scale by trip (3e), or "level weights"
+6. PACE              who leads, who presses — from run comments; if
+                     unknown, the hole is NAMED
+7. MARK              raise/drop v last winning mark for the principals
+8. THE TRAVELLER     longest trip in the field; stack boxes ticked or
+                     not (4f); "quiet" is a valid entry — after checking
+9. THE BOARD         live market: who's backed, who's drifting — ASK
+                     THE MASTER if not visible (#25); no-story money is
+                     the layers (4d)
+10. THE BLANCO LINE  best figures at a big price: USED or PASSED with
+                     the reason (#22) — no line, no verdict
+11. UNREAD           every horse whose record was not read, by name —
+                     an honest gap beats a fake cross (#24)
+12. BET SHAPE        WIN or EACH-WAY from the race shape + price (#23),
+                     arithmetic shown
+13. VERDICT + DANGER named, one line each — best horse wins race
