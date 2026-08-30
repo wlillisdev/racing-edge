@@ -361,3 +361,25 @@ IS completeness. Therefore:
     the finishers); the shape only turns less-risk-more-reward when it
     wraps a horse the yardstick already crowned. Find the best horse
     first; then, and only then, let the race's shape set the stake.
+
+24. **THE FLOOR OF A READ — a label is not a read** (the master,
+    2026-08-30, after JM Jungle 5/2 won as the third class-top crossed
+    on a label: "why do this? you need to evaluate each horse properly,
+    this has happened a lot." The named disease: the sitter rations
+    depth by narrative — reads the horses already in his forming story
+    and LABELS the rest, and the labels land hardest on the horses that
+    threaten the story): every runner in every read — duty sheet, telly
+    read, bandit line, all of it — gets the FLOOR, minimum: (a) his
+    figures line (OR + perf); (b) his form digits WITH THEIR COMPANY —
+    digits are RELATIVE: never cite form figures as a cross without
+    knowing what class they were earned in (JM Jungle's 0-3-5-7 in
+    group company was a CV, not a cold streak); (c) a cross reason that
+    is a FACT from his record, never a bare label — "cold form",
+    "placer", "outclassed" are BANNED as standalone reasons; each must
+    be followed by the evidence or it doesn't count as measured. Where
+    time genuinely does not allow the floor for every horse, the read
+    says "UNREAD" against those names — an honest gap beats a fake
+    cross, and a verdict over unread horses is declared at reduced
+    confidence. Question-winners and the class-top keep their v8b
+    protection on top of the floor: full record, always. Depth leads
+    the story; the story never rations the depth.
