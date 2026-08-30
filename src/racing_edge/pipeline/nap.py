@@ -143,14 +143,15 @@ def evaluate_field(client: _Client, day: str = "today",
                    codes: tuple[str, ...] = ("jump", "flat"), top_n: int = 4,
                    progress: Callable[[str], None] | None = None,
                    as_of=None, now=None) -> list[NapPick]:
-    """EVERY contender in every readable handicap, each given its own conviction read,
+    """EVERY contender in every readable race (handicaps + the Zavateri pattern
+    gate), each given its own conviction read,
     sorted strongest-first. The fair-evaluation enforcement (rule #24): no horse is
     skipped, so a pick has to beat an even reading of the whole field, not an anchor.
 
     `progress`, if given, is called with a status line as each race is read — so the
     caller can NARRATE the (slow, per-horse) evidence fetch instead of sitting silent."""
     races = [r for r in racecards_from_raw(client.racecards(day))
-             if r.is_readable_handicap and r.code in codes]
+             if r.is_readable and r.code in codes]
     # LIVE-DAY TIME GUARD (2026-07-13, an 8pm manual run): races already OFF must
     # never be pickable — banking a race whose result exists would corrupt the
     # pre-off ledger. Off-times print without am/pm; racing runs ~11:00-21:45, so
@@ -183,7 +184,7 @@ def evaluate_field(client: _Client, day: str = "today",
             progress(f"  time guard: {before - len(races)} race(s) already off — "
                      f"only {len(races)} still to run are readable")
     if progress:
-        progress(f"  reading the form on {len(races)} readable handicap(s) "
+        progress(f"  reading the form on {len(races)} readable race(s) "
                  f"(form first, price last — rule #29)…")
     out: list[NapPick] = []
     oddsless = 0

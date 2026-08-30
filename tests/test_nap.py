@@ -890,3 +890,95 @@ def test_course_placed_form_earns_the_course_dot_once() -> None:
     from racing_edge.selection.conviction import _FAMILIES
     course_keys = dict((n, k) for n, k in _FAMILIES)["course"]
     assert "course form" in course_keys and "course winner" in course_keys
+
+
+def test_dominant_profile_answers_the_absence_leg_of_the_bounce() -> None:
+    """Law 2b-iii engine-side (the master, 2026-08-29): two or more wins in
+    the last five same-code runs answers the absence question — Forty Years
+    On (1112-1, 79 days) carries no first-run-raise caution; Town Queen's
+    one-win staircase (70 days) keeps it. Dominance never buys a class hike
+    (Gore Point stays cautioned)."""
+    from racing_edge.selection.conviction import conviction
+    flat = Race(race_id="g", course="Goodwood", off_time="14:00",
+                date=date(2026, 8, 29), race_type="Flat", is_handicap=True,
+                race_class=2)
+    fyo = Runner(horse_id="fyo", horse="Forty Years On", official_rating=96,
+                 odds=Odds(consensus=2.5), days_since_run=79)
+    dominant = (PastRun(date=date(2026, 6, 11), position=1, race_type="Flat",
+                        official_rating=90, race_class=2),
+                PastRun(date=date(2026, 5, 20), position=2, race_type="Flat",
+                        official_rating=88, race_class=2),
+                PastRun(date=date(2026, 4, 30), position=1, race_type="Flat",
+                        official_rating=84, race_class=3),
+                PastRun(date=date(2026, 4, 10), position=1, race_type="Flat",
+                        official_rating=80, race_class=3),
+                PastRun(date=date(2026, 3, 20), position=1, race_type="Flat",
+                        official_rating=76, race_class=4))
+    c = conviction(fyo, flat, dominant, market_rank=1, field_size=12)
+    assert not any("first run off a raised mark" in x for x in c.cautions)
+    # the same absence on a one-win staircase keeps the caution (Town Queen
+    # is already pinned above); and dominance never buys a class hike:
+    cl1 = Race(race_id="g1", course="Goodwood", off_time="14:00",
+               date=date(2026, 8, 29), race_type="Flat", is_handicap=True,
+               race_class=1)
+    c2 = conviction(fyo, cl1, dominant, market_rank=1, field_size=12)
+    assert any("first run off a raised mark" in x for x in c2.cautions)
+
+
+def test_young_improver_carveout_hike_walls_exposed_horses_only() -> None:
+    """The master's word 2026-08-29 (Kokbastau, 3yo, 4 runs, won last two,
+    hiked to Cl2 bottom-figured, WON ~10/3): a young improver is still ahead
+    of the handicapper — the class hike does not re-arm his caution. Gore
+    Point (no age set = not young) keeps his (pinned above)."""
+    from racing_edge.selection.conviction import conviction
+    cl2 = Race(race_id="s215", course="Sandown", off_time="14:15",
+               date=date(2026, 8, 29), race_type="Flat", is_handicap=True,
+               race_class=2)
+    kok = Runner(horse_id="kok", horse="Kokbastau", official_rating=102,
+                 odds=Odds(consensus=4.33), days_since_run=17, age=3)
+    curve = (PastRun(date=date(2026, 8, 12), position=1, race_type="Flat",
+                     official_rating=95, race_class=3),
+             PastRun(date=date(2026, 7, 22), position=1, race_type="Flat",
+                     official_rating=90, race_class=4),
+             PastRun(date=date(2026, 6, 30), position=3, race_type="Flat",
+                     official_rating=90, race_class=4),
+             PastRun(date=date(2026, 6, 5), position=6, race_type="Flat",
+                     official_rating=92, race_class=4))
+    c = conviction(kok, cl2, curve, market_rank=2, field_size=13)
+    assert not any("first run off a raised mark" in x for x in c.cautions)
+
+
+def test_zavateri_gate_pattern_races_enter_the_funnel() -> None:
+    """THE ZAVATERI GATE (the master, 2026-08-29: the Celebration Mile G2
+    winner cruised at 6/4 unseen because the funnel read handicaps only —
+    'proper horse, proper race... fix hole'): a Class 1-2 non-handicap with
+    exposed class is readable; maidens, Class 3+ conditions and amateur
+    races stay outside. REVERT-IF: first three pattern-race naps go 0-for-3."""
+    g2 = Race(race_id="g2", course="Goodwood", off_time="15:10",
+              date=date(2026, 8, 29), race_type="Flat",
+              is_handicap=False, race_class=1)
+    assert g2.is_readable_pattern and g2.is_readable
+
+    cl2_conditions = Race(race_id="c2", course="York", off_time="15:10",
+                          date=date(2026, 8, 29), race_type="Flat",
+                          is_handicap=False, race_class=2)
+    assert cl2_conditions.is_readable
+
+    cl2_maiden = Race(race_id="m", course="Goodwood", off_time="15:45",
+                      date=date(2026, 8, 29), race_type="Flat",
+                      is_handicap=False, is_novice=True, race_class=2)
+    assert not cl2_maiden.is_readable
+
+    cl3_conditions = Race(race_id="c3", course="Ripon", off_time="14:10",
+                          date=date(2026, 8, 29), race_type="Flat",
+                          is_handicap=False, race_class=3)
+    assert not cl3_conditions.is_readable
+
+    cl1_amateur = Race(race_id="am", course="Ascot", off_time="16:00",
+                       date=date(2026, 8, 29), race_type="Flat",
+                       is_handicap=False, is_amateur=True, race_class=1)
+    assert not cl1_amateur.is_readable
+
+    # the record's home ground is untouched: a readable handicap still enters
+    hcp = _race(race_class=4)
+    assert hcp.is_readable

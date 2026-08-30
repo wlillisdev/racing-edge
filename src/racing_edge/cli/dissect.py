@@ -40,7 +40,7 @@ def main() -> int:
     printed = 0
     for res in results:
         card = cards.get(res.race_id)
-        if card is None or not card.is_readable_handicap:   # readable handicaps only
+        if card is None or not card.is_readable:   # the funnel: handicaps + pattern
             continue
         runners = [StudiedRunner(name=r.horse, horse_id=r.horse_id, finish_pos=r.position,
                                  sp_dec=r.sp_dec, comment=r.comment,

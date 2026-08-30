@@ -419,3 +419,36 @@ def test_law_3h_the_track_knows_its_own() -> None:
     assert "THE TRACK KNOWS ITS OWN" in NAP_SYSTEM
     assert "Saint Polo" in NAP_SYSTEM
     assert "understimate" in NAP_SYSTEM   # the master's words, verbatim
+
+
+def test_law_2b_iii_the_big_yard_freshener() -> None:
+    """Taught 2026-08-29 (Forty Years On won easily at 6/4 off 79 days while
+    the absence scars talked the book off her): the race-fit question is
+    answered by WHO answers it — big yards ready class horses first time;
+    absence breaks fragile form, not dominant form."""
+    from racing_edge.study.morningread import NAP_SYSTEM
+    assert "THE BIG-YARD FRESHENER" in NAP_SYSTEM
+    assert "class horses will run well fresh" in NAP_SYSTEM
+    assert "Forty Years On" in NAP_SYSTEM
+
+
+def test_law_2b_iii_scope_today_must_be_the_fresh_run() -> None:
+    """Crown Of Oaks corpse (same afternoon the law shipped): dominance
+    answers the UNKNOWN of absence — once a comeback run exists it is
+    evidence, and a poor completed return outranks the presumption."""
+    from racing_edge.study.morningread import NAP_SYSTEM
+    assert "Crown Of Oaks corpse" in NAP_SYSTEM
+    assert "ONLY when TODAY is the fresh run" in NAP_SYSTEM
+
+
+def test_law_5b_the_yardstick_on_every_horse() -> None:
+    """Taught 2026-08-28 (Sedgefield 3:30 howler: a rule fired, the looking
+    stopped, the obvious 3/1 winner went unmeasured), confirmed 2026-08-29
+    (three ignored Blanco horses paid in three straight TV races): a rule
+    firing is where the work starts — no horse unmeasured, no verdict."""
+    from racing_edge.study.morningread import NAP_SYSTEM
+    assert "THE YARDSTICK ON EVERY HORSE" in NAP_SYSTEM
+    assert ("measured against the yardstick and not blinded by the shiny "
+            "light") in NAP_SYSTEM
+    assert "trap bookies set" in NAP_SYSTEM
+    assert "No horse unmeasured, no verdict" in NAP_SYSTEM

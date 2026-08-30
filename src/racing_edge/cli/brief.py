@@ -60,9 +60,9 @@ def main() -> int:
         print(render_preread(race, hists))
         return 0
     races = [r for r in racecards_from_raw(client.racecards(args.day))
-             if r.is_readable_handicap and r.code in codes]
+             if r.is_readable and r.code in codes]
     if not races:
-        print("No readable handicaps to brief.")
+        print("No readable races to brief.")
         return 0
     for race in races:
         evidence = build_evidence(race, client)
