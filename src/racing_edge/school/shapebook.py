@@ -95,6 +95,24 @@ def build(raw: Path, min_n: int = 30):
     return {k: v for k, v in cells.items() if v["n"] >= min_n}
 
 
+def triage(c: dict) -> str:
+    """The master's glance, spoken (his word, 2026-08-30: "you need to get
+    to the point where you will read a race and say: oh I know this type,
+    it is best avoided — or this is the one where we will find a gem, or
+    get on the jolly"). Descriptive labels on the shape's own record —
+    thresholds present the data, they are not betting rules."""
+    decided = max(c["n"] - c["no_win"], 1)
+    fav = 100 * c["fav"] / decided
+    top3 = 100 * (c["fav"] + c["r2"] + c["r3"]) / decided
+    if fav >= 45 and top3 >= 85:
+        return "GET ON THE JOLLY — the fav is a good thing; don't get clever"
+    if top3 >= 78 and fav < 40:
+        return "GEM BEHIND THE JOLLY — front of market but often NOT the fav: 2nd-3rd fav hunting ground"
+    if top3 < 65:
+        return "BEST AVOIDED — lottery shape; never a nap, bandit water only"
+    return "FULL READ DECIDES — no strong shape prior"
+
+
 def render(cells: dict, raw: Path, min_n: int) -> str:
     total = sum(c["n"] for c in cells.values())
     lines = [
@@ -116,8 +134,8 @@ def render(cells: dict, raw: Path, min_n: int) -> str:
         "win lottery — the shape itself says pass or go bandit-hunting.",
         "",
         "| shape (type · class · field · fav) | n | fav% | 2nd fav% | "
-        "3rd fav% | top3% | outside% | med win SP |",
-        "|---|---|---|---|---|---|---|---|",
+        "3rd fav% | top3% | outside% | med win SP | THE GLANCE |",
+        "|---|---|---|---|---|---|---|---|---|",
     ]
     for key in sorted(cells, key=lambda k: -cells[k]["n"]):
         c = cells[key]
@@ -130,7 +148,7 @@ def render(cells: dict, raw: Path, min_n: int) -> str:
             f"| {code} · {cls} · {fld} · {fav} | {n} "
             f"| {100*c['fav']/decided:.0f} | {100*c['r2']/decided:.0f} "
             f"| {100*c['r3']/decided:.0f} | {100*top3/decided:.0f} "
-            f"| {100*c['out']/decided:.0f} | {med} |")
+            f"| {100*c['out']/decided:.0f} | {med} | {triage(c)} |")
     return "\n".join(lines) + "\n"
 
 
