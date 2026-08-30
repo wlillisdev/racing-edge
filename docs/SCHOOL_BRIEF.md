@@ -328,3 +328,25 @@ IS completeness. Therefore:
     USED or PASSED with the reason. In places races he is an automatic
     bandit candidate (rule 18-series). The read is never forced into the
     pick — it is forced into CONSIDERATION: no Blanco line, no verdict.
+
+23. **THE CALCULATED SHAPE — the race's shape chooses the bet's shape**
+    (the master, 2026-08-30, after nominating Inspired EW at 9/2-5/1 in
+    the banked Goodwood 2:00: "do you see my point about being
+    calculated better — in an open-ish race, with an e/w bet at 5/1 we
+    have a free bet if he places. less risk more reward." This is 4e's
+    each-way insurance grown into a standing law of bet construction):
+    at 5/1 with 1/5 place terms the place pays EVENS — the place half
+    refunds the ENTIRE each-way outlay, so the win half is a free bet.
+    That is the mathematical reason the bandit floor lives at 5/1@1/5:
+    it is the freeroll boundary, not an arbitrary number. The law: an
+    OPEN-ish race is where win-only bets die by variance (read it right,
+    beaten a head, lose everything — Pellitory 3rd at 11/1 beside four
+    dead win-lines) and ALSO where real cases drift to 5/1+ — the open
+    race hands you the price that makes its own insurance free. So: the
+    sheet's verdict now carries a mandatory BET SHAPE line — WIN or
+    EACH-WAY, chosen from the race's shape, in writing: anchored race /
+    solid-fav / candy shape and a case under ~4/1 → WIN (the place
+    return is rent, not insurance); open-ish shape and a case at 5/1+
+    (or 4/1+ at 1/4 terms) → EACH-WAY (the freeroll: less risk, more
+    reward); the in-between named honestly with the arithmetic shown.
+    No bet-shape line, no verdict.
