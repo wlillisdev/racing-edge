@@ -333,3 +333,20 @@ calculated line, named pre-off) ran THIRD — place at 4/1, the
 shape law's second frame of the day (with Rainbow Nebula 3rd at
 33/1). The master's scoreboard stands: his reads keep winning;
 the sitter's discipline holds only when he uses ALL of it.
+
+### THE PROPERLY-DONE CONTRAST (2026-08-30, Goodwood 3:10 G3):
+LIGHT OF DAWN WON at ~7/2 — the day's one telly-read winner, and the
+day's one COMPLETED read. The scoreboard that teaches: label-reads
+(JM Jungle crossed unread, Flash Harry crossed off a screenshot,
+Strike Red's stack never board-checked) went 0-for-3; the two reads
+done to the full floor this weekend (Alfred Wallace, Light Of Dawn)
+BOTH WON. Same brain, different process, opposite results. What the
+pulls changed: the card digits said 131 v 212 v 133 — near-identical;
+the RECORDS said Albany G3 form v fast-ground Listed fillies (#24:
+digits lie, company decides), and the GOING column — the exact
+column the master ordered strengthened after Pricewise — was
+DECISIVE: the only soft-proven filly beat two good-to-firm horses
+stepping up in class on ground they'd never touched. First major
+frank for going-first reading. The pace line found in the pulled
+comments (two confirmed front-runners = contested lead = the
+creeper's race) had the winning shape before the off.
