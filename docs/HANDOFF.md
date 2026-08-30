@@ -340,3 +340,78 @@ New-mark-first-run cohort receipts: Vaguely Royal, Molly Mac, Is She Now,
 Kanzi, Town Queen — 0-for-5 the week; winners at/below proven mark:
 Gallus Norman, Ecclefechan, Cape Toronada, Rikki Tiki Tavi. All of it
 lands in the live engine only when PR #69 merges.
+
+## 2026-08-29/30 weekend — the telly school (seven laws, two promoted edges, and the master's masterclass)
+
+Two live TV co-read days with the master; the heaviest teaching stretch
+of the apprenticeship. Everything below is on branch
+claude/resume-handoff-docs-ayas2r inside **PR #71 — the production 07:30
+engine has NONE of it until the master says "merge"** (Lane-3 gate, his
+key alone).
+
+**LAWS CUT (rulebook, all master-taught, all test-pinned, suite green):**
+- **5b THE YARDSTICK ON EVERY HORSE** (Sedgefield scar formalised): a rule
+  firing is where work starts; no horse unmeasured, no verdict.
+- **4f THE LONG TRAVELLER** ("I have seen this time and time again, it's
+  my law"): the van is intent; two-tier — full stack (lone raider +
+  in-form yard + jockey + clean money) = win candidate; bare trip =
+  frame nomination. Corroborator never selector; defers to #10 at quirky
+  tracks. Day-one receipts: Inspired WON SP 4/1 (full stack, beat the
+  duty pick); Rainbow Nebula 3rd, backed 33s->10s.
+- **4g THE BOOKIE'S GIFT AND THE FLIP-FLOP** (Cork): a bookmaker's BOOST
+  is the kiss of death (they boost what they want you on); a
+  flip-flopping fav is churn not conviction; market CHARACTER is asked
+  of the watcher, never inferred from two snapshots. Receipt: Catalina
+  15/8F (boosted, flip-flopping) 10th of 12.
+- **3i THE SPECIES QUESTION + THE MISMATCHED BOOKING** (Kokbastau+Itica,
+  "important lesson here"): figures are CEILINGS on exposed horses,
+  FLOORS on babies (<=5-6 runs); sharpest in sellers where every exposed
+  ceiling is known; champion jockey on the bottom-rated at a price = the
+  mismatch is the message; booking nominates, species decides. Receipt:
+  Itica WON SP 22/1, Murphy up, crossed by the sitter on perf 53.
+- **THE ZAVATERI GATE** (engine, "fix hole"): is_readable — Cl1-2 pattern
+  races enter the funnel across nap/brief/restudy/dissect; handicap
+  preference untouched; REVERT-IF first three pattern naps 0-for-3.
+  Born after Zavateri (four-question sweep, 6/4) won a G2 the
+  handicaps-only funnel never saw.
+
+**BRIEFS:** #22 Blanco line mandatory + AMENDMENT: the scan is PLURAL
+(all figures within ~4lb of top at a price, each judged on own facts —
+receipts were always 2nd-best figures: Fondo Blanco, Love Dynasty,
+Magny Cours WON 9/1 missed by the single-top scan). #23 THE CALCULATED
+SHAPE (open race + 5/1@1/5 = the freeroll boundary; bet-shape line
+mandatory; anchor: "best horse wins race"). #24 THE FLOOR OF A READ
+(a label is not a read; digits need COMPANY; UNREAD declared honestly).
+#25 NO CARD NO CALL + ASK THE BOARD (Flash Harry scar — crossed off a
+screenshot, won this race last year). **docs/TELLY_SHEET.md**: the
+mandatory 13-line form for every live co-read.
+
+**EDGES PROMOTED:** THE UNEXPOSED CARVE-OUT (two receipts, ledger's own
+bar: Kokbastau + Itica). Blanco read: 6 sightings, 4 ran to profile in
+48h. Traveller stack: Burke's Goodwood van went W-W-3rd on the day.
+
+**SCARS (named, append-only):** THE OVERRIDDEN CONVERGENCE (sum + stack
++ money all said Inspired; sitter paid an 11lb grade premium to
+disagree — when instruments converge, answer it in writing or yield);
+THE UNMEASURED RACE (Zavateri); repeat burns JM Jungle (v8b third burn
+— class-top crossed on a label) and Flash Harry (screenshot read);
+the pendulum fault (board promoted from dot to verdict at Cork).
+
+**THE RECORD, WEEKEND:** Duty 0-2 (Defence Minister 3rd 9/4; Principality
+4th 4/1 — winner Inspired was the sheet's own named danger,
+wrong_twin=1). Bandit column -8.8pts running. Telly column Sun 1-5
+(Light Of Dawn WON 7/2 — the one COMPLETED read; full-floor reads 2-0
+across the weekend, label reads 0-for-everything). ITV7 fun entry 2/7
+(Kinswoman 4/9, Light Of Dawn). MASTER'S COLUMN: +5.0pts (Inspired EW,
+his call, his stack) and telly reads near-flawless — Inspired, avoided
+Catalina (flip-flop+boost), named Magny Cours the system's horse.
+engine_override=1 (Sat: engine's Passing Diamond WON 8/15F while the
+sitter hand-picked elsewhere — ENGINE-FIRST for the chat lane proposed,
+master: "possibly a good approach", alignment logged at every settle).
+
+**OPEN:** PR #71 awaits the master's "merge" (all of the above + Fri/Sat
+work). Engine-side Blanco scan = promised surgical cut (his word given
+via "stop ignoring the blanco read" + "not dialled in"). Traveller
+mining run on the results corpus offered. GOING column now has its
+first major frank (Light Of Dawn). E8 watch: Victoria Night next run.
+Morning duty trigger unchanged; settle triggers self-managed per day.
