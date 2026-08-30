@@ -214,4 +214,28 @@ now exists and gets counted at every settle. PROPOSED for the
 master's word: the chat duty lane obeys the same engine-first
 mode as production — the sitter reads the engine's morning output
 before banking, and departs from its candidate only with the
-cited veto in writing.
+cited veto in writing. (The master, 2026-08-30: "ok possibly a
+good approach" — trialling from today; alignment logged at every
+settle, the override column decides.)
+
+### THE LONG TRAVELLER (the master, 2026-08-30: "longest traveller
+— are we looking at this?" — we were NOT; lens opened today)
+
+Nobody ships one horse 300 miles on a Sunday for exercise — the
+van is intent written on the card. The system holds
+trainer_location on every runner and has never read it; rule #10
+(local masters beat raiders at quirky tracks) is this coin's other
+face — travel is intent, local schooling is edge, both true at
+once: the lens NOMINATES, the case still gets built, and at a
+Cartmel-species track the local master still outranks the
+raider's diesel. TRIAL, sheet-level only: from today every sheet
+notes the field's longest traveller(s) and whether the case
+franks the trip. First live receipts to watch (2026-08-30,
+Goodwood 2:00, banked pre-off): Inspired — Burke, Coverham N
+Yorks → Goodwood ~280mi, hot yard, bottom weight, already the
+sheet's named danger (lens FRANKS); Rainbow Nebula — Fahey,
+Malton → Goodwood, but form 156500 (lens nominates, case says
+no — the contrast that will teach us what the lens is worth).
+Engine feature (needs a small course/yard distance table) waits
+for receipts across days and the master's word — surgical, not
+sledgehammer.
