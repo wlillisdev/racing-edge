@@ -289,6 +289,18 @@ signal is an argument; a case that must beat three agreeing
 signals had better be a fortress. Grade was not a fortress. Same
 flame, never twice.
 
+AND THE SECOND VAN (the master, minutes later: "Rainbow Nebula
+was third"): BOTH northern raiders hit the frame — Inspired
+(full stack) WON, Rainbow Nebula (trip WITHOUT form — the lens's
+own named contrast case, 33/1, form 156500) ran THIRD, outrunning
+his price by a street into a 6.6/1 place. The two-tier receipt,
+day one, one race: THE STACK WINS RACES; THE TRIP ALONE STILL
+OUTRUNS ITS PRICE. Which is precisely the master's original
+sizing — "in some cases... every case is different": the
+stacked raider is a win candidate, the bare raider is a frame/
+price candidate, never a crown. One race, receipts not law —
+the lens column keeps counting.
+
 THE LENS'S PLACE (the master, same morning, closing the loop):
 "in some cases... but let's say the form of your horse had the
 longest traveller profile also, I would be very interested. but
