@@ -350,3 +350,14 @@ IS completeness. Therefore:
     (or 4/1+ at 1/4 terms) → EACH-WAY (the freeroll: less risk, more
     reward); the in-between named honestly with the arithmetic shown.
     No bet-shape line, no verdict.
+
+    THE ANCHOR (the master, same conversation, before the ink dried):
+    "but always remember best horse wins race." The bet shape is
+    DOWNSTREAM of the read — #23 decides how to stake a case, never
+    what the case is. The selection question is still Rule One's, the
+    only one there is: who is the best horse. An each-way structure on
+    a horse you don't believe wins is frame-chasing — yesterday's
+    bandit graveyard (Swift Salian, the 'consistency' story, last of
+    the finishers); the shape only turns less-risk-more-reward when it
+    wraps a horse the yardstick already crowned. Find the best horse
+    first; then, and only then, let the race's shape set the stake.
