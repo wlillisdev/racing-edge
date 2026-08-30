@@ -257,7 +257,16 @@ live exam: Inspired ticks the stack (280mi, Burke 20%, Clifford
 Lee = the yard's man, ~5.5 second-line of the market; lone-raider
 status and live move OWED, not guessed) — and he is the sheet's
 named danger against Principality's form-top case. The 2:00
-settles the first receipt either way.
+settles the first receipt either way. CORRECTED same morning (the
+master: "now Inspired has form too, to be fair" — he does: 2-1-2
+above his mark every time, and the sheet's own weight sum leaned
+to him +3lb): the exam is NOT stack-vs-form — both have form.
+The true question banked on is GRADE (law 6a): Principality's
+southern Cl3 form bought at an 11lb premium against Inspired's
+northern Cl4/5 form plus the full traveller stack. If Inspired
+wins, the one-sentence error is already drafted: the grade tax
+was overpriced against a rolling improver whose own yard just
+paid 280 miles of diesel to say so.
 
 THE LENS'S PLACE (the master, same morning, closing the loop):
 "in some cases... but let's say the form of your horse had the
