@@ -328,3 +328,80 @@ IS completeness. Therefore:
     USED or PASSED with the reason. In places races he is an automatic
     bandit candidate (rule 18-series). The read is never forced into the
     pick — it is forced into CONSIDERATION: no Blanco line, no verdict.
+
+23. **THE CALCULATED SHAPE — the race's shape chooses the bet's shape**
+    (the master, 2026-08-30, after nominating Inspired EW at 9/2-5/1 in
+    the banked Goodwood 2:00: "do you see my point about being
+    calculated better — in an open-ish race, with an e/w bet at 5/1 we
+    have a free bet if he places. less risk more reward." This is 4e's
+    each-way insurance grown into a standing law of bet construction):
+    at 5/1 with 1/5 place terms the place pays EVENS — the place half
+    refunds the ENTIRE each-way outlay, so the win half is a free bet.
+    That is the mathematical reason the bandit floor lives at 5/1@1/5:
+    it is the freeroll boundary, not an arbitrary number. The law: an
+    OPEN-ish race is where win-only bets die by variance (read it right,
+    beaten a head, lose everything — Pellitory 3rd at 11/1 beside four
+    dead win-lines) and ALSO where real cases drift to 5/1+ — the open
+    race hands you the price that makes its own insurance free. So: the
+    sheet's verdict now carries a mandatory BET SHAPE line — WIN or
+    EACH-WAY, chosen from the race's shape, in writing: anchored race /
+    solid-fav / candy shape and a case under ~4/1 → WIN (the place
+    return is rent, not insurance); open-ish shape and a case at 5/1+
+    (or 4/1+ at 1/4 terms) → EACH-WAY (the freeroll: less risk, more
+    reward); the in-between named honestly with the arithmetic shown.
+    No bet-shape line, no verdict.
+
+    THE ANCHOR (the master, same conversation, before the ink dried):
+    "but always remember best horse wins race." The bet shape is
+    DOWNSTREAM of the read — #23 decides how to stake a case, never
+    what the case is. The selection question is still Rule One's, the
+    only one there is: who is the best horse. An each-way structure on
+    a horse you don't believe wins is frame-chasing — yesterday's
+    bandit graveyard (Swift Salian, the 'consistency' story, last of
+    the finishers); the shape only turns less-risk-more-reward when it
+    wraps a horse the yardstick already crowned. Find the best horse
+    first; then, and only then, let the race's shape set the stake.
+
+24. **THE FLOOR OF A READ — a label is not a read** (the master,
+    2026-08-30, after JM Jungle 5/2 won as the third class-top crossed
+    on a label: "why do this? you need to evaluate each horse properly,
+    this has happened a lot." The named disease: the sitter rations
+    depth by narrative — reads the horses already in his forming story
+    and LABELS the rest, and the labels land hardest on the horses that
+    threaten the story): every runner in every read — duty sheet, telly
+    read, bandit line, all of it — gets the FLOOR, minimum: (a) his
+    figures line (OR + perf); (b) his form digits WITH THEIR COMPANY —
+    digits are RELATIVE: never cite form figures as a cross without
+    knowing what class they were earned in (JM Jungle's 0-3-5-7 in
+    group company was a CV, not a cold streak); (c) a cross reason that
+    is a FACT from his record, never a bare label — "cold form",
+    "placer", "outclassed" are BANNED as standalone reasons; each must
+    be followed by the evidence or it doesn't count as measured. Where
+    time genuinely does not allow the floor for every horse, the read
+    says "UNREAD" against those names — an honest gap beats a fake
+    cross, and a verdict over unread horses is declared at reduced
+    confidence. Question-winners and the class-top keep their v8b
+    protection on top of the floor: full record, always. Depth leads
+    the story; the story never rations the depth.
+
+25. **NO CARD, NO CALL — and ASK THE BOARD** (the master, 2026-08-30,
+    2:35 Goodwood, after Flash Harry — crossed by the sitter as "cold
+    digits" off a pasted screenshot — was backed from 15/2 into strong
+    favourite and WON WELL, having won THIS VERY RACE last year; Ardisia
+    the protected class-top ran 2nd; the master: "it seems the exact
+    same as last race... are you even looking at this race?" It WAS the
+    exact same as last race — JM Jungle's lesson, the backed no-story
+    horse, repeated within the hour. The sitter's confession, verbatim
+    truth: he never pulled the card; he read a photograph of the
+    morning): TWO HARD RULES. (a) NO CARD, NO CALL: no selection box,
+    no verdict, on any race whose card the sitter has not pulled —
+    course flags, comments, and going form live in the card, not in a
+    screenshot; if there is no time to pull it, the reply is
+    OBSERVATIONS WITHOUT A SELECTION, said plainly. (b) ASK THE BOARD:
+    in a live TV co-read the master is sitting in front of the live
+    market — the one decisive fact a stale paste can never show. Before
+    any verdict in an open race, ask him: "who's being backed?" The
+    market line is never OWED when the man watching the board is the
+    one asking for the read. A crunched price on a no-story horse is
+    the layers' respect (4d, JM Jungle, Flash Harry — twice in one
+    hour) and it outranks a label every time.

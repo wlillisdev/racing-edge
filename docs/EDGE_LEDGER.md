@@ -214,4 +214,139 @@ now exists and gets counted at every settle. PROPOSED for the
 master's word: the chat duty lane obeys the same engine-first
 mode as production — the sitter reads the engine's morning output
 before banking, and departs from its candidate only with the
-cited veto in writing.
+cited veto in writing. (The master, 2026-08-30: "ok possibly a
+good approach" — trialling from today; alignment logged at every
+settle, the override column decides.)
+
+### THE LONG TRAVELLER (the master, 2026-08-30: "longest traveller
+— are we looking at this?" — we were NOT; lens opened today)
+
+Nobody ships one horse 300 miles on a Sunday for exercise — the
+van is intent written on the card. The system holds
+trainer_location on every runner and has never read it; rule #10
+(local masters beat raiders at quirky tracks) is this coin's other
+face — travel is intent, local schooling is edge, both true at
+once: the lens NOMINATES, the case still gets built, and at a
+Cartmel-species track the local master still outranks the
+raider's diesel. TRIAL, sheet-level only: from today every sheet
+notes the field's longest traveller(s) and whether the case
+franks the trip. First live receipts to watch (2026-08-30,
+Goodwood 2:00, banked pre-off): Inspired — Burke, Coverham N
+Yorks → Goodwood ~280mi, hot yard, bottom weight, already the
+sheet's named danger (lens FRANKS); Rainbow Nebula — Fahey,
+Malton → Goodwood, but form 156500 (lens nominates, case says
+no — the contrast that will teach us what the lens is worth).
+Engine feature (needs a small course/yard distance table) waits
+for receipts across days and the master's word — surgical, not
+sledgehammer.
+
+THE STACK (the master, same morning, verbatim): "sometimes if it
+is a stable in form, good jockey booking, and the market is
+positive, it often stacks up to a winner. but again every case is
+different. but a good trainer sending one horse a huge distance
+can be a good signal." So the lens has its checklist — the trip
+alone is NOTHING; it stacks when: (1) LONG TRIP, ideally a LONE
+raider (one horse in the van, not a yard's away-day — a good
+trainer's single shipment is the tell); (2) STABLE IN FORM (the
+14-day column); (3) GOOD JOCKEY BOOKED (the stable's proper man
+or better travelled with it — nobody books Buick for a day out);
+(4) MARKET POSITIVE (backed or firm — 4d: the layers' respect,
+never story-money). Every case still different — the stack
+NOMINATES with force, the sheet still builds the case. Today's
+live exam: Inspired ticks the stack (280mi, Burke 20%, Clifford
+Lee = the yard's man, ~5.5 second-line of the market; lone-raider
+status and live move OWED, not guessed) — and he is the sheet's
+named danger against Principality's form-top case. The 2:00
+settles the first receipt either way. CORRECTED same morning (the
+master: "now Inspired has form too, to be fair" — he does: 2-1-2
+above his mark every time, and the sheet's own weight sum leaned
+to him +3lb): the exam is NOT stack-vs-form — both have form.
+The true question banked on is GRADE (law 6a): Principality's
+southern Cl3 form bought at an 11lb premium against Inspired's
+northern Cl4/5 form plus the full traveller stack. If Inspired
+wins, the one-sentence error is already drafted: the grade tax
+was overpriced against a rolling improver whose own yard just
+paid 280 miles of diesel to say so.
+
+RESULT: INSPIRED WON at ~9/2 (the master's EW line, backed
+11/2->9/2; Oliver Show 2nd; official SP settle to follow). The
+pre-drafted sentence goes in the book verbatim. The master picked
+Inspired for his own ITV7 — his words, banked: "remember I am the
+master, you have a lot to learn. but let today be a lesson
+learned, this will stand to us long term."
+
+THE LESSON LEARNED (named scar: THE OVERRIDDEN CONVERGENCE):
+three independent instruments pointed at the same horse — the
+sheet's OWN weight sum (+3lb Inspired, objection recorded), the
+full traveller stack (van + hot yard + yard's man), and the live
+market (backed) — and the sitter overrode ALL THREE to pay an
+11lb premium for one story pillar (grade). The standing lesson,
+surgical form: when the sheet's own arithmetic AND two or more
+taught lenses converge on one rival, the verdict must ANSWER THE
+CONVERGENCE in writing — name why the single pillar outweighs
+the agreeing instruments — or yield to it. A case that beats one
+signal is an argument; a case that must beat three agreeing
+signals had better be a fortress. Grade was not a fortress. Same
+flame, never twice.
+
+AND THE SECOND VAN (the master, minutes later: "Rainbow Nebula
+was third"): BOTH northern raiders hit the frame — Inspired
+(full stack) WON, Rainbow Nebula (trip WITHOUT form — the lens's
+own named contrast case, 33/1, form 156500) ran THIRD, outrunning
+his price by a street into a 6.6/1 place. The two-tier receipt,
+day one, one race: THE STACK WINS RACES; THE TRIP ALONE STILL
+OUTRUNS ITS PRICE. Which is precisely the master's original
+sizing — "in some cases... every case is different": the
+stacked raider is a win candidate, the bare raider is a frame/
+price candidate, never a crown. One race, receipts not law —
+the lens column keeps counting.
+
+THE LENS'S PLACE (the master, same morning, closing the loop):
+"in some cases... but let's say the form of your horse had the
+longest traveller profile also, I would be very interested. but
+remember every horse gets the yardstick and don't be blinded by
+the shiny thing." So the lens is a CORROBORATOR, never a
+selector: its highest-value firing is when the horse that ALREADY
+wins the four questions also owns the traveller stack — then the
+van is the yard agreeing with our own read. It never crowns a
+horse the yardstick didn't; law 5b governs the lens like it
+governs everything: measure all, fall for none. The traveller
+line joins the sheet as a corroboration column beside yard/jockey
+/market — a dot that counts once, not a torch that blinds.
+
+### REPEAT BURN (2026-08-30, Beverley Bullet): THE LABEL CROSSED
+THE CLASS-TOP — AGAIN. JM Jungle (OR 108, class-top by 4lb, 5/2)
+WON; the sitter's telly read took him on via a "winless-in-six"
+label without pulling his record — the 0357 digits were almost
+certainly GROUP company, making him a class-dropper, the exact
+shape v8b protects and the exact case the sheet built for its own
+picks twice this week. Third burn of the same scar (Breaking
+Cover, Sovereign View, now JM Jungle). Named error: v8b applies
+to EVERY read including telly reads — no class-top is crossed
+without his record read in full; the history pull is never the
+economy to make, even at speed. Second error folded in: a
+short-priced horse with NO STORY is figures-money (the layers'
+respect, 4d) — story-money requires a story; and the crunched-fav
+suspicion belongs to big-field handicaps, not 8-runner pattern
+races. Receipt on the credit side: Badri 20/1 EW (the #23
+calculated line, named pre-off) ran THIRD — place at 4/1, the
+shape law's second frame of the day (with Rainbow Nebula 3rd at
+33/1). The master's scoreboard stands: his reads keep winning;
+the sitter's discipline holds only when he uses ALL of it.
+
+### THE PROPERLY-DONE CONTRAST (2026-08-30, Goodwood 3:10 G3):
+LIGHT OF DAWN WON at ~7/2 — the day's one telly-read winner, and the
+day's one COMPLETED read. The scoreboard that teaches: label-reads
+(JM Jungle crossed unread, Flash Harry crossed off a screenshot,
+Strike Red's stack never board-checked) went 0-for-3; the two reads
+done to the full floor this weekend (Alfred Wallace, Light Of Dawn)
+BOTH WON. Same brain, different process, opposite results. What the
+pulls changed: the card digits said 131 v 212 v 133 — near-identical;
+the RECORDS said Albany G3 form v fast-ground Listed fillies (#24:
+digits lie, company decides), and the GOING column — the exact
+column the master ordered strengthened after Pricewise — was
+DECISIVE: the only soft-proven filly beat two good-to-firm horses
+stepping up in class on ground they'd never touched. First major
+frank for going-first reading. The pace line found in the pulled
+comments (two confirmed front-runners = contested lead = the
+creeper's race) had the winning shape before the off.

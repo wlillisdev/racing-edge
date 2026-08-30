@@ -452,3 +452,19 @@ def test_law_5b_the_yardstick_on_every_horse() -> None:
             "light") in NAP_SYSTEM
     assert "trap bookies set" in NAP_SYSTEM
     assert "No horse unmeasured, no verdict" in NAP_SYSTEM
+
+
+def test_law_4f_the_long_traveller() -> None:
+    """The master's law (2026-08-30, banked the day he called Inspired home
+    at 9/2 off the full stack while the bare-trip raider framed at 33/1):
+    the van is intent written on the card — full stack = win candidate,
+    bare trip = frame nomination; corroborator never selector; defers to
+    #10 at quirky tracks."""
+    from racing_edge.study.morningread import NAP_SYSTEM
+    assert "THE LONG TRAVELLER" in NAP_SYSTEM
+    assert "I have seen this time and time again, it's my law" in NAP_SYSTEM
+    assert "good trainer sending one horse a huge distance" in NAP_SYSTEM
+    assert "CORROBORATOR, never a selector" in NAP_SYSTEM
+    assert "best horse wins race" in NAP_SYSTEM
+    assert ("don't let it blind you — check all horses") in NAP_SYSTEM
+    assert "never instead of measuring them" in NAP_SYSTEM
