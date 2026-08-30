@@ -482,3 +482,15 @@ def test_law_4g_the_bookies_gift_and_the_flipflop() -> None:
     assert "flip-flopping in the market" in NAP_SYSTEM
     assert "they boost what they want you on" in NAP_SYSTEM
     assert "ASKED of the person watching" in NAP_SYSTEM
+
+
+def test_law_3i_the_species_question() -> None:
+    """The master's word 2026-08-30 ('important lesson here'), twin receipts
+    Kokbastau + Itica: figures are ceilings on the exposed, floors on
+    babies; the mismatched champion booking nominates, the species
+    decides; class rider untouched for exposed profiles."""
+    from racing_edge.study.morningread import NAP_SYSTEM
+    assert "THE SPECIES QUESTION AND THE MISMATCHED BOOKING" in NAP_SYSTEM
+    assert "CEILINGS on exposed horses and FLOORS on babies" in NAP_SYSTEM
+    assert "nobody books the champ to finish seventh" in NAP_SYSTEM
+    assert "the booking NOMINATES, the species DECIDES" in NAP_SYSTEM
