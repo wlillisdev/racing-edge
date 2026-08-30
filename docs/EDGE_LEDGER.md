@@ -268,6 +268,27 @@ wins, the one-sentence error is already drafted: the grade tax
 was overpriced against a rolling improver whose own yard just
 paid 280 miles of diesel to say so.
 
+RESULT: INSPIRED WON at ~9/2 (the master's EW line, backed
+11/2->9/2; Oliver Show 2nd; official SP settle to follow). The
+pre-drafted sentence goes in the book verbatim. The master picked
+Inspired for his own ITV7 — his words, banked: "remember I am the
+master, you have a lot to learn. but let today be a lesson
+learned, this will stand to us long term."
+
+THE LESSON LEARNED (named scar: THE OVERRIDDEN CONVERGENCE):
+three independent instruments pointed at the same horse — the
+sheet's OWN weight sum (+3lb Inspired, objection recorded), the
+full traveller stack (van + hot yard + yard's man), and the live
+market (backed) — and the sitter overrode ALL THREE to pay an
+11lb premium for one story pillar (grade). The standing lesson,
+surgical form: when the sheet's own arithmetic AND two or more
+taught lenses converge on one rival, the verdict must ANSWER THE
+CONVERGENCE in writing — name why the single pillar outweighs
+the agreeing instruments — or yield to it. A case that beats one
+signal is an argument; a case that must beat three agreeing
+signals had better be a fortress. Grade was not a fortress. Same
+flame, never twice.
+
 THE LENS'S PLACE (the master, same morning, closing the loop):
 "in some cases... but let's say the form of your horse had the
 longest traveller profile also, I would be very interested. but
