@@ -17,6 +17,12 @@ No filled sheet, no call: observations only.)
 6. PACE              who leads, who presses — from run comments; if
                      unknown, the hole is NAMED
 7. MARK              raise/drop v last winning mark for the principals
+7b. FRANK            the pick's key form: have the re-runners from
+                     those races won/placed SINCE (form real) or
+                     flopped (form hollow)? (#5 — the engine prints
+                     this on every nap; the sitter's sheets now
+                     carry it too). Time-short = declared UNREAD,
+                     and an unfranked form-top is a weaker form-top
 8. THE TRAVELLER     longest trip in the field; stack boxes ticked or
                      not (4f); "quiet" is a valid entry — after checking
 9. THE BOARD         live market CHARACTER, asked of the master (#25,
