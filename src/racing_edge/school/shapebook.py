@@ -166,3 +166,58 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
+
+# --------------------------------------------------------------------------- #
+# THE GLANCE DECLINE GATE (the master, 2026-08-31, after the engine banked a
+# NOT-confident lean ranked 4th in the market inside a shape whose cell reads
+# top-3 94% — Play Me, Epsom 5:15, 4th; and, pressing the wound: "we need to
+# stop making these mistakes... it seems to be same old story"): 'declinable'
+# finally gets teeth. A LEAN-grade candidate is DECLINED — a named pass banks
+# instead — when the shape book's own record says the shape is against it.
+# Confident naps are never gated; a missing corpus or unknown cell gates
+# nothing (graceful: the book advises, absence of the book changes nothing).
+# --------------------------------------------------------------------------- #
+
+_CELLS_CACHE: dict | None = None
+
+
+def glance_for(code: str | None, rclass, n_priced: int, fav_sp,
+               raw: Path = Path("data/school/raw")):
+    """The book's cell for a live race, or None (unknown letter, thin cell,
+    corpus absent). code is the corpus letter: F/H/C/N."""
+    global _CELLS_CACHE
+    if not code or not fav_sp:
+        return None
+    try:
+        if _CELLS_CACHE is None:
+            _CELLS_CACHE = build(raw)
+        key = (code, _class_band(int(rclass or 0)), _field_band(n_priced),
+               _fav_band(float(fav_sp)))
+        c = _CELLS_CACHE.get(key)
+        if c is None:
+            return None
+        decided = max(c["n"] - c["no_win"], 1)
+        return {"cell": " · ".join(key), "n": c["n"],
+                "top3": round(100 * (c["fav"] + c["r2"] + c["r3"]) / decided),
+                "verdict": triage(c)}
+    except Exception:
+        return None
+
+
+def glance_decline(confident: bool, glance, nap_market_rank) -> str | None:
+    """The gate's decision, pure and pinnable: reason string = decline (bank a
+    named pass); None = no objection. Never fires on a confident nap."""
+    if confident or glance is None:
+        return None
+    if glance["verdict"].startswith("BEST AVOIDED"):
+        return (f"GLANCE DECLINE — the book calls this shape a lottery "
+                f"({glance['cell']}: top-3 wins only {glance['top3']}% over "
+                f"{glance['n']} races) and the candidate is a lean: a named "
+                f"pass beats a coin toss")
+    if glance["top3"] >= 78 and nap_market_rank and nap_market_rank > 3:
+        return (f"GLANCE DECLINE — front-of-market shape ({glance['cell']}: "
+                f"top-3 wins {glance['top3']}% over {glance['n']} races) and "
+                f"the lean is ranked {nap_market_rank} in the market: napping "
+                f"down the board fights the book's prior")
+    return None

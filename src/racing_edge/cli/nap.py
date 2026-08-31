@@ -970,6 +970,30 @@ def main() -> int:
     confident = ((deep_conf == "confident") if deep_case else c.confident) \
         and not off_profile and not c.flags and not c.cautions \
         and not frank_thin_deep and not cornered
+    # THE GLANCE DECLINE GATE (the master, 2026-08-31 — Play Me, 4th in the
+    # market inside a top-3-94% shape, banked as a "declinable" lean nobody
+    # declined: "we need to stop making these mistakes"): before a LEAN banks,
+    # the shape book gets a veto. Confident naps pass untouched; no book, no
+    # gate. A declined lean banks as a NAMED PASS — discipline is a position.
+    from racing_edge.school.shapebook import glance_decline, glance_for
+    _race_picks = sorted([p for p in field if p.race.race_id == r.race_id
+                          and p.price], key=lambda p: p.price)
+    _nap_rank = next((i + 1 for i, p in enumerate(_race_picks)
+                      if p.runner.horse_id == nap.runner.horse_id), None)
+    _code = {"Flat": "F"}.get(r.race_type) or \
+        ("H" if "Hurdle" in (r.race_type or "") else
+         "C" if "Chase" in (r.race_type or "") else None)
+    _glance = glance_for(_code, r.race_class, len(_race_picks),
+                         _race_picks[0].price if _race_picks else None)
+    _decline = glance_decline(confident, _glance, _nap_rank)
+    if _decline:
+        emit(f"\n  {_decline}")
+        emit(f"  candidate stood down: {nap.runner.horse} — {r.course} "
+             f"{r.off_time} (lean; the book's shape prior objected)")
+        _bank_pass(nap.race.date, _decline)
+        _maybe_email(out, f"Nap — named pass (glance decline): {r.course} "
+                     f"{r.off_time}", args.email)
+        return 0
     _ew = ew_advice(nap.price, r.field_size)
     if _ew:
         emit(f"  instrument: {_ew}")

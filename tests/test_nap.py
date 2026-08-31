@@ -988,3 +988,20 @@ def test_zavateri_gate_pattern_races_enter_the_funnel() -> None:
     # the record's home ground is untouched: a readable handicap still enters
     hcp = _race(race_class=4)
     assert hcp.is_readable
+
+
+def test_glance_decline_gate_gives_declinable_teeth() -> None:
+    """The master, 2026-08-31 (Play Me 4th in a top-3-94% shape; 'we need to
+    stop making these mistakes'): a lean in a front-of-market shape napped
+    below the market's top 3 is DECLINED; a lean in a lottery shape is
+    DECLINED; confident naps and unknown cells are never gated."""
+    from racing_edge.school.shapebook import glance_decline
+    front = {"cell": "F · Cl3-4 · 2-7 · fav<6/4", "n": 141, "top3": 94,
+             "verdict": "GET ON THE JOLLY — the fav is a good thing; don't get clever"}
+    lottery = {"cell": "F · Cl6+ · 8-11 · fav 6/4-3/1", "n": 204, "top3": 64,
+               "verdict": "BEST AVOIDED — lottery shape; never a nap, bandit water only"}
+    assert glance_decline(False, front, 4) is not None      # Play Me's shape
+    assert glance_decline(False, front, 2) is None          # front-of-market pick: fine
+    assert glance_decline(False, lottery, 1) is not None    # lean in a lottery: pass
+    assert glance_decline(True, front, 4) is None           # confident is never gated
+    assert glance_decline(False, None, 4) is None           # no book, no gate
