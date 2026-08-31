@@ -445,3 +445,26 @@ IS completeness. Therefore:
     column and teaches nothing, and pretending otherwise is how a
     streak gets mistaken for a system. Losses get Rule One; winners
     get this; nothing settles unexamined.
+
+27. **THE MASTER'S CLASSROOM — the new teaching** (the master,
+    2026-08-31, after the Cartmel 4:19 sitting: "this will be our new
+    teaching: you study race, I give you results and then comments,
+    you will learn a lot" — and his grade on that first sitting, banked
+    with it: "I feel we should have got this one"): the standing ritual,
+    three movements. (1) THE SITTING: the sitter studies a race
+    result-unseen — full telly sheet, every line, every unread named,
+    verdict graded, GIT-LOCKED before any result is sought or seen; the
+    lock is the proof. (2) THE RETURN: the master gives the result AND
+    the professional comments/analysis — the prose that holds what no
+    ratings column prints (refitted headgear, sixteen-wins-at-3m,
+    better-terms reversals, the owner's quote). (3) THE DOUBLE AUTOPSY:
+    the sitter first mines the RESULT for his own process faults (Rule
+    One / #26), then mines the COMMENTS for the race's truths — and the
+    two lists are compared: what the result taught about the sitter,
+    what the analysis taught about horses. Every lesson banks same
+    night. First sitting's receipt: Cartmel 4:19 — pick 2nd beaten 1L,
+    winner skipped on the sheet, SIX lessons banked in one evening
+    (5b fingerprint, 4f deferral misuse, unreads-decorate meta-lesson,
+    #24 conditions extension, E9 restoration trial, terms reversal).
+    The result grades the pick; the comments grade the reading; the
+    master grades both.
