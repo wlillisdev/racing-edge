@@ -519,3 +519,29 @@ IS completeness. Therefore:
     the jolly is often the trap). Small-sample honesty: a two-year
     roll REFINES a read, it never overrides the full sheet — the
     calibration law applies to race-DNA like everything else.
+
+30. **THE SIGNPOSTS INTAKE — a nightly stream, a fixed funnel** (the
+    master, 2026-08-31: "will we send this every evening to calibrate
+    and dial in, or is an overload likely to upset the system?" The
+    answer: nightly YES, through a capped intake — overload only harms
+    a system that lets inputs mint rules, and ours cannot). THE
+    PROTOCOL, three extracts and NOTHING else per evening PDF:
+    (a) STACKED NOMINATIONS — horses appearing in 2+ tables, pre-noted
+        for tomorrow's duty cross-check (nominations only; every one
+        owes the full sheet; the bots proved single-table angles are
+        priced in);
+    (b) DIFFERENTIALS — the trainer-conditioned tells we lack (gear
+        strike v overall, travel strike v overall, booking combos at
+        profit): these populate EXISTING lines — E9's whose-hand
+        clause, 4f's fifth box, the mismatched-booking tell — never
+        new lines;
+    (c) COLD-HOUSE CAUTIONS — dots, never walls (the bots' cold-yard
+        finding stands guard over that).
+    THE GUARDS: the PDF never adds a law or a sheet line directly —
+    any angle wanting rulehood queues for the bars or the word like
+    everything else; bots re-run only for a specific question, never
+    ritually (costs are real money). THE GRADE: signpost-stacked
+    nominations get their own settle column (strike + what the sheet
+    did with them); TRIAL PERIOD two weeks / ~50 nominations — if the
+    column adds nothing over engine+sheet, the intake drops to
+    weekends. Calibrated by receipts, like everything in this school.
