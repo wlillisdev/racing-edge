@@ -409,3 +409,29 @@ front-of-market or best-avoided becomes a NAMED PASS; a pass beats
 a 6/1 fourth. Alongside the standing engine-floor observation
 (Dapper Guest crossed on a stale-anchor label): the engine needs
 #24's floor and the book's glance — the two lessons of its Monday.
+
+### THE CARTMEL 4:19 MASTERCLASS (2026-08-31, the master's pasted
+analysis — "a lot of comments here to help you learn"): four lessons
+the bare result could not show. (1) #24 EXTENDED (the master's teach,
+via Caughtinyourtrance: the "red-hot last two" that anchored the
+solid-fav read contained a HURDLES win — today was fences, up in
+trip): DIGITS WITHOUT CONDITIONS ARE NOISE — the floor's company
+clause now reads company + CODE + TRIP + GOING; a streak that
+crossed codes is not the streak the digits show. (2) TRIAL EDGE E9 —
+THE SETUP RESTORATION (Tommie Beau: back up in trip + back to fences
++ cheekpieces REFITTED + the track he owns; 16 wins, every one a 3m+
+handicap; backed 11/2->4/1): when connections visibly rebuild a
+proven specialist's exact winning conditions across multiple card
+fields, the record's specialist outruns the ratings argument — the
+restoration IS the intent. Receipts: Tommie Beau WON 4/1; adjacent:
+Dapper Guest (cheekpieces, WON 9/2, 2026-08-31) — headgear-change
+winners on consecutive days. Status: WATCHING (promoted at two clean
+receipts or the word). (3) THE TERMS REVERSAL: "turned around recent
+course form with the second on 3lb better terms" — when today's
+field contains a horse RECENTLY BEATEN BY the pick, re-run that race
+at TODAY'S weight difference in the sum line; the reversal was
+arithmetic sitting inside a declared-unread column. (4) WIND SURGERY
+is a live column the card already carries (wind_surgery fields):
+Stratagem third op + consistent since; Fairlawn Flyer op + 55 days +
+crunched story-money = lame and last — the op-return + short-money
+combination is the 4d trap shape wearing a bandage.
