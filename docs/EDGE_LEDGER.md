@@ -451,3 +451,26 @@ card. CLASSROOM SCOREBOARD after two sittings: 1 win (Divilabother
 4/1), 1 second beaten 1L (Caughtinyourtrance 15/8F) — and ELEVEN
 lessons banked in one evening. The glance's receipts: three
 consecutive front-of-market exactas this weekend.
+
+### SITTING #2, THE COMMENTS MINED (the master's paste — the return's
+second half): (1) THE RECONCILIATION DUTY: the engine cautioned
+Divilabother "+12lb since last win" — the analysis says FOUR WINS
+FROM HIS LAST FIVE, "the thriving winner": when a caution contradicts
+the form string, the contradiction is a QUESTION to resolve, never
+two facts to hold — a +12 chased onto a serial winner is the
+handicapper losing the race with him (3g-ii at full scale: the raise
+lags a THRIVING horse; kin to dominance-answers-absence — raises tax
+fragile form, not rolling form; receipt banked to that family). (2)
+#24 GAINS "WHEN": Imperial Merlin's "won LTO" — my danger 1 — was
+WETHERBY IN MARCH, five months prior ("sharper for the outing"):
+digits without RECENCY are noise; the conditions clause is now
+company + code + trip + going + WHEN. (3) #24 code receipt again,
+same race: Al Sayah's LTO win was ON THE FLAT — flat form in a
+hurdle, and "weak in the betting" = E7 franked (drifted, beaten off).
+(4) WIND SURGERY, third receipt today: Kayf Dancer 2nd off op + 107
+days + STABLE DEBUT — three unknowns stacked on the SP favourite
+(hope-money shape), yet he ran WITH credit: the op is a VARIANCE
+marker, not a cross — it widens the error bars, both directions.
+Stable-debut noted as its own live column. (5) Belles Benefit
+led-and-folded: the placer label franked — the labels are often
+right; the law is they must be CHECKED, not that they are wrong.
