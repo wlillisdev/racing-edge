@@ -516,3 +516,56 @@ email line so no sitter's eye is needed to spot a visor at 7:30.
 (5) Cuzco's profile note: the "placer" label and a live PLACE case
 coexist — crossed for the WIN can still be named for the FRAME; the
 bandit door reads the crossed list too.
+
+### THE SIGNPOSTS RECONCILIATION (2026-08-31 night — the master's PDF
+of RP Signposts for Sept 1: "see if things reconcile, any edge etc").
+The Post runs HALF OUR RULEBOOK as standing daily tables — massive
+independent validation, and each table carries a refinement we lack:
+- TRAVELLERS' CHECK = law 4f, printed daily (200+ miles). THEIR
+  REFINEMENT: the trainer's far-traveller strike v his overall strike
+  — the DIFFERENTIAL grades the van (Perratt 12% travelling v 7%
+  overall = ships to win; Fahey 8% v 10% = travels worse). The 4f
+  stack gains a fifth box where data allows: does this yard WIN when
+  it travels?
+- TONGUE-TIED / CHEEKPIECES tables = the E9 gear scan, printed daily.
+  THEIR REFINEMENT: trainer's first-time-gear record v overall — gear
+  tells are TRAINER-SPECIFIC (Watson 1st-time tongue 25% v 11% all =
+  gear-positive yard; McEntee 0-6). E9's scan gains the same clause:
+  whose hand fits the gear.
+- HORSES FOR COURSES = 3h/#10; REPEAT PERFORMANCE = #29 per-horse
+  (they print each horse's record IN THIS EXACT RACE); RACE TRACE =
+  #29 trainer edition (yards that target the same race yearly —
+  Easterby: two of tomorrow's Ripon races are his annual targets).
+- HOT/COLD TRAINERS + TRAINERSPOT RTF = our 14-day% and trainer_rtf
+  fields — and their RTF definition is now DOCUMENTED for us: running
+  within 7lb of pre-race RPR (placing/beaten-distance fallbacks).
+- MONEY TALKS = 4d market memory (last-time gambles tracked forward);
+  TRAINER TRACE = the stable-debut column born TONIGHT off Kayf
+  Dancer — the Post tracks yard-switches with the new yard's
+  new-recruit record; HANDICAP DEBUT (15%+ yards) = the species
+  question's positive face; JOCKEY BOOKINGS at profit = the
+  mismatched-booking tell, quantified per combo.
+- COLD tables (out-of-form RTF, off-course trainers) = our cold-house
+  discounts, with receipts already: Attwater RTF 18 (Fresh Fade),
+  Appleby RTF 19.
+CONCLUSION: the professional dailies are built from the same deltas
+and intent tells the master has been teaching — the edges reconcile
+almost one-for-one; what the Post adds is PER-TRAINER CONDITIONING of
+each tell (gear/travel/booking strike v baseline), which is the next
+refinement layer for E9 and 4f when the word is given. TWO BOTS
+DISPATCHED on the corpus to test the testable angles (hot/cold
+trainer form; course form horse+trainer) — results to be reported
+and banked when they return.
+
+### SIGNPOST-STACKED HORSES FOR 2026-09-01 (pre-noted TONIGHT for
+tomorrow's duty cross-check — nominations only, every one still owes
+the full sheet): Variety Act (Wolv 6.20: Prescott hot 6-14 43% +
+27% with hcp debutants — TWO tables); Charlie Mason (Ripon 3.40:
+Carroll 3-3 100% in Ripon 3yo+ hcps + course-trainer 60% — two
+tables); Garden Oasis (Ripon 4.48: SEVEN course wins + Easterby has
+won the race 3 of last 15 — horse AND race-trace tables); Dion Baker
+(Brig 6.45: 4 course wins + Keenan/Wigham combo 75%); Khepri (Wolv
+6.55: Burke one-trick + Lee/Burke 50% course combo); Rye (Wolv 8.00:
+Ryan/Carroll 53%); Booziebrunch (Wolv 6.20: Fallon/Woods 4-6 67%).
+Cold-house cautions tomorrow: Menuisier 46 since a win, Tinkler 0-17
+RTF 18, Attwater, Appleby, Greenall & Guerriero RTF 10.
