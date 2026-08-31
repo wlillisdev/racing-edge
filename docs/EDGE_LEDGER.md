@@ -474,3 +474,19 @@ marker, not a cross — it widens the error bars, both directions.
 Stable-debut noted as its own live column. (5) Belles Benefit
 led-and-folded: the placer label franked — the labels are often
 right; the law is they must be CHECKED, not that they are wrong.
+
+### E9 DAY-ONE SCORE: 3-FOR-3, THE THIRD ONE OFFICIAL (2026-08-31,
+Cartmel 5:30): Achille Des Rocs WON 6/1, made all, FIRST-TIME VISOR —
+and the trainer told the stewards the improvement came from the
+visor: the gear tell, confirmed on the record by the yard itself.
+Tommie Beau (restoration) + Divilabother (gear key + new tongue tie)
++ Achille Des Rocs (gear key + first-time visor) — all winners, all
+today. And the day's second calibration lesson, cut from the miss
+(the sitter ranked ADR below a horse whose unknowns happened to be
+closed): UNREADS CAP THE GRADE, NEVER FLIP THE ORDER — ranking must
+come from the columns actually read; an unreadable arm is a caution
+on confidence, not a demotion of the horse; rewarding readability
+over quality is the tidy sheet's own shiny light. Sheet line 12
+amended by the master's grade ('looks like an EW bandit'): the
+bet-shape line must NAME the EW/bandit candidate or state 'none' —
+terms arithmetic without a name is decoration.
