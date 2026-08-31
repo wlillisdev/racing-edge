@@ -291,7 +291,9 @@ def evaluate_field(client: _Client, day: str = "today",
         # on every pick so the ranking puts the race before the horse.
         _dead = sum(1 for p in race_picks
                     if any(("cold form" in f) or ("no win in" in f)
-                           or ("STALE" in f) for f in p.conviction.flags))
+                           or ("STALE" in f)
+                           for f in (*p.conviction.flags,
+                                     *p.conviction.cautions)))
         rq = race_quality_score(is_handicap=race.is_handicap, concentration=conc,
                                 race_class=race.race_class,
                                 race_type=race.race_type or "",
