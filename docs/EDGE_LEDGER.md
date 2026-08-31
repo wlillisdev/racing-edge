@@ -389,3 +389,23 @@ the drift, E7). Second E7 dent of the day (Itica won drifting
 handicappers; today's two dents were lightly-raced types — the drift
 may be weaker evidence on horses the crowd cannot price confidently.
 The column counts; the bars or the master's word decide.
+
+### THE ODD RACE (2026-08-31, Epsom 5:15 — the master: "this was an
+odd race to pick also, any more learning?"): three observations
+banked, no swing. (1) THE GLANCE KNEW: the shape book's cell (flat
+Cl3-4, 2-7 runners, fav<6/4) says fav 55% / top-3 94% "don't get
+clever" — the fav lost but to the 2nd and 3rd market choices, and
+the engine's nap ran 4th in the market: napping down the board in a
+front-of-market shape fights a 94% prior. (2) SAMPLE IS NOT STRIKE:
+Boyle "36 from 438 at Epsom" = 8% — a resident, not a master; #10's
+definition is strike, and the readout's own real angle (EJH 18%/153,
+yard's No1) ran 2nd. A big sample dressed as an edge is a story
+wearing a statistic. (3) DECLINABLE NEEDS TEETH: the engine graded
+its own nap NOT confident and named the muddle risk that beat it —
+then production banked it anyway, because nothing ever declines.
+PROPOSED for the master's word (engine cut, PR queue): THE GLANCE
+DECLINE GATE — a lean-grade candidate in a shape the book calls
+front-of-market or best-avoided becomes a NAMED PASS; a pass beats
+a 6/1 fourth. Alongside the standing engine-floor observation
+(Dapper Guest crossed on a stale-anchor label): the engine needs
+#24's floor and the book's glance — the two lessons of its Monday.
