@@ -435,3 +435,19 @@ is a live column the card already carries (wind_surgery fields):
 Stratagem third op + consistent since; Fairlawn Flyer op + 55 days +
 crunched story-money = lame and last — the op-return + short-money
 combination is the 4d trap shape wearing a bandage.
+
+### E9 PROMOTED AT ITS OWN BAR (2026-08-31, two receipts in ONE DAY):
+THE SETUP RESTORATION — connections visibly rebuilding a proven
+horse's winning conditions across multiple card fields (trip/code
+restored, headgear refitted or KEY, new gear at the off, the track
+that fits) is INTENT written on the card; it nominates with force
+and the case still gets built. Receipts: TOMMIE BEAU WON 4/1
+(trip back + fences back + cheekpieces refitted + his song track,
+backed 11/2->4/1); DIVILABOTHER WON 4/1 (headgear key + FIRST-TIME
+tongue tie + local yard's setup, sitting pick, comfortable). Ledger
+rule satisfied (two receipts). Kin: 4f stack (the van is intent),
+E9 (the gear is intent) — both are the yard talking through the
+card. CLASSROOM SCOREBOARD after two sittings: 1 win (Divilabother
+4/1), 1 second beaten 1L (Caughtinyourtrance 15/8F) — and ELEVEN
+lessons banked in one evening. The glance's receipts: three
+consecutive front-of-market exactas this weekend.
