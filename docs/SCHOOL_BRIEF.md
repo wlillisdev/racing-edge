@@ -496,3 +496,26 @@ IS completeness. Therefore:
     horse whose deltas all point HOME (restoration) is E9's scan hit;
     a horse whose deltas all point AWAY (new trip, new code, raise,
     rust) is carrying every burden at once — and the sheet says which.
+
+29. **THE RACE'S OWN MEMORY — the past winners line** (the master,
+    2026-08-31: "past winners... will show you the shape of horse
+    that wins this previously — use this to help form the shape of
+    the winner"): annual named races are TARGETS — the same track,
+    trip, ground-season and prize keep selecting the same shape of
+    winner, and the roll of past winners is that shape written down:
+    age band, weight band, market slot, yard species, prep pattern.
+    It is the third memory layer and the most specific — the SHAPE
+    BOOK gives the species prior (thousands of races), the GLANCE
+    speaks it, and the PAST WINNERS roll gives THIS race's DNA. Where
+    the roll is available (the master's classroom pastes; the corpus
+    by course+race-name for repeat runnings), the sheet carries a
+    PAST WINNERS line: the recent winners' profile in one sentence,
+    and whether today's candidates fit it. First receipt, Furness RDA
+    H'cap Chase: 2025 Dexter 8yo 11-7 at 11/2; 2026 Achille Des Rocs
+    7yo 11-10 at 6/1 — two runnings, one shape: a 7-8yo under BIG
+    weight from the market's second line, never the fav — in low
+    grade the top weight is the class horse condescending, and this
+    race pays it (kin: Rule One, best horse wins race; notebook #2,
+    the jolly is often the trap). Small-sample honesty: a two-year
+    roll REFINES a read, it never overrides the full sheet — the
+    calibration law applies to race-DNA like everything else.
