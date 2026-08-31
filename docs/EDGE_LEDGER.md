@@ -569,3 +569,37 @@ won the race 3 of last 15 — horse AND race-trace tables); Dion Baker
 Ryan/Carroll 53%); Booziebrunch (Wolv 6.20: Fallon/Woods 4-6 67%).
 Cold-house cautions tomorrow: Menuisier 46 since a win, Tinkler 0-17
 RTF 18, Attwater, Appleby, Greenall & Guerriero RTF 10.
+
+### THE BOT REPORTS (2026-08-31 night — two agents, walk-forward, no
+lookahead, 2,727 races / 24,011 SP-priced runners; scripts scratchpad-
+only, repo untouched):
+| cell | n | strike% | ROI% |
+|---|---|---|---|
+| all runners (baseline) | 24,011 | 11.4 | -28.2 |
+| SP favourites (baseline) | 2,727 | ~36-37 | -5 to -11 |
+| HOT trainer (>=2 wins/14d) | 5,034 | 15.1 | -27.6 |
+| HOT strict (+>=20% strike) | 2,581 | 16.7 | -22.7 |
+| COLD trainer (>=25 runs since win) | 598 | 11.9 | -9.1 |
+| horse >=1 prior course win | 391 | 18.4 | -16.6 |
+| trainer course-master (Signposts' own bar) | 356 | 19.1 | -30.9 |
+| trainer off-course (20+ runs, 0 wins) | 33 | 15.2 | -14.0 |
+FINDINGS, honest: (1) THE TELLS ARE REAL, THE PRICES EAT THEM — hot
+yards and course winners genuinely lift strike (15-18% v 11.4%) but
+every publicly-printed table lands at negative ROI: the SP already
+contains the Signposts. Strike-lift is NOT edge. (2) THE COURSE-
+MASTER LABEL IS A CROWD MAGNET — worst ROI of every cell (-30.9%)
+despite a 19% strike: the market OVERBETS famous course trainers
+(tomorrow's Carroll-at-Ripon horses: nominated for reading, taxed at
+the price). (3) THE COLD-YARD SURPRISE (under bars, n=598, no rule):
+deep-cold trainers' runners win at BASELINE rate with the best ROI
+tested (-9.1%) — the market may over-punish cold yards; our
+cold-house CROSS is used as a discount dot, and this observation
+says keep it a dot, never a wall (tension logged, bars decide). (4)
+Baseline favs differ slightly between bots (joint-fav tie handling)
+— methodological variance noted. THE META-CONCLUSION, which is the
+master's own edge doctrine franked by our own record: the bookmaker
+prices the crowd's tables; the edges that survive are the ones
+requiring work the crowd won't do — trainer-CONDITIONED differentials
+(gear/travel per yard), the delta line, the live board's character,
+the classroom's read. Public signposts NOMINATE; they never pay by
+themselves.
