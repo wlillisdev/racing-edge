@@ -490,3 +490,29 @@ over quality is the tidy sheet's own shiny light. Sheet line 12
 amended by the master's grade ('looks like an EW bandit'): the
 bet-shape line must NAME the EW/bandit candidate or state 'none' —
 terms arithmetic without a name is decoration.
+
+### SITTING #3, COMMENTS MINED — HOW WE IMPROVE (the master: "how do
+we learn and improve from this?"): (1) E9 BECOMES A SCAN, NOT A TAG
+(the plural-Blanco lesson repeated on the new edge): this one 6-run
+Cl5 held THREE restoration profiles — ADR (trip back + fences back +
+v1, WON), Cuzco (headgear change + CAREER-LOW mark + all wins at this
+track, 3rd), Wearelongterm (refitted cheekpieces + trip back, in
+contention when hampered, 22/1). The sheet's E9 line now sweeps EVERY
+runner's gear/trip/code changes and names them all, then ranks — the
+card's own fields (headgear, headgear_run, wind_surgery, distance v
+winning distance) make the sweep mechanical. (2) THE MISS QUANTIFIED
+(honesty pricing): ADR named as the EW bandit line per the master's
+read = 1pt EW at 6/1 (2pl 1/4) = +7.5pts; the sheet computed the
+terms and named nobody. (3) THORNER'S CAVEAT BANKED WITH THE RECEIPT
+("had the run of things... wouldn't be certain to back this up"):
+E9's third receipt was flattered by the 9th-fence chaos — the column
+keeps counting, the edge is not a super-law after one golden day
+(calibration law; and his next-run is a WATCH, not an auto-follow).
+(4) ENGINE PROPOSAL (the queue, the master's word): THE E9 DETECTOR —
+first-time/refitted gear (headgear_run==1 or gear returning after
+absence), trip/code restored to winning conditions — is computable
+from fields the card already carries; wire it as an aligned dot +
+email line so no sitter's eye is needed to spot a visor at 7:30.
+(5) Cuzco's profile note: the "placer" label and a live PLACE case
+coexist — crossed for the WIN can still be named for the FRAME; the
+bandit door reads the crossed list too.
