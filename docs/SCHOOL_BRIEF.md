@@ -468,3 +468,31 @@ IS completeness. Therefore:
     #24 conditions extension, E9 restoration trial, terms reversal).
     The result grades the pick; the comments grade the reading; the
     master grades both.
+
+28. **THE DELTA LINE — build the picture like the Post** (the master,
+    2026-08-31, after three classroom sittings: "see the comments I
+    give you — the Racing Post analysis is based on information you
+    have at your fingertips. see the way they build the picture"):
+    every Thorner comment is the same recipe, and every clause of it
+    is a field we already hold — the analyst narrates THE DELTAS:
+    what is DIFFERENT about today versus the horse's recent past and
+    versus his winning profile. So every runner on every sheet now
+    gets a DELTA LINE, one sentence, built mechanically from the card:
+    trip Δ (distance_f v his record and v his winning trips) · code Δ
+    (race_type v his record) · gear Δ (headgear + headgear_run: new /
+    refitted / changed / off) · days Δ (last_run; freshener or rust)
+    · surgery (wind_surgery + runs since) · yard Δ (prev_trainers =
+    stable debut) · mark Δ (OR v last winning mark AND v career range
+    — career-low is a delta) · terms Δ (v any rival from a shared
+    recent race, in pounds) · course/track record. The delta line IS
+    half the rulebook run as one sweep — E9 lives in the gear/trip/
+    code deltas, #24's conditions in the code/when deltas, the terms
+    reversal in the terms delta, the freshener and species questions
+    in days and career-shape — which is WHY the Post's paragraph
+    reads like our laws: the laws were always deltas. THE STANDARD:
+    if the Racing Post can write the sentence after the race from
+    fingertip data, the sheet writes it BEFORE the race from the same
+    data. A runner with no delta line has not been read (#24). A
+    horse whose deltas all point HOME (restoration) is E9's scan hit;
+    a horse whose deltas all point AWAY (new trip, new code, raise,
+    rust) is carrying every burden at once — and the sheet says which.
