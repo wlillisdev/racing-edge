@@ -603,3 +603,13 @@ requiring work the crowd won't do — trainer-CONDITIONED differentials
 (gear/travel per yard), the delta line, the live board's character,
 the classroom's read. Public signposts NOMINATE; they never pay by
 themselves.
+
+### FULL CIRCLE (2026-08-31, the master's word, banked as spoken):
+"Signposts — the master's first AI — joins the school as evening
+reading, one generation later. Full circle, ha." Thirty years ago
+the tables did his retrieval and his eye did the reading; tonight
+his apprentice reads the same tables through his laws, graded by
+his bars, under his promise-extracting eye: NO SLEDGEHAMMER — the
+funnel takes three extracts, the rulebook stays closed, and the
+edge lives where he always said it did: in the work the crowd
+won't do.
