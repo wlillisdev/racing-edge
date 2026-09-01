@@ -53,6 +53,23 @@ def _best_floor_fit(survivors, field):
     return None
 
 
+def _git_stamp() -> str:
+    """The running code, named in the email itself (the master, 2026-09-01:
+    'how do I know this is pushed and will actually run?') — the box pulls
+    main before every task, and this line is the receipt: the sha printed
+    in the email IS the commit that picked. Never crashes a run."""
+    try:
+        import subprocess
+        from pathlib import Path
+        sha = subprocess.run(
+            ["git", "rev-parse", "--short", "HEAD"], capture_output=True,
+            text=True, timeout=5,
+            cwd=Path(__file__).resolve().parent).stdout.strip()
+        return f"\n\nengine code: {sha}" if sha else ""
+    except Exception:
+        return ""
+
+
 def _maybe_email(buf: list[str], subject: str, email: bool) -> None:
     """Email the buffered output if --email was set. Never crashes the run."""
     if not email:
@@ -61,7 +78,8 @@ def _maybe_email(buf: list[str], subject: str, email: bool) -> None:
     if not configured():
         print("  (--email set, but EMAIL_SENDER/PASSWORD/RECIPIENT aren't in the env — not sent)")
         return
-    ok = send(subject, "\n".join(buf), title=subject, subtitle="racing-edge form trial")
+    ok = send(subject, "\n".join(buf) + _git_stamp(), title=subject,
+              subtitle="racing-edge form trial")
     # the delivery VERDICT, verified in the mailbox itself — not just 'sent'
     print(f"  email to {recipient() or '?'}: {ok if ok else 'FAILED — check the SMTP env'}")
 

@@ -1037,3 +1037,15 @@ def test_race_quality_shape_book_steers_race_selection() -> None:
     assert jolly == race_quality_score(
         is_handicap=True, concentration=0.80, race_class=4, race_type="Flat",
         field_size=6, n_race_flags=0) + 1
+
+
+def test_git_stamp_names_the_running_commit() -> None:
+    """The master, 2026-09-01: 'how do I know this is pushed and will
+    actually run?' — every email now carries the sha of the code that
+    picked. The stamp must match the repo's actual HEAD and never crash."""
+    import subprocess
+    from racing_edge.cli.nap import _git_stamp
+    stamp = _git_stamp()
+    head = subprocess.run(["git", "rev-parse", "--short", "HEAD"],
+                          capture_output=True, text=True).stdout.strip()
+    assert head and f"engine code: {head}" in stamp
