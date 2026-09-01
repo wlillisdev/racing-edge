@@ -635,3 +635,30 @@ master pasted: 4/11F, 13/8, 4/1 — three years, all front of market):
 the roll REFINES, never overrides — it says IF this race is played,
 play the front of the market; Mr Cool at 2nd fav at least obeys the
 roll. The cell says a LEAN was never enough to play it at all.
+
+SETTLED same night (master pasted full result, ~20:00): Brighton 7:15
+— 1st Diomed Spirit 2/1J (the engine's OWN NAMED DANGER), 2nd Bona
+Fortuna 5/2, 3rd Mr Cool 2/1J btn 2¼L. The nap LOST; the gate's
+pre-registered DECLINE is franked on its first live night — and the
+gate was merged to main (PR #77) BEFORE the result was known, so
+tomorrow's 07:30 is already the engine that declines. Autopsies:
+ · RULE ONE (why the winner was best): Diomed Spirit was the only
+   course-proven front-of-market horse — won here off 55, giant 2nd
+   here off 58 caught on the line, receiving 13lb from Mr Cool, form
+   arrow up (636212). At Brighton — sharp, undulating, a specialist's
+   track — course mastery beat 13lb of paper class. Our own email
+   HELD every fact: Diomed course line 1W+1P, Mr Cool course line
+   "—" and the deep read's own OWED admitted his Brighton fitness
+   was "an inference, not a proven fact". The read outweighed its
+   own declared unknown — same family as the unreads-cap-grade scar.
+ · THE STORY THAT LOST: "he keeps getting caught" was a narrative
+   against the danger; the fact pattern (course wins, form direction,
+   13lb pull) was the horse. Stories don't beat weight-for-course.
+ · MKT-MOVE lesson: Mr Cool was BACKED 5/2 → 2/1J (touched 7/4) —
+   the owed move arrived, went WITH the nap, and the nap still lost.
+   A move is a tell to weigh, never a verdict (4g cuts both ways).
+ · #29 ROLL EXTENDS: fourth straight year the winner comes from the
+   front of the market in this race (2/1J joins 4/11F, 13/8, 4/1).
+ · GRADE THE GATE HONESTLY: the decline is right because a LEAN in a
+   65% cell was a bad BET, not because the coin landed tails — the
+   grade would stand even had Mr Cool won. Column continues.
