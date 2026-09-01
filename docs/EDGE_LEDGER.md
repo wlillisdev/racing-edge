@@ -613,3 +613,25 @@ his bars, under his promise-extracting eye: NO SLEDGEHAMMER — the
 funnel takes three extracts, the rulebook stays closed, and the
 edge lives where he always said it did: in the work the crowd
 won't do.
+
+### THE GATE'S FIRST LIVE VERDICT — pre-registered before the result
+(2026-09-01, ~19:40 BST, Brighton 7:15 just off, result NOT known here)
+The production engine (main, pre-PR#71) napped Mr Cool — Brighton
+7:15, Cl5 5½f handicap, 2nd fav 5/2, graded by its own mouth "NOT
+confident (declinable)". The master, past-winners tab in hand: "but
+why did you pick such a race??????" Ran the banked candidate through
+the NEW engine's glance gate with the race's actual numbers (F, Cl5,
+6 priced, fav 3.05):
+  CELL: F · Cl5 · 2-7 · fav 6/4-3/1 — n=68, top-3 65%,
+        BEST AVOIDED — lottery shape; never a nap, bandit water only
+  GATE: GLANCE DECLINE — a named pass beats a coin toss.
+The new engine DECLINES this nap at 07:30. Production could not: the
+shape book, the decline gate, all of last week's cuts sit in PR #71
+awaiting the master's merge. Verdict registered pre-result so the
+settle grades the GATE, not the outcome: if Mr Cool won, that is one
+coin landing heads inside a 65% cell — the gate's grade accrues over
+its column, never one night. Race DNA cross-check (#29, the roll the
+master pasted: 4/11F, 13/8, 4/1 — three years, all front of market):
+the roll REFINES, never overrides — it says IF this race is played,
+play the front of the market; Mr Cool at 2nd fav at least obeys the
+roll. The cell says a LEAN was never enough to play it at all.
