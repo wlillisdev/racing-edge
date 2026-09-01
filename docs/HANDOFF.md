@@ -134,7 +134,8 @@ every policy must beat.
   reading. He teaches by short corrections, pasted race results, and blunt
   verdicts. Paper stakes ONLY until the record proves profit.
 - **The system** — `racing_edge` on PythonAnywhere (`/home/v5racing/
-  racing_edge`, user v5racing), branch `claude/tender-wright-kbn1h6`.
+  racing_edge`, user v5racing), branch `main` (since 2026-08-18, "one
+  brain": the box pulls main before every task — a merge IS a deploy).
   Scheduled UTC: 07:30 nap · 09:30 health · 12:30 guard · 22:00 night
   (settle+study; Sunday adds synthesis). Two emails/day are the interface.
 
