@@ -15,6 +15,7 @@ from dataclasses import dataclass, replace
 from racing_edge.data.evidence import build_evidence
 from racing_edge.data.normalise import racecards_from_raw
 from racing_edge.domain.models import Race, Runner
+from racing_edge.school.shapebook import glance_for
 from racing_edge.selection.conviction import Conviction, conviction
 
 
@@ -40,7 +41,8 @@ class NapPick:
 def race_quality_score(*, is_handicap: bool, concentration: float,
                        race_class: int | None, race_type: str,
                        field_size: int, n_race_flags: int,
-                       is_aw: bool = False, hollow: bool = False) -> int:
+                       is_aw: bool = False, hollow: bool = False,
+                       shape_verdict: str | None = None) -> int:
     """THE BETTING-RACE FINGERPRINT (the master, 2026-08-17: 'we need to give
     ourself the best chance of winning consistently... lets go'), every term
     receipted by the 1,978-race study of that date:
@@ -76,6 +78,24 @@ def race_quality_score(*, is_handicap: bool, concentration: float,
     # -10.0% vs -6.6%): the surface itself taxes readability.
     q -= 1 if is_aw else 0
     q -= n_race_flags
+    # THE SHAPE BOOK JOINS RACE SELECTION (the master, 2026-09-01: "we are
+    # still selecting wrong type and shape of race — you have picked enough
+    # losers to find the right type of race"). Until tonight the book only
+    # vetoed at the end (glance decline gate); the race-picker itself never
+    # consulted it — which is how a BEST-AVOIDED Cl5 sprint (Mr Cool, 3rd)
+    # outranked the race holding the day's 8/11 winner (Yes I'm Mali, whose
+    # cell read FULL READ DECIDES). The book's own record now votes where
+    # the race is chosen: a front-of-market shape (GET ON THE JOLLY / GEM,
+    # top-3 >= 78% over 30+ races) is the fingerprint's friend; a lottery
+    # shape (BEST AVOIDED, top-3 < 65%) is penalised harder than any single
+    # bonus can buy back. No cell, no vote — the book advises, absence of
+    # the book changes nothing. The decline gate stays as the backstop.
+    # REVERT-IF: a week of shape-steered picks reads worse than the old key.
+    if shape_verdict:
+        if shape_verdict.startswith(("GET ON THE JOLLY", "GEM")):
+            q += 1
+        elif shape_verdict.startswith("BEST AVOIDED"):
+            q -= 2
     return q
 
 
@@ -294,13 +314,18 @@ def evaluate_field(client: _Client, day: str = "today",
                            or ("STALE" in f)
                            for f in (*p.conviction.flags,
                                      *p.conviction.cautions)))
+        _code = {"Flat": "F"}.get(race.race_type) or \
+            ("H" if "Hurdle" in (race.race_type or "") else
+             "C" if "Chase" in (race.race_type or "") else None)
+        _glance = glance_for(_code, race.race_class, len(race_picks), fav)
         rq = race_quality_score(is_handicap=race.is_handicap, concentration=conc,
                                 race_class=race.race_class,
                                 race_type=race.race_type or "",
                                 field_size=len(race_picks),
                                 n_race_flags=len(race_flags),
                                 is_aw="(AW)" in (race.course or ""),
-                                hollow=_dead * 2 > len(race_picks))
+                                hollow=_dead * 2 > len(race_picks),
+                                shape_verdict=(_glance or {}).get("verdict"))
         race_picks = [replace(p, race_quality=rq) for p in race_picks]
         out.extend(race_picks)
     if oddsless and progress:

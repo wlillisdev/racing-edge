@@ -1005,3 +1005,35 @@ def test_glance_decline_gate_gives_declinable_teeth() -> None:
     assert glance_decline(False, lottery, 1) is not None    # lean in a lottery: pass
     assert glance_decline(True, front, 4) is None           # confident is never gated
     assert glance_decline(False, None, 4) is None           # no book, no gate
+
+
+def test_race_quality_shape_book_steers_race_selection() -> None:
+    """The master, 2026-09-01: 'we are still selecting wrong type and shape
+    of race — you have picked enough losers to find the right type of race.'
+    Fixture is that day's own card: Brighton 7:15 (Cl5 sprint, 6 ran, conc
+    0.80 — cell BEST AVOIDED; nap Mr Cool 3rd) outranked Ripon 3:40 (Cl4,
+    10 ran — cell FULL READ DECIDES; Yes I'm Mali WON 8/11). With the book
+    voting where the race is chosen, the order inverts. No cell = no vote."""
+    from racing_edge.pipeline.nap import race_quality_score
+    brighton = race_quality_score(
+        is_handicap=True, concentration=0.80, race_class=5, race_type="Flat",
+        field_size=6, n_race_flags=0,
+        shape_verdict="BEST AVOIDED — lottery shape; never a nap")
+    ripon = race_quality_score(
+        is_handicap=True, concentration=0.70, race_class=4, race_type="Flat",
+        field_size=10, n_race_flags=0,
+        shape_verdict="FULL READ DECIDES — no strong shape prior")
+    assert ripon > brighton, "the 8/11 winner's race must outrank the lottery"
+    # BEST AVOIDED costs more than the concentration bonus bought (-2 v +1)
+    no_book = race_quality_score(
+        is_handicap=True, concentration=0.80, race_class=5, race_type="Flat",
+        field_size=6, n_race_flags=0, shape_verdict=None)
+    assert brighton == no_book - 2
+    # a front-of-market cell is the fingerprint's friend (+1)
+    jolly = race_quality_score(
+        is_handicap=True, concentration=0.80, race_class=4, race_type="Flat",
+        field_size=6, n_race_flags=0,
+        shape_verdict="GET ON THE JOLLY — the fav is a good thing")
+    assert jolly == race_quality_score(
+        is_handicap=True, concentration=0.80, race_class=4, race_type="Flat",
+        field_size=6, n_race_flags=0) + 1
