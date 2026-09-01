@@ -494,3 +494,32 @@ def test_law_3i_the_species_question() -> None:
     assert "CEILINGS on exposed horses and FLOORS on babies" in NAP_SYSTEM
     assert "nobody books the champ to finish seventh" in NAP_SYSTEM
     assert "the booking NOMINATES, the species DECIDES" in NAP_SYSTEM
+
+
+def test_law_5c_the_sitting_floor() -> None:
+    """The master's word 2026-09-01 ('terrible read, learn from this' ->
+    'fix it', the Wakeman Stayers: a 2m Cl6 ordered as a sprint on a sheet
+    holding neither trip nor class nor favourite; the winner stood in the
+    sitter's own crossed-off list): no order without class + distance +
+    favourite — missing any one, the read is a NAMED PASS."""
+    from racing_edge.study.morningread import NAP_SYSTEM
+    assert "THE SITTING FLOOR" in NAP_SYSTEM
+    assert "cannot read this race from here" in NAP_SYSTEM
+    assert "A named gap is a stop sign, never a licence" in NAP_SYSTEM
+
+
+def test_sitting_floor_blocks_when_any_leg_missing() -> None:
+    """2026-09-01 fixture, both directions: the Wakeman sitting (class None,
+    distance unknown, fav unnamed) must be a NAMED PASS; the same race fully
+    sighted must pass the floor. Blank strings count as not held."""
+    from racing_edge.school.sitting import sitting_floor
+    # the exact failing sitting: nothing held -> wall up, all three named
+    wall = sitting_floor(None, None, None)
+    assert wall is not None and "NAMED PASS" in wall
+    assert "class" in wall and "distance" in wall and "favourite" in wall
+    # one leg missing is enough — the unnamed favourite alone blocks
+    assert sitting_floor(6, "2m", None) is not None
+    assert sitting_floor(6, "", "Si White") is not None      # blank != held
+    assert sitting_floor(None, "2m", "Si White") is not None
+    # fully sighted -> the read may proceed
+    assert sitting_floor(6, "2m", "Si White") is None
