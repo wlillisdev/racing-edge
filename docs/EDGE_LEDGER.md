@@ -389,3 +389,249 @@ the drift, E7). Second E7 dent of the day (Itica won drifting
 handicappers; today's two dents were lightly-raced types — the drift
 may be weaker evidence on horses the crowd cannot price confidently.
 The column counts; the bars or the master's word decide.
+
+### THE ODD RACE (2026-08-31, Epsom 5:15 — the master: "this was an
+odd race to pick also, any more learning?"): three observations
+banked, no swing. (1) THE GLANCE KNEW: the shape book's cell (flat
+Cl3-4, 2-7 runners, fav<6/4) says fav 55% / top-3 94% "don't get
+clever" — the fav lost but to the 2nd and 3rd market choices, and
+the engine's nap ran 4th in the market: napping down the board in a
+front-of-market shape fights a 94% prior. (2) SAMPLE IS NOT STRIKE:
+Boyle "36 from 438 at Epsom" = 8% — a resident, not a master; #10's
+definition is strike, and the readout's own real angle (EJH 18%/153,
+yard's No1) ran 2nd. A big sample dressed as an edge is a story
+wearing a statistic. (3) DECLINABLE NEEDS TEETH: the engine graded
+its own nap NOT confident and named the muddle risk that beat it —
+then production banked it anyway, because nothing ever declines.
+PROPOSED for the master's word (engine cut, PR queue): THE GLANCE
+DECLINE GATE — a lean-grade candidate in a shape the book calls
+front-of-market or best-avoided becomes a NAMED PASS; a pass beats
+a 6/1 fourth. Alongside the standing engine-floor observation
+(Dapper Guest crossed on a stale-anchor label): the engine needs
+#24's floor and the book's glance — the two lessons of its Monday.
+
+### THE CARTMEL 4:19 MASTERCLASS (2026-08-31, the master's pasted
+analysis — "a lot of comments here to help you learn"): four lessons
+the bare result could not show. (1) #24 EXTENDED (the master's teach,
+via Caughtinyourtrance: the "red-hot last two" that anchored the
+solid-fav read contained a HURDLES win — today was fences, up in
+trip): DIGITS WITHOUT CONDITIONS ARE NOISE — the floor's company
+clause now reads company + CODE + TRIP + GOING; a streak that
+crossed codes is not the streak the digits show. (2) TRIAL EDGE E9 —
+THE SETUP RESTORATION (Tommie Beau: back up in trip + back to fences
++ cheekpieces REFITTED + the track he owns; 16 wins, every one a 3m+
+handicap; backed 11/2->4/1): when connections visibly rebuild a
+proven specialist's exact winning conditions across multiple card
+fields, the record's specialist outruns the ratings argument — the
+restoration IS the intent. Receipts: Tommie Beau WON 4/1; adjacent:
+Dapper Guest (cheekpieces, WON 9/2, 2026-08-31) — headgear-change
+winners on consecutive days. Status: WATCHING (promoted at two clean
+receipts or the word). (3) THE TERMS REVERSAL: "turned around recent
+course form with the second on 3lb better terms" — when today's
+field contains a horse RECENTLY BEATEN BY the pick, re-run that race
+at TODAY'S weight difference in the sum line; the reversal was
+arithmetic sitting inside a declared-unread column. (4) WIND SURGERY
+is a live column the card already carries (wind_surgery fields):
+Stratagem third op + consistent since; Fairlawn Flyer op + 55 days +
+crunched story-money = lame and last — the op-return + short-money
+combination is the 4d trap shape wearing a bandage.
+
+### E9 PROMOTED AT ITS OWN BAR (2026-08-31, two receipts in ONE DAY):
+THE SETUP RESTORATION — connections visibly rebuilding a proven
+horse's winning conditions across multiple card fields (trip/code
+restored, headgear refitted or KEY, new gear at the off, the track
+that fits) is INTENT written on the card; it nominates with force
+and the case still gets built. Receipts: TOMMIE BEAU WON 4/1
+(trip back + fences back + cheekpieces refitted + his song track,
+backed 11/2->4/1); DIVILABOTHER WON 4/1 (headgear key + FIRST-TIME
+tongue tie + local yard's setup, sitting pick, comfortable). Ledger
+rule satisfied (two receipts). Kin: 4f stack (the van is intent),
+E9 (the gear is intent) — both are the yard talking through the
+card. CLASSROOM SCOREBOARD after two sittings: 1 win (Divilabother
+4/1), 1 second beaten 1L (Caughtinyourtrance 15/8F) — and ELEVEN
+lessons banked in one evening. The glance's receipts: three
+consecutive front-of-market exactas this weekend.
+
+### SITTING #2, THE COMMENTS MINED (the master's paste — the return's
+second half): (1) THE RECONCILIATION DUTY: the engine cautioned
+Divilabother "+12lb since last win" — the analysis says FOUR WINS
+FROM HIS LAST FIVE, "the thriving winner": when a caution contradicts
+the form string, the contradiction is a QUESTION to resolve, never
+two facts to hold — a +12 chased onto a serial winner is the
+handicapper losing the race with him (3g-ii at full scale: the raise
+lags a THRIVING horse; kin to dominance-answers-absence — raises tax
+fragile form, not rolling form; receipt banked to that family). (2)
+#24 GAINS "WHEN": Imperial Merlin's "won LTO" — my danger 1 — was
+WETHERBY IN MARCH, five months prior ("sharper for the outing"):
+digits without RECENCY are noise; the conditions clause is now
+company + code + trip + going + WHEN. (3) #24 code receipt again,
+same race: Al Sayah's LTO win was ON THE FLAT — flat form in a
+hurdle, and "weak in the betting" = E7 franked (drifted, beaten off).
+(4) WIND SURGERY, third receipt today: Kayf Dancer 2nd off op + 107
+days + STABLE DEBUT — three unknowns stacked on the SP favourite
+(hope-money shape), yet he ran WITH credit: the op is a VARIANCE
+marker, not a cross — it widens the error bars, both directions.
+Stable-debut noted as its own live column. (5) Belles Benefit
+led-and-folded: the placer label franked — the labels are often
+right; the law is they must be CHECKED, not that they are wrong.
+
+### E9 DAY-ONE SCORE: 3-FOR-3, THE THIRD ONE OFFICIAL (2026-08-31,
+Cartmel 5:30): Achille Des Rocs WON 6/1, made all, FIRST-TIME VISOR —
+and the trainer told the stewards the improvement came from the
+visor: the gear tell, confirmed on the record by the yard itself.
+Tommie Beau (restoration) + Divilabother (gear key + new tongue tie)
++ Achille Des Rocs (gear key + first-time visor) — all winners, all
+today. And the day's second calibration lesson, cut from the miss
+(the sitter ranked ADR below a horse whose unknowns happened to be
+closed): UNREADS CAP THE GRADE, NEVER FLIP THE ORDER — ranking must
+come from the columns actually read; an unreadable arm is a caution
+on confidence, not a demotion of the horse; rewarding readability
+over quality is the tidy sheet's own shiny light. Sheet line 12
+amended by the master's grade ('looks like an EW bandit'): the
+bet-shape line must NAME the EW/bandit candidate or state 'none' —
+terms arithmetic without a name is decoration.
+
+### SITTING #3, COMMENTS MINED — HOW WE IMPROVE (the master: "how do
+we learn and improve from this?"): (1) E9 BECOMES A SCAN, NOT A TAG
+(the plural-Blanco lesson repeated on the new edge): this one 6-run
+Cl5 held THREE restoration profiles — ADR (trip back + fences back +
+v1, WON), Cuzco (headgear change + CAREER-LOW mark + all wins at this
+track, 3rd), Wearelongterm (refitted cheekpieces + trip back, in
+contention when hampered, 22/1). The sheet's E9 line now sweeps EVERY
+runner's gear/trip/code changes and names them all, then ranks — the
+card's own fields (headgear, headgear_run, wind_surgery, distance v
+winning distance) make the sweep mechanical. (2) THE MISS QUANTIFIED
+(honesty pricing): ADR named as the EW bandit line per the master's
+read = 1pt EW at 6/1 (2pl 1/4) = +7.5pts; the sheet computed the
+terms and named nobody. (3) THORNER'S CAVEAT BANKED WITH THE RECEIPT
+("had the run of things... wouldn't be certain to back this up"):
+E9's third receipt was flattered by the 9th-fence chaos — the column
+keeps counting, the edge is not a super-law after one golden day
+(calibration law; and his next-run is a WATCH, not an auto-follow).
+(4) ENGINE PROPOSAL (the queue, the master's word): THE E9 DETECTOR —
+first-time/refitted gear (headgear_run==1 or gear returning after
+absence), trip/code restored to winning conditions — is computable
+from fields the card already carries; wire it as an aligned dot +
+email line so no sitter's eye is needed to spot a visor at 7:30.
+(5) Cuzco's profile note: the "placer" label and a live PLACE case
+coexist — crossed for the WIN can still be named for the FRAME; the
+bandit door reads the crossed list too.
+
+### THE SIGNPOSTS RECONCILIATION (2026-08-31 night — the master's PDF
+of RP Signposts for Sept 1: "see if things reconcile, any edge etc").
+The Post runs HALF OUR RULEBOOK as standing daily tables — massive
+independent validation, and each table carries a refinement we lack:
+- TRAVELLERS' CHECK = law 4f, printed daily (200+ miles). THEIR
+  REFINEMENT: the trainer's far-traveller strike v his overall strike
+  — the DIFFERENTIAL grades the van (Perratt 12% travelling v 7%
+  overall = ships to win; Fahey 8% v 10% = travels worse). The 4f
+  stack gains a fifth box where data allows: does this yard WIN when
+  it travels?
+- TONGUE-TIED / CHEEKPIECES tables = the E9 gear scan, printed daily.
+  THEIR REFINEMENT: trainer's first-time-gear record v overall — gear
+  tells are TRAINER-SPECIFIC (Watson 1st-time tongue 25% v 11% all =
+  gear-positive yard; McEntee 0-6). E9's scan gains the same clause:
+  whose hand fits the gear.
+- HORSES FOR COURSES = 3h/#10; REPEAT PERFORMANCE = #29 per-horse
+  (they print each horse's record IN THIS EXACT RACE); RACE TRACE =
+  #29 trainer edition (yards that target the same race yearly —
+  Easterby: two of tomorrow's Ripon races are his annual targets).
+- HOT/COLD TRAINERS + TRAINERSPOT RTF = our 14-day% and trainer_rtf
+  fields — and their RTF definition is now DOCUMENTED for us: running
+  within 7lb of pre-race RPR (placing/beaten-distance fallbacks).
+- MONEY TALKS = 4d market memory (last-time gambles tracked forward);
+  TRAINER TRACE = the stable-debut column born TONIGHT off Kayf
+  Dancer — the Post tracks yard-switches with the new yard's
+  new-recruit record; HANDICAP DEBUT (15%+ yards) = the species
+  question's positive face; JOCKEY BOOKINGS at profit = the
+  mismatched-booking tell, quantified per combo.
+- COLD tables (out-of-form RTF, off-course trainers) = our cold-house
+  discounts, with receipts already: Attwater RTF 18 (Fresh Fade),
+  Appleby RTF 19.
+CONCLUSION: the professional dailies are built from the same deltas
+and intent tells the master has been teaching — the edges reconcile
+almost one-for-one; what the Post adds is PER-TRAINER CONDITIONING of
+each tell (gear/travel/booking strike v baseline), which is the next
+refinement layer for E9 and 4f when the word is given. TWO BOTS
+DISPATCHED on the corpus to test the testable angles (hot/cold
+trainer form; course form horse+trainer) — results to be reported
+and banked when they return.
+
+### SIGNPOST-STACKED HORSES FOR 2026-09-01 (pre-noted TONIGHT for
+tomorrow's duty cross-check — nominations only, every one still owes
+the full sheet): Variety Act (Wolv 6.20: Prescott hot 6-14 43% +
+27% with hcp debutants — TWO tables); Charlie Mason (Ripon 3.40:
+Carroll 3-3 100% in Ripon 3yo+ hcps + course-trainer 60% — two
+tables); Garden Oasis (Ripon 4.48: SEVEN course wins + Easterby has
+won the race 3 of last 15 — horse AND race-trace tables); Dion Baker
+(Brig 6.45: 4 course wins + Keenan/Wigham combo 75%); Khepri (Wolv
+6.55: Burke one-trick + Lee/Burke 50% course combo); Rye (Wolv 8.00:
+Ryan/Carroll 53%); Booziebrunch (Wolv 6.20: Fallon/Woods 4-6 67%).
+Cold-house cautions tomorrow: Menuisier 46 since a win, Tinkler 0-17
+RTF 18, Attwater, Appleby, Greenall & Guerriero RTF 10.
+
+### THE BOT REPORTS (2026-08-31 night — two agents, walk-forward, no
+lookahead, 2,727 races / 24,011 SP-priced runners; scripts scratchpad-
+only, repo untouched):
+| cell | n | strike% | ROI% |
+|---|---|---|---|
+| all runners (baseline) | 24,011 | 11.4 | -28.2 |
+| SP favourites (baseline) | 2,727 | ~36-37 | -5 to -11 |
+| HOT trainer (>=2 wins/14d) | 5,034 | 15.1 | -27.6 |
+| HOT strict (+>=20% strike) | 2,581 | 16.7 | -22.7 |
+| COLD trainer (>=25 runs since win) | 598 | 11.9 | -9.1 |
+| horse >=1 prior course win | 391 | 18.4 | -16.6 |
+| trainer course-master (Signposts' own bar) | 356 | 19.1 | -30.9 |
+| trainer off-course (20+ runs, 0 wins) | 33 | 15.2 | -14.0 |
+FINDINGS, honest: (1) THE TELLS ARE REAL, THE PRICES EAT THEM — hot
+yards and course winners genuinely lift strike (15-18% v 11.4%) but
+every publicly-printed table lands at negative ROI: the SP already
+contains the Signposts. Strike-lift is NOT edge. (2) THE COURSE-
+MASTER LABEL IS A CROWD MAGNET — worst ROI of every cell (-30.9%)
+despite a 19% strike: the market OVERBETS famous course trainers
+(tomorrow's Carroll-at-Ripon horses: nominated for reading, taxed at
+the price). (3) THE COLD-YARD SURPRISE (under bars, n=598, no rule):
+deep-cold trainers' runners win at BASELINE rate with the best ROI
+tested (-9.1%) — the market may over-punish cold yards; our
+cold-house CROSS is used as a discount dot, and this observation
+says keep it a dot, never a wall (tension logged, bars decide). (4)
+Baseline favs differ slightly between bots (joint-fav tie handling)
+— methodological variance noted. THE META-CONCLUSION, which is the
+master's own edge doctrine franked by our own record: the bookmaker
+prices the crowd's tables; the edges that survive are the ones
+requiring work the crowd won't do — trainer-CONDITIONED differentials
+(gear/travel per yard), the delta line, the live board's character,
+the classroom's read. Public signposts NOMINATE; they never pay by
+themselves.
+
+### FULL CIRCLE (2026-08-31, the master's word, banked as spoken):
+"Signposts — the master's first AI — joins the school as evening
+reading, one generation later. Full circle, ha." Thirty years ago
+the tables did his retrieval and his eye did the reading; tonight
+his apprentice reads the same tables through his laws, graded by
+his bars, under his promise-extracting eye: NO SLEDGEHAMMER — the
+funnel takes three extracts, the rulebook stays closed, and the
+edge lives where he always said it did: in the work the crowd
+won't do.
+
+### THE GATE'S FIRST LIVE VERDICT — pre-registered before the result
+(2026-09-01, ~19:40 BST, Brighton 7:15 just off, result NOT known here)
+The production engine (main, pre-PR#71) napped Mr Cool — Brighton
+7:15, Cl5 5½f handicap, 2nd fav 5/2, graded by its own mouth "NOT
+confident (declinable)". The master, past-winners tab in hand: "but
+why did you pick such a race??????" Ran the banked candidate through
+the NEW engine's glance gate with the race's actual numbers (F, Cl5,
+6 priced, fav 3.05):
+  CELL: F · Cl5 · 2-7 · fav 6/4-3/1 — n=68, top-3 65%,
+        BEST AVOIDED — lottery shape; never a nap, bandit water only
+  GATE: GLANCE DECLINE — a named pass beats a coin toss.
+The new engine DECLINES this nap at 07:30. Production could not: the
+shape book, the decline gate, all of last week's cuts sit in PR #71
+awaiting the master's merge. Verdict registered pre-result so the
+settle grades the GATE, not the outcome: if Mr Cool won, that is one
+coin landing heads inside a 65% cell — the gate's grade accrues over
+its column, never one night. Race DNA cross-check (#29, the roll the
+master pasted: 4/11F, 13/8, 4/1 — three years, all front of market):
+the roll REFINES, never overrides — it says IF this race is played,
+play the front of the market; Mr Cool at 2nd fav at least obeys the
+roll. The cell says a LEAN was never enough to play it at all.

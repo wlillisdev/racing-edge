@@ -71,7 +71,9 @@ class Conviction:
 
     @property
     def stale_anchor(self) -> bool:
-        return any("STALE" in f for f in self.flags)
+        # STALE moved flag -> caution 2026-08-31 (demotion law); scan both so
+        # every downstream reader of this property keeps its behaviour
+        return any("STALE" in f for f in (*self.flags, *self.cautions))
 
     @property
     def placer_risk(self) -> bool:
@@ -133,9 +135,15 @@ def conviction(runner: Runner, race: Race, history: tuple[PastRun, ...],
             if mr.stale:
                 # THE WOODSTOCK LESSON (2026-07-25 audit): an exposed loser's mark
                 # erodes BECAUSE it keeps losing — 'well-in' against a win 10+ runs
-                # back is a placer's profile wearing the winning profile's coat
-                flags.append(f"well-in anchor STALE (last win {mr.since} runs back) "
-                             "— placer risk, not a missed handicapper")
+                # back is a placer's profile wearing the winning profile's coat.
+                # DEMOTED flag -> caution 2026-08-31 by the standing demotion law
+                # (2026-08-22: a caution warns, never erases; same treatment the
+                # first-run-raise cohort got at 1-for-6): the profile now has a
+                # winner on the ledger — Dapper Guest 9/2, Epsom 5:15, crossed on
+                # this exact label while well-in with new cheekpieces, a top
+                # booking and market support. The label warns; the case answers.
+                cautions.append(f"well-in anchor STALE (last win {mr.since} runs "
+                                "back) — placer risk, not a missed handicapper")
                 _well_in_pending = None
             else:
                 _well_in_pending = f"well-in ({mr.verdict}{grade})"

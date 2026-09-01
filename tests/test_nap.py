@@ -330,7 +330,10 @@ def test_the_woodstock_lesson_stale_anchor_and_serial_placer_flag() -> None:
     """2026-07-25 adversarial audit: Woodstock read 'WELL-IN -7lb' against a win
     older than its entire visible history — an exposed loser's mark erodes BECAUSE
     it keeps losing, and 0 wins in 10 visible runs is a placer profile at win odds.
-    Both now flag; a flagged horse is never confident and never a clean survivor."""
+    AMENDED 2026-08-31 (Dapper Guest 9/2, Epsom 5:15 — WON while erased on this
+    exact label; the standing demotion law applies, same as first-run-raise at
+    1-for-6): STALE is now a CAUTION that warns and blocks confident, never a
+    flag that erases — the case must answer it in the open."""
     r = Runner(horse_id="w", horse="Woodstock", official_rating=68,
                odds=Odds(consensus=4.9))
     losses = tuple(PastRun(date=date(2026, 7, 1 + i), position=2 + (i % 4),
@@ -340,15 +343,18 @@ def test_the_woodstock_lesson_stale_anchor_and_serial_placer_flag() -> None:
     race = Race(race_id="r", course="Cartmel", off_time="15:50",
                 date=date(2026, 6, 27), race_type="Flat", is_handicap=True)
     c = conviction(r, race, losses + old_win, market_rank=2, field_size=8)
-    assert any("STALE" in f for f in c.flags)            # anchor from a dead era
-    assert any("placer risk" in f for f in c.flags)
-    assert not c.confident
+    assert any("STALE" in f for f in c.cautions)     # warns in the open now
+    assert not any("STALE" in f for f in c.flags)    # never erases (2026-08-31)
+    assert c.stale_anchor                            # property survives the move
+    assert any("placer risk" in f for f in c.cautions)
+    assert not c.confident                           # still blocks confident
     # a fresh winner is untouched: won 2 runs back, no stale/placer noise
     fresh = (PastRun(date=date(2026, 7, 10), position=3, race_type="Flat"),
              PastRun(date=date(2026, 7, 1), position=1, official_rating=68,
                      race_type="Flat"))
     c2 = conviction(r, race, fresh, market_rank=2, field_size=8)
-    assert not any("STALE" in f or "placer risk" in f for f in c2.flags)
+    assert not any("STALE" in f or "placer risk" in f
+                   for f in (*c2.flags, *c2.cautions))
 
 
 def test_led_and_caught_reads_as_the_nearly_type() -> None:
@@ -982,3 +988,20 @@ def test_zavateri_gate_pattern_races_enter_the_funnel() -> None:
     # the record's home ground is untouched: a readable handicap still enters
     hcp = _race(race_class=4)
     assert hcp.is_readable
+
+
+def test_glance_decline_gate_gives_declinable_teeth() -> None:
+    """The master, 2026-08-31 (Play Me 4th in a top-3-94% shape; 'we need to
+    stop making these mistakes'): a lean in a front-of-market shape napped
+    below the market's top 3 is DECLINED; a lean in a lottery shape is
+    DECLINED; confident naps and unknown cells are never gated."""
+    from racing_edge.school.shapebook import glance_decline
+    front = {"cell": "F · Cl3-4 · 2-7 · fav<6/4", "n": 141, "top3": 94,
+             "verdict": "GET ON THE JOLLY — the fav is a good thing; don't get clever"}
+    lottery = {"cell": "F · Cl6+ · 8-11 · fav 6/4-3/1", "n": 204, "top3": 64,
+               "verdict": "BEST AVOIDED — lottery shape; never a nap, bandit water only"}
+    assert glance_decline(False, front, 4) is not None      # Play Me's shape
+    assert glance_decline(False, front, 2) is None          # front-of-market pick: fine
+    assert glance_decline(False, lottery, 1) is not None    # lean in a lottery: pass
+    assert glance_decline(True, front, 4) is None           # confident is never gated
+    assert glance_decline(False, None, 4) is None           # no book, no gate

@@ -445,3 +445,103 @@ IS completeness. Therefore:
     column and teaches nothing, and pretending otherwise is how a
     streak gets mistaken for a system. Losses get Rule One; winners
     get this; nothing settles unexamined.
+
+27. **THE MASTER'S CLASSROOM — the new teaching** (the master,
+    2026-08-31, after the Cartmel 4:19 sitting: "this will be our new
+    teaching: you study race, I give you results and then comments,
+    you will learn a lot" — and his grade on that first sitting, banked
+    with it: "I feel we should have got this one"): the standing ritual,
+    three movements. (1) THE SITTING: the sitter studies a race
+    result-unseen — full telly sheet, every line, every unread named,
+    verdict graded, GIT-LOCKED before any result is sought or seen; the
+    lock is the proof. (2) THE RETURN: the master gives the result AND
+    the professional comments/analysis — the prose that holds what no
+    ratings column prints (refitted headgear, sixteen-wins-at-3m,
+    better-terms reversals, the owner's quote). (3) THE DOUBLE AUTOPSY:
+    the sitter first mines the RESULT for his own process faults (Rule
+    One / #26), then mines the COMMENTS for the race's truths — and the
+    two lists are compared: what the result taught about the sitter,
+    what the analysis taught about horses. Every lesson banks same
+    night. First sitting's receipt: Cartmel 4:19 — pick 2nd beaten 1L,
+    winner skipped on the sheet, SIX lessons banked in one evening
+    (5b fingerprint, 4f deferral misuse, unreads-decorate meta-lesson,
+    #24 conditions extension, E9 restoration trial, terms reversal).
+    The result grades the pick; the comments grade the reading; the
+    master grades both.
+
+28. **THE DELTA LINE — build the picture like the Post** (the master,
+    2026-08-31, after three classroom sittings: "see the comments I
+    give you — the Racing Post analysis is based on information you
+    have at your fingertips. see the way they build the picture"):
+    every Thorner comment is the same recipe, and every clause of it
+    is a field we already hold — the analyst narrates THE DELTAS:
+    what is DIFFERENT about today versus the horse's recent past and
+    versus his winning profile. So every runner on every sheet now
+    gets a DELTA LINE, one sentence, built mechanically from the card:
+    trip Δ (distance_f v his record and v his winning trips) · code Δ
+    (race_type v his record) · gear Δ (headgear + headgear_run: new /
+    refitted / changed / off) · days Δ (last_run; freshener or rust)
+    · surgery (wind_surgery + runs since) · yard Δ (prev_trainers =
+    stable debut) · mark Δ (OR v last winning mark AND v career range
+    — career-low is a delta) · terms Δ (v any rival from a shared
+    recent race, in pounds) · course/track record. The delta line IS
+    half the rulebook run as one sweep — E9 lives in the gear/trip/
+    code deltas, #24's conditions in the code/when deltas, the terms
+    reversal in the terms delta, the freshener and species questions
+    in days and career-shape — which is WHY the Post's paragraph
+    reads like our laws: the laws were always deltas. THE STANDARD:
+    if the Racing Post can write the sentence after the race from
+    fingertip data, the sheet writes it BEFORE the race from the same
+    data. A runner with no delta line has not been read (#24). A
+    horse whose deltas all point HOME (restoration) is E9's scan hit;
+    a horse whose deltas all point AWAY (new trip, new code, raise,
+    rust) is carrying every burden at once — and the sheet says which.
+
+29. **THE RACE'S OWN MEMORY — the past winners line** (the master,
+    2026-08-31: "past winners... will show you the shape of horse
+    that wins this previously — use this to help form the shape of
+    the winner"): annual named races are TARGETS — the same track,
+    trip, ground-season and prize keep selecting the same shape of
+    winner, and the roll of past winners is that shape written down:
+    age band, weight band, market slot, yard species, prep pattern.
+    It is the third memory layer and the most specific — the SHAPE
+    BOOK gives the species prior (thousands of races), the GLANCE
+    speaks it, and the PAST WINNERS roll gives THIS race's DNA. Where
+    the roll is available (the master's classroom pastes; the corpus
+    by course+race-name for repeat runnings), the sheet carries a
+    PAST WINNERS line: the recent winners' profile in one sentence,
+    and whether today's candidates fit it. First receipt, Furness RDA
+    H'cap Chase: 2025 Dexter 8yo 11-7 at 11/2; 2026 Achille Des Rocs
+    7yo 11-10 at 6/1 — two runnings, one shape: a 7-8yo under BIG
+    weight from the market's second line, never the fav — in low
+    grade the top weight is the class horse condescending, and this
+    race pays it (kin: Rule One, best horse wins race; notebook #2,
+    the jolly is often the trap). Small-sample honesty: a two-year
+    roll REFINES a read, it never overrides the full sheet — the
+    calibration law applies to race-DNA like everything else.
+
+30. **THE SIGNPOSTS INTAKE — a nightly stream, a fixed funnel** (the
+    master, 2026-08-31: "will we send this every evening to calibrate
+    and dial in, or is an overload likely to upset the system?" The
+    answer: nightly YES, through a capped intake — overload only harms
+    a system that lets inputs mint rules, and ours cannot). THE
+    PROTOCOL, three extracts and NOTHING else per evening PDF:
+    (a) STACKED NOMINATIONS — horses appearing in 2+ tables, pre-noted
+        for tomorrow's duty cross-check (nominations only; every one
+        owes the full sheet; the bots proved single-table angles are
+        priced in);
+    (b) DIFFERENTIALS — the trainer-conditioned tells we lack (gear
+        strike v overall, travel strike v overall, booking combos at
+        profit): these populate EXISTING lines — E9's whose-hand
+        clause, 4f's fifth box, the mismatched-booking tell — never
+        new lines;
+    (c) COLD-HOUSE CAUTIONS — dots, never walls (the bots' cold-yard
+        finding stands guard over that).
+    THE GUARDS: the PDF never adds a law or a sheet line directly —
+    any angle wanting rulehood queues for the bars or the word like
+    everything else; bots re-run only for a specific question, never
+    ritually (costs are real money). THE GRADE: signpost-stacked
+    nominations get their own settle column (strike + what the sheet
+    did with them); TRIAL PERIOD two weeks / ~50 nominations — if the
+    column adds nothing over engine+sheet, the intake drops to
+    weekends. Calibrated by receipts, like everything in this school.
