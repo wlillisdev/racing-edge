@@ -131,9 +131,17 @@ def test_night_runs_end_to_end_from_disk(school, capsys):
     policies_seen = {ln.split(",")[1] for ln in lines[1:]}
     assert "fav" in policies_seen
     assert CHALLENGER in policies_seen
+    # the night grades the trailing window (holes self-heal, 2026-09-02): every
+    # row sits inside it and the night's own day is graded
+    from datetime import date as _d, timedelta as _td
+    from racing_edge.school.night import BACKFILL_DAYS
+    _lo = (_d.fromisoformat(NIGHT_DAY) - _td(days=BACKFILL_DAYS - 1)).isoformat()
+    days_seen = set()
     for ln in lines[1:]:
         day, policy, picks, wins, returned = ln.split(",")
-        assert day == NIGHT_DAY
+        assert _lo <= day <= NIGHT_DAY
+        days_seen.add(day)
+    assert NIGHT_DAY in days_seen
 
 
 def test_night_verdict_string_is_produced(school, capsys):
