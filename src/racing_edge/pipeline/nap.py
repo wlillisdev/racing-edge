@@ -347,9 +347,10 @@ def evaluate_field(client: _Client, day: str = "today",
         # or more declared-but-unpriced runners is banded on a shrunken field —
         # said out loud so a feed gap never reads as a smaller race
         _unpriced = race.field_size - len(race_picks)
-        if progress and _unpriced >= 2:
+        if progress and _unpriced >= 1:
             progress(f"  ⚠ {race.course} {race.off_time}: {_unpriced} declared runner(s) "
-                     f"carry no price — banded as a {len(race_picks)}-runner field")
+                     f"carry no price — UNMEASURED by the yardstick and banded as a "
+                     f"{len(race_picks)}-runner field")
         rq = race_quality_score(is_handicap=race.is_handicap, concentration=conc,
                                 race_class=race.race_class,
                                 race_type=race.race_type or "",

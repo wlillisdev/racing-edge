@@ -90,7 +90,9 @@ def render_preread(race: Race, histories: dict[str, tuple[PastRun, ...]],
         gear = f" | headgear {r.headgear}{'(1st time)' if r.headgear_first_time else ''}" \
             if r.headgear else ""
         lines.append("")
-        tid = f" trainer {r.trainer or '?'} [tid {r.trainer_id}]" if r.trainer_id else ""
+        tid = (f" trainer {r.trainer or '?'} [tid {r.trainer_id}]"
+               + (f" ({r.trainer_location})" if r.trainer_location else "")) \
+            if r.trainer_id else ""
         lines.append(f"  {r.horse:22} {rank}  [id {r.horse_id}]{tid}")
         wt = ""
         if r.weight_lbs and _top:
@@ -98,8 +100,10 @@ def render_preread(race: Race, histories: dict[str, tuple[PastRun, ...]],
             gap = _top - r.weight_lbs
             wt = (f" | carries {st}-{lb}"
                   + (f" ({gap}lb less than top weight)" if gap > 0 else " (TOP WEIGHT)"))
+        # the draw reaches the reader (third audit, bot P5: parsed, read by nobody)
+        drw = f" | draw {r.draw}" if r.draw is not None else ""
         lines.append(f"        mark: {marktxt}  | form {r.form or '?'} "
-                     f"| OR {r.official_rating or '?'} RPR {r.rpr or '?'}{gear}{wt}")
+                     f"| OR {r.official_rating or '?'} RPR {r.rpr or '?'}{gear}{wt}{drw}")
         _mh = same_code_runs(hist, race.code)[:4]
         mv = nap_verdict([h.comment for h in _mh],
                          positions=[h.position for h in _mh])

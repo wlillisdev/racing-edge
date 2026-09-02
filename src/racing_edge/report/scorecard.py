@@ -168,7 +168,7 @@ _LENSES: tuple[tuple[str, Callable[[RunnerEvidence, Race], Cell]], ...] = (
 )
 
 
-def build_scorecard(race: Race, evidence: list[RunnerEvidence], top_n: int = 4) -> Scorecard:
+def build_scorecard(race: Race, evidence: list[RunnerEvidence], top_n: int = 16) -> Scorecard:
     """The top `top_n` contenders by market rank, each read on EVERY lens, side by side."""
     by_id = {ev.runner.horse_id: ev for ev in evidence}
     priced = sorted([r for r in race.runners if r.odds.consensus and r.odds.consensus > 1],

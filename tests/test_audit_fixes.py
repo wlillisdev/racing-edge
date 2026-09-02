@@ -381,3 +381,22 @@ def test_no_tracked_corpus_file_can_collide_with_the_boxs_own_nightly_files() ->
         pytest.skip("no git or no tracked corpus here")
     latest = max(Path(f).stem for f in out)
     assert latest <= "2026-08-14", f"tracked corpus reaches {latest} — the box owns later days"
+
+
+def test_draw_and_yard_location_reach_the_reader() -> None:
+    """Third audit (bots P5, P6): the draw was parsed and read by nobody; the
+    yard's base (law 4f, the traveller) was not even carried. Both now ride
+    into the readout the deep read sees."""
+    from datetime import date as _d
+    from racing_edge.data.normalise import racecards_from_raw
+    from racing_edge.report.restudy import render_preread
+    cards = racecards_from_raw({"racecards": [{
+        "race_id": "r1", "course": "Bath", "off_time": "5:02", "date": "2026-09-02",
+        "race_name": "Fillies' Handicap", "type": "Flat", "race_class": "Class 4",
+        "runners": [{"horse_id": "h1", "horse": "Quebella", "trainer": "Owen Burrows",
+                     "trainer_id": "t1", "trainer_location": "Lambourn, Berks",
+                     "draw": "5", "ofr": "83", "odds": [{"decimal": "3.0"}]}]}]})
+    r = cards[0].runners[0]
+    assert r.trainer_location == "Lambourn, Berks" and r.draw == 5
+    out = render_preread(cards[0], {})
+    assert "draw 5" in out and "Lambourn, Berks" in out

@@ -61,6 +61,7 @@ class Runner:
     horse: str
     trainer: str = ""
     trainer_id: str = ""
+    trainer_location: str = ""    # the yard's base — law 4f's traveller reads from it (third audit)
     jockey: str = ""
     jockey_id: str = ""
     claim_lbs: int | None = None     # a claiming/conditional jockey's allowance — weight off the back
