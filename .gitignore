@@ -95,3 +95,10 @@ archive/external_exports/*.tar.gz
 .claude/settings.local.json
 .claude/worktrees/
 data/school/
+# box-written artefacts must never be tracked (a tracked file the box writes
+# dirties its tree and blocks the pre-task git pull — second audit 2026-09-02)
+data/nap_record.csv
+data/rulings_recalls.json
+data/task_runs.log
+data/model_usage.csv
+data/*.db
