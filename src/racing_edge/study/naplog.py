@@ -72,13 +72,49 @@ class NapLog:
         with contextlib.suppress(sqlite3.OperationalError):
             self._conn.execute(
                 "ALTER TABLE nap ADD COLUMN race_quality INTEGER DEFAULT 0")
+        # VOID (audit 2026-09-02, the master: "non-runners voided automatically,
+        # voids with a mandatory reason"): won = -2 is the terminal state for a
+        # pick no result can settle as a bet — a non-runner, an abandoned race,
+        # a result that never came. The reason rides in void_reason, never blank.
+        for table in ("nap", "shadow", "favline"):
+            with contextlib.suppress(sqlite3.OperationalError):
+                self._conn.execute(
+                    f"ALTER TABLE {table} ADD COLUMN void_reason TEXT DEFAULT ''")
         self._conn.commit()
+
+    VOID = -2          # terminal: not a bet, not a pass — a pick the result could not settle
+    PASS = -1          # an earned no-bet day
+
+    def existing(self, day: date) -> dict | None:
+        row = self._conn.execute("SELECT * FROM nap WHERE date = ?",
+                                 (day.isoformat(),)).fetchone()
+        return dict(row) if row else None
 
     def record(self, *, day: date, race_id: str, course: str, horse: str, horse_id: str,
                price: float | None, score: int, confident: bool,
                case: str = "", deep_conf: str = "", aligned: str = "",
-               race_quality: int = 0) -> None:
-        """Bank the morning's nap (unsettled), WITH its reasoning. Idempotent on the day."""
+               race_quality: int = 0, force: bool = False) -> None:
+        """Bank the morning's nap (unsettled), WITH its reasoning.
+
+        THE GUARD LIVES AT THE WRITE POINT (audit 2026-09-02, the master: "is
+        every gate on money enforced at the write point or only in a caller").
+        Until tonight the pre-off-record guard lived only in cli/nap.py, and
+        --force-rebank fell straight through to an INSERT OR REPLACE that reset
+        won/sp_dec to NULL — a SETTLED result could be erased by re-picking.
+        Now: a day that already carries a row is refused here unless force=True,
+        and a SETTLED row (won in 0/1) is refused even under force — the record
+        is never edited, only appended (law 1)."""
+        old = self.existing(day)
+        if old is not None:
+            if old["won"] in (0, 1):
+                raise ValueError(
+                    f"{day} is already SETTLED ({old['horse']} won={old['won']}) — "
+                    "the record is never edited; refuse to re-bank")
+            if not force:
+                raise ValueError(
+                    f"{day} already carries a banked row ({old['horse'] or 'PASS'}) — "
+                    "re-picking would overwrite the pre-off record; pass force=True "
+                    "only from --force-rebank")
         self._conn.execute(
             "INSERT OR REPLACE INTO nap (date, race_id, course, horse, horse_id, price, "
             "score, confident, won, sp_dec, case_text, deep_conf, aligned, race_quality) "
@@ -106,7 +142,11 @@ class NapLog:
         """Bank a NO-BET day as a first-class row (won=-1: settled as 'no bet').
         2026-07-18: an earned pass and a dead pipeline looked identical — empty inbox,
         empty ledger. Now quiet days carry their reason and the watchman can tell
-        discipline from failure."""
+        discipline from failure. A SETTLED day is never overwritten by a pass
+        (write-point guard, audit 2026-09-02)."""
+        old = self.existing(day)
+        if old is not None and old["won"] in (0, 1):
+            raise ValueError(f"{day} is already SETTLED — a pass cannot overwrite it")
         self._conn.execute(
             "INSERT OR REPLACE INTO nap (date, race_id, course, horse, horse_id, price, "
             "score, confident, won, sp_dec, case_text, deep_conf) "
@@ -119,6 +159,67 @@ class NapLog:
         self._conn.execute("UPDATE nap SET won = ?, sp_dec = ? WHERE date = ?",
                            (int(won), sp_dec, day.isoformat()))
         self._conn.commit()
+
+    # NON-RUNNER family: the bet never ran — VOID, never a loss (audit
+    # 2026-09-02: 'won = me.position == 1' scored a withdrawn horse as beaten).
+    # Fallers / pulled-up / unseated RAN and lost — they stay losses.
+    NON_RUNNER = ("NR", "WD", "W", "VOID", "VOI", "WITHDRAWN")
+
+    def void(self, day: date, reason: str, table: str = "nap") -> None:
+        """Terminal state for a pick no result can settle as a bet. The reason
+        is MANDATORY (the master: 'voids with a mandatory reason'); a settled
+        bet (won 0/1) is never voided — that would edit the record."""
+        if not (reason or "").strip():
+            raise ValueError("a void needs a reason — refusing a silent void")
+        if table not in ("nap", "shadow", "favline"):
+            raise ValueError(f"unknown table {table!r}")
+        row = self._conn.execute(f"SELECT won FROM {table} WHERE date = ?",
+                                 (day.isoformat(),)).fetchone()
+        if row is None:
+            raise ValueError(f"no {table} row for {day} to void")
+        if row["won"] in (0, 1):
+            raise ValueError(f"{table} {day} is SETTLED — a settled bet is never voided")
+        self._conn.execute(
+            f"UPDATE {table} SET won = ?, void_reason = ? WHERE date = ?",
+            (self.VOID, reason.strip(), day.isoformat()))
+        self._conn.commit()
+
+    def pending_all(self) -> dict[str, list[dict]]:
+        """Every unsettled row in every ledger table, oldest first — the settle
+        backlog (audit 2026-09-02: 'the night task retries tomorrow' was a
+        comment, not code; --settle today never revisited a missed day)."""
+        out: dict[str, list[dict]] = {}
+        for table in ("nap", "shadow", "favline"):
+            rows = self._conn.execute(
+                f"SELECT * FROM {table} WHERE won IS NULL ORDER BY date").fetchall()
+            out[table] = [dict(r) for r in rows]
+        return out
+
+    def export_text(self, path: str | Path) -> int:
+        """THE TEXT TWIN (audit 2026-09-02: 'restore anything a binary-database
+        merge lost from a text twin, and if there is no text twin, build one').
+        Every row of every table, one CSV, rewritten whole after each bank /
+        settle / void. Returns the row count written."""
+        import csv
+        p = Path(path)
+        p.parent.mkdir(parents=True, exist_ok=True)
+        cols = ["table", "date", "race_id", "course", "horse", "horse_id", "price",
+                "score", "confident", "won", "sp_dec", "race_quality", "deep_conf",
+                "aligned", "void_reason", "case_text"]
+        n = 0
+        tmp = p.with_suffix(".tmp")
+        with open(tmp, "w", newline="") as fh:
+            w = csv.writer(fh)
+            w.writerow(cols)
+            for table in ("nap", "shadow", "favline"):
+                for r in self._conn.execute(
+                        f"SELECT * FROM {table} ORDER BY date").fetchall():
+                    d = dict(r)
+                    w.writerow([table] + [d.get(c, "") for c in cols[1:]])
+                    n += 1
+        import os
+        os.replace(tmp, p)
+        return n
 
     def strike_rate(self, confident_only: bool = False) -> tuple[int, int]:
         """(naps won, naps settled). Pass confident_only to judge the real naps alone."""

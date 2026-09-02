@@ -90,6 +90,19 @@ class _EngineBankNow(Exception):
     reader-mode floor and fallback below the try block."""
 
 
+def _lessons_with_rulings(lesson_lines: list[str]) -> str:
+    """THE MASTER'S RULINGS ride into the morning prompt above the banked
+    lessons (audit 2026-09-02, STEP 6: 'one table the reads actually recall at
+    the point of use ... every recall counted'). Never crashes the read."""
+    try:
+        from racing_edge.study.rulings import recall, render
+        block = render(recall())
+    except Exception as exc:                         # the read outranks the memory
+        print(f"  ⚠ rulings not recalled: {exc.__class__.__name__}", flush=True)
+        block = ""
+    return (block + "\n\n" if block else "") + "\n".join(lesson_lines)
+
+
 def _bank_pass(day, reason: str) -> None:
     """A no-bet day is still a ledger day — banked with its reason (never overwrites
     a real pick: record_pass only fires on paths where none was banked)."""
@@ -224,6 +237,84 @@ def _guard() -> int:
     return 0
 
 
+VOID_AFTER_DAYS = 7     # a pick with no result after a week is voided WITH its reason
+                        # and the console command — a hygiene bound, not a betting rule
+                        # (audit 2026-09-02; REVERT-IF the master rules a longer wait)
+
+
+def _settle_tables(day, results, log, emit) -> dict[str, str]:
+    """Settle the day's nap / shadow / favline rows against `results` — ONE
+    definition for all three (audit 2026-09-02). Non-runner statuses and a
+    horse absent from a found race's runners VOID with a reason (the bet never
+    ran); fallers/pulled-up RAN and lose; a race not in the results stays open
+    for the backlog sweep. Returns {table: outcome line} for the rows touched."""
+    from racing_edge.study.naplog import NapLog
+    out: dict[str, str] = {}
+    pend = log.pending_all()
+    settlers = {"nap": log.settle, "shadow": log.settle_shadow,
+                "favline": log.settle_favline}
+    for table in ("nap", "shadow", "favline"):
+        row = next((x for x in pend[table] if x["date"] == day.isoformat()), None)
+        if row is None:
+            continue
+        race = next((r for r in results if r.race_id == row["race_id"]), None)
+        if race is None:
+            out[table] = f"{row['horse']} — no result yet (race {row['race_id']} not in the feed)"
+            continue
+        me = next((rr for rr in race.runners if rr.horse_id == row["horse_id"]), None)
+        if me is None:
+            log.void(day, f"{row['horse']} absent from the result's runners — "
+                          "non-runner/withdrawn", table=table)
+            out[table] = f"{row['horse']} VOID — absent from the result (non-runner)"
+            continue
+        status = (getattr(me, "status", "") or "").upper()
+        if status in NapLog.NON_RUNNER:
+            log.void(day, f"{row['horse']} non-runner ({status})", table=table)
+            out[table] = f"{row['horse']} VOID — non-runner ({status})"
+            continue
+        won = me.position == 1
+        settlers[table](day, won=won, sp_dec=me.sp_dec)
+        out[table] = (f"{row['horse']} {'WON' if won else 'unplaced'} "
+                      f"({me.position or status or '?'}) at SP {me.sp_dec or '?'}")
+    return out
+
+
+def _sweep_backlog(day, log, emit, fetch=None) -> None:
+    """Every open row OLDER than `day`, in every table: fetch that date's results
+    once and settle; still open past VOID_AFTER_DAYS -> VOID with the reason and
+    the console command. Nothing stays open unnamed."""
+    from datetime import date as _date
+    if fetch is None:
+        def fetch(ds: str):
+            return results_from_raw(get_client().results_by_date(ds))
+    pend = log.pending_all()
+    dates = sorted({r["date"] for rows in pend.values() for r in rows
+                    if r["date"] < day.isoformat()})
+    for ds in dates:
+        d = _date.fromisoformat(ds)
+        try:
+            res = fetch(ds)
+        except Exception as exc:
+            emit(f"  ⚠ backlog {ds}: results fetch failed ({exc.__class__.__name__}) "
+                 "— still open")
+            res = None
+        if res is not None:
+            for t, o in _settle_tables(d, res, log, emit).items():
+                emit(f"  backlog {ds} {t}: {o}")
+        age = (day - d).days
+        still = log.pending_all()
+        for t in ("nap", "shadow", "favline"):
+            if not any(r["date"] == ds for r in still[t]):
+                continue
+            cmd = f"PYTHONPATH=src venv/bin/python -m racing_edge.cli.nap --settle {ds}"
+            if age >= VOID_AFTER_DAYS:
+                log.void(d, f"no result after {age} days — voided by the backlog "
+                            f"sweep; console: {cmd}", table=t)
+                emit(f"  backlog {ds} {t}: VOID — no result after {age} days")
+            else:
+                emit(f"  backlog {ds} {t}: still open ({age}d) — console: {cmd}")
+
+
 def _settle(day_str: str, email: bool) -> int:
     day = resolve_date(day_str)
     out: list[str] = []
@@ -241,27 +332,29 @@ def _settle(day_str: str, email: bool) -> int:
         # a transient API failure must not kill the settle run with a bare
         # traceback (2026-07-25 review) — say it, email it, retry tomorrow
         emit(f"  ⚠ results fetch failed ({exc.__class__.__name__}) — nothing "
-             f"settled this run; the night task retries tomorrow")
+             f"settled this run; the backlog sweep retries it tomorrow")
         _maybe_email(out, f"Settle FAILED — results fetch error ({day})", email)
         return 1
     nlog = open_nuance_log()
-    tracked_by_id = {t["horse_id"]: t for t in nlog.tracked_active() if t["horse_id"]}
+    # EVERY active clue per horse, not one (audit 2026-09-02: a dict keyed on
+    # horse_id silently dropped a second angle on the same horse before settle)
+    tracked_by_id: dict[str, list] = {}
+    for t in nlog.tracked_active():
+        if t["horse_id"]:
+            tracked_by_id.setdefault(t["horse_id"], []).append(t)
     settled_clues = 0
     for res in results:
         for rr in res.runners:
-            t = tracked_by_id.get(rr.horse_id)
-            if t is None:
-                continue
-            # SP in the stamp (ROI audit: without it the clue stream can never be
-            # judged in money or against the fav baseline)
-            outcome = (f"ran {day.isoformat()}, "
-                       f"{'WON' if rr.position == 1 else f'pos {rr.position or rr.status}'}"
-                       + (f", SP {rr.sp_dec}" if rr.sp_dec else ""))
-            hit = (rr.position == 1) == (t["angle"] == "follow")
-            settled_clues += nlog.settle_tracked(rr.horse_id, outcome=outcome, held=hit)
-            emit(f"  tracked clue settled: [{t['angle']}] {t['horse']} — "
-                 f"{outcome} ({'clue HELD' if hit else 'clue missed'})")
-            del tracked_by_id[rr.horse_id]
+            for t in tracked_by_id.pop(rr.horse_id, []):
+                # SP in the stamp (ROI audit: without it the clue stream can never be
+                # judged in money or against the fav baseline)
+                outcome = (f"ran {day.isoformat()}, "
+                           f"{'WON' if rr.position == 1 else f'pos {rr.position or rr.status}'}"
+                           + (f", SP {rr.sp_dec}" if rr.sp_dec else ""))
+                hit = (rr.position == 1) == (t["angle"] == "follow")
+                settled_clues += nlog.settle_tracked(rr.horse_id, outcome=outcome, held=hit)
+                emit(f"  tracked clue settled: [{t['angle']}] {t['horse']} — "
+                     f"{outcome} ({'clue HELD' if hit else 'clue missed'})")
     swept = nlog.expire_tracked()
     # RECORD-BASED promotion: a theme whose settled clues prove out promotes its
     # nuances to 'field-tested' — the trial record doing the validating, exactly as
@@ -276,34 +369,12 @@ def _settle(day_str: str, email: bool) -> int:
         emit(f"  ({swept} stale clue(s) expired unverified — 28-day broom)")
 
     log = open_nap_log()
-    # SHADOW and FAV LINE settle FIRST, independently of the nap row.
-    # LATENT BUG (found 2026-08-17): on veto/pass days there is no pending
-    # nap, and the early return below meant vetoed picks banked in shadow
-    # NEVER settled — the veto tripwire's 'killed a winner' count was blind,
-    # so its reassurance was unfalsifiable, exactly the disease health exists
-    # to catch. These two settle before the nap-existence check, always.
-    sh = next((x for x in log.pending_shadow() if x["date"] == day.isoformat()), None)
-    if sh is not None:
-        shr = next((r for r in results if r.race_id == sh["race_id"]), None)
-        shm = next((rr for rr in shr.runners if rr.horse_id == sh["horse_id"]), None) \
-            if shr else None
-        if shm is not None:
-            log.settle_shadow(day, won=shm.position == 1, sp_dec=shm.sp_dec)
-            out.append(f"  shadow settled: {sh['horse']} "
-                       f"{'WON' if shm.position == 1 else 'lost'}")
-    if hasattr(log, "pending_favline"):
-        fv = next((x for x in log.pending_favline()
-                   if x["date"] == day.isoformat()), None)
-        if fv is not None:
-            fvr = next((r for r in results if r.race_id == fv["race_id"]), None)
-            fvm = next((rr for rr in fvr.runners
-                        if rr.horse_id == fv["horse_id"]), None) if fvr else None
-            if fvm is not None:
-                log.settle_favline(day, won=fvm.position == 1, sp_dec=fvm.sp_dec)
-                fw, fn, fpnl = log.favline_record()
-                emit(f"  FAV LINE settled: {fv['horse']} "
-                     f"{'WON' if fvm.position == 1 else 'lost'} — fav line record "
-                     f"{fw}/{fn}, {fpnl:+.1f}pt")
+    # EVERY LEDGER TABLE SETTLES THROUGH ONE FUNCTION (audit 2026-09-02): nap,
+    # shadow and fav line — non-runners VOID with a reason, absentees VOID,
+    # finishers settle; a race with no result yet stays open for the sweep.
+    outcome = _settle_tables(day, results, log, emit)
+    for _t, _o in outcome.items():
+        emit(f"  {day} {_t}: {_o}")
     # MARK THE MORNING OPINIONS (the master, 2026-08-18: 'this is the test').
     # Every race the engine studied this morning is graded against tonight's
     # winners and fed to the ladder as the 'engine' policy.
@@ -378,27 +449,18 @@ def _settle(day_str: str, email: bool) -> int:
                      "figures above are PROVISIONAL until these settle.")
     except Exception as _e:
         emit(f"  ⚠ morning opinions not marked: {_e}")
-    nap = next((n for n in log.pending() if n["date"] == day.isoformat()), None)
-    if nap is None:
-        print(f"No unsettled nap for {day} (pass day or already settled).")
-        log.close()
-        return 0
-    race = next((r for r in results if r.race_id == nap["race_id"]), None)
-    me = next((rr for rr in race.runners if rr.horse_id == nap["horse_id"]), None) if race else None
-    if me is None:
-        print(f"Result for {nap['horse']} not in yet for {day}.")
-        log.close()
-        return 0
-    won = me.position == 1
-    log.settle(day, won=won, sp_dec=me.sp_dec)
-    w, n = log.strike_rate()
-    cw, cn = log.strike_rate(confident_only=True)
-    flag = "WON" if won else f"unplaced ({me.position or me.status})"
-    emit(f"  {day}: nap {nap['horse']} — {flag} at SP {me.sp_dec or '?'}")
-    emit(f"  nap record: {w}/{n} won ({100 * w / n:.0f}%) overall; "
-         f"{cw}/{cn} on CONFIDENT naps." if n else "  nap record: none settled yet.")
+    # THE BACKLOG SWEEP (audit 2026-09-02: '--settle today' never revisited a
+    # missed day; the comment "retries tomorrow" was a comment, not code)
+    _sweep_backlog(day, log, emit)
+    from pathlib import Path as _TP
+    log.export_text(_TP("data/nap_record.csv"))      # the text twin, rewritten whole
     log.close()
-    _maybe_email(out, f"Nap settled — {nap['horse']} {flag} ({day})", email)
+    _nap_line = outcome.get("nap")
+    if _nap_line is None:
+        print(f"No unsettled nap for {day} (pass day or already settled).")
+        _maybe_email(out, f"Settle — {day} (no nap to settle)", email)
+        return 0
+    _maybe_email(out, f"Nap settled — {_nap_line} ({day})", email)
     return 0
 
 
@@ -715,12 +777,12 @@ def main() -> int:
                           f"disqualifying fact as pass_reason.")
                 text, trail = deep(VETO_SYSTEM,
                                    build_nap_prompt(candidates,
-                                                    "\n".join(lesson_lines))
+                                                    _lessons_with_rulings(lesson_lines))
                                    + _fixed)
             else:
                 text, trail = deep(NAP_SYSTEM,
                                    build_nap_prompt(candidates,
-                                                    "\n".join(lesson_lines)))
+                                                    _lessons_with_rulings(lesson_lines)))
             for t in trail:
                 print(f"      🔎 {t}", flush=True)
             mp = parse_morning_pick(text)
@@ -998,9 +1060,8 @@ def main() -> int:
                           and p.price], key=lambda p: p.price)
     _nap_rank = next((i + 1 for i, p in enumerate(_race_picks)
                       if p.runner.horse_id == nap.runner.horse_id), None)
-    _code = {"Flat": "F"}.get(r.race_type) or \
-        ("H" if "Hurdle" in (r.race_type or "") else
-         "C" if "Chase" in (r.race_type or "") else None)
+    from racing_edge.domain.units import book_code as _book_code
+    _code = _book_code(r.race_type)
     _glance = glance_for(_code, r.race_class, len(_race_picks),
                          _race_picks[0].price if _race_picks else None)
     _decline = glance_decline(confident, _glance, _nap_rank)
@@ -1033,15 +1094,43 @@ def main() -> int:
     emit("\n" + render_scorecard(build_scorecard(r, evidence)))
 
     day = nap.race.date
+    # THE PRE-BANK TRIPWIRE (audit 2026-09-02: the field was time-guarded once,
+    # at the start of the read; the deep read then ran for minutes and nothing
+    # re-checked before the row was written — scar 2026-08-24
+    # banked_after_the_off). Same clock, same function, asked again NOW.
+    from datetime import datetime as _dt
+    from zoneinfo import ZoneInfo as _ZI
+    from racing_edge.pipeline.nap import still_to_run as _str
+    _now_uk = _dt.now(_ZI("Europe/London")).replace(tzinfo=None)
+    if not (_str(r.off_time, _now_uk) if nap.race.date == _now_uk.date() else True):
+        _why = (f"TRIPWIRE at bank time: {r.course} {r.off_time} is off or inside "
+                f"the 5-minute buffer (now {_now_uk:%H:%M} UK) — a pick banked "
+                "after the off is never a pick")
+        emit(f"\n  ✗ {_why}")
+        _bank_pass(day, _why)
+        _maybe_email(out, f"Nap — named pass (tripwire): {r.course} {r.off_time}",
+                     args.email)
+        return 0
     log = open_nap_log()
+    # THE WRITTEN EDGE (audit 2026-09-02: "does a departure from the market
+    # favourite have to state its edge in writing"): the favourite of the
+    # nap's race is named BEFORE the case banks, and a pick that is not the
+    # favourite carries its edge line — the lenses that put it above the
+    # market's horse — or the word NONE, in the record, where it can be judged.
+    fav = min((p for p in field if p.race.race_id == r.race_id and p.price),
+              key=lambda p: (p.price, p.runner.horse_id), default=None)
     # the CASE banks with the pick — the night study interrogates the real reasoning,
     # not a guess at it (audit: "a self-critique of an invented memory")
     case_text = "\n".join(deep_case) if deep_case else \
         f"engine pick: conviction {c.score} — {', '.join(c.aligned) or 'thin'}"
+    if fav is not None and fav.runner.horse_id != nap.runner.horse_id:
+        case_text += (f"\nDEPARTURE FROM THE FAVOURITE {fav.runner.horse} ({fav.price}): "
+                      f"written edge = {', '.join(c.aligned) or 'NONE — thin'}")
     log.record(day=day, race_id=r.race_id, course=r.course, horse=nap.runner.horse,
                horse_id=nap.runner.horse_id, price=nap.price, score=c.score,
                confident=confident, case=case_text, deep_conf=deep_conf,
-               aligned=" | ".join(c.aligned), race_quality=nap.race_quality)
+               aligned=" | ".join(c.aligned), race_quality=nap.race_quality,
+               force=args.force_rebank)
     # THE SHADOW: the mechanical engine's own top survivor, banked silently for the
     # A/B record (one machine, two ledgers — the record decides which method earns
     # the stakes). Costs nothing: it was already computed.
@@ -1057,8 +1146,6 @@ def main() -> int:
     # what have we got to lose the information is there'): the favourite of
     # the nap's own race banks beside the pick — two bets, same race, and the
     # record judges both. No new selection rule: the market names this horse.
-    fav = min((p for p in field if p.race.race_id == r.race_id and p.price),
-              key=lambda p: (p.price, p.runner.horse_id), default=None)
     if fav is not None and hasattr(log, "record_favline"):
         log.record_favline(day=day, race_id=r.race_id, course=r.course,
                            horse=fav.runner.horse, horse_id=fav.runner.horse_id,
@@ -1067,6 +1154,8 @@ def main() -> int:
              + ("same horse as the nap today"
                 if fav.runner.horse_id == nap.runner.horse_id
                 else "the market's answer in the same race, banked beside ours"))
+    from pathlib import Path as _TwinPath
+    log.export_text(_TwinPath("data/nap_record.csv"))     # the text twin
     log.close()
     emit(f"\n  banked the nap for {day} — settle it tomorrow with --settle {day}.")
     _maybe_email(out, f"{tag}: {nap.runner.horse} — {r.course} {r.off_time} ({day})", args.email)
