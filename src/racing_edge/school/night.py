@@ -46,14 +46,14 @@ def main(argv=None):
     a = ap.parse_args(argv)
     school = Path(a.school)
     raw = school / "raw"
+    from racing_edge.school.fetch import day_fetched as _day_fetched   # one definition
 
     # 1. fetch — free on the subscription; skipped without credentials so
     # the grader still runs wherever the corpus already exists.
     if os.environ.get("RACING_API_USERNAME"):
         from racing_edge.school.fetch import main as fetch_main
         fetch_main(["--start", a.day, "--end", a.day, "--raw", str(raw)])
-    elif not __import__("racing_edge.school.fetch", fromlist=["day_fetched"]).day_fetched(
-            raw / f"{a.day}.csv"):
+    elif not _day_fetched(raw / f"{a.day}.csv"):
         print(f"night school: no API credentials and no corpus for {a.day} "
               "— nothing to grade tonight (fail loud, not silent)")
         return 1

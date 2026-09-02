@@ -173,3 +173,55 @@ def test_the_reads_claims_are_banked_and_graded_at_settle(tmp_path):
     r2 = NS(runners=[NS(horse="Rival", position=1, sp_dec=2.0), me])
     assert grade_read_claims({"danger": "rival", "crossed": "", "my_price": None},
                              r2, me) == "danger WON"
+
+
+def test_a_pass_never_overwrites_a_pending_pick_without_force(tmp_path):
+    """Second audit (bot A): record_pass could INSERT OR REPLACE a pending real
+    pick away. Now it refuses unless forced; a pass on an empty day still banks."""
+    log = _log(tmp_path)
+    d = date(2026, 9, 2)
+    _bank(log, d)
+    with pytest.raises(ValueError, match="already carries a banked pick"):
+        log.record_pass(day=d, reason="late cold feet")
+    assert log.existing(d)["horse"] == "Gem"
+    log.record_pass(day=date(2026, 9, 3), reason="nothing readable")
+    assert log.existing(date(2026, 9, 3))["won"] == NapLog.PASS
+    log.record_pass(day=d, reason="forced", force=True)
+    assert log.existing(d)["race_id"] == "PASS"
+
+
+def test_a_null_position_with_no_status_voids_through_the_real_normaliser(tmp_path):
+    """Second audit (bot B): the API can mark a withdrawn horse with position
+    null and NO status string; that fell through to 'unplaced' (a loss). Fed
+    through results_from_raw end to end, it now voids."""
+    from racing_edge.cli.nap import _settle_tables
+    from racing_edge.data.normalise import results_from_raw
+    log = _log(tmp_path)
+    d = date(2026, 9, 2)
+    _bank(log, d)
+    results = results_from_raw({"results": [{
+        "race_id": "rac_1", "date": "2026-09-02", "course": "Ripon",
+        "runners": [{"horse_id": "h1", "horse": "Gem", "position": None, "sp_dec": None},
+                    {"horse_id": "h2", "horse": "Win", "position": "1", "sp_dec": "3.0"}]}]})
+    out = _settle_tables(d, results, log, lambda s: None)
+    assert "VOID" in out["nap"] and log.existing(d)["won"] == NapLog.VOID
+    # a genuine faller still loses through the same normaliser
+    log2_dir = tmp_path / "f"; log2_dir.mkdir()
+    log2 = _log(log2_dir)
+    _bank(log2, d)
+    results = results_from_raw({"results": [{
+        "race_id": "rac_1", "date": "2026-09-02", "course": "Ripon",
+        "runners": [{"horse_id": "h1", "horse": "Gem", "position": "F", "sp_dec": "3.0"},
+                    {"horse_id": "h2", "horse": "Win", "position": "1", "sp_dec": "3.0"}]}]})
+    _settle_tables(d, results, log2, lambda s: None)
+    assert log2.existing(d)["won"] == 0
+
+
+def test_settle_is_write_once_at_the_write_point(tmp_path):
+    log = _log(tmp_path)
+    d = date(2026, 9, 2)
+    _bank(log, d)
+    log.settle(d, won=True, sp_dec=3.0)
+    with pytest.raises(ValueError, match="never edited"):
+        log.settle(d, won=False, sp_dec=None)
+    assert log.existing(d)["won"] == 1

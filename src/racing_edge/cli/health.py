@@ -391,8 +391,10 @@ def main() -> int:
     # marked against results — the learning loop's real gauge, not win/loss
     try:
         _lg = open_nap_log()
-        _rg = _lg.read_grades() if hasattr(_lg, "read_grades") else {}
-        _lg.close()
+        try:
+            _rg = _lg.read_grades() if hasattr(_lg, "read_grades") else {}
+        finally:
+            _lg.close()
         if _rg and _rg.get("graded"):
             lines.append(f"  read scoreboard ({_rg['graded']} graded): named danger won "
                          f"{_rg['danger_won']}, beat us {_rg['danger_beat_us']}; winner "
@@ -415,12 +417,16 @@ def main() -> int:
         from pathlib import Path as _PT
         _t0 = _PT("data/school/tier0.md")
         _age = (_dtm.now() - _dtm.fromtimestamp(_t0.stat().st_mtime)).days if _t0.exists() else None
-        all_ok &= _check(
-            _age is not None and _age <= 1,
-            f"tier-0 pass fresh (data/school/tier0.md, {_age}d old)",
-            "tier-0 pass STALE or missing — the night task's tier0 step did not run "
-            f"({'never written' if _age is None else f'{_age}d old'})",
-            lines)
+        if _age is None:
+            # never written yet is not a fault (second audit, bot F): the same
+            # courtesy the flight recorder gets on its first morning
+            lines.append("  tier-0: not yet run (starts with tonight's night task)")
+        else:
+            all_ok &= _check(
+                _age <= 1,
+                f"tier-0 pass fresh (data/school/tier0.md, {_age}d old)",
+                f"tier-0 pass STALE ({_age}d old) — the night task's tier0 step did not run",
+                lines)
     except Exception:
         lines.append("  tier-0: unreadable")
     lines.append("\n  NOT WATCHED (the honest half — nobody is checking these):")

@@ -96,19 +96,35 @@ def _lessons_with_rulings(lesson_lines: list[str]) -> str:
     the point of use ... every recall counted'). Never crashes the read."""
     try:
         from racing_edge.study.rulings import recall, render
-        block = render(recall())
+        block = render(recall(limit=25))     # the newest 25: his voice, not a wall of it
     except Exception as exc:                         # the read outranks the memory
         print(f"  ⚠ rulings not recalled: {exc.__class__.__name__}", flush=True)
         block = ""
     return (block + "\n\n" if block else "") + "\n".join(lesson_lines)
 
 
+def _record_nap(log, day, r, nap, c, confident, case_text, deep_conf, mp, args) -> None:
+    """The one bank call, with the read's claims riding in the row."""
+    log.record(day=day, race_id=r.race_id, course=r.course, horse=nap.runner.horse,
+               horse_id=nap.runner.horse_id, price=nap.price, score=c.score,
+               confident=confident, case=case_text, deep_conf=deep_conf,
+               aligned=" | ".join(c.aligned), race_quality=nap.race_quality,
+               force=args.force_rebank,
+               danger=(mp.danger_horse if mp is not None else ""),
+               crossed=("|".join(mp.crossed_off) if mp is not None else ""),
+               my_price=(mp.my_price if mp is not None else None))
+
+
 def _bank_pass(day, reason: str) -> None:
     """A no-bet day is still a ledger day — banked with its reason (never overwrites
     a real pick: record_pass only fires on paths where none was banked)."""
     log = open_nap_log()
-    log.record_pass(day=day, reason=reason)
-    log.close()
+    try:
+        log.record_pass(day=day, reason=reason)
+    except ValueError as exc:      # refused at the write point (bot A) — said, not raised
+        print(f"  ✗ pass NOT banked: {exc}", flush=True)
+    finally:
+        log.close()
 
 
 def _record() -> int:
@@ -272,6 +288,14 @@ def _settle_tables(day, results, log, emit) -> dict[str, str]:
             log.void(day, f"{row['horse']} non-runner ({status})", table=table)
             out[table] = f"{row['horse']} VOID — non-runner ({status})"
             continue
+        if me.position is None and not status:
+            # second audit 2026-09-02 (bot B): a null position with NO status
+            # string is how a feed marks a withdrawn horse — it is not a beaten
+            # one. A void names the uncertainty; a loss would invent a bet.
+            log.void(day, f"{row['horse']} no finishing position and no status in "
+                          "the result — treated as a non-runner", table=table)
+            out[table] = f"{row['horse']} VOID — no position, no status (non-runner)"
+            continue
         won = me.position == 1
         settlers[table](day, won=won, sp_dec=me.sp_dec)
         out[table] = (f"{row['horse']} {'WON' if won else 'unplaced'} "
@@ -282,6 +306,17 @@ def _settle_tables(day, results, log, emit) -> dict[str, str]:
                 log.grade_read(day, grade)
                 out[table] += f" | READ GRADED: {grade}"
     return out
+
+
+def norm_horse_name(s: str) -> str:
+    """ONE way to compare horse names (second audit 2026-09-02, bot E: the
+    danger was graded by exact string match — a curly apostrophe or an '(IRE)'
+    suffix scored a present danger as absent): lowercase, straight quotes, no
+    country suffix, single spaces."""
+    import re
+    s = (s or "").replace("’", "'").replace("‘", "'").replace("`", "'")
+    s = re.sub(r"\s*\([A-Za-z]{2,3}\)\s*$", "", s.strip())
+    return re.sub(r"\s+", " ", s).strip().lower()
 
 
 def grade_read_claims(row: dict, race, me) -> str:
@@ -298,13 +333,13 @@ def grade_read_claims(row: dict, race, me) -> str:
     runners = list(getattr(race, "runners", []) or [])
 
     def _name(rr) -> str:
-        return (getattr(rr, "horse", "") or "").strip().lower()
+        return norm_horse_name(getattr(rr, "horse", "") or "")
 
     def _pos(rr):
         p = getattr(rr, "position", None)
         return p if isinstance(p, int) else None
 
-    danger = (row.get("danger") or "").strip().lower()
+    danger = norm_horse_name(row.get("danger") or "")
     if danger:
         dr = next((rr for rr in runners if _name(rr) == danger), None)
         if dr is None:
@@ -315,7 +350,7 @@ def grade_read_claims(row: dict, race, me) -> str:
             parts.append(f"danger beat us ({_pos(dr)} v {_pos(me) or 'unplaced'})")
         else:
             parts.append("danger behind us")
-    crossed = [x.split(" — ")[0].split(" - ")[0].strip().lower()
+    crossed = [norm_horse_name(x.split(" — ")[0].split(" - ")[0])
                for x in (row.get("crossed") or "").split("|") if x.strip()]
     if crossed:
         winner = next((rr for rr in runners if _pos(rr) == 1), None)
@@ -760,9 +795,21 @@ def main() -> int:
                     cand_order.append(p.race.race_id)
         cand_races = [all_by_race[rid] for rid in cand_order[:3]]
         candidates = []
+        from racing_edge.school.sitting import sitting_floor as _floor
         for picks in cand_races:
             r0 = picks[0].race
             label = f"{r0.course} {r0.off_time}"
+            # LAW 5c AT THE MACHINE'S OWN READ (second audit 2026-09-02: the wall
+            # had no caller): a race whose class, distance or favourite the read
+            # cannot name is not read — a named pass line, never an order.
+            _favp = min((p for p in picks if p.price), key=lambda p: p.price,
+                        default=None)
+            _wall = _floor(r0.race_class,
+                           getattr(r0, "distance_f", None) or getattr(r0, "distance", None),
+                           _favp.runner.horse if _favp is not None else None)
+            if _wall:
+                emit(f"  ✗ {label}: {_wall}")
+                continue
             hists = {p.runner.horse_id: p.history for p in picks}
             race_flags = sorted({f for p in picks
                                  for f in _race_gate_flags(p.conviction.flags)})
@@ -866,8 +913,9 @@ def main() -> int:
                 # agreement path: the pick is FIXED — the case attaches only if
                 # the reader wrote it for the engine's horse; a re-pick attempt
                 # is not a power it has.
-                if (mp.ok and mp.horse and mp.horse.strip().lower()
-                        == nap.runner.horse.strip().lower()):
+                _same = bool(mp.horse) and (mp.horse.strip().lower()
+                                            == nap.runner.horse.strip().lower())
+                if _same and mp.case.strip():
                     deep_case = [
                         f"  DEEP READ ({resolve_model('nap')}) — the case for "
                         f"the ENGINE'S pick:",
@@ -878,13 +926,24 @@ def main() -> int:
                         deep_case.append(f"    rests on: {' | '.join(mp.cite)}")
                     if mp.owed:
                         deep_case.append(f"    OWED: {mp.owed}")
-                elif mp.ok and mp.horse:
+                    if not mp.ok:
+                        # second audit 2026-09-02 (bot E): a terse or half-built
+                        # case for the RIGHT horse used to be thrown away whole
+                        # and the email degraded to a one-line blurb. It is kept,
+                        # named incomplete, and can never be CONFIDENT.
+                        import dataclasses as _dc
+                        deep_case.append("    ⚠ INCOMPLETE CASE (danger, profile "
+                                         "or length missing) — LEAN at best")
+                        mp = _dc.replace(mp, confidence="lean")
+                elif mp.horse and not _same:
                     emit(f"  ⚠ reader attempted a re-pick ('{mp.horse}') — not "
                          f"its power in engine mode; the engine pick banks "
                          f"with the mechanical case.")
+                    mp = None      # its claims belong to the wrong horse (bot A)
                 else:
                     emit("  (no usable case from the reader — the engine pick "
                          "banks with the mechanical case)")
+                    mp = None
                 raise _EngineBankNow                     # skip reader-mode logic below
             if mp.ok and mp.is_pass:
                 emit("  DEEP READ: argued a PASS, race by race:")
@@ -947,6 +1006,7 @@ def main() -> int:
     except _EngineBankNow:
         pass                       # engine mode: case written (or not) — bank the pick
     except Exception as exc:                      # the deep read must never kill the bank
+        mp = None          # a half-parsed pick must not bank its claims (bot A)
         emit(f"  (deep read failed: {exc.__class__.__name__} — shallow engine pick used)")
 
     # standing guard (rule #26): the two decisive facts the brief CAN'T see — never
@@ -1177,15 +1237,14 @@ def main() -> int:
     if fav is not None and fav.runner.horse_id != nap.runner.horse_id:
         case_text += (f"\nDEPARTURE FROM THE FAVOURITE {fav.runner.horse} ({fav.price}): "
                       f"written edge = {', '.join(c.aligned) or 'NONE — thin'}")
-    log.record(day=day, race_id=r.race_id, course=r.course, horse=nap.runner.horse,
-               horse_id=nap.runner.horse_id, price=nap.price, score=c.score,
-               confident=confident, case=case_text, deep_conf=deep_conf,
-               aligned=" | ".join(c.aligned), race_quality=nap.race_quality,
-               force=args.force_rebank,
-               # the read's claims ride in the row and are graded at settle
-               danger=(mp.danger_horse if mp is not None else ""),
-               crossed=("|".join(mp.crossed_off) if mp is not None else ""),
-               my_price=(mp.my_price if mp is not None else None))
+    try:
+        _record_nap(log, day, r, nap, c, confident, case_text, deep_conf, mp, args)
+    except ValueError as exc:
+        # a settled day, or a banked day without --force-rebank: refused at the
+        # write point and said plainly — never a crash email (bot A)
+        emit(f"  ✗ NOT banked: {exc}")
+        log.close()
+        return 1
     # THE SHADOW: the mechanical engine's own top survivor, banked silently for the
     # A/B record (one machine, two ledgers — the record decides which method earns
     # the stakes). Costs nothing: it was already computed.

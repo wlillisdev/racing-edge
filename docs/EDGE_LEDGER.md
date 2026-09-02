@@ -724,3 +724,31 @@ betting method, a carved rule or stakes; those items are marked FOR RULING.
 ### Still broken / needs the master's console
 - The 07:30 nap email did not arrive on 2026-09-02 and no crash email came: the run never started, hung, or the mailer is down — `tail -80 data/task_runs.log` on the box and the Tasks page (expiry) decide it. From tonight the EXIT trap mails any failed exit.
 - Items 7, 8, 10 (thin case), 13, 17 are FOR RULING and unchanged.
+
+### THE SECOND WAVE (same night — the master: "send bots out and do a full audit, I have been here before and still found problems hidden")
+Six fresh bots, adversarial briefs on the code written HOURS earlier. They found real holes in the fix itself — the reason a second wave exists.
+
+| # | bot | finding | disposition |
+|---|---|---|---|
+| S1 | (mine, while briefing) | the rulings recall counter rewrote a git-TRACKED file every morning — on the box that dirties the tree and the pre-task `git pull` refuses forever, silently | FIXED (PR #82): counts live in an untracked JSON twin; every box-written artefact ignored explicitly; a test pins that the tracked corpus ends before the box's own nightly files begin |
+| S2 | A | on two branches the reader's REJECTED candidate's danger/crossed/my_price banked against the engine's horse (stale `mp`) | FIXED: `mp = None` on both branches and in the deep-read except; pinned by the write-point tests |
+| S3 | A | `record_pass` could INSERT OR REPLACE a pending real pick away | FIXED: write-point guard with `force`; the CLI says the refusal instead of crashing; pinned |
+| S4 | A | `--force-rebank` on a settled day crashed into the crash-mail | FIXED: refused with a message, exit 1 |
+| S5 | B | a non-runner whose position is null with NO status string still settled as a LOSS | FIXED: null position + no status = void, reason named; pinned THROUGH the real normaliser |
+| S6 | B | `settle()` had no write-once guard (a caller's discipline, not the record's) | FIXED: identical re-settle is idempotent, a different result or a void raises; pinned |
+| S7 | B | a stray "W" in the non-runner statuses | FIXED |
+| S8 | C | the EXIT trap's log append ran under `set -e` BEFORE the mail — on a full disk the net would not fire and the exit code was overwritten | FIXED: append guarded with `|| true` |
+| S9 | C | night-task sub-steps (settle/school/tier0) swallowed failures with a WARNING nobody reads | FIXED: each swallowed failure mails |
+| S10 | C | double crash-mail for a guarded CLI (run_guarded + trap) | ACCEPTED as noisy-not-dangerous; named |
+| S11 | C | 88 corpus files are tracked; a future commit of a box-dated file would block the box's pull | GUARDED: test forbids tracked raw files after 2026-08-14; rule in HANDOFF |
+| S12 | D | law 5c's wall had no caller in the machine | FIXED: the deep read skips a candidate race whose class, distance or favourite it cannot name, with a line |
+| S13 | D | seven unreached branches (grades, failing fetch, shadow twin, month test, GEM bonus, no git, corrupt counts) | FIXED: seven tests |
+| S14 | E | a terse-but-correct engine-mode case was thrown away whole; the email degraded to a one-line blurb | FIXED: kept, named INCOMPLETE, forced LEAN |
+| S15 | E | the danger was graded by exact string match (a smart quote or "(IRE)" scored a present danger as absent) | FIXED: one name-normaliser for danger, crossed and result names; pinned |
+| S16 | E | rulings recalled all-at-once make "never consulted" a near-tautology; NAP_SYSTEM lacks the own-price clause VETO_SYSTEM has; the "bottling" ruling pulls against the earned-pass laws | NOTED for the master: tag-keyed recall is the next step; the prompt text is his (Lane 3); the tension is real and his to reconcile |
+| S17 | F | health redded the whole report on the first morning before tier-0 had ever run; a connection not closed in `finally` | FIXED |
+| S18 | F | tier-0's "0" unknown position counted as a placing (already fixed) had no test | FIXED: pinned |
+| S19 | F | tier-0's rank control is coarse (7+ pooled) — a HOLDS can still be the market in disguise | NOTED: nothing is carved from tier-0 without the doorbell; finer cells before any HOLDS is brought to him |
+| S20 | F | HANDOFF's "Last updated" header was three weeks stale; the ledger's own suite claim went stale within the hour | FIXED (date bumped); the count below is measured after the second wave |
+
+Second wave measured: suite **240 passed**, exit 0; two more bugs put back by hand (the pass-overwrite guard, the null-position void) and both tests screamed. Deployed the same night (PR #83).

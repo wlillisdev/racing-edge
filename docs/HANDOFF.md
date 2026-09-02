@@ -1,6 +1,6 @@
 # HANDOFF — the apprenticeship's living memory
 
-Last updated: **2026-08-15** (update this file whenever state changes — it is
+Last updated: **2026-09-02** (the audit night) (update this file whenever state changes — it is
 how every new chat remembers everything).
 
 ## 2026-08-15 — THE SCHOOL (new standing method, master-dictated)

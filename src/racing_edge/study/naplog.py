@@ -173,7 +173,7 @@ class NapLog:
             out.append((wins, settled))
         return out[0], out[1]
 
-    def record_pass(self, *, day: date, reason: str) -> None:
+    def record_pass(self, *, day: date, reason: str, force: bool = False) -> None:
         """Bank a NO-BET day as a first-class row (won=-1: settled as 'no bet').
         2026-07-18: an earned pass and a dead pipeline looked identical — empty inbox,
         empty ledger. Now quiet days carry their reason and the watchman can tell
@@ -182,6 +182,12 @@ class NapLog:
         old = self.existing(day)
         if old is not None and old["won"] in (0, 1):
             raise ValueError(f"{day} is already SETTLED — a pass cannot overwrite it")
+        if (old is not None and old["won"] is None and old["race_id"] != "PASS"
+                and not force):
+            # second audit 2026-09-02 (bot A): a pass could INSERT OR REPLACE a
+            # pending real pick away — horse, price, case gone without trace
+            raise ValueError(f"{day} already carries a banked pick ({old['horse']}) — "
+                             "a pass will not overwrite it without force")
         self._conn.execute(
             "INSERT OR REPLACE INTO nap (date, race_id, course, horse, horse_id, price, "
             "score, confident, won, sp_dec, case_text, deep_conf) "
@@ -191,14 +197,32 @@ class NapLog:
         self._conn.commit()
 
     def settle(self, day: date, won: bool, sp_dec: float | None = None) -> None:
+        if not self._assert_open("nap", day, won, sp_dec):
+            return
         self._conn.execute("UPDATE nap SET won = ?, sp_dec = ? WHERE date = ?",
                            (int(won), sp_dec, day.isoformat()))
         self._conn.commit()
 
+    def _assert_open(self, table: str, day: date, won=None, sp_dec=None) -> bool:
+        """A settled or voided row is never CHANGED (second audit 2026-09-02,
+        bot B: the write-once law lived only in the caller). Re-settling with
+        the identical result is idempotent and allowed (a re-run night task);
+        a different result, or touching a void, raises. Returns True when the
+        row is open and the write should proceed."""
+        row = self._conn.execute(f"SELECT won, sp_dec FROM {table} WHERE date = ?",
+                                 (day.isoformat(),)).fetchone()
+        if row is None or row["won"] is None:
+            return True
+        if (won is not None and row["won"] == int(won)
+                and (row["sp_dec"] or None) == (sp_dec or None)):
+            return False                       # identical re-settle: nothing to write
+        raise ValueError(f"{table} {day} is already settled/voided (won={row['won']}) "
+                         "— the record is never edited")
+
     # NON-RUNNER family: the bet never ran — VOID, never a loss (audit
     # 2026-09-02: 'won = me.position == 1' scored a withdrawn horse as beaten).
     # Fallers / pulled-up / unseated RAN and lost — they stay losses.
-    NON_RUNNER = ("NR", "WD", "W", "VOID", "VOI", "WITHDRAWN")
+    NON_RUNNER = ("NR", "WD", "WITHDRAWN", "VOI", "VOID")   # bare "W" removed (bot B)
 
     def void(self, day: date, reason: str, table: str = "nap") -> None:
         """Terminal state for a pick no result can settle as a bet. The reason
@@ -324,6 +348,8 @@ class NapLog:
         return [dict(r) for r in rows]
 
     def settle_shadow(self, day: date, won: bool, sp_dec: float | None = None) -> None:
+        if not self._assert_open("shadow", day, won, sp_dec):
+            return
         self._conn.execute("UPDATE shadow SET won = ?, sp_dec = ? WHERE date = ?",
                            (int(won), sp_dec, day.isoformat()))
         self._conn.commit()
@@ -364,6 +390,8 @@ class NapLog:
             "SELECT * FROM favline WHERE won IS NULL ORDER BY date").fetchall()]
 
     def settle_favline(self, day: date, won: bool, sp_dec: float | None = None) -> None:
+        if not self._assert_open("favline", day, won, sp_dec):
+            return
         self._conn.execute("UPDATE favline SET won = ?, sp_dec = ? WHERE date = ?",
                            (1 if won else 0, sp_dec, day.isoformat()))
         self._conn.commit()
