@@ -400,3 +400,44 @@ def test_draw_and_yard_location_reach_the_reader() -> None:
     assert r.trainer_location == "Lambourn, Berks" and r.draw == 5
     out = render_preread(cards[0], {})
     assert "draw 5" in out and "Lambourn, Berks" in out
+
+
+# --------------------------------------------------------------------------- #
+# the master's rulings of 2026-09-02 ("fix the above now")
+# --------------------------------------------------------------------------- #
+
+def test_rank_key_right_race_as_a_bar_then_best_horse() -> None:
+    """Race quality is a BAR: below it a race loses to any race above it; among
+    races that clear it the BEST HORSE wins and race quality only breaks ties."""
+    from racing_edge.pipeline.nap import BETTING_BAR, _rank_key
+
+    def pick(rq, score, cls=4):
+        return NS(race_quality=rq, price=3.0, race=NS(race_class=cls),
+                  conviction=NS(confident=False, mark_known=True, score=score,
+                                aligned=tuple("x" * score)))
+    assert BETTING_BAR == 2
+    # below the bar loses to above it whatever the horse
+    assert _rank_key(pick(2, 1)) > _rank_key(pick(1, 4))
+    # both above the bar: the better horse wins even in the lesser race
+    assert _rank_key(pick(2, 4)) > _rank_key(pick(3, 1))
+    # equal horses: race quality breaks the tie
+    assert _rank_key(pick(3, 3)) > _rank_key(pick(2, 3))
+
+
+def test_board_moves_reads_steamers_and_drifters_from_two_snapshots() -> None:
+    from racing_edge.cli.nap import board_moves
+    morning = {"r1": {"course": "Bath", "off": "5:02", "runners": {
+        "a": ["Steam", 4.0], "b": ["Drift", 3.0], "c": ["Same", 6.0], "d": ["New", None]}}}
+    now = {"r1": {"course": "Bath", "off": "5:02", "runners": {
+        "a": ["Steam", 3.0], "b": ["Drift", 4.5], "c": ["Same", 6.2], "e": ["Late", 8.0]}}}
+    rows = {r[1]: r[5] for r in board_moves(morning, now)}
+    assert rows == {"Steam": "STEAMER", "Drift": "DRIFTER", "Same": "steady"}
+
+
+def test_law_5d_and_the_engine_lens_appendix_ride_in_the_rulebook() -> None:
+    from racing_edge.study.morningread import NAP_SYSTEM
+    assert "THE BOTTLING LINE" in NAP_SYSTEM
+    assert "THE ENGINE'S OWN LENSES" in NAP_SYSTEM
+    for tag in ("#10 LOCAL MASTER YARD", "#14 THE ALL-WEATHER CAUTION",
+                "#22 THE ANCHOR BAR", "#30 THE COURSE JOCKEY", "NO COMPLETED CHASE"):
+        assert tag in NAP_SYSTEM

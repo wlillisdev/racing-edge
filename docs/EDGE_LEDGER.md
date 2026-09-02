@@ -781,3 +781,14 @@ Six bots: yardstick coverage (P1), the rule coverage matrix (P2), memory wiring 
 | T21 | P6 | franking ran on the pick only, never the danger | FIXED: the danger is franked like the pick |
 | T22 | P6 | law 4f (the traveller) has no data: trainer_location was dropped at the normaliser | FIXED: carried and shown; the miles table is the next incision |
 | T23 | P6 | ~47 API calls per 10-runner race, no cap; `result_by_id`/`trainer_ages` fire only if the model chooses, uncounted | NAMED |
+
+### THE MASTER'S RULINGS ON THE THIRD WAVE — "fix the above now" (2026-09-02, ~20:00 UTC)
+| ruling | what changed | REVERT-IF |
+|---|---|---|
+| Right race v best horse | `_rank_key`: race quality is a BAR (the two-column record's bar, 2); a race below it loses to any race above it; among races that clear it the BEST HORSE wins; race quality breaks ties; BELOW the bar the 2026-08-17 race-first law still orders the duty water | a week of picks reads worse than the race-first key |
+| The cornered day | no betting race survives the gates → a NAMED PASS (law 5), race by race — the dreck column's supply ends | the record shows readable winners passed over |
+| The reader-mode floors | mark / class / anchor live in engine mode as CAPS: off-profile is LEAN, never CONFIDENT, never a re-pick | confident naps vanish for a week on floor caps alone |
+| One-race deep read | engine mode reads TWO races: the pick's and the next-best distinct race | cost doubles with no objection ever raised |
+| Engine lenses without a law | #10, #13, #14, #19, #22, #30, no-completed-chase and the improver-favourite are written into the rulebook as coded, with their receipts | — |
+| Bottling v the earned pass | law 5d THE BOTTLING LINE: a pass names what kills every race; a lean names the caution that blocked confidence and whether it is a question (answer it) or a fact (it stands) | — |
+| The market is one number | THE BOARD: 07:30 snapshot of every priced runner from the morning read; the 12:30 guard snapshots the whole card again, reads steamers / drifters and the nap race's board, and emails it — law 4g's first data. Flip-flop needs a third snapshot (next) | the board email is noise for a week |
