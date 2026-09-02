@@ -323,3 +323,35 @@ def test_night_takes_its_credentials_through_configs_door_not_the_shell(
     want = (date.fromisoformat(NIGHT_DAY) - timedelta(days=BACKFILL_DAYS - 1)).isoformat()
     assert called and called[0][:4] == ["--start", want, "--end", NIGHT_DAY]
 
+
+def test_fetch_rides_out_a_429_and_honours_retry_after(monkeypatch):
+    """Live on the box 2026-09-02 21:00: the backfill died on the third day
+    with '429 Too Many Requests'. A 429 waits (Retry-After if named) and
+    retries; the page is still fetched whole."""
+    import requests as _rq
+    waits = []
+    monkeypatch.setattr(fetch_mod.time, "sleep", lambda s: waits.append(s))
+    calls = []
+
+    class _R(_FakeResp):
+        def __init__(self, data, status=200, headers=None):
+            super().__init__(data)
+            self.status_code = status
+            self.headers = headers or {}
+
+        def raise_for_status(self):
+            if self.status_code >= 400:
+                raise _rq.exceptions.HTTPError(str(self.status_code))
+
+    def fake_get(url, params=None, auth=None, timeout=None):
+        calls.append(params["skip"])
+        if len(calls) == 1:
+            return _R({}, 429, {"Retry-After": "7"})
+        return _R({"results": [{"id": 1}], "total": 1})
+
+    monkeypatch.setattr(fetch_mod.requests, "get", fake_get)
+    races = fetch_mod.fetch_day("2026-08-17", ("u", "p"))
+    assert len(races) == 1
+    assert calls == [0, 0]                     # the same page, asked again
+    assert waits and waits[0] == 7             # the server's Retry-After won
+
