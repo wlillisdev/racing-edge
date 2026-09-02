@@ -11,6 +11,10 @@ the fetches.
 
 from __future__ import annotations
 
+# EVERY LENS FAILURE, COLLECTED FOR THE EMAIL (third audit 2026-09-02): the
+# console print stays; this list lets the sheet say what it could not measure
+owed_notes: list[str] = []
+
 from datetime import date
 from typing import Protocol
 
@@ -137,13 +141,16 @@ def build_evidence(race: Race, client: _Fetcher, as_of: date | None = None) -> l
         # One horse's fetch dying must not kill the whole morning (2026-07-25
         # reliability audit): the horse degrades to history-OWED, said out loud.
         try:
-            history = past_runs_from_raw(client.horse_results(r.horse_id, limit=20),
+            # 30 runs, not 20 (third audit, bot P1): a last win 21-30 starts back
+            # read as 'mark OWED' instead of STALE — the anchor's own veto was blind
+            history = past_runs_from_raw(client.horse_results(r.horse_id, limit=30),
                                          r.horse_id)
         except Exception as exc:
             # NAME the failure (2026-08-01: a whole Saturday of 'history fetch
             # failed' with the cause swallowed — an unnamed error is undiagnosable)
             print(f"      ⚠ evidence OWED for {r.horse} — history fetch failed: "
                   f"{exc.__class__.__name__}: {str(exc)[:100]}", flush=True)
+            owed_notes.append(f"{r.horse}: HISTORY unread ({exc.__class__.__name__})")
             history = ()
         if as_of is not None:
             history = tuple(h for h in history if h.date < as_of)
@@ -159,6 +166,7 @@ def build_evidence(race: Race, client: _Fetcher, as_of: date | None = None) -> l
             # optional lens — OWED, not fatal, and NAMED (audit 2026-09-02)
             print(f"      ⚠ trip lens OWED for {r.horse}: {exc.__class__.__name__}",
                   flush=True)
+            owed_notes.append(f"{r.horse}: trip lens unread ({exc.__class__.__name__})")
             trip_strike, trip_runs = None, 0
         if backtest or not r.jockey_id:
             j_strike, j_rides = None, 0
@@ -170,6 +178,8 @@ def build_evidence(race: Race, client: _Fetcher, as_of: date | None = None) -> l
                 except Exception as exc:
                     print(f"      ⚠ jockey-course lens OWED for {r.horse}: "
                           f"{exc.__class__.__name__}", flush=True)
+                    owed_notes.append(f"{r.horse}: jockey-course lens unread "
+                                      f"({exc.__class__.__name__})")
                     jrows = []                    # optional lens — OWED, not fatal
                 jcache[r.jockey_id] = course_strike_from_analysis(jrows, race.course)
             j_strike, j_rides = jcache[r.jockey_id]

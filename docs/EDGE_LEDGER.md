@@ -752,3 +752,32 @@ Six fresh bots, adversarial briefs on the code written HOURS earlier. They found
 | S20 | F | HANDOFF's "Last updated" header was three weeks stale; the ledger's own suite claim went stale within the hour | FIXED (date bumped); the count below is measured after the second wave |
 
 Second wave measured: suite **240 passed**, exit 0; two more bugs put back by hand (the pass-overwrite guard, the null-position void) and both tests screamed. Deployed the same night (PR #83).
+
+### THE THIRD WAVE — THE PICKING SYSTEM ITSELF (same night — the master: "audit the whole horse picking system, make sure it is wired correctly, apply yardstick to all horses, picking the right races, applying all rules, lessons learned, franking and nuances not just some of them, make sure memory is working, data based, wired correctly and recalled … remember best horse wins")
+Six bots: yardstick coverage (P1), the rule coverage matrix (P2), memory wiring (P3), race selection (P4), blind spots (P5), the evidence pipe (P6). The SWOT is docs/SWOT_2026-09-02.md.
+
+| # | bot | finding | disposition |
+|---|---|---|---|
+| T1 | P2 | **THE FINDING OF THE NIGHT: under the default engine mode the model was sent VETO_SYSTEM alone — NAP_SYSTEM, every law in the master's words, reached the reader only in reader mode, which nobody runs.** Every law "pinned" this week was inert prose for the live read | FIXED: the rulebook rides above the veto clause in engine mode (prompt caching keeps the fixed text cheap) |
+| T2 | P1 | the engine measured every priced runner and the deep reader never saw a single per-horse finding (manner reads, cautions, flags) — it argued blind to the yardstick | FIXED: an ENGINE'S YARDSTICK block per candidate race, every priced runner with its lenses, cautions and flags, rides into the read |
+| T3 | P1 | unpriced runners get no conviction read and no receipt; they reach the deep-read card with no history | PARTLY FIXED: a per-race line names them as UNMEASURED; measuring them (rank None) is queued |
+| T4 | P1 | evidence-fetch failures printed to the console only — the emailed sheet never showed an unmeasured horse | FIXED: EVIDENCE OWED block in the email |
+| T5 | P1 | histories capped at 20 runs — a last win 21+ back read as "mark OWED" not STALE; the anchor's veto was blind | FIXED: 30 |
+| T6 | P1 | the emailed scorecard silently capped at the top 4 by price (the Green Sky lesson, alive one file over) | FIXED: the whole priced field (16) |
+| T7 | P1 | engine mode deep-reads ONE race; every other readable race is read by the mechanical engine alone | FOR RULING (cost v coverage) |
+| T8 | P2 | laws with NO engine implementation (the model alone is trusted): 1c, 3b, 3d, 3e, 3f draw, 3i species, 4b/4c/4d/4g board, 4f traveller, 5, 9 | NAMED; the data exists for 3e/3f/3i/4f — each an incision on his word. 4b/4c/4d/4g have NO data source (single price snapshot) |
+| T9 | P2 | engine lenses citing law numbers (#10/#13/#14/#19/#22/#30) that the rulebook text never spells out; two flags with a receipt but no law (no-completed-chase, improver-favourite) | FOR RULING: write them into the rulebook or retire them |
+| T10 | P2 | nuances change prompt text only; none moves a gate — and in engine mode the pick is fixed BEFORE the lessons-carrying call | NAMED (the master: read the form, not arithmetic — prompt effect is the design; the pick-before-lessons ordering is for his word) |
+| T11 | P3 | read_grade written at settle and read by nobody but health | FIXED: the last graded reads ride into the next morning's lessons |
+| T12 | P3 | SCHOOL_BRIEF.md dead on both ends; lens_attribution/clue_scoreboard display-only; SHAPE_BOOK.md doc drifts (cannot be regenerated on the box: tracked file) | NAMED |
+| T13 | P3 | no result written from a race can reach the same day's pick (order of tasks verified) | CONFIRMED CLEAN |
+| T14 | P4 | **race_quality dominates the rank key entirely** — a conviction-1 horse in a Class 3 outranks a clean-sheet conviction-4 in a Class 5, and the code never reaches conviction | FOR RULING: "right race first" v "best horse wins" — the tie is his to break |
+| T15 | P4 | **the cornered day still banks a pick** ("duty only, dreck column") — direct conflict with law 5 and the source of the dreck losers | FOR RULING: one pick every day (his standing order) v a pass is correct (law 5) |
+| T16 | P4 | the field band and the 12+ penalty count PRICED runners; the fav band is asked with the 07:30 price on cells built from SP | PARTLY FIXED: partial odds gap said out loud; SP-v-morning limit recorded in the book's docstring; a pre-off re-glance is the fix |
+| T17 | P4 | shape cells missing for common live shapes (jumps 8-11, flat 12-15, unclassed 8-11) → no vote | NAMED: the box's corpus grows nightly; regenerate cells there |
+| T18 | P4 | the fav line and two-column record never feed back into selection | NAMED (display by design) |
+| T19 | P5 | the draw parsed and read by nobody; sex/weight-for-age idle; profile verdicts computed but not shown to the reader; past winners of the race have no source; breeding endpoints unused | FIXED: draw and yard location reach the reader. The rest NAMED in the SWOT |
+| T20 | P6 | `market_move` is dead by construction — one price snapshot, `morning == consensus`, `late` never set; the mkt-move column is OWED forever, not just at 07:30 | NAMED: the biggest data gap (laws 4b/4d/4g); market snapshots through the day are the cut — his word |
+| T21 | P6 | franking ran on the pick only, never the danger | FIXED: the danger is franked like the pick |
+| T22 | P6 | law 4f (the traveller) has no data: trainer_location was dropped at the normaliser | FIXED: carried and shown; the miles table is the next incision |
+| T23 | P6 | ~47 API calls per 10-runner race, no cap; `result_by_id`/`trainer_ages` fire only if the model chooses, uncounted | NAMED |

@@ -225,3 +225,16 @@ def test_settle_is_write_once_at_the_write_point(tmp_path):
     with pytest.raises(ValueError, match="never edited"):
         log.settle(d, won=False, sp_dec=None)
     assert log.existing(d)["won"] == 1
+
+
+def test_the_reads_own_grades_reach_the_next_mornings_lessons() -> None:
+    """Third audit (bot P3): read_grade was written at settle and consulted by
+    nobody but health. The morning lessons now carry the last graded reads."""
+    from racing_edge.study.morningread import build_lessons
+    hist = [{"date": "2026-09-01", "horse": "Mr Cool", "course": "Brighton", "won": 0,
+             "race_id": "r1", "read_grade": "danger WON; my price 4.0 longer than SP 3.0"},
+            {"date": "2026-09-02", "horse": "Open", "course": "Bath", "won": None,
+             "race_id": "r2", "read_grade": ""}]
+    lines = build_lessons(hist, (0, 1), [], [], [])
+    assert any("READ GRADED 2026-09-01 Mr Cool: danger WON" in ln for ln in lines)
+    assert not any("Open" in ln and "READ GRADED" in ln for ln in lines)

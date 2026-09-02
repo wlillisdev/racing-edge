@@ -485,3 +485,18 @@ danger, the crossed-off list, the reader's own price — banks in the nap row an
 is GRADED at settle (read_grade), with the scoreboard in health. The loop is:
 read every race in the morning, mark every read at night, autopsy the misses
 Rule-One style, the master's rulings verbatim in every read, walls around it.
+
+THREE WAVES IN ONE NIGHT (2026-09-02): the plumbing audit (41 findings), the
+adversarial second wave on the fixes themselves (20), and the picking-system
+audit (23) — all in docs/EDGE_LEDGER.md under the date; the SWOT in
+docs/SWOT_2026-09-02.md. The two findings that matter most for every future
+session: (1) under the default engine mode the rulebook (NAP_SYSTEM) was NEVER
+sent to the model — only the veto text was — so every "pinned" law was inert
+for the live read until tonight; (2) the engine's per-horse yardstick (lenses,
+cautions, flags) was never shown to the reader. Both fixed. STILL FOR THE
+MASTER'S RULING, unchanged: the race-first rank key v "best horse wins"; the
+cornered day banking against law 5; the dead reader-mode floors; engine mode's
+one-race deep read; the engine lenses citing law numbers the rulebook never
+spells out; "stop bottling" v the earned pass. The market is ONE price
+snapshot — laws 4b/4c/4d/4g have no data; snapshots through the day are the
+cut, on his word.

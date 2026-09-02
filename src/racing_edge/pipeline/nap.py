@@ -309,6 +309,9 @@ def evaluate_field(client: _Client, day: str = "today",
         # <=7) + exactly ONE horse in winning form = the candy race — the wall
         # stands down and the read decides. REVERT-IF: a week of candy-race
         # picks reads worse than the dreck column they came from.
+        # PROXY, named (third audit 2026-09-02, bot P4): 'one horse in winning
+        # form' is operationalised as WON LAST TIME OUT — narrower than the
+        # master's sense (a recent win with an excuse since would not count)
         _in_form = [p for p in race_picks
                     if p.history and p.history[0].position == 1]
         _candy = len(race_picks) <= 7 and len(_in_form) == 1
@@ -339,6 +342,15 @@ def evaluate_field(client: _Client, day: str = "today",
                                      *p.conviction.cautions)))
         _glance = glance_for(book_code(race.race_type), race.race_class,
                              len(race_picks), fav)
+        # PARTIAL ODDS GAP (third audit, bot P4): the field band and the 12+
+        # penalty count PRICED runners (as the book was built); a run with two
+        # or more declared-but-unpriced runners is banded on a shrunken field —
+        # said out loud so a feed gap never reads as a smaller race
+        _unpriced = race.field_size - len(race_picks)
+        if progress and _unpriced >= 1:
+            progress(f"  ⚠ {race.course} {race.off_time}: {_unpriced} declared runner(s) "
+                     f"carry no price — UNMEASURED by the yardstick and banded as a "
+                     f"{len(race_picks)}-runner field")
         rq = race_quality_score(is_handicap=race.is_handicap, concentration=conc,
                                 race_class=race.race_class,
                                 race_type=race.race_type or "",

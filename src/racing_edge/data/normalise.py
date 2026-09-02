@@ -109,6 +109,7 @@ def runner_from_raw(raw: dict) -> Runner:
         horse=_str(raw.get("horse")),
         trainer=_str(raw.get("trainer")),
         trainer_id=_str(raw.get("trainer_id")),
+        trainer_location=_str(raw.get("trainer_location")),
         jockey=_str(raw.get("jockey")),
         jockey_id=_str(raw.get("jockey_id")),
         claim_lbs=_int(raw.get("claim")),

@@ -605,7 +605,23 @@ def main() -> int:
     def _progress(line: str) -> None:
         print(line, flush=True)
 
+    from racing_edge.data import evidence as _evmod
+    _evmod.owed_notes.clear()                 # one run, one list
     field = evaluate_field(client, day=args.day, codes=codes, progress=_progress)
+    # EVIDENCE OWED, in the email not just the console (third audit, bot P1:
+    # a history-fetch failure printed to stdout and the emailed sheet never
+    # showed it — an unmeasured horse looked measured)
+    try:
+        from racing_edge.data.evidence import owed_notes as _owed
+        if _owed:
+            emit(f"  ⚠ EVIDENCE OWED — {len(_owed)} lens fetch(es) failed; those "
+                 "horses are measured on LESS than the sheet implies:")
+            for _n in _owed[:12]:
+                emit(f"    · {_n}")
+            if len(_owed) > 12:
+                emit(f"    · … {len(_owed) - 12} more in the task log")
+    except Exception:
+        pass
 
     # THE MORNING OPINIONS (the master, 2026-08-18: 'you should study the
     # form of every race each day, then look at the winners in the evening,
@@ -816,7 +832,21 @@ def main() -> int:
             warn = ("  ⚠ RACE WARNINGS (cautions, not blindfolds — a pick here must "
                     "ANSWER each one in its case, and is LEAN at best): "
                     + "; ".join(race_flags) + "\n" if race_flags else "")
-            candidates.append((label, warn + render_preread(r0, hists)))
+            # THE ENGINE'S YARDSTICK RIDES INTO THE READ (third audit 2026-09-02,
+            # bot P1: every priced runner was measured, and the reader never saw a
+            # single per-horse finding — it argued blind to the manner reads,
+            # the cautions and the flags). Law 5b at the reader's desk.
+            _yard = ["  ENGINE'S YARDSTICK — every priced runner measured; the case "
+                     "must ANSWER each caution and flag it argues past:"]
+            for _p in sorted(picks, key=lambda x: (x.price or 999.0)):
+                _c = _p.conviction
+                _yard.append(f"    {_p.runner.horse} @{_p.price or '?'}: conv {_c.score}"
+                             + (f" — for: {', '.join(_c.aligned)}" if _c.aligned else "")
+                             + (f" | cautions: {'; '.join(_c.cautions)}" if _c.cautions else "")
+                             + (f" | FLAGS: {'; '.join(_c.flags)}" if _c.flags else "")
+                             + ("" if _c.mark_known else " | mark OWED"))
+            candidates.append((label, warn + "\n".join(_yard) + "\n"
+                               + render_preread(r0, hists)))
         # max_steps=6 (2026-07-25 audit: rules 4+8 demand ~2 lookups per candidate
         # race — franking the key form AND checking the danger — and at 4 the model
         # ran dry mid-frank on a 3-race Saturday shortlist)
@@ -873,7 +903,13 @@ def main() -> int:
                           f"{nap.race.off_time}. Write its case with that exact "
                           f"race and horse, or veto (pass=true) with the cited "
                           f"disqualifying fact as pass_reason.")
-                text, trail = deep(VETO_SYSTEM,
+                # THE RULEBOOK RIDES INTO ENGINE MODE (third audit 2026-09-02, bot
+                # P2 — the finding of the night): under the default NAP_MODE the
+                # model was sent VETO_SYSTEM ALONE; NAP_SYSTEM, every law in the
+                # master's own words, reached the reader only in a mode nobody
+                # runs. The veto clause now sits BELOW the rulebook, not instead
+                # of it (prompt caching keeps the cost of the fixed text low).
+                text, trail = deep(NAP_SYSTEM + "\n\n" + VETO_SYSTEM,
                                    build_nap_prompt(candidates,
                                                     _lessons_with_rulings(lesson_lines))
                                    + _fixed)
@@ -1025,6 +1061,18 @@ def main() -> int:
     from racing_edge.study.frank import frank_form
     frank_thin_deep = False
     fr = frank_form(client, nap.runner.horse_id, nap.history, code=nap.race.code)
+    # THE DANGER IS FRANKED LIKE THE PICK (third audit, bot P6: the pick's key
+    # form got a mechanical frank, the named danger's was only the model's own
+    # narrative — an asymmetry that made every pick look weaker than its rival)
+    try:
+        _dname = norm_horse_name(mp.danger_horse) if mp is not None else ""
+        _dp = next((p for p in field if p.race.race_id == nap.race.race_id
+                    and norm_horse_name(p.runner.horse) == _dname), None) if _dname else None
+        if _dp is not None:
+            _frd = frank_form(client, _dp.runner.horse_id, _dp.history, code=nap.race.code)
+            emit(f"  danger frank (#5/#15): {_dp.runner.horse} — {_frd.note}")
+    except Exception as _e:
+        emit(f"  danger frank OWED: {_e.__class__.__name__}")
     if fr.is_thin:
         frank_thin_deep = True
         emit(f"  ⚠ FRANK THIN ({fr.note}) — a con on the ledger: LEAN at best, "
