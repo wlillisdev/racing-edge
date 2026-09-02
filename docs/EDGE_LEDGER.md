@@ -822,3 +822,12 @@ Six bots, each running an entry point end to end with fake feeds or the real cor
 | F23 | B6 learning | three-day loop: bank → no-lookahead lessons → settle with read grading → clue held → ruling recalled with the untracked counter → void never a loss → backlog void with console command → text twin; field-test promotion; tier-0 month test; learn's model-free paths | CLEAN, 4 tests kept |
 | F24 | me | `shapebook.glance_for` memoised cells process-wide and IGNORED its `raw` argument — cells from one corpus answered for another (surfaced as a test-order leak: the e2e nap fixture read BEST AVOIDED from the real corpus and passed the day) | FIXED: memo keyed by the resolved corpus path |
 
+### "IMPLEMENT WHATEVER WILL MAKE IT BETTER" (the master, 2026-09-02, ~20:20 UTC — his ruling on the fourth wave's open items)
+| item | what changed | REVERT-IF |
+|---|---|---|
+| F11 the truncation retry (money) | grows the budget by half (16k → 24k), not double (16k → 32k) — the first attempt is still thrown away, that is the API's shape | a truncated read fails to complete at 24k twice in a week |
+| F19 one clock | `domain.units.uk_today()` — the racing day (Europe/London) — replaces `date.today()` at every site (usage ledger, night/tier0 default day, health, client's 'today', normaliser fallbacks, the objection window, nuance cutoffs, rulings); a test scans the source so it cannot creep back | — |
+| THE THIRD SNAPSHOT | health (09:30) writes `data/market_snapshots/<day>-0930.json` (one racecards call, no model, never a red); the guard's `board_moves` reads 07:30 → 09:30 → 12:30 and names a FLIP-FLOP (steamed then drifted, or the reverse, by the guard's own bands) — law 4g's board character, mechanically | the 09:30 call fails three mornings running (the line says so) |
+| THE DELTA LINE | `report.restudy.delta_line`: today v the last same-code run — class (UP/down), mark (±lb), trip (UP/DOWN), going, same course — on every runner's card in the deep read; facts only, no threshold, no score | the reader's cases cite it wrongly |
+| NOT tonight | main() extraction (F12) — a 290-line move ninety minutes before a live run is the wrong hour; tag-keyed rulings recall — the tag vocabulary is mine and unruled; load_corpus memo (F13) — no cost to remove | — |
+

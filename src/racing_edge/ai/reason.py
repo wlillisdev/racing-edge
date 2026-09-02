@@ -28,6 +28,8 @@ from collections.abc import Callable
 
 import requests
 
+from racing_edge.domain.units import uk_today
+
 _URL = "https://api.anthropic.com/v1/messages"
 
 
@@ -36,7 +38,6 @@ def _log_usage(task: str, model: str, data: dict) -> None:
     the machine counts its own bill instead of anyone estimating it. Never raises."""
     try:
         import csv
-        import datetime
         from pathlib import Path
         _data_dir = Path(__file__).resolve().parents[3] / "data"
         u = data.get("usage") or {}
@@ -46,7 +47,7 @@ def _log_usage(task: str, model: str, data: dict) -> None:
         eff_in = (int(u.get("input_tokens") or 0)
                   + int(u.get("cache_creation_input_tokens") or 0)
                   + int(u.get("cache_read_input_tokens") or 0) // 10)
-        row = [datetime.date.today().isoformat(), task, model,
+        row = [uk_today().isoformat(), task, model,
                eff_in, int(u.get("output_tokens") or 0)]
         # anchored to the repo, not the CWD (2026-07-25 audit: a manual
         # run from elsewhere wrote spend into a stray data/ — the budget
@@ -106,9 +107,8 @@ def _budget_spent_today(task: str | None = None) -> int:
     """Tokens (in+out) logged today — for one task, or all. 0 if no ledger yet."""
     try:
         import csv
-        import datetime
         from pathlib import Path
-        today = datetime.date.today().isoformat()
+        today = uk_today().isoformat()
         total = 0
         _data_dir = Path(__file__).resolve().parents[3] / "data"
         with (_data_dir / "model_usage.csv").open() as f:
@@ -266,11 +266,15 @@ def get_investigator(task: str, tools: list[dict],
             text = "".join(b.get("text", "") for b in content if isinstance(b, dict))
             stop = data.get("stop_reason")
             # a TRUNCATED answer (max_tokens) is unusable even when text came back —
-            # the JSON gets cut mid-string. Retry the same request once, budget doubled.
+            # the JSON gets cut mid-string. Retry the same request once with HALF
+            # AGAIN the budget (fourth audit 2026-09-02, F11: doubling threw away
+            # 16k tokens and bought 32k — one bad morning spent most of the day's
+            # nap budget; the master: "implement whatever will make it better").
             if stop == "max_tokens" and not bumped:
                 bumped = True
-                budget *= 2
-                trail.append(f"answer truncated at {budget // 2} tokens — "
+                _was = budget
+                budget = int(budget * 1.5)
+                trail.append(f"answer truncated at {_was} tokens — "
                              f"retrying with max_tokens={budget}")
                 continue
             if not text:                               # NEVER fail silently

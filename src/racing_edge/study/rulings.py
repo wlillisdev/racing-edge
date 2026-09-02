@@ -21,6 +21,8 @@ import os
 from datetime import date
 from pathlib import Path
 
+from racing_edge.domain.units import uk_today
+
 RULINGS = Path("data/rulings.csv")
 FIELDS = ("date", "source", "tags", "ruling", "recalls")
 
@@ -84,7 +86,7 @@ def add(ruling: str, tags: str = "", day: date | str | None = None,
     for r in rows:
         if r["ruling"] == text:
             return r
-    d = day.isoformat() if isinstance(day, date) else (day or date.today().isoformat())
+    d = day.isoformat() if isinstance(day, date) else (day or uk_today().isoformat())
     row = {"date": d, "source": source, "tags": tags, "ruling": text, "recalls": 0}
     rows.append(row)
     _save(rows, path)

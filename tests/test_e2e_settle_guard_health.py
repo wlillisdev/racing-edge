@@ -40,6 +40,11 @@ def project(tmp_path, monkeypatch):
         monkeypatch.delenv(k, raising=False)
     monkeypatch.chdir(tmp_path)
     get_config.cache_clear()
+    # health takes the 09:30 board snapshot through the client door (2026-09-02):
+    # an empty card here, so the entry point never touches the network
+    monkeypatch.setattr("racing_edge.data.client.get_client",
+                        lambda: type("_C", (), {"racecards": lambda self, d="today":
+                                                 {"racecards": []}})())
     yield tmp_path
     get_config.cache_clear()
 
@@ -319,6 +324,9 @@ def test_health_reds_a_stale_unsettled_nap(project, monkeypatch, capsys):
     rc = health_cli.main()
     out = capsys.readouterr().out
 
+    # the third price point of the day is written by health (the flip-flop's data)
+    assert (project / "data" / "market_snapshots" / f"{today.isoformat()}-0930.json").exists()
+    assert "09:30 snapshot written" in out
     assert rc == 1
     assert "RED" in out
     assert d3.isoformat() in out

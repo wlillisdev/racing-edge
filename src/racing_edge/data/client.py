@@ -15,6 +15,7 @@ import requests
 from requests.exceptions import ConnectionError, ReadTimeout, Timeout
 
 from racing_edge.config import Config, get_config
+from racing_edge.domain.units import uk_today
 
 
 class RacingAPIError(RuntimeError):
@@ -87,11 +88,11 @@ class RacingAPIClient:
     def racecards(self, day: str = "today") -> dict:
         """Pro racecards for a day (accepts 'today', 'tomorrow', or YYYY-MM-DD —
         a past date for backtesting). Returns the raw doc (key 'racecards')."""
-        from datetime import date, timedelta
+        from datetime import timedelta
         if day == "today":
-            ds = date.today().isoformat()
+            ds = uk_today().isoformat()
         elif day == "tomorrow":
-            ds = (date.today() + timedelta(days=1)).isoformat()
+            ds = (uk_today() + timedelta(days=1)).isoformat()
         else:
             ds = day
         regions = [r.strip() for r in self._cfg.api.regions.split(",")]
@@ -104,8 +105,8 @@ class RacingAPIClient:
         else:
             # standard/basic take day=today|tomorrow ONLY — no date param (the 422
             # that silently killed every morning after the downgrade, 2026-07-13)
-            today = date.today().isoformat()
-            tomorrow = (date.today() + timedelta(days=1)).isoformat()
+            today = uk_today().isoformat()
+            tomorrow = (uk_today() + timedelta(days=1)).isoformat()
             if ds == today:
                 dayp = "today"
             elif ds == tomorrow:

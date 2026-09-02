@@ -517,4 +517,10 @@ roots. For the master's ruling: the deep read's truncation retry doubles the
 token budget (money, F11). Named, not touched: main() at 800 lines (F12).
 Harness scar: NEVER restore a mutated file with `git checkout` while edits are
 uncommitted — copy the file aside first (it wiped pipeline/nap.py once tonight).
+HIS RULING ON THE OPEN ITEMS ("implement whatever will make it better"):
+the truncation retry grows by half; one clock (uk_today) everywhere; the
+THIRD SNAPSHOT — health writes 09:30, the guard names FLIP-FLOPs across
+07:30/09:30/12:30; THE DELTA LINE (today v last run: class, mark, trip,
+going, course) on every runner in the deep read. Deferred with reasons in the
+ledger: main() extraction, tag-keyed rulings recall, the corpus memo.
 
