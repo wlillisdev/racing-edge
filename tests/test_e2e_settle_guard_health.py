@@ -126,6 +126,9 @@ def test_settle_happy_path_grades_the_read_and_writes_the_csv(project, monkeypat
     assert shadow_rows["won"] == 0          # danger ran 2nd -> unplaced
     assert favline_rows["won"] == 0         # crossed-off horse ran 5th -> unplaced
     assert (project / "data" / "nap_record.csv").exists()
+    # WHAT WE MEASURE (2026-09-02): the settled nap rides into the policy ledger
+    _pol = (project / "data" / "school" / "daily_policy.csv").read_text()
+    assert f"{today.isoformat()},nap,1,1," in _pol
     assert f"{today} nap:" in out
 
 

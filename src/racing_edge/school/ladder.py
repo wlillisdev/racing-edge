@@ -58,6 +58,22 @@ def load_rows(csv_path: Path):
     return rows
 
 
+def nap_policy_rows(history) -> list[tuple]:
+    """THE NAP COLUMN AS THE LADDER'S CHAMPION (the master, 2026-09-02 21:05,
+    on the first honest ladder read — engine opinions 19% v the jolly 30%:
+    "best horse wins; we read the form; we pick winners — that is what we
+    measure"). Every SETTLED real pick (won 0/1) is one graded pick at SP;
+    passes and voids are positions, not picks, and carry no row."""
+    out = []
+    for r in history:
+        if r.get("won") not in (0, 1):
+            continue
+        won = int(r["won"])
+        ret = float(r.get("sp_dec") or 0.0) if won else 0.0
+        out.append((r["date"], "nap", 1, won, ret))
+    return out
+
+
 def last_day(rows, policy: str) -> str:
     """The most recent day a policy was graded ('' if never) — the ladder's
     freshness, so a silent night school is a named fault not a red verdict."""

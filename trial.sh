@@ -62,8 +62,9 @@ SDK_OFF=(env ANTHROPIC_API_KEY=)
 # ONE BRAIN (PR #56, 2026-08-18, the master: 'is the system fixed now one
 # brain, one goal') — the trial lives on main. Override with TRIAL_BRANCH=...
 BRANCH="${TRIAL_BRANCH:-main}"
-# the school ladder's champion policy: the engine's own whole-card reading
-export SCHOOL_CHAMPION="${SCHOOL_CHAMPION:-engine}"
+# the school ladder's champion: THE NAP COLUMN (the master, 2026-09-02: "best
+# horse wins; we read the form; we pick winners — that is what we measure")
+export SCHOOL_CHAMPION="${SCHOOL_CHAMPION:-nap}"
 echo ">> updating to the latest trial branch ($BRANCH)..."
 # BEST-EFFORT update (2026-07-21): under set -e a git/network hiccup at 08:30 killed
 # the entire run before it banked anything. Stale code running beats no run.

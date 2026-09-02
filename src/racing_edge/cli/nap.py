@@ -614,17 +614,11 @@ def _settle(day_str: str, email: bool) -> int:
                             _bw += 1
                             _bret += _me.sp_dec or 0.0
             if _n:
-                _csvp = _Path("data/school/daily_policy.csv")
-                _new = not _csvp.exists()
-                _csvp.parent.mkdir(parents=True, exist_ok=True)
-                with open(_csvp, "a", newline="") as _fh:
-                    _wr = _csv.writer(_fh)
-                    if _new:
-                        _wr.writerow(["day", "policy", "picks", "wins", "returned"])
-                    _wr.writerow([day.isoformat(), "engine", _n, _w, f"{_ret:.2f}"])
-                    if _bn:
-                        _wr.writerow([day.isoformat(), "engine-bet", _bn, _bw,
-                                      f"{_bret:.2f}"])
+                from racing_edge.school.daily import append_policy_rows as _apr
+                _prow = [(day.isoformat(), "engine", _n, _w, _ret)]
+                if _bn:
+                    _prow.append((day.isoformat(), "engine-bet", _bn, _bw, _bret))
+                _apr(_Path("data/school/daily_policy.csv"), _prow)
                 emit(f"  MORNING OPINIONS marked: {_w}/{_n} races read right "
                      f"({100.0 * _w / _n:.0f}%), level stakes {_ret - _n:+.1f}pt "
                      f"— the day's full test, fed to the ladder")
@@ -645,6 +639,16 @@ def _settle(day_str: str, email: bool) -> int:
     # THE BACKLOG SWEEP (audit 2026-09-02: '--settle today' never revisited a
     # missed day; the comment "retries tomorrow" was a comment, not code)
     _sweep_backlog(day, log, emit)
+    # WHAT WE MEASURE (the master, 2026-09-02): the nap column is the ladder's
+    # champion — every settled pick rides into the policy ledger as 'nap'
+    # (whole history, deduped: the first settle after this lands backfills)
+    try:
+        from pathlib import Path as _PP
+        from racing_edge.school.daily import append_policy_rows as _apr2
+        from racing_edge.school.ladder import nap_policy_rows as _npr
+        _apr2(_PP("data/school/daily_policy.csv"), _npr(log.history()))
+    except Exception as _e:
+        emit(f"  ⚠ nap column not written to the policy ledger: {_e.__class__.__name__}")
     from pathlib import Path as _TP
     log.export_text(_TP("data/nap_record.csv"))      # the text twin, rewritten whole
     log.close()
