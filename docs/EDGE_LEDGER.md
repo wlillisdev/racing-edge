@@ -666,7 +666,7 @@ tomorrow's 07:30 is already the engine that declines. Autopsies:
 ## THE COMPREHENSIVE SYSTEM AUDIT (2026-09-02, the master: "cut out rot, fix glitches, make it stable, reliable and accurate — I am sick of finding the problems myself")
 
 Six read-only bots (sonnet, one per layer, file:line evidence only) + the map of
-19 pipeline stages (docs/ARCHITECTURE.md). Suite: **209 tests before →  after**,
+19 pipeline stages (docs/ARCHITECTURE.md). Suite: **209 tests before → 226 after**,
 exit 0. Mutation proof: four bugs put back by hand, four pinned tests screamed
 (write-point guard, time guard fail-open, non-runner-as-loss, pagination
 without total). End-to-end on live data: tier-0 ran on the real corpus (23,339
