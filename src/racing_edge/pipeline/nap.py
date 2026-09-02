@@ -165,7 +165,11 @@ def still_to_run(off_time: str, now, buffer_minutes: int = 5):
         return None
 
 
-def _rank_key(p: NapPick) -> tuple[int, int, int, int, int, float]:
+BETTING_BAR = 2   # the two-column record's bar (naplog.record_split): a race at or
+                  # above it is a BETTING race; below it, duty water
+
+
+def _rank_key(p: NapPick) -> tuple:
     # RACE QUALITY breaks ties (the master, 2026-07-05: "really bad race selections —
     # poor classes, anything could win"): between equal convictions, the pick in the
     # BETTER-CLASS race wins. A readable Class 3 beats a Class 6 scramble every time.
@@ -178,12 +182,23 @@ def _rank_key(p: NapPick) -> tuple[int, int, int, int, int, float]:
     # 2026-07-05 law finally reaches the RANKING, not just the flags): the
     # readable race outranks the seductive horse. Within equal races, the
     # old horse-first key decides as before.
-    return (p.race_quality,
-            int(p.conviction.confident), int(p.conviction.mark_known),
-            p.conviction.score, len(p.conviction.aligned),
-            # unclassed (None) ranks BELOW Class 6, never level with it (audit
-            # 2026-09-02: `or 6` tied 'unknown' with 'known worst')
-            -(p.race.race_class if p.race.race_class else 7), -(p.price or 999.0))
+    # RIGHT RACE AS A BAR, THEN BEST HORSE (the master, 2026-09-02, ruling on
+    # the third audit's finding that race_quality outranked the horse entirely —
+    # a conviction-1 in a Class 3 beat a clean-sheet conviction-4 in a Class 5
+    # and the key never reached conviction: "best horse wins" + "picking the
+    # right race" reconciled: the race must CLEAR the betting bar first; among
+    # races that clear it the BEST HORSE wins; race quality then breaks ties).
+    # REVERT-IF: a week of picks reads worse than the race-first key.
+    horse = (int(p.conviction.confident), int(p.conviction.mark_known),
+             p.conviction.score, len(p.conviction.aligned))
+    # unclassed (None) ranks BELOW Class 6, never level with it (audit
+    # 2026-09-02: `or 6` tied 'unknown' with 'known worst')
+    tail = (-(p.race.race_class if p.race.race_class else 7), -(p.price or 999.0))
+    if p.race_quality >= BETTING_BAR:
+        return (1, *horse, p.race_quality, *tail)      # above the bar: best horse first
+    # below the bar the 2026-08-17 law still holds — the race outranks the
+    # horse in duty water, so the dreck column stays honest for the record
+    return (0, p.race_quality, *horse, *tail)
 
 
 def evaluate_field(client: _Client, day: str = "today",

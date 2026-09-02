@@ -500,3 +500,8 @@ one-race deep read; the engine lenses citing law numbers the rulebook never
 spells out; "stop bottling" v the earned pass. The market is ONE price
 snapshot — laws 4b/4c/4d/4g have no data; snapshots through the day are the
 cut, on his word.
+THE MASTER RULED THE SAME NIGHT ("fix the above now"): race quality is a BAR
+then best horse wins; the cornered day PASSES; the floors cap in engine mode;
+two-race deep read; the engine's lenses are in the rulebook; law 5d the
+bottling line; THE BOARD — two price snapshots a day (07:30 from the read,
+12:30 from the guard), movers emailed. All with REVERT-IFs in the ledger.

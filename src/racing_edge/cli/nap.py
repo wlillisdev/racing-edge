@@ -200,6 +200,95 @@ def _resend(day_str: str) -> int:
     return 0
 
 
+# --------------------------------------------------------------------------- #
+# THE BOARD (the master, 2026-09-02, ruling on the third audit: "the market is
+# one price snapshot — laws 4b/4c/4d/4g have no data at all"). Two snapshots a
+# day, every priced runner: 07:30 from the morning read, 12:30 from the guard.
+# The difference is the board's CHARACTER — steamers, drifters, the nap race's
+# whole board — read mechanically and emailed before racing. Flip-flop needs a
+# third point; that is the next snapshot, on his word.
+# --------------------------------------------------------------------------- #
+
+def _field_prices(field) -> dict:
+    out: dict = {}
+    for p in field:
+        if p.price:
+            out.setdefault(p.race.race_id, {"course": p.race.course,
+                                            "off": p.race.off_time, "runners": {}})
+            out[p.race.race_id]["runners"][p.runner.horse_id] = [p.runner.horse, p.price]
+    return out
+
+
+def _cards_prices(cards) -> dict:
+    out: dict = {}
+    for r in cards:
+        for x in r.runners:
+            if x.odds.consensus and x.odds.consensus > 1:
+                out.setdefault(r.race_id, {"course": r.course, "off": r.off_time,
+                                           "runners": {}})
+                out[r.race_id]["runners"][x.horse_id] = [x.horse, x.odds.consensus]
+    return out
+
+
+def _board_snapshot(day, tag: str, prices: dict) -> None:
+    import json
+    from pathlib import Path as _P
+    d = _P("data/market_snapshots")
+    d.mkdir(parents=True, exist_ok=True)
+    (d / f"{day.isoformat()}-{tag}.json").write_text(json.dumps(prices))
+
+
+def board_moves(morning: dict, now: dict, steam: float = 0.85, drift: float = 1.30):
+    """Pure: every runner priced in both snapshots -> (race_id, horse, then, now,
+    ratio, label) with label steamer / drifter / steady. The thresholds are the
+    guard's own bands (2026-07-26, the master: graded bands, not a cliff)."""
+    rows = []
+    for rid, race in now.items():
+        m = morning.get(rid, {}).get("runners", {})
+        for hid, (horse, price) in race.get("runners", {}).items():
+            then = m.get(hid, [None, None])[1]
+            if not then or not price:
+                continue
+            ratio = price / then
+            label = "STEAMER" if ratio <= steam else "DRIFTER" if ratio >= drift else "steady"
+            rows.append((rid, horse, then, price, round(ratio, 2), label))
+    return rows
+
+
+def _board_read(day, cards) -> None:
+    import json
+    from pathlib import Path as _P
+    now = _cards_prices(cards)
+    _board_snapshot(day, "1230", now)
+    f = _P("data/market_snapshots") / f"{day.isoformat()}-0730.json"
+    if not f.exists():
+        print("  board: no 07:30 snapshot — the read starts tomorrow", flush=True)
+        return
+    morning = json.loads(f.read_text())
+    rows = board_moves(morning, now)
+    movers = [x for x in rows if x[5] != "steady"]
+    lines = [f"THE BOARD at 12:30 v 07:30 — {len(rows)} runners priced both times, "
+             f"{len(movers)} mover(s)"]
+    for rid, horse, then, price, ratio, label in sorted(movers, key=lambda x: x[4]):
+        race = now[rid]
+        lines.append(f"  {label:8} {horse:22} {then} -> {price}  ({race['course']} {race['off']})")
+    log = open_nap_log()
+    n = next((x for x in log.pending() if x["date"] == day.isoformat()), None)
+    log.close()
+    if n and n["race_id"] in now:
+        lines.append(f"\n  THE NAP'S RACE ({now[n['race_id']]['course']} {now[n['race_id']]['off']}):")
+        for rid, horse, then, price, ratio, label in sorted(
+                (x for x in rows if x[0] == n["race_id"]), key=lambda x: x[3]):
+            lines.append(f"    {horse:22} {then} -> {price}  {label}")
+    text = "\n".join(lines)
+    print(text)
+    if movers:
+        from racing_edge.report.mail import configured, send
+        if configured():
+            send(f"The board 12:30: {len(movers)} mover(s)", text,
+                 title="The board", subtitle="racing-edge form trial")
+
+
 def _guard() -> int:
     """The pre-off DRIFT GUARD (audit fix 4). The move called the winner four times in
     one day and the drift saved the Perfidia stake — yet the banked nap was never
@@ -208,13 +297,20 @@ def _guard() -> int:
     the STAKE, not the record."""
     from racing_edge.data.normalise import racecards_from_raw
     day = resolve_date("today")
+    cards = racecards_from_raw(get_client().racecards("today"))
+    # THE BOARD, SNAPSHOT TWO + THE READ (the master, 2026-09-02): the whole
+    # card's prices now against 07:30 — steamers, drifters, the nap race's
+    # board — emailed before racing so law 4g finally has data behind it.
+    try:
+        _board_read(day, cards)
+    except Exception as _e:
+        print(f"  ⚠ board read failed: {_e.__class__.__name__}", flush=True)
     log = open_nap_log()
     n = next((x for x in log.pending() if x["date"] == day.isoformat()), None)
     log.close()
     if not n:
         print("  No unsettled nap banked for today — nothing to guard.")
         return 0
-    cards = racecards_from_raw(get_client().racecards("today"))
     race = next((r for r in cards if r.race_id == n["race_id"]), None)
     runner = next((x for x in race.runners if x.horse_id == n["horse_id"]), None) \
         if race else None
@@ -608,6 +704,14 @@ def main() -> int:
     from racing_edge.data import evidence as _evmod
     _evmod.owed_notes.clear()                 # one run, one list
     field = evaluate_field(client, day=args.day, codes=codes, progress=_progress)
+    # THE BOARD, SNAPSHOT ONE (the master, 2026-09-02: the market was one number
+    # and laws 4b/4c/4d/4g had no data): every priced runner's 07:30 price is
+    # kept so the 12:30 guard can read the whole card's character against it.
+    try:
+        _board_snapshot(resolve_date(args.day), "0730",
+                        {p.race.race_id: {} for p in field} and _field_prices(field))
+    except Exception as _e:
+        print(f"  ⚠ board snapshot not written: {_e.__class__.__name__}", flush=True)
     # EVIDENCE OWED, in the email not just the console (third audit, bot P1:
     # a history-fetch failure printed to stdout and the emailed sheet never
     # showed it — an unmeasured horse looked measured)
@@ -754,12 +858,21 @@ def main() -> int:
     # the pick still banks (one pick a day, the master's standing order) but
     # it is loudly labelled, never confident, and lands in the dreck column
     # of the two-column record where the master said to judge it separately.
-    cornered = bool(survivors) and getattr(nap, "race_quality", 0) < 2
+    from racing_edge.pipeline.nap import BETTING_BAR as _BAR
+    cornered = bool(survivors) and getattr(nap, "race_quality", 0) < _BAR
     if cornered:
-        emit("  ⚠ CORNERED DAY: no betting race survived the gates — every "
-             "remaining candidate sits in a race type the record says to walk "
-             "past. This pick is DUTY ONLY (dreck column); the fav line is the "
-             "day's only serious interest. Never confident on a cornered day.")
+        # THE CORNERED DAY IS A PASS (the master, 2026-09-02, ruling on the
+        # third audit: the forced 'duty only' pick was the dreck column's
+        # whole supply — law 5, a pass is CORRECT when no candidate matches,
+        # now outranks the one-pick-a-day habit). Named race by race.
+        _why = ("CORNERED DAY: no betting race survived the gates (best survivor "
+                f"{nap.runner.horse} in {nap.race.course} {nap.race.off_time} scores "
+                f"race quality {getattr(nap, 'race_quality', 0)} < bar {_BAR}) — "
+                "law 5: a pass is the correct pick")
+        emit(f"  ✗ {_why}")
+        _bank_pass(resolve_date(args.day), _why)
+        _maybe_email(out, "Nap — no bet today (cornered: no betting race)", args.email)
+        return 0
     deep_case: list[str] = []
     mp = None
     try:
@@ -792,7 +905,14 @@ def main() -> int:
             # ENGINE-FIRST: one race — the engine's pick's race. The reader
             # reads it in full to write the case (or find a disqualifier); it
             # chooses nothing.
+            # TWO races, not one (the master, 2026-09-02): the engine's pick's
+            # race first, then the next-best DISTINCT race — so the reader sees
+            # the runner-up race too and can object with a cited fact.
             cand_order: list[str] = [nap.race.race_id]
+            for p in field:
+                if p.race.race_id not in cand_order:
+                    cand_order.append(p.race.race_id)
+                    break
         else:
             cand_order = []
             for p in field:                  # field is rank-sorted, flagged included
@@ -1146,11 +1266,19 @@ def main() -> int:
     # form reader, the exact thing the master said he does not want). Never CONFIDENT
     # off-profile, and the shallow engine pick gets no such licence.
     soft_fails = []
-    if (not engine_mode) and r.race_class is not None and r.race_class > 4:
+    # THE FLOORS LIVE IN ENGINE MODE TOO (the master, 2026-09-02, ruling on the
+    # third audit: mark, class and anchor were dead under the default while
+    # their comments claimed protection). In engine mode the pick is fixed, so
+    # a floor never re-picks — it CAPS: off-profile is LEAN, never CONFIDENT.
+    if engine_mode and (delta is None or delta > 0 or _mr.stale):
+        soft_fails.append("mark not soundly well-in ("
+                          + ("STALE anchor" if _mr.stale else
+                             f"delta {delta if delta is not None else 'OWED'}") + ")")
+    if r.race_class is not None and r.race_class > 4:
         soft_fails.append(f"class Cl{r.race_class}")
     _shape, _conc = market_shape([p.price for p in field
                                   if p.race.race_id == r.race_id and p.price])
-    if (not engine_mode) and (race_fav is None or _shape == "OPEN"):
+    if race_fav is None or _shape == "OPEN":
         soft_fails.append(f"no market anchor (fav {race_fav}, "
                           f"top-3 concentration {_conc:.2f})")
     off_profile = bool(soft_fails)
