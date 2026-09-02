@@ -14,7 +14,7 @@ reads, nothing to hallucinate.
 from __future__ import annotations
 
 import argparse
-from datetime import timedelta
+from datetime import date, timedelta
 
 from racing_edge.cli._common import open_nap_log, open_nuance_log
 from racing_edge.domain.units import uk_today
@@ -392,6 +392,26 @@ def main() -> int:
             not _v.startswith("CHANGE TACK"),
             f"school ladder: {_v}",
             f"SCHOOL LADDER: {_v}",
+            lines)
+    if _lcsv.exists():
+        # NIGHT SCHOOL FRESHNESS (2026-09-02: the box's ladder read 'fav n=0' —
+        # the benchmark had NO graded days while the engine rows kept coming
+        # from settle; nobody watched the grader itself). The fav line is
+        # graded ONLY by the night run on the corpus: a stale fav day means
+        # the night fetch or grader is dead, whatever the verdict says.
+        from racing_edge.school.ladder import last_day as _ld
+        from racing_edge.school.ladder import load_rows as _lr2
+        _rows = _lr2(_lcsv)
+        _fav_day = _ld(_rows, "fav")
+        _age = (today - date.fromisoformat(_fav_day)).days if _fav_day else None
+        all_ok &= _check(
+            _age is not None and _age <= 2,
+            f"night school grading (fav benchmark last graded {_fav_day}, "
+            f"engine {_ld(_rows, 'engine') or 'never'})",
+            f"NIGHT SCHOOL NOT GRADING — fav benchmark last graded "
+            f"{_fav_day or 'never'}; the corpus fetch or the grader is dead: "
+            "console `tail -40 data/task_runs.log` after 22:00 and "
+            "`ls -la data/school/raw | tail -5`",
             lines)
     # THE HONEST HALF (dog-school lesson, 2026-08-24: "a dashboard showing
     # only what it measures is how a system looks healthy while rotting").

@@ -250,3 +250,21 @@ def test_self_auditor_three_strikes_appends_correction(tmp_path):
     # idempotent: never appended twice
     counts = update_ledger(school, "2026-03-05", faults)
     assert apply_corrections(school, brief, counts) == []
+
+
+def test_ladder_says_no_verdict_against_an_empty_benchmark():
+    """2026-09-02, the box's health: 'CHANGE TACK ... vs fav n=0' — a red
+    verdict against nothing. A thin benchmark names the upstream fault."""
+    from racing_edge.school.ladder import last_day, verdict
+
+    def days(n_days, picks, wins, ret):
+        return [(f"2026-03-{d + 1:02d}", picks, wins, ret) for d in range(n_days)]
+
+    rows = {"engine": days(10, 10, 2, 6.0)}
+    v = verdict(rows, "engine")
+    assert v.startswith("NO VERDICT") and "night school is not grading" in v
+    assert last_day(rows, "fav") == ""
+    assert last_day(rows, "engine") == "2026-03-10"
+    rows["fav"] = days(3, 10, 3, 9.0)          # 30 picks — still under the bar
+    assert verdict(rows, "engine").startswith("NO VERDICT")
+

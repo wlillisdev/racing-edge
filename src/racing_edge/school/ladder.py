@@ -58,6 +58,13 @@ def load_rows(csv_path: Path):
     return rows
 
 
+def last_day(rows, policy: str) -> str:
+    """The most recent day a policy was graded ('' if never) — the ladder's
+    freshness, so a silent night school is a named fault not a red verdict."""
+    dr = rows.get(policy) or []
+    return max(d for d, _p, _w, _r in dr) if dr else ""
+
+
 def window_stats(day_rows, window: int = WINDOW):
     """Rolling window of the most recent days totalling <= window picks
     (whole days — the day is the school's unit)."""
@@ -84,6 +91,15 @@ def verdict(rows, champion: str, window: int = WINDOW) -> str:
                 "not evidence")
     bn, bs, broi = window_stats(rows.get("fav", []), window)
     bench = f"fav n={bn} strike={bs:.1f}% ROI={broi:+.1f}%"
+    if bn < MIN_JUDGE:
+        # 2026-09-02, the box's 09:30 health: "CHANGE TACK ... vs fav n=0" —
+        # a red verdict against an EMPTY benchmark. A thin benchmark judges
+        # nothing; the fault is upstream (night school not grading the
+        # corpus) and is named as such.
+        return (f"NO VERDICT — favourite benchmark has {bn} graded picks "
+                f"(<{MIN_JUDGE}): night school is not grading the corpus "
+                f"(last fav day {last_day(rows, 'fav') or 'never'}) — "
+                "check the night fetch before judging anyone")
     champ = f"{champion} n={cn} strike={cs:.1f}% ROI={croi:+.1f}%"
 
     challengers = []
