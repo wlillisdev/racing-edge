@@ -253,6 +253,8 @@ def _corpus(tmp_path: Path) -> Path:
             d = f"{month}-{dd:02d}"
             for k, sp in enumerate((2.0, 4.0, 6.0, 10.0, 20.0), 1):
                 pos = "1" if k == (1 if dd % 2 else 2) else str(k + 1)
+                if k == 5:
+                    pos = "0"          # the corpus's UNKNOWN position — never a placing
                 rows.append([d, f"r{n}", "Ripon", "G", "F", "4", "6", f"h{k}",
                              f"{sp}", pos, "0", "j", "t"])
             with open(raw / f"{d}.csv", "w", newline="") as fh:
@@ -269,6 +271,7 @@ def test_tier0_scores_every_runner_against_the_market_and_writes_the_report(tmp_
     ctl = tier0.control(rows)
     assert ctl[1][0] == 8 and ctl[1][1] == 4          # favs: 8 runs, 4 wins
     assert ctl[2][1] == 4                             # 2nd favs: the other 4
+    assert ctl[5][2] == 0                             # rank-5 "0" positions: never placed (bot F)
     out = tmp_path / "tier0.md"
     assert tier0.main(["--day", "2026-08-04", "--raw", str(raw), "--out", str(out),
                        "--score-from", "2026-07-01"]) == 0
@@ -354,3 +357,27 @@ def test_rulings_survive_a_corrupt_counts_twin(tmp_path):
     R._counts_path(p).write_text("{not json")
     assert R.load(p)[0]["recalls"] == 0
     assert R.recall(path=p)[0]["recalls"] == 1
+
+
+def test_danger_grading_survives_quotes_case_and_country_suffix() -> None:
+    from racing_edge.cli.nap import grade_read_claims, norm_horse_name
+    assert norm_horse_name("Yes I’m Mali (IRE)") == "yes i'm mali"
+    me = NS(horse="Gem", position=3, sp_dec=4.0)
+    race = NS(runners=[NS(horse="Yes I'm Mali", position=1, sp_dec=1.7), me])
+    g = grade_read_claims({"danger": "YES I’M MALI (IRE)", "crossed": "", "my_price": None},
+                          race, me)
+    assert g == "danger WON"
+
+
+def test_no_tracked_corpus_file_can_collide_with_the_boxs_own_nightly_files() -> None:
+    """Second audit (bot C): the box writes data/school/raw/<day>.csv nightly
+    from 2026-08-18; a future commit adding a file with one of those names
+    would make the box's git pull fail forever. The tracked corpus must end
+    before the box's own files begin."""
+    import subprocess
+    out = subprocess.run(["git", "ls-files", "data/school/raw"], capture_output=True,
+                         text=True).stdout.split()
+    if not out:
+        pytest.skip("no git or no tracked corpus here")
+    latest = max(Path(f).stem for f in out)
+    assert latest <= "2026-08-14", f"tracked corpus reaches {latest} — the box owns later days"

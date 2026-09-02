@@ -46,7 +46,7 @@ if configured():
          "tail -120 data/task_runs.log (grep 'trial.sh' for the run's section).")
 PYEOF
 }
-trap 'st=$?; echo "=== $(date -u "+%F %T") UTC :: trial.sh '"${1:-nap}"' EXIT $st" >> "$LOGF"; if [ "$st" != "0" ]; then PYTHONPATH=src _crash_mail "'"${1:-nap}"'" "$st"; fi' EXIT
+trap 'st=$?; { echo "=== $(date -u "+%F %T") UTC :: trial.sh '"${1:-nap}"' EXIT $st" >> "$LOGF"; } || true; if [ "$st" != "0" ]; then PYTHONPATH=src _crash_mail "'"${1:-nap}"'" "$st"; fi' EXIT
 exec > >(tee -a "$LOGF") 2>&1
 
 export PYTHONPATH=src
@@ -88,6 +88,7 @@ case "${1:-nap}" in
            # (07-22..24: one NameError in settle starved the nuance ledger 3 nights)
            if ! "${SDK_OFF[@]}" "$PY" -m racing_edge.cli.nap --settle today --email; then
              echo "WARNING: settle FAILED — continuing to the self-study regardless"
+             PYTHONPATH=src _crash_mail "night:settle" 1   # a swallowed failure still mails (bot C)
            fi
            echo
            "$PY" -m racing_edge.cli.learn   --day today --email
@@ -98,12 +99,14 @@ case "${1:-nap}" in
            # Best-effort: a school crash must never cancel the self-study chain.
            if ! "${SDK_OFF[@]}" "$PY" -m racing_edge.school.night --day "$(date +%F)" --champion "$SCHOOL_CHAMPION"; then
              echo "WARNING: night school FAILED — the grind misses a day, nothing else"
+             PYTHONPATH=src _crash_mail "night:school" 1   # a swallowed failure still mails (bot C)
            fi
            # TIER-0 (audit 2026-09-02, the master: 'learn from every race, every
            # placing'): every runner in every resulted race v the market, yesterday
            # beside the trailing 14 days. Free, scripted, best-effort.
            if ! "${SDK_OFF[@]}" "$PY" -m racing_edge.school.tier0 --day "$(date +%F)"; then
              echo "WARNING: tier-0 pass FAILED — health goes red on a stale report"
+             PYTHONPATH=src _crash_mail "night:tier0" 1   # a swallowed failure still mails (bot C)
            fi
            # Sunday: the weekly synthesis rides in the same slot (no weekly task needed)
            if [ "$(date +%u)" = "7" ]; then echo; "$PY" -m racing_edge.cli.learn --synthesise --email; fi ;;
