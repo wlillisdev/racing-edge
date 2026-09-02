@@ -77,6 +77,33 @@ def grade(races_by_day: dict[str, list[list[Runner]]], policies: list[str]):
     return out
 
 
+def append_policy_rows(csv_path: Path, rows) -> int:
+    """ONE SITE for the policy ledger's append (fourth audit 2026-09-02, bot
+    B3: a re-run of night school appended a graded day again and the ladder
+    double-counted). rows = (day, policy, picks, wins, returned). One row per
+    (day, policy): a row already there is skipped; returns how many were."""
+    csv_path.parent.mkdir(parents=True, exist_ok=True)
+    new = not csv_path.exists()
+    have: set[tuple[str, str]] = set()
+    if not new:
+        with open(csv_path, newline="") as fh:
+            for row in csv.reader(fh):
+                if len(row) >= 2 and row[0] != "day":
+                    have.add((row[0], row[1]))
+    skipped = 0
+    with open(csv_path, "a", newline="") as fh:
+        w = csv.writer(fh)
+        if new:
+            w.writerow(["day", "policy", "picks", "wins", "returned"])
+        for day, p, n, wins, ret in rows:
+            if (day, p) in have:
+                skipped += 1
+                continue
+            w.writerow([day, p, n, wins, f"{float(ret):.2f}"])
+            have.add((day, p))
+    return skipped
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument("--from", dest="frm", required=True)
@@ -98,31 +125,8 @@ def main(argv=None):
         by_day[rs[0].date].append(rs)
 
     graded = grade(by_day, policies)
-    csv_path = Path(a.csv)
-    csv_path.parent.mkdir(parents=True, exist_ok=True)
-    new = not csv_path.exists()
-    # ONE ROW PER (day, policy) — fourth audit 2026-09-02, bot B3: a re-run of
-    # night school for a day already graded appended that day's rows again and
-    # the ladder double-counted every pick, win and return. The ledger is
-    # append-only; a row that is already there is skipped and said so.
-    have: set[tuple[str, str]] = set()
-    if not new:
-        with open(csv_path, newline="") as fh:
-            for row in csv.reader(fh):
-                if len(row) >= 2 and row[0] != "day":
-                    have.add((row[0], row[1]))
-    skipped = 0
-    with open(csv_path, "a", newline="") as fh:
-        w = csv.writer(fh)
-        if new:
-            w.writerow(["day", "policy", "picks", "wins", "returned"])
-        for p in policies:
-            for day in sorted(graded[p]):
-                if (day, p) in have:
-                    skipped += 1
-                    continue
-                n, wins, ret = graded[p][day]
-                w.writerow([day, p, n, wins, f"{ret:.2f}"])
+    rows = [(day, p, *graded[p][day]) for p in policies for day in sorted(graded[p])]
+    skipped = append_policy_rows(Path(a.csv), rows)
     if skipped:
         print(f"already graded: {skipped} (day, policy) row(s) skipped — "
               "the ledger holds one row per day per policy")

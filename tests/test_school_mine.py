@@ -268,3 +268,23 @@ def test_ladder_says_no_verdict_against_an_empty_benchmark():
     rows["fav"] = days(3, 10, 3, 9.0)          # 30 picks — still under the bar
     assert verdict(rows, "engine").startswith("NO VERDICT")
 
+
+def test_the_nap_column_is_what_we_measure(tmp_path):
+    """The master, 2026-09-02: "best horse wins; we read the form; we pick
+    winners — that is what we measure." Settled picks become 'nap' rows,
+    passes and voids carry none, and the append is idempotent."""
+    from racing_edge.school.daily import append_policy_rows
+    from racing_edge.school.ladder import last_day, load_rows, nap_policy_rows
+    hist = [{"date": "2026-09-01", "won": 1, "sp_dec": 4.0},
+            {"date": "2026-08-31", "won": 0, "sp_dec": 3.0},
+            {"date": "2026-08-30", "won": -1, "sp_dec": None},      # PASS
+            {"date": "2026-08-29", "won": -2, "sp_dec": None},      # VOID
+            {"date": "2026-09-02", "won": None, "sp_dec": None}]    # pending
+    rows = nap_policy_rows(hist)
+    assert rows == [("2026-09-01", "nap", 1, 1, 4.0), ("2026-08-31", "nap", 1, 0, 0.0)]
+    csvp = tmp_path / "daily_policy.csv"
+    assert append_policy_rows(csvp, rows) == 0
+    assert append_policy_rows(csvp, rows) == 2                # nothing doubled
+    got = load_rows(csvp)
+    assert len(got["nap"]) == 2 and last_day(got, "nap") == "2026-09-01"
+

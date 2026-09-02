@@ -383,7 +383,7 @@ def main() -> int:
     # impossible to miss. Quiet when the school isn't deployed here.
     import os as _os
     _lcsv = _data_dir() / "school" / "daily_policy.csv"
-    _champ = _os.environ.get("SCHOOL_CHAMPION")
+    _champ = _os.environ.get("SCHOOL_CHAMPION") or "nap"      # what we measure (09-02)
     if _lcsv.exists() and _champ:
         from racing_edge.school.ladder import load_rows as _lr
         from racing_edge.school.ladder import verdict as _lv

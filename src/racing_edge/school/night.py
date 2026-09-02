@@ -44,7 +44,7 @@ def trial_policies(school_dir: Path) -> list[str]:
 
 def main(argv=None):
     ap = argparse.ArgumentParser()
-    ap.add_argument("--champion", default=os.environ.get("SCHOOL_CHAMPION"))
+    ap.add_argument("--champion", default=os.environ.get("SCHOOL_CHAMPION") or "nap")
     ap.add_argument("--day", default=(uk_today() - timedelta(days=1)).isoformat())
     ap.add_argument("--school", default="data/school")
     a = ap.parse_args(argv)

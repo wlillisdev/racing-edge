@@ -536,4 +536,9 @@ links were fixed at the console (creds door, 429 backoff). First honest ladder:
 engine opinions 19.4%/−29.3% (n=299) v fav 29.7%/−20.2% (n=471) — the
 card-wide arithmetic loses to the jolly; the nap column is judged separately
 (15/46; betting column 5/10). The doorbell is the master's.
+HIS RULING ON THE LADDER (21:05): "best horse wins; we read the form; we pick
+winners — that is what we measure." The nap column is the champion: settled
+picks ride into daily_policy.csv as 'nap' at every settle (backfilled from
+history), champion defaults to 'nap' everywhere, the engine's opinions stay on
+the ladder as the arithmetic's receipt. Verdict is NO VERDICT until 50.
 
