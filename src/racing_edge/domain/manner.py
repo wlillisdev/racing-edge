@@ -28,6 +28,8 @@ _FINISHER = (
     # earned 2026-07-01 (Worcester 1:50 self-study): "asserted on the run-in" read as
     # NEUTRAL and the rules missed the winner — the vocabulary grows as the eye sharpens
     "asserted", "forged clear", "went on to win", "finished strongly",
+    # audit 2026-09-02: routine winning descriptors that read NEUTRAL
+    "ridden out", "pushed out", "shaken up to assert", "kept on to win",
 )
 # An excuse — the bare result lies, don't downgrade the manner.
 _TROUBLE = (
@@ -36,6 +38,10 @@ _TROUBLE = (
     "slowly away", "missed the break", "blocked", "no clear run", "shuffled back",
     "fell", "unseated", "brought down", "pulled up", "ran out", "refused",
     "hung badly", "jumped slowly",
+    # audit 2026-09-02 (reads bot): common Post tokens that fell through to
+    # NEUTRAL — a horse that hung or pulled did not get a fair test
+    "hung left", "hung right", "hung under pressure", "too keen", "keen early",
+    "very keen", "pulled hard", "pulled too hard",
 )
 # The nearly-type tells — got its chance and found nothing.
 _NON_FINISHER = (
@@ -47,6 +53,8 @@ _NON_FINISHER = (
     # led-and-caught (2026-07-25 Woodstock audit: 'driven to the front... overtaken
     # inside the final 110 yards' read NEUTRAL — the textbook nearly-type went unseen)
     "overtaken", "headed", "collared", "caught inside the final", "caught close home",
+    # audit 2026-09-02: the ungenuine tells
+    "carried head high", "head high", "did not run on", "not run on", "hung fire",
 )
 _GREEN = (
     "green", "ran green", "will improve", "needed the run", "should improve",

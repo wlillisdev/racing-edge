@@ -32,7 +32,9 @@ class APIConfig:
 class Config:
     api: APIConfig
     project_dir: Path
-    # The ledger is SQLite (data/ledger.db) — no MySQL, no DB creds to configure.
+    # The ledgers are SQLite under data/ — nap.db (the record), nuances.db (the
+    # learning), study.db (old system, dormant); text twin data/nap_record.csv.
+    # No MySQL, no DB creds to configure. (audit 2026-09-02: 'ledger.db' was stale)
 
 
 def _require(name: str) -> str:

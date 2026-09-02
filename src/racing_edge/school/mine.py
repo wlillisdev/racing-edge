@@ -71,14 +71,23 @@ class Runner:
 def load_corpus(raw_dir: Path) -> list[list[Runner]]:
     """All races, sorted by date; each race a list of Runners."""
     by_race: dict[str, list[Runner]] = defaultdict(list)
+    skipped = 0
     for f in sorted(raw_dir.glob("*.csv")):
         with open(f, newline="") as fh:
             for row in csv.reader(fh):
                 if len(row) != 13:
+                    skipped += 1          # counted, never silent (audit 2026-09-02)
                     continue
                 by_race[row[1]].append(Runner(row))
     races = sorted(by_race.values(), key=lambda rs: (rs[0].date, rs[0].race_id))
+    load_corpus.last_skipped = skipped
+    if skipped:
+        print(f"  corpus: {skipped} malformed row(s) skipped under {raw_dir} "
+              "(not 13 columns) — data the feed dropped, now counted", flush=True)
     return races
+
+
+load_corpus.last_skipped = 0
 
 
 class Tally:
