@@ -531,4 +531,9 @@ credentials door (config.racing_creds), a 21-day self-healing fetch window,
 a thin benchmark is NO VERDICT, health reds a stale fav benchmark. Tonight's
 22:00 run should fetch 08-15..09-02 and grade them; tomorrow's 09:30 health
 should read "night school grading (fav benchmark last graded 2026-09-02)".
+VERIFIED LIVE 21:02: the box fetched and graded 21 days (794 races) after two
+links were fixed at the console (creds door, 429 backoff). First honest ladder:
+engine opinions 19.4%/−29.3% (n=299) v fav 29.7%/−20.2% (n=471) — the
+card-wide arithmetic loses to the jolly; the nap column is judged separately
+(15/46; betting column 5/10). The doorbell is the master's.
 
