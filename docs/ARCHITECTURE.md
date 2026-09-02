@@ -25,13 +25,15 @@ session (human or AI) touching the code reads this first.
 | Layer | Modules | Job |
 |---|---|---|
 | data | `client` `normalise` `evidence` | Racing API transport (Basic Auth, retry, tier-aware two-door horse_results), raw→domain parsing, per-runner evidence assembly (each fetch guarded → OWED) |
-| domain | `models` `mark` `manner` `tells` `courses` | Pure form-reading: the mark (proven level, stale, up-in-grade), run style, in-running tells, course handedness |
+| domain | `models` `mark` `manner` `tells` `courses` `form` `intent` `market` `profile` `season` `signal` `units` | Pure form-reading: the mark (proven level, stale, up-in-grade), run style, in-running tells, course handedness, unit converters (`units.book_code` is the one race-letter site) |
+| school | `fetch` `mine` `daily` `ladder` `night` `shapebook` `tier0` `sitting` | The free night school: results corpus, the mine, policy grind + ladder, the shape book, tier-0 every-runner scoring, the sitting floor |
 | selection | `case` `conviction` | The jigsaw: family scoring, flags (cautions, not blindfolds), race gates |
 | pipeline | `nap` `restudy` | Orchestration: read every readable handicap fair-and-even (`evaluate_field`), market shape, e/w maths, rank; gather finished races for study |
 | ai | `reason` | Direct-HTTP model caller. Per-task model TABLE + per-task daily token CEILINGS + global cap + prompt caching + usage ledger. Never a source of facts |
 | study | `morningread` `selfcritique` `investigate` `nuances` `naplog` `store` | The learning loop: deep-read prompts (RULE ONE first), night self-interrogation with evidence tools, nuance ledger (dedup-as-votes, clue tracking, 28-day broom, scoreboard), the pick record |
-| report | `mail` `restudy` `email_render` | SMTP (never raises), pre-race readouts (pace map, scales, finding-tools) |
-| cli | `nap` `learn` `health` `dissect` `brief` `restudy` `napcheck` `_common` | Entry points. Scheduled ones wrapped in `run_guarded` (crash → traceback + email + exit 1) |
+| report | `mail` `restudy` `scorecard` (+ top-level `src/email_render.py`) | SMTP (never raises), pre-race readouts (pace map, scales, finding-tools) |
+| cli | `nap` `learn` `health` `dissect` `brief` `restudy` `_common` | Entry points. Scheduled ones wrapped in `run_guarded` (crash → traceback + email + exit 1); trial.sh's EXIT trap mails any non-zero exit besides (audit 2026-09-02). `napcheck`/`backcheck` deleted as rot 2026-09-02 (git history keeps them) |
+| study | + `rulings` | the master's rulings table (data/rulings.csv), recalled into the morning prompt, recalls counted |
 
 Dependency direction: `cli → pipeline/study → selection/domain → data`. Domain
 and selection are pure (no I/O) — that's what makes them testable and safe.

@@ -11,6 +11,9 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.10"   # matches the PythonAnywhere box
+          python-version: "3.11"   # the box's venv (docs/DEPLOY: python3.11) and
+                                   # pyproject's requires-python — audit 2026-09-02
+                                   # found CI on 3.10 testing a version the package
+                                   # declares unsupported
       - run: pip install -r requirements.txt pytest
       - run: PYTHONPATH=src python -m pytest tests/ -q
