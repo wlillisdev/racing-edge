@@ -31,7 +31,22 @@ LOGF="data/task_runs.log"
 echo "=== $(date -u '+%F %T') UTC :: trial.sh ${1:-nap} START" >> "$LOGF"
 # NOTE the st=$? FIRST: $(date) inside the echo resets $?, so the old trap logged
 # EXIT 0 on crashed runs — three starved nights (07-22..24) hid behind that zero.
-trap 'st=$?; echo "=== $(date -u "+%F %T") UTC :: trial.sh '"${1:-nap}"' EXIT $st" >> "$LOGF"' EXIT
+# THE SHELL-LEVEL CRASH NET (audit 2026-09-02): run_guarded only wraps main() —
+# an import-time crash, a venv/pull failure or a signal dies BEFORE it and the
+# only trace was this log. Now any non-zero exit mails the master one line
+# (best-effort; mail failure never masks the exit code).
+_crash_mail() {
+  "${PY:-venv/bin/python}" - "$1" "$2" <<'PYEOF' 2>/dev/null || true
+import sys
+from racing_edge.report.mail import send, configured
+task, st = sys.argv[1], sys.argv[2]
+if configured():
+    send(f"⚠ trial.sh {task} EXIT {st} — needs a look",
+         f"trial.sh {task} exited {st} on the box. Full story: "
+         "tail -120 data/task_runs.log (grep 'trial.sh' for the run's section).")
+PYEOF
+}
+trap 'st=$?; echo "=== $(date -u "+%F %T") UTC :: trial.sh '"${1:-nap}"' EXIT $st" >> "$LOGF"; if [ "$st" != "0" ]; then PYTHONPATH=src _crash_mail "'"${1:-nap}"'" "$st"; fi' EXIT
 exec > >(tee -a "$LOGF") 2>&1
 
 export PYTHONPATH=src
@@ -83,6 +98,12 @@ case "${1:-nap}" in
            # Best-effort: a school crash must never cancel the self-study chain.
            if ! "${SDK_OFF[@]}" "$PY" -m racing_edge.school.night --day "$(date +%F)" --champion "$SCHOOL_CHAMPION"; then
              echo "WARNING: night school FAILED — the grind misses a day, nothing else"
+           fi
+           # TIER-0 (audit 2026-09-02, the master: 'learn from every race, every
+           # placing'): every runner in every resulted race v the market, yesterday
+           # beside the trailing 14 days. Free, scripted, best-effort.
+           if ! "${SDK_OFF[@]}" "$PY" -m racing_edge.school.tier0 --day "$(date +%F)"; then
+             echo "WARNING: tier-0 pass FAILED — health goes red on a stale report"
            fi
            # Sunday: the weekly synthesis rides in the same slot (no weekly task needed)
            if [ "$(date +%u)" = "7" ]; then echo; "$PY" -m racing_edge.cli.learn --synthesise --email; fi ;;
