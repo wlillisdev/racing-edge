@@ -27,6 +27,15 @@ def is_jump(race_type: str) -> bool:
     return race_code(race_type) == "jump"
 
 
+def uk_today():
+    """THE RACING DAY — Europe/London, never the box's UTC clock (2026-07-25
+    reliability audit; fourth audit 2026-09-02 F19: eight sites still asked
+    the box's own clock). Every ledger row, default day and cutoff keys on this."""
+    from datetime import datetime
+    from zoneinfo import ZoneInfo
+    return datetime.now(ZoneInfo("Europe/London")).date()
+
+
 def norm_horse_name(s: str) -> str:
     """ONE way to compare horse names (second audit 2026-09-02, bot E: the
     danger was graded by exact string match — a curly apostrophe or an '(IRE)'

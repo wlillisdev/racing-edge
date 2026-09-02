@@ -48,6 +48,35 @@ def _past_line(h: PastRun) -> str:
     return f"        {h.date}  {pos:>2}  {where:<34}  {comment}{rid}"
 
 
+def delta_line(r, race, hist) -> str:
+    """TODAY v THE LAST SAME-CODE RUN, in facts (the SWOT 2026-09-02: 'the
+    Post's picture, mechanically' — class move, mark move, trip move, going
+    move — from fields the card already holds; the master: read the form,
+    join the dots). Empty when there is no prior run to compare."""
+    prev = same_code_runs(hist, race.code)
+    if not prev:
+        return ""
+    lp = prev[0]
+    parts = []
+    if race.race_class and lp.race_class:
+        d = lp.race_class - race.race_class            # Cl5 -> Cl4 is UP in class
+        parts.append(f"class Cl{race.race_class} v Cl{lp.race_class} last "
+                     + (f"(UP {d})" if d > 0 else f"(down {-d})" if d < 0 else "(same)"))
+    if r.official_rating and lp.official_rating:
+        d = r.official_rating - lp.official_rating
+        parts.append(f"mark {r.official_rating} v {lp.official_rating} last ({d:+d}lb)")
+    if race.distance_f and lp.distance_f:
+        d = race.distance_f - lp.distance_f
+        parts.append(f"trip {race.distance_f:g}f v {lp.distance_f:g}f last "
+                     + (f"(UP {d:g}f)" if d > 0.4 else f"(DOWN {-d:g}f)" if d < -0.4
+                        else "(same)"))
+    if race.going and lp.going and race.going.lower() != lp.going.lower():
+        parts.append(f"going {race.going} v {lp.going} last")
+    if lp.course and race.course and lp.course.lower() == race.course.lower():
+        parts.append("same course as last time")
+    return ("today v last run (the delta line): " + "; ".join(parts)) if parts else ""
+
+
 def render_preread(race: Race, histories: dict[str, tuple[PastRun, ...]],
                    past_n: int = 4) -> str:
     """The PRE-RACE full-form readout — same honest layout as the re-study, no result.
@@ -104,6 +133,9 @@ def render_preread(race: Race, histories: dict[str, tuple[PastRun, ...]],
         drw = f" | draw {r.draw}" if r.draw is not None else ""
         lines.append(f"        mark: {marktxt}  | form {r.form or '?'} "
                      f"| OR {r.official_rating or '?'} RPR {r.rpr or '?'}{gear}{wt}{drw}")
+        _dl = delta_line(r, race, hist)
+        if _dl:
+            lines.append(f"        {_dl}")
         _mh = same_code_runs(hist, race.code)[:4]
         mv = nap_verdict([h.comment for h in _mh],
                          positions=[h.position for h in _mh])

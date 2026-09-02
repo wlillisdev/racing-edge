@@ -29,6 +29,7 @@ from datetime import date, timedelta
 from pathlib import Path
 
 from racing_edge.school.mine import featurise, load_corpus
+from racing_edge.domain.units import uk_today
 
 MIN_FIELD = 5                 # the daily grind's own floor (school/daily.py)
 MONTH_MIN_N = 30              # the shape book's cell floor, reused — not a new bar
@@ -169,7 +170,7 @@ def render(day: str, rows_all: list[dict]) -> str:
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--day", default=(date.today() - timedelta(days=1)).isoformat())
+    ap.add_argument("--day", default=(uk_today() - timedelta(days=1)).isoformat())
     ap.add_argument("--raw", default="data/school/raw")
     ap.add_argument("--out", default="data/school/tier0.md")
     ap.add_argument("--score-from", default="2026-01-01")

@@ -14,6 +14,8 @@ import sqlite3
 from datetime import date
 from pathlib import Path
 
+from racing_edge.domain.units import uk_today
+
 _SCHEMA = """
 CREATE TABLE IF NOT EXISTS nuance (
     id          INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -169,7 +171,7 @@ class NuanceLog:
         a month on, that run has happened unseen or the clue is stale either way
         (coroner 2026-07-21: 872 rows, the oldest from week one, none ever settled)."""
         from datetime import timedelta
-        cutoff = (date.today() - timedelta(days=28)).isoformat()
+        cutoff = (uk_today() - timedelta(days=28)).isoformat()
         rows = self._conn.execute(
             "SELECT * FROM tracked WHERE status = 'active' AND date >= ? ORDER BY date",
             (cutoff,)).fetchall()
@@ -181,7 +183,7 @@ class NuanceLog:
         'active' in the DB for good). A clue whose horse hasn't reappeared within
         `days` is marked done-expired: the lead went cold, honestly. Returns rows swept."""
         from datetime import timedelta
-        cutoff = (date.today() - timedelta(days=days)).isoformat()
+        cutoff = (uk_today() - timedelta(days=days)).isoformat()
         cur = self._conn.execute(
             "UPDATE tracked SET status = 'done', "
             "note = note || '  [expired unverified — horse never reappeared]' "
@@ -193,7 +195,7 @@ class NuanceLog:
         """Rows STILL marked active in the DB beyond the expiry horizon — should be
         ~0 while the nightly broom runs; a growing count means the broom is dead."""
         from datetime import timedelta
-        cutoff = (date.today() - timedelta(days=days)).isoformat()
+        cutoff = (uk_today() - timedelta(days=days)).isoformat()
         row = self._conn.execute(
             "SELECT COUNT(*) AS n FROM tracked WHERE status = 'active' AND date < ?",
             (cutoff,)).fetchone()

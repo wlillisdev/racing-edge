@@ -544,3 +544,64 @@ def test_health_reads_every_file_from_one_root(tmp_path, monkeypatch) -> None:
         assert _data_dir() == tmp_path / "data"
     finally:
         get_config.cache_clear()
+
+
+# --------------------------------------------------------------------------- #
+# "implement whatever will make it better" (the master, 2026-09-02, ~20:20 UTC)
+# --------------------------------------------------------------------------- #
+
+def test_flip_flop_needs_the_third_snapshot() -> None:
+    """Law 4g's board character: steamed then drifted (or the reverse) between
+    07:30, 09:30 and 12:30 is a FLIP-FLOP; without the middle snapshot the same
+    runner reads by its net move alone."""
+    from racing_edge.cli.nap import board_moves
+    m = {"r1": {"course": "Bath", "off": "5:02", "runners": {
+        "a": ["Flip", 4.0], "b": ["Steam", 4.0], "c": ["Same", 6.0]}}}
+    mid = {"r1": {"course": "Bath", "off": "5:02", "runners": {
+        "a": ["Flip", 3.0], "b": ["Steam", 3.5], "c": ["Same", 6.0]}}}
+    now = {"r1": {"course": "Bath", "off": "5:02", "runners": {
+        "a": ["Flip", 4.2], "b": ["Steam", 3.0], "c": ["Same", 6.0]}}}
+    rows = {r[1]: r[5] for r in board_moves(m, now, mid=mid)}
+    assert rows == {"Flip": "FLIP-FLOP", "Steam": "STEAMER", "Same": "steady"}
+    assert {r[1]: r[5] for r in board_moves(m, now)}["Flip"] == "steady"
+
+
+def test_delta_line_joins_todays_dots_to_the_last_run() -> None:
+    from racing_edge.domain.models import Odds, PastRun, Race, Runner
+    from racing_edge.report.restudy import delta_line
+    race = Race(race_id="R", course="Thirsk", off_time="3:00", date=date(2026, 9, 2),
+                race_type="Flat", is_handicap=True, race_class=4, distance_f=8.0,
+                going="Good")
+    r = Runner(horse_id="H", horse="Horse", official_rating=78, odds=Odds(consensus=4.0))
+    last = PastRun(date=date(2026, 8, 1), position=2, race_class=5, going="Soft",
+                   distance_f=7.0, official_rating=74, course="Thirsk", race_type="Flat")
+    line = delta_line(r, race, (last,))
+    assert "class Cl4 v Cl5 last (UP 1)" in line
+    assert "mark 78 v 74 last (+4lb)" in line
+    assert "trip 8f v 7f last (UP 1f)" in line
+    assert "going Good v Soft last" in line
+    assert "same course" in line
+    assert delta_line(r, race, ()) == ""
+
+
+def test_uk_today_is_the_one_clock() -> None:
+    """F19: eight sites asked the box's UTC date; every default day and cutoff
+    now asks the racing day (Europe/London) through one function."""
+    from datetime import datetime
+    from zoneinfo import ZoneInfo
+    from racing_edge.cli._common import resolve_date
+    from racing_edge.domain.units import uk_today
+    assert uk_today() == datetime.now(ZoneInfo("Europe/London")).date()
+    assert resolve_date("today") == uk_today()
+    src = Path("src/racing_edge").rglob("*.py")
+    offenders = [p for p in src if "date.today()" in p.read_text()]
+    assert offenders == []
+
+
+def test_truncation_retry_grows_by_half_not_double() -> None:
+    """F11 (money): the retry after a truncated answer buys half again, not
+    double — pinned on the source since the loop needs a live key to run."""
+    src = Path("src/racing_edge/ai/reason.py").read_text()
+    assert "budget = int(budget * 1.5)" in src
+    assert "budget *= 2" not in src
+

@@ -62,8 +62,8 @@ def resolve_date(s: str) -> date:
     """'today' means the RACING day — Europe/London — not the box's UTC clock
     (2026-07-25 reliability audit: a UTC box's date and the card's date part ways
     at midnight London time; every ledger row keys on this)."""
-    from zoneinfo import ZoneInfo
-    _today = datetime.now(ZoneInfo("Europe/London")).date()
+    from racing_edge.domain.units import uk_today
+    _today = uk_today()
     if s == "today":
         return _today
     if s == "yesterday":

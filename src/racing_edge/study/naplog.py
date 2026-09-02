@@ -13,6 +13,8 @@ import sqlite3
 from datetime import date
 from pathlib import Path
 
+from racing_edge.domain.units import uk_today
+
 _SCHEMA = """
 CREATE TABLE IF NOT EXISTS nap (
     date        TEXT NOT NULL,
@@ -363,7 +365,7 @@ class NapLog:
         pick WON — the doubt was wrong, of those the pick LOST — the doubt was
         right). The record judges whether the reader's doubts predict losses."""
         from datetime import timedelta
-        cut = (date.today() - timedelta(days=days)).isoformat()
+        cut = (uk_today() - timedelta(days=days)).isoformat()
         where = ("date >= ? AND (case_text LIKE '%READER OBJECTION%' "
                  "OR case_text LIKE 'reader veto%')")
         n = int(self._conn.execute(

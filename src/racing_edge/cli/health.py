@@ -14,9 +14,10 @@ reads, nothing to hallucinate.
 from __future__ import annotations
 
 import argparse
-from datetime import date, timedelta
+from datetime import timedelta
 
 from racing_edge.cli._common import open_nap_log, open_nuance_log
+from racing_edge.domain.units import uk_today
 
 
 def _check(ok: bool, good: str, bad: str, lines: list[str]) -> bool:
@@ -93,10 +94,24 @@ def main() -> int:
     ap.add_argument("--email", action="store_true", help="email the report (SMTP env)")
     args = ap.parse_args()
 
-    today = date.today()
+    today = uk_today()
     yday = today - timedelta(days=1)
     lines: list[str] = [f"LOOP HEALTH — {today}"]
     all_ok = True
+
+    # THE BOARD, SNAPSHOT TWO (2026-09-02: the flip-flop needed a third price
+    # point; health runs at 09:30, between the read and the guard — one
+    # racecards call, no model). Failure is a line, never a red.
+    try:
+        from racing_edge.cli.nap import _board_snapshot, _cards_prices
+        from racing_edge.data import client as _cl
+        from racing_edge.data.normalise import racecards_from_raw
+        _cards = racecards_from_raw(_cl.get_client().racecards("today"))
+        _prices = _cards_prices(_cards)
+        _board_snapshot(today, "0930", _prices)
+        lines.append(f"  board: 09:30 snapshot written ({len(_prices)} races)")
+    except Exception as _e:
+        lines.append(f"  board: 09:30 snapshot not written ({_e.__class__.__name__})")
 
     log = open_nap_log()
     naps = log.history()

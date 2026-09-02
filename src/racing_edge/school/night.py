@@ -23,8 +23,10 @@ from __future__ import annotations
 import argparse
 import os
 import sys
-from datetime import date, timedelta
+from datetime import timedelta
 from pathlib import Path
+
+from racing_edge.domain.units import uk_today
 
 
 def trial_policies(school_dir: Path) -> list[str]:
@@ -41,7 +43,7 @@ def trial_policies(school_dir: Path) -> list[str]:
 def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument("--champion", default=os.environ.get("SCHOOL_CHAMPION"))
-    ap.add_argument("--day", default=(date.today() - timedelta(days=1)).isoformat())
+    ap.add_argument("--day", default=(uk_today() - timedelta(days=1)).isoformat())
     ap.add_argument("--school", default="data/school")
     a = ap.parse_args(argv)
     school = Path(a.school)

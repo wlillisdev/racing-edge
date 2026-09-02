@@ -15,6 +15,7 @@ from datetime import date, datetime
 from typing import Any
 
 from racing_edge.domain.models import Odds, PastRun, Race, RaceResult, Runner, RunnerResult
+from racing_edge.domain.units import uk_today
 
 _CLASS_RE = re.compile(r"class\s*(\d)", re.IGNORECASE)
 
@@ -160,7 +161,7 @@ def racecards_from_raw(doc: dict) -> list[Race]:
     races = doc.get("racecards") or doc.get("races") or []
     out: list[Race] = []
     for raw in races:
-        d = _date(raw.get("date")) or date.today()
+        d = _date(raw.get("date")) or uk_today()
         out.append(race_from_raw(raw, d))
     return out
 
@@ -187,7 +188,7 @@ def runner_result_from_raw(raw: dict) -> RunnerResult:
 def results_from_raw(doc: dict) -> list[RaceResult]:
     out: list[RaceResult] = []
     for race in doc.get("results") or []:
-        rd = _date(race.get("date")) or date.today()
+        rd = _date(race.get("date")) or uk_today()
         out.append(RaceResult(
             race_id=_str(race.get("race_id")),
             date=rd,
@@ -227,7 +228,7 @@ def past_runs_from_raw(rows: list[dict], horse_id: str = "") -> tuple[PastRun, .
             if (horse_id and isinstance(runners, list)) else r
         pos, _status = _position(me.get("position"))
         out.append(PastRun(
-            date=_date(r.get("date")) or date.today(),
+            date=_date(r.get("date")) or uk_today(),
             position=pos,
             race_class=_class(r),
             going=_str(r.get("going")),

@@ -248,19 +248,29 @@ def _board_snapshot(day, tag: str, prices: dict) -> None:
     (d / f"{day.isoformat()}-{tag}.json").write_text(json.dumps(prices))
 
 
-def board_moves(morning: dict, now: dict, steam: float = 0.85, drift: float = 1.30):
+def board_moves(morning: dict, now: dict, steam: float = 0.85, drift: float = 1.30,
+                mid: dict | None = None):
     """Pure: every runner priced in both snapshots -> (race_id, horse, then, now,
     ratio, label) with label steamer / drifter / steady. The thresholds are the
-    guard's own bands (2026-07-26, the master: graded bands, not a cliff)."""
+    guard's own bands (2026-07-26, the master: graded bands, not a cliff).
+    With a MIDDLE snapshot (09:30, from health — the third snapshot the flip-flop
+    needed, 2026-09-02): a runner that steamed then drifted, or drifted then
+    steamed, by those same bands is a FLIP-FLOP — law 4g's board character."""
     rows = []
     for rid, race in now.items():
         m = morning.get(rid, {}).get("runners", {})
+        md = (mid or {}).get(rid, {}).get("runners", {})
         for hid, (horse, price) in race.get("runners", {}).items():
             then = m.get(hid, [None, None])[1]
             if not then or not price:
                 continue
             ratio = price / then
             label = "STEAMER" if ratio <= steam else "DRIFTER" if ratio >= drift else "steady"
+            between = md.get(hid, [None, None])[1]
+            if between:
+                r1, r2 = between / then, price / between
+                if (r1 <= steam and r2 >= drift) or (r1 >= drift and r2 <= steam):
+                    label = "FLIP-FLOP"
             rows.append((rid, horse, then, price, round(ratio, 2), label))
     return rows
 
@@ -275,7 +285,9 @@ def _board_read(day, cards) -> None:
         print("  board: no 07:30 snapshot — the read starts tomorrow", flush=True)
         return
     morning = json.loads(f.read_text())
-    rows = board_moves(morning, now)
+    _mid = _P("data/market_snapshots") / f"{day.isoformat()}-0930.json"
+    mid = json.loads(_mid.read_text()) if _mid.exists() else None
+    rows = board_moves(morning, now, mid=mid)
     movers = [x for x in rows if x[5] != "steady"]
     lines = [f"THE BOARD at 12:30 v 07:30 — {len(rows)} runners priced both times, "
              f"{len(movers)} mover(s)"]
