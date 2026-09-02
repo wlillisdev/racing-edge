@@ -185,22 +185,26 @@ if __name__ == "__main__":
 # nothing (graceful: the book advises, absence of the book changes nothing).
 # --------------------------------------------------------------------------- #
 
-_CELLS_CACHE: dict | None = None
+_CELLS_CACHE: dict[Path, dict] = {}     # keyed by the CORPUS PATH it was built from
 
 
 def glance_for(code: str | None, rclass, n_priced: int, fav_sp,
                raw: Path = Path("data/school/raw")):
     """The book's cell for a live race, or None (unknown letter, thin cell,
     corpus absent). code is the corpus letter: F/H/C/N."""
-    global _CELLS_CACHE
     if not code or not fav_sp:
         return None
     try:
-        if _CELLS_CACHE is None:
-            _CELLS_CACHE = build(raw)
+        # the memo is keyed by the corpus it was built from (fourth audit
+        # 2026-09-02: one process-wide cache ignored `raw`, so cells built
+        # from one corpus answered for another — a test-order leak today, a
+        # wrong-book answer the day two corpora share a process)
+        rk = Path(raw).resolve()
+        if rk not in _CELLS_CACHE:
+            _CELLS_CACHE[rk] = build(raw)
         key = (code, _class_band(int(rclass or 0)), _field_band(n_priced),
                _fav_band(float(fav_sp)))
-        c = _CELLS_CACHE.get(key)
+        c = _CELLS_CACHE[rk].get(key)
         if c is None:
             return None
         decided = max(c["n"] - c["no_win"], 1)

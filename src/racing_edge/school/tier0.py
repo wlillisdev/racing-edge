@@ -108,6 +108,20 @@ def month_test(c: dict, min_n: int = MONTH_MIN_N) -> str:
     return "HOLDS" if all(v[1] - v[2] > 0 for _, v in ms) else "FAILS"
 
 
+def month_test_line(c: dict, min_n: int = MONTH_MIN_N) -> str:
+    """The verdict WITH the lift over the months it was judged on (fourth audit
+    2026-09-02, bot B3: a trait read HOLDS beside a NEGATIVE store lift, because
+    the store column sums every month and the test reads only the 30+ months —
+    two numbers, two populations, one glance). e.g. 'HOLDS · 2 mo · +1.4'."""
+    verdict = month_test(c, min_n)
+    ms = [v for v in c["months"].values() if v[0] >= min_n]
+    n = sum(v[0] for v in ms)
+    if not ms or not n:
+        return verdict
+    lift = 100.0 * (sum(v[1] for v in ms) - sum(v[2] for v in ms)) / n
+    return f"{verdict} · {len(ms)} mo · {lift:+.1f}"
+
+
 def render(day: str, rows_all: list[dict]) -> str:
     d0 = date.fromisoformat(day)
     w14 = (d0 - timedelta(days=13)).isoformat()
@@ -146,7 +160,7 @@ def render(day: str, rows_all: list[dict]) -> str:
     for f in sorted(ts, key=lambda f: -ts[f]["n"]):
         c = ts[f]
         L.append(f"| {f} | {tcell(ty, f)} | {tcell(t14, f)} | {c['n']} · "
-                 f"{100 * c['wins'] / c['n']:.1f}% · {lift_pp(c):+.1f} | {month_test(c)} |")
+                 f"{100 * c['wins'] / c['n']:.1f}% · {lift_pp(c):+.1f} | {month_test_line(c)} |")
     L += ["", "month test: HOLDS = lift > 0 in every month with 30+ runners (two months",
           "minimum); THIN = not enough months; FAILS = at least one month against.",
           "Only HOLDS rows may be brought to the doorbell — and even then as a question."]

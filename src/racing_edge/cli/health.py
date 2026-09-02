@@ -78,6 +78,16 @@ def _engineer_sweep(log_text: str, today: str) -> tuple[bool, list[str]]:
     return ok, out
 
 
+def _data_dir():
+    """ONE root for everything health reads (fourth audit 2026-09-02, bot B2:
+    the flight recorder read the checkout's data/, the school files read the
+    cwd, the ledgers read PROJECT_DIR — three roots in one report). The
+    ledgers' root wins: config.project_dir, the same door _common opens."""
+    from pathlib import Path
+    from racing_edge.config import get_config
+    return Path(get_config().project_dir) / "data"
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description="Loop health — red/green ledger report.")
     ap.add_argument("--email", action="store_true", help="email the report (SMTP env)")
@@ -208,9 +218,7 @@ def main() -> int:
     # (2026-07-21: the ledger proved scheduled runs weren't happening; this separates
     # 'PythonAnywhere never started it' from 'started and died at line X')
     try:
-        from pathlib import Path as _P
-        _root = _P(__file__).resolve().parents[3]
-        tail = (_root / "data" / "task_runs.log").read_text().splitlines()
+        tail = (_data_dir() / "task_runs.log").read_text().splitlines()
         starts = [ln for ln in tail if "START" in ln and today.isoformat() in ln]
         exits = [ln for ln in tail if "EXIT" in ln and today.isoformat() in ln]
         all_ok &= _check(
@@ -228,8 +236,7 @@ def main() -> int:
 
     # THE DAILY ENGINEER'S EYE — mechanical audit of the flight recorder
     try:
-        from pathlib import Path as _P3
-        _txt = (_P3(__file__).resolve().parents[3] / "data" / "task_runs.log").read_text()
+        _txt = (_data_dir() / "task_runs.log").read_text()
         _eok, _elines = _engineer_sweep(_txt, today.isoformat())
         all_ok &= _eok
         lines.extend(_elines)
@@ -240,9 +247,7 @@ def main() -> int:
     # fail-safe in — this is ridiculous'). The double-billing truncation ran silent
     # for days; now waste itself goes RED within 24 hours.
     try:
-        from pathlib import Path as _P2
-        _log_txt = (_P2(__file__).resolve().parents[3] / "data"
-                    / "task_runs.log").read_text()
+        _log_txt = (_data_dir() / "task_runs.log").read_text()
         _today_block = _log_txt[_log_txt.rfind(today.isoformat()):] \
             if today.isoformat() in _log_txt else ""
         _truncs = _today_block.count("truncated at")
@@ -257,10 +262,8 @@ def main() -> int:
     try:
         import csv as _csv
         from datetime import timedelta as _td2
-        from pathlib import Path as _P3
         _by = {}
-        with (_P3(__file__).resolve().parents[3] / "data"
-              / "model_usage.csv").open() as _f:
+        with (_data_dir() / "model_usage.csv").open() as _f:
             for _row in _csv.DictReader(_f):
                 _by.setdefault(_row["date"], 0)
                 _by[_row["date"]] += (int(_row["input_tokens"])
@@ -283,10 +286,8 @@ def main() -> int:
     # API response, logged to data/model_usage.csv — multiply by your plan's rates)
     try:
         import csv
-        from pathlib import Path
         by_day: dict[str, list[int]] = {}
-        _root2 = Path(__file__).resolve().parents[3]
-        with (_root2 / "data" / "model_usage.csv").open() as f:
+        with (_data_dir() / "model_usage.csv").open() as f:
             for row in csv.DictReader(f):
                 d = by_day.setdefault(row["date"], [0, 0])
                 d[0] += int(row["input_tokens"])
@@ -302,20 +303,16 @@ def main() -> int:
     log2 = open_nap_log()
     w, n = log2.strike_rate()                      # correct: pass days (won=-1) excluded
     sw, sn = log2.shadow_strike()
-    # THE VETO TRIPWIRE (2026-08-08, the flip): the reader's only power,
-    # watched daily — a veto that killed a winner is RED by name; a veto
-    # habit (3+/week) is the old departing-from-the-rules disease back in
-    # its last hiding place.
-    if hasattr(log2, "veto_watch"):
-        _vn, _vk = log2.veto_watch()
-        if _vn:
-            all_ok &= _check(
-                _vk == 0 and _vn <= 2,
-                f"reader vetoes in check ({_vn} this week, none killed a winner)",
-                f"VETO ALARM — {_vn} veto(es) this week, {_vk} killed a WINNER: "
-                "the reader is departing by the back door; audit every veto "
-                "fact against the results before trusting the next one",
-                lines)
+    # THE READER'S DOUBTS, JUDGED (2026-08-19 law: an objection is recorded
+    # and the pick stands at LEAN; fourth audit 2026-09-02: the old veto
+    # tripwire matched a prefix nobody wrote and always read zero). Not a
+    # gate — a scoreboard: do the reader's doubts predict losses?
+    if hasattr(log2, "objection_watch"):
+        _on, _ow, _ol = log2.objection_watch()
+        if _on:
+            lines.append(f"  reader objections this week: {_on} — the pick then "
+                         f"won {_ow}, lost {_ol}, {_on - _ow - _ol} open "
+                         "(a doubt that keeps losing is a doubt worth a law)")
     # P/L must be read BEFORE close (2026-08-01: it sat after close() and the
     # whole health report died on 'Cannot operate on a closed database')
     pnl, _pn = log2.profit_loss() if hasattr(log2, "profit_loss") else (0.0, 0)
@@ -370,8 +367,7 @@ def main() -> int:
     # school ladder's verdict rides in health — a CHANGE TACK is RED and
     # impossible to miss. Quiet when the school isn't deployed here.
     import os as _os
-    from pathlib import Path as _Path
-    _lcsv = _Path("data/school/daily_policy.csv")
+    _lcsv = _data_dir() / "school" / "daily_policy.csv"
     _champ = _os.environ.get("SCHOOL_CHAMPION")
     if _lcsv.exists() and _champ:
         from racing_edge.school.ladder import load_rows as _lr
@@ -414,8 +410,7 @@ def main() -> int:
         lines.append("  rulings: table unreadable")
     try:
         from datetime import datetime as _dtm
-        from pathlib import Path as _PT
-        _t0 = _PT("data/school/tier0.md")
+        _t0 = _data_dir() / "school" / "tier0.md"
         _age = (_dtm.now() - _dtm.fromtimestamp(_t0.stat().st_mtime)).days if _t0.exists() else None
         if _age is None:
             # never written yet is not a fault (second audit, bot F): the same

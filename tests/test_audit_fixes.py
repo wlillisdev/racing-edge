@@ -387,7 +387,6 @@ def test_draw_and_yard_location_reach_the_reader() -> None:
     """Third audit (bots P5, P6): the draw was parsed and read by nobody; the
     yard's base (law 4f, the traveller) was not even carried. Both now ride
     into the readout the deep read sees."""
-    from datetime import date as _d
     from racing_edge.data.normalise import racecards_from_raw
     from racing_edge.report.restudy import render_preread
     cards = racecards_from_raw({"racecards": [{
@@ -441,3 +440,107 @@ def test_law_5d_and_the_engine_lens_appendix_ride_in_the_rulebook() -> None:
     for tag in ("#10 LOCAL MASTER YARD", "#14 THE ALL-WEATHER CAUTION",
                 "#22 THE ANCHOR BAR", "#30 THE COURSE JOCKEY", "NO COMPLETED CHASE"):
         assert tag in NAP_SYSTEM
+
+
+# --------------------------------------------------------------------------- #
+# fourth wave 2026-09-02 — the pipeline run end to end, waste removed
+# --------------------------------------------------------------------------- #
+
+def test_bank_time_scorecard_reuses_the_field_reads_evidence() -> None:
+    """The field read pays for every runner's evidence once; the bank-time
+    scorecard must not fetch the pick's race a second time (~47 API calls).
+    Unpriced runners ride along too — the yardstick stays on every horse."""
+    from racing_edge.cli.nap import _evidence_for
+    from racing_edge.pipeline.nap import evaluate_field
+
+    class _Counting:
+        calls = 0
+
+        def racecards(self, day="today"):
+            runners = [{"horse_id": f"H{i}", "horse": f"Horse{i}", "age": "7",
+                        "ofr": "70", "odds": [{"decimal": p}]}
+                       for i, p in enumerate(("3.0", "4.0", "6.0"))]
+            runners.append({"horse_id": "U1", "horse": "Unpriced", "age": "7",
+                            "ofr": "65"})
+            return {"racecards": [{"race_id": "R9", "course": "Thirsk",
+                                   "off_time": "3:00", "date": "2026-07-05",
+                                   "race_name": "Handicap", "type": "Flat",
+                                   "class": "4", "runners": runners}]}
+
+        def horse_results(self, hid, limit=12):
+            _Counting.calls += 1
+            return [{"date": f"2026-0{m}-01", "runners": [
+                {"horse_id": hid, "position": str(pos), "or": "70"}]}
+                for m, pos in ((6, 2), (5, 1), (4, 3))]
+
+        def trainer_jockeys(self, tid):
+            return []
+
+    client = _Counting()
+    field = evaluate_field(client, day="today", codes=("flat",),
+                           now=datetime(2026, 7, 13, 8, 0))
+    assert field, "fixture race must be readable"
+    paid = _Counting.calls
+    assert paid == 4                              # one history per runner, priced or not
+    race = field[0].race
+    ev = _evidence_for(race, client)
+    assert _Counting.calls == paid                # NO second fetch at bank time
+    assert {e.runner.horse_id for e in ev} == {"H0", "H1", "H2", "U1"}
+    # a race the read never saw is still fetched (the honest fallback)
+    other = NS(race_id="NOPE", runners=[], distance_f=None, course="X")
+    assert _evidence_for(other, client) == []
+
+
+def test_trainer_and_jockey_lenses_fetched_once_per_run_not_per_race() -> None:
+    """Bot B4: a yard with runners in three races was fetched three times —
+    the trainer/jockey caches lived inside build_evidence, per race. One run,
+    one cache; the course rides in the key because local strike is per course."""
+    from racing_edge.pipeline.nap import evaluate_field
+
+    class _Yard:
+        tj = 0
+        jc = 0
+
+        def racecards(self, day="today"):
+            def race(rid, off):
+                runners = [{"horse_id": f"{rid}H{i}", "horse": f"{rid}Horse{i}",
+                            "age": "7", "ofr": "70", "odds": [{"decimal": p}],
+                            "trainer_id": "T1", "jockey_id": "J1"}
+                           for i, p in enumerate(("3.0", "4.0"))]
+                return {"race_id": rid, "course": "Thirsk", "off_time": off,
+                        "date": "2026-07-05", "race_name": "Handicap",
+                        "type": "Flat", "class": "4", "runners": runners}
+            return {"racecards": [race("A", "2:00"), race("B", "2:30"), race("C", "3:00")]}
+
+        def horse_results(self, hid, limit=12):
+            return [{"date": "2026-06-01", "runners": [
+                {"horse_id": hid, "position": "1", "or": "70"}]}]
+
+        def trainer_jockeys(self, tid):
+            _Yard.tj += 1
+            return []
+
+        def jockey_course(self, jid):
+            _Yard.jc += 1
+            return []
+
+    field = evaluate_field(_Yard(), day="today", codes=("flat",),
+                           now=datetime(2026, 7, 13, 8, 0))
+    assert len({p.race.race_id for p in field}) == 3
+    assert _Yard.tj == 1                          # not 3
+    assert _Yard.jc == 1                          # not 3
+
+
+def test_health_reads_every_file_from_one_root(tmp_path, monkeypatch) -> None:
+    """Bot B2: the flight recorder read the checkout, the school files the cwd,
+    the ledgers PROJECT_DIR — three roots in one report. One door now."""
+    from racing_edge.cli.health import _data_dir
+    from racing_edge.config import get_config
+    monkeypatch.setenv("PROJECT_DIR", str(tmp_path))
+    monkeypatch.setenv("RACING_API_USERNAME", "u")
+    monkeypatch.setenv("RACING_API_PASSWORD", "p")
+    get_config.cache_clear()
+    try:
+        assert _data_dir() == tmp_path / "data"
+    finally:
+        get_config.cache_clear()

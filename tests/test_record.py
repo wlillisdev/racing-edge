@@ -238,3 +238,27 @@ def test_the_reads_own_grades_reach_the_next_mornings_lessons() -> None:
     lines = build_lessons(hist, (0, 1), [], [], [])
     assert any("READ GRADED 2026-09-01 Mr Cool: danger WON" in ln for ln in lines)
     assert not any("Open" in ln and "READ GRADED" in ln for ln in lines)
+
+
+def test_objection_watch_counts_the_readers_recorded_doubts(tmp_path) -> None:
+    """Bot B5 (fourth audit): the old veto_watch matched 'reader veto%' — a
+    prefix no writer has produced since the 2026-08-19 law; the health line
+    was always zero. The objection watch reads the real case text and judges
+    the doubt by the result."""
+    from datetime import date, timedelta
+    from racing_edge.study.naplog import NapLog
+    log = NapLog(tmp_path / "nap.db")
+    d1 = (date.today() - timedelta(days=1)).isoformat()
+    d2 = (date.today() - timedelta(days=2)).isoformat()
+    d3 = (date.today() - timedelta(days=3)).isoformat()
+    for d, txt in ((d1, "  READER OBJECTION (2026-08-19 law: ...):\n    doubt"),
+                   (d2, "  READER OBJECTION (2026-08-19 law: ...):\n    doubt"),
+                   (d3, "engine pick: conviction 3 — clean")):
+        log.record(day=date.fromisoformat(d), race_id=f"R{d}", course="Bath",
+                   horse=f"Horse {d}", horse_id=f"H{d}", price=4.0, score=3,
+                   confident=False, case=txt)
+    log.settle(date.fromisoformat(d1), won=True, sp_dec=4.0)
+    log.settle(date.fromisoformat(d2), won=False, sp_dec=4.0)
+    log.settle(date.fromisoformat(d3), won=True, sp_dec=4.0)
+    assert log.objection_watch(days=7) == (2, 1, 1)
+    assert not hasattr(log, "veto_watch")
