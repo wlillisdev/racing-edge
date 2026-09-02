@@ -456,3 +456,20 @@ GRADING NEXT SUNDAY, off columns only: duty strike rate (>0 or the
 named passes that earned their pass), completed-read %, engine
 alignment record, repeat burns (must be 0), bandit/telly/master
 columns P/L. The strike rate is the grade — nothing else.
+
+## AUDIT 2026-09-02 — read this before touching the record or the settle
+
+The master ordered a whole-pipeline audit ("I am sick of finding the problems
+myself"). The map of every stage lives in docs/ARCHITECTURE.md; the 41 findings
+and their dispositions in docs/EDGE_LEDGER.md (same date). What changed the
+system's behaviour, in one breath: the record's guards live AT THE WRITE POINT
+(a settled day can never be re-banked or passed over); non-runners VOID with a
+mandatory reason (won = -2), never a loss; the night settle SWEEPS every open
+date and voids a week-old orphan with the console command in its reason; the
+time guard fails CLOSED and is asked again at bank time; a non-favourite pick
+carries its written edge; data/nap_record.csv is the text twin; the master's
+rulings (data/rulings.csv, verbatim, dated) ride into the morning prompt and
+every recall is counted; tier-0 scores every runner against the market nightly
+(data/school/tier0.md). For the master's ruling, unchanged: the reader-mode
+floors that are dead under engine mode; the shape-book gate's fail-open on an
+unreadable corpus; scoring the named danger / my-price at settle.

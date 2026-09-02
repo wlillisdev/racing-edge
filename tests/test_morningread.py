@@ -167,7 +167,7 @@ def test_the_masters_glance_rides_in_the_rulebook() -> None:
     races a handicapper would actually study; wrong-type races are a PASS."""
     from racing_edge.study.morningread import NAP_SYSTEM
     assert "THE MASTER'S GLANCE" in NAP_SYSTEM
-    assert "never have "
+    assert "never have " in NAP_SYSTEM      # audit 2026-09-02: was a bare literal
     assert "would actually STUDY" in NAP_SYSTEM
     assert "NEVER a nap candidate" in NAP_SYSTEM
     assert "correct nap is a PASS" in NAP_SYSTEM

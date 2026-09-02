@@ -155,8 +155,11 @@ def build_evidence(race: Race, client: _Fetcher, as_of: date | None = None) -> l
                 trip_strike_from_analysis(
                     client.horse_distance_times(r.horse_id) if hasattr(
                         client, "horse_distance_times") else [], race.distance_f)
-        except Exception:
-            trip_strike, trip_runs = None, 0      # optional lens — OWED, not fatal
+        except Exception as exc:
+            # optional lens — OWED, not fatal, and NAMED (audit 2026-09-02)
+            print(f"      ⚠ trip lens OWED for {r.horse}: {exc.__class__.__name__}",
+                  flush=True)
+            trip_strike, trip_runs = None, 0
         if backtest or not r.jockey_id:
             j_strike, j_rides = None, 0
         else:
@@ -164,7 +167,9 @@ def build_evidence(race: Race, client: _Fetcher, as_of: date | None = None) -> l
                 try:
                     jrows = client.jockey_course(r.jockey_id) if hasattr(
                         client, "jockey_course") else []
-                except Exception:
+                except Exception as exc:
+                    print(f"      ⚠ jockey-course lens OWED for {r.horse}: "
+                          f"{exc.__class__.__name__}", flush=True)
                     jrows = []                    # optional lens — OWED, not fatal
                 jcache[r.jockey_id] = course_strike_from_analysis(jrows, race.course)
             j_strike, j_rides = jcache[r.jockey_id]

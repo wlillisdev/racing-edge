@@ -28,6 +28,15 @@ BASE = os.environ.get("RACING_API_BASE", "https://api.theracingapi.com/v1")
 TYPE_MAP = {"Flat": "F", "Hurdle": "H", "Chase": "C", "NH Flat": "N"}
 
 
+def day_fetched(path: Path) -> bool:
+    """ONE definition of 'this day is on disk': the file exists AND holds at
+    least one runner row. fetch.main and school.night both ask here."""
+    try:
+        return path.exists() and path.stat().st_size > 0
+    except OSError:
+        return False
+
+
 def _digits(s: str) -> str:
     return "".join(ch for ch in (s or "") if ch.isdigit()) or "0"
 
@@ -44,7 +53,12 @@ def fetch_day(day: str, auth: tuple[str, str]) -> list[dict]:
         data = resp.json()
         races += data.get("results", [])
         skip += 50
-        if skip >= int(data.get("total", 0)):
+        if "total" not in data:
+            # audit 2026-09-02: a missing 'total' defaulted to 0 and the loop
+            # returned after ONE page — hundreds of runners silently dropped
+            raise ValueError(f"results page for {day} carries no 'total' — "
+                             "refusing to guess the page count")
+        if skip >= int(data["total"]):
             return races
         time.sleep(0.6)  # stay inside the plan's rate limit
 
@@ -88,7 +102,9 @@ def main(argv=None):
     while d <= end:
         day = d.isoformat()
         out = raw / f"{day}.csv"
-        if not out.exists():
+        # 'fetched' means ROWS INSIDE, not a file on disk (audit 2026-09-02: an
+        # empty file from a failed day was never retried — the proxy, not the thing)
+        if not day_fetched(out):
             rows, comments = day_rows(fetch_day(day, (user, pw)))
             with open(out, "w", newline="") as fh:
                 csv.writer(fh).writerows(rows)

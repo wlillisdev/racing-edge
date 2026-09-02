@@ -73,6 +73,13 @@ class RacingAPIClient:
             # OWED, never crash the whole morning) — both read as honest empties
             # where the caller allows it
             if resp.status_code in (404, 403) and allow_404:
+                if resp.status_code == 403:
+                    # a plan gate is NOT an honest empty — say so in the log
+                    # every time (audit 2026-09-02: 403 and 404 folded into one
+                    # silent None, so a tier downgrade read as a blank day)
+                    print(f"      ⚠ PLAN GATE 403 on {path} — the subscription does "
+                          "not cover this endpoint; the lens is OWED, not empty",
+                          flush=True)
                 return None
             raise RacingAPIError(resp.status_code, url, resp.text[:200])
 
@@ -110,8 +117,20 @@ class RacingAPIClient:
                          allow_404=True) or {"racecards": []}
 
     def results_by_date(self, date_str: str) -> dict:
-        params = [("start_date", date_str), ("end_date", date_str), ("limit", 100)]
-        return self._get("/results", params=params, allow_404=True) or {"results": []}
+        """A day's results for the CONFIGURED regions (audit 2026-09-02: the
+        module docstring claimed region filtering here; the code passed none,
+        so settle read the API's default region set). An empty/None answer is
+        an OUTAGE, raised — a genuinely blank day comes back 200 with an
+        empty list, never as None (fail loud, never 'no races today')."""
+        regions = [r.strip() for r in self._cfg.api.regions.split(",") if r.strip()]
+        params = ([("start_date", date_str), ("end_date", date_str), ("limit", 100)]
+                  + [("region_codes", r) for r in regions])
+        doc = self._get("/results", params=params, allow_404=True)
+        if doc is None:
+            raise RacingAPIError(404, f"{self._cfg.api.base_url}/results",
+                                 f"no results document for {date_str} — outage or "
+                                 "plan gate, not a blank day")
+        return doc
 
     def result_by_id(self, race_id: str) -> dict | None:
         """One past race's full result — the FRANKING door (#5/#15): who else was in

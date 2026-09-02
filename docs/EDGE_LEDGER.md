@@ -662,3 +662,65 @@ tomorrow's 07:30 is already the engine that declines. Autopsies:
  · GRADE THE GATE HONESTLY: the decline is right because a LEAN in a
    65% cell was a bad BET, not because the coin landed tails — the
    grade would stand even had Mr Cool won. Column continues.
+
+## THE COMPREHENSIVE SYSTEM AUDIT (2026-09-02, the master: "cut out rot, fix glitches, make it stable, reliable and accurate — I am sick of finding the problems myself")
+
+Six read-only bots (sonnet, one per layer, file:line evidence only) + the map of
+19 pipeline stages (docs/ARCHITECTURE.md). Suite: **209 tests before → 226 after**,
+exit 0. Mutation proof: four bugs put back by hand, four pinned tests screamed
+(write-point guard, time guard fail-open, non-runner-as-loss, pagination
+without total). End-to-end on live data: tier-0 ran on the real corpus (23,339
+runners, 349 for 2026-08-14); the nap/settle/health chain needs the box's
+credentials — tonight's 22:00 and tomorrow's 07:30 are its live runs, receipts by
+the sha in the email footer. AUTONOMY LINE honoured: nothing below changes the
+betting method, a carved rule or stakes; those items are marked FOR RULING.
+
+### Findings and dispositions
+
+| # | layer | finding (evidence) | disposition |
+|---|---|---|---|
+| 1 | delivery | NO race_status/off-time re-check between the deep read and the bank (only a once-at-start field filter that FAILED OPEN on a parse error) — pipeline/nap.py _still_to_run | FIXED: one site `still_to_run` (None = cannot check → caller treats as OFF); pre-bank tripwire in cli/nap.py banks a named pass if the race is off; pinned |
+| 2 | ledger | `--force-rebank` fell through INSERT OR REPLACE and could erase a SETTLED result; the guard lived only in the caller | FIXED at the write point: NapLog.record refuses a banked day unless force, refuses a SETTLED day even under force; record_pass likewise; pinned + mutation-proved |
+| 3 | settle | non-runners scored as LOSSES (`won = position == 1`), no VOID state, no terminal state, no mandatory reason | FIXED: won=-2 VOID with mandatory void_reason on nap/shadow/favline; NR family → void; absent from result → void; fallers RAN → loss; pinned + mutation-proved |
+| 4 | settle | "the night task retries tomorrow" was a comment — `--settle today` never revisited a missed day; a pick could sit open for weeks | FIXED: `_sweep_backlog` fetches every open date once, settles, voids after 7 days WITH the console command in the reason; health's stale alarm now names the command; pinned |
+| 5 | settle | three copies of settle logic (nap/shadow/favline) | FIXED: one `_settle_tables` for all three |
+| 6 | record | no text twin of nap.db | FIXED: `NapLog.export_text` → data/nap_record.csv rewritten after every bank/settle; pinned |
+| 7 | selection | shape-book gate fails OPEN: any exception in glance_for = "no cell" = no objection | NOT FIXED TONIGHT (for ruling): fail-closed here means every lean is declined whenever the corpus is unreadable on the box — the master rules whether a missing book declines or passes; the corpus now ships in git so the case is rare; a loud log line is the interim |
+| 8 | selection | profile floor / mark-sacred / class floor / anchor floor are DEAD under the default NAP_MODE=engine (all gated `not engine_mode`) while their comments call them "non-negotiable" | FOR RULING (betting method): the engine-first flip (2026-08-08/19) made them reader-only by the master's word; either re-arm them engine-side or retire the comments — his call |
+| 9 | selection | `veto_watch` counts a case_text pattern ("reader veto") the code stopped writing on 2026-08-19 → health reports "vetoes in check" from a tripwire that can never fire | NOT FIXED TONIGHT: dead reassurance named; deletion of the health line + method is the fix, queued (no money on it) |
+| 10 | selection | a non-favourite could bank with a generic templated case — no written edge | FIXED: the favourite is named BEFORE the case banks and "DEPARTURE FROM THE FAVOURITE … written edge = …" rides in case_text; the thin (score 0) non-fav case is FOR RULING (refuse or allow) |
+| 11 | selection | `race_class or 6` in the rank key tied unclassed with Class 6 | FIXED: unclassed ranks below; pinned |
+| 12 | reads | MorningPick.ok accepted an EMPTY case text as a real deep read | NOT FIXED TONIGHT: requires a schema change in the model contract (case length / cites); queued behind a live-day check of how often it fires |
+| 13 | reads | claims every read makes that nothing scores afterwards: my_price, named danger, pace map, crossed-off | FOR RULING / roadmap: store danger + my_price in the row and grade at settle — a learning gain, one incision, needs his word on the grading rule |
+| 14 | reads | manner vocabulary blind to hung left/right, keen, ridden out, carried head high, hung fire | FIXED (tokens added; "eased" deliberately NOT added — ambiguous between eased-down winner and eased-off loser); pinned |
+| 15 | reads | readable-race filter drops races with no receipt naming which and why | NOT FIXED TONIGHT: a per-race exclusion line is cheap, queued for tomorrow's run to size the noise |
+| 16 | reads | cli/brief.py reads a race with no off-time guard | NOT FIXED (on-demand tool, no money) — noted |
+| 17 | reads | mark.stale cut at 10 runs has no incident receipt for the number | FOR RULING (carved threshold) |
+| 18 | fetch | client docstring claimed region filtering on /results; code passed none; None → "no races today" | FIXED: regions passed; None raises (outage ≠ blank day); 403 plan-gate now logged loudly; pinned |
+| 19 | fetch | school/fetch.py trusted a missing `total` → one page fetched, rest dropped silently | FIXED: refuses; pinned + mutation-proved |
+| 20 | fetch | "day fetched" judged by file existence (a proxy) in fetch.py AND night.py | FIXED: one `day_fetched` (rows inside), both callers ask it; pinned |
+| 21 | fetch | two independent results fetchers (client vs school/fetch, different param names, no backoff in one) | NOT FIXED: unification is a larger cut; named |
+| 22 | store | tracked clues collapsed to one per horse before settle (dict keyed on horse_id) | FIXED: every active clue per horse settles |
+| 23 | store | corpus rows dropped silently (13-column check) and missing SP coerced to 0 uncounted | FIXED: skipped rows counted and printed; pinned. Missing-SP count still uncounted — named |
+| 24 | store | evidence.py: two optional-lens excepts swallowed the cause | FIXED: named |
+| 25 | store | config comment named a ledger.db that does not exist | FIXED |
+| 26 | tests | `assert "never have "` — a bare literal, always true | FIXED |
+| 27 | tests | 27 of 34 morningread tests are prompt-text pins (they prove the words exist, not that the engine obeys) | DOCUMENTED, not renamed: engine-side laws carry behaviour tests (5c, glance, zavateri, stale, tonight's eleven); the pins remain as doc-freshness checks |
+| 28 | tests | engine-mode test re-typed the expression it claimed to test | NOT FIXED TONIGHT (vacuous test named; extract `nap_mode()` next) |
+| 29 | tests | no import smoke; CI on 3.10 while the box and pyproject say 3.11 | FIXED: tests/test_imports.py walks every module; CI → 3.11 |
+| 30 | tests | no mutation harness | INTERIM: four hand mutations run and recorded above; the harness is a manual protocol until a tool earns its keep |
+| 31 | rot | dead scripts: cli/backcheck, cli/napcheck (a backtest that no longer matched production), study/patterns (+its pure test) | DELETED (git history keeps them). school/pack, mark, audit were flagged dead but carry tests and belong to the Phase-2 classroom design — KEPT |
+| 32 | rot | race-letter mapping duplicated byte-for-byte in cli/nap.py and pipeline/nap.py; neither knew NH Flat | FIXED: `domain/units.book_code`, one site; pinned |
+| 33 | rot | bare `date.today()` (box UTC) in client/normalise/naplog/nuances/reason vs London-aware resolve_date | NOT FIXED TONIGHT: a shared london_today helper is the cut; each site is a cutoff that needs its own check |
+| 34 | rot | docs/DEPLOY.md and docs/go_live_shadow.md describe a retired generation (old CLI names, old branches, "55 tests") | ARCHIVED with a banner |
+| 35 | rot | ARCHITECTURE module map: wrong email_render path, missing domain/school modules, dead napcheck listed | FIXED |
+| 36 | rot | orphan notes in data/school (preregistered, vision_report) | MOVED to docs/school/ |
+| 37 | rot | carved figures with no rebuild command (1,978-race study, 6-of-8, 38.2%, -30.9%) | RECEIPTED as frozen snapshots in the docstring; the shape book's "1690 races" already carries its command (the model) |
+| 38 | delivery | run_guarded cannot catch an import-time crash; mail.py's SMTP_PORT int() sat outside its try | FIXED: trial.sh's EXIT trap mails any non-zero exit (covers imports, pulls, signals); SMTP_PORT left (queued) |
+| 39 | delivery | "sent" = SMTP accepted, filed-check best-effort; a bounce is invisible | NOT FIXED: named in the pipeline map's watched-by column |
+| 40 | step 5 | nothing scored every runner against the market | ADDED: school/tier0.py — every runner, every resulted race, market rank as the control, yesterday v trailing 14 days v store, month test on lift; nightly in trial.sh; health reds on a stale report; pinned |
+| 41 | step 6 | the master's rulings lived in chat and in the apprentice's memory | ADDED: study/rulings.py + data/rulings.csv (18 rulings seeded verbatim, dated); recalled into the morning prompt at the point of use, every recall counted; health names the never-consulted |
+
+### Still broken / needs the master's console
+- The 07:30 nap email did not arrive on 2026-09-02 and no crash email came: the run never started, hung, or the mailer is down — `tail -80 data/task_runs.log` on the box and the Tasks page (expiry) decide it. From tonight the EXIT trap mails any failed exit.
+- Items 7, 8, 10 (thin case), 13, 17 are FOR RULING and unchanged.

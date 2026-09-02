@@ -1,3 +1,5 @@
+> **ARCHIVED (audit 2026-09-02):** this page describes a retired generation of the system (old CLI names, old branches, old cron rows). The live contract is docs/ARCHITECTURE.md; the live scheduler is trial.sh on `main`. Kept for history only.
+
 # Going live — shadow mode (safe, alongside the old system)
 
 This runs the new `racing_edge` engine **next to** the existing V3/V4 system. It

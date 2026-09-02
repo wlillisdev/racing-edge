@@ -1,3 +1,5 @@
+> **ARCHIVED (audit 2026-09-02):** this page describes a retired generation of the system (old CLI names, old branches, old cron rows). The live contract is docs/ARCHITECTURE.md; the live scheduler is trial.sh on `main`. Kept for history only.
+
 # Deploy — racing_edge v4 (the clean rebuild)
 
 This replaces the old 97-script sprawl with one installable package and three

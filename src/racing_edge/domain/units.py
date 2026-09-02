@@ -27,6 +27,24 @@ def is_jump(race_type: str) -> bool:
     return race_code(race_type) == "jump"
 
 
+def book_code(race_type: str | None) -> str | None:
+    """The SHAPE BOOK's letter for a race type — F / H / C / N — ONE SITE
+    (audit 2026-09-02: byte-identical copies lived in cli/nap.py and
+    pipeline/nap.py, and neither knew 'NH Flat'). None = not a book code."""
+    t = (race_type or "").strip().lower()
+    if not t:
+        return None
+    if t == "flat":
+        return "F"
+    if "hurdle" in t:
+        return "H"
+    if "chase" in t:
+        return "C"
+    if "nh flat" in t or "bumper" in t or "national hunt flat" in t:
+        return "N"
+    return None
+
+
 # --------------------------------------------------------------------------- #
 # going — canonical band (winter jumps lives on the soft end)
 # --------------------------------------------------------------------------- #

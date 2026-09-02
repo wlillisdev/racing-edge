@@ -52,7 +52,8 @@ def main(argv=None):
     if os.environ.get("RACING_API_USERNAME"):
         from racing_edge.school.fetch import main as fetch_main
         fetch_main(["--start", a.day, "--end", a.day, "--raw", str(raw)])
-    elif not (raw / f"{a.day}.csv").exists():
+    elif not __import__("racing_edge.school.fetch", fromlist=["day_fetched"]).day_fetched(
+            raw / f"{a.day}.csv"):
         print(f"night school: no API credentials and no corpus for {a.day} "
               "— nothing to grade tonight (fail loud, not silent)")
         return 1

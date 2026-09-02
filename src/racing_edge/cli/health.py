@@ -103,11 +103,16 @@ def main() -> int:
         "task failed or crashed; open its log on the Tasks page",
         lines)
     stale = [n for n in naps if n["won"] is None and n["date"] < yday.isoformat()]
+    # the named console command rides with the alarm (audit 2026-09-02: "no pick
+    # open over two days without a named cause and a named console command")
     all_ok &= _check(
         not stale,
         "no stale unsettled naps",
         f"{len(stale)} nap(s) unsettled for 2+ days ({', '.join(n['date'] for n in stale[:5])}) "
-        "— the 22:00 night task is not settling",
+        "— the night settle's backlog sweep has not closed them; console: "
+        f"PYTHONPATH=src venv/bin/python -m racing_edge.cli.nap --settle "
+        f"{stale[0]['date'] if stale else 'YYYY-MM-DD'} --email  (a row with no "
+        "result after 7 days is auto-voided with its reason)",
         lines)
     # only judge naps banked since the case feature existed (2026-07-06) — rows from
     # before it are legitimately caseless legacy, not a live fault
@@ -382,6 +387,29 @@ def main() -> int:
     # Every report ends with what is NOT being watched. Update this list
     # when an item is fixed or a new blind spot is found — a stale honest
     # half is the dishonest kind.
+    # THE MEMORY AND THE TIER-0 PASS (audit 2026-09-02, steps 5 and 6): knowledge
+    # never consulted is named; a tier-0 report older than yesterday is red.
+    try:
+        from racing_edge.study.rulings import load as _rl, never_consulted as _nc
+        _all, _never = _rl(), _nc()
+        lines.append(f"  rulings: {len(_all)} stored, {len(_never)} never consulted"
+                     + (f" — {', '.join(r['date'] + ' ' + r['ruling'][:40] for r in _never[:3])}"
+                        if _never else ""))
+    except Exception:
+        lines.append("  rulings: table unreadable")
+    try:
+        from datetime import datetime as _dtm
+        from pathlib import Path as _PT
+        _t0 = _PT("data/school/tier0.md")
+        _age = (_dtm.now() - _dtm.fromtimestamp(_t0.stat().st_mtime)).days if _t0.exists() else None
+        all_ok &= _check(
+            _age is not None and _age <= 1,
+            f"tier-0 pass fresh (data/school/tier0.md, {_age}d old)",
+            "tier-0 pass STALE or missing — the night task's tier0 step did not run "
+            f"({'never written' if _age is None else f'{_age}d old'})",
+            lines)
+    except Exception:
+        lines.append("  tier-0: unreadable")
     lines.append("\n  NOT WATCHED (the honest half — nobody is checking these):")
     lines.append("    · morning card coverage — races never STUDIED at all "
                  "(summaries vs opinions count); settle-side coverage of "

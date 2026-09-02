@@ -15,6 +15,7 @@ from dataclasses import dataclass, replace
 from racing_edge.data.evidence import build_evidence
 from racing_edge.data.normalise import racecards_from_raw
 from racing_edge.domain.models import Race, Runner
+from racing_edge.domain.units import book_code
 from racing_edge.school.shapebook import glance_for
 from racing_edge.selection.conviction import Conviction, conviction
 
@@ -45,7 +46,12 @@ def race_quality_score(*, is_handicap: bool, concentration: float,
                        shape_verdict: str | None = None) -> int:
     """THE BETTING-RACE FINGERPRINT (the master, 2026-08-17: 'we need to give
     ourself the best chance of winning consistently... lets go'), every term
-    receipted by the 1,978-race study of that date:
+    receipted by the 1,978-race study of that date (RECEIPT, audit 2026-09-02:
+    these figures are a FROZEN snapshot of data/school/raw as of 2026-08-17; no
+    command in the repo rebuilds them exactly — the nearest is
+    `PYTHONPATH=src python -m racing_edge.school.mine`, which prints the live
+    SP-favourite benchmark and cells to compare against; treat the numbers as
+    dated, not live):
       +1 honest handicap        (the record's winning profile, 6 of 8 winners)
       +1 concentrated market    (top-3 conc > 0.75: winner in front three 79%
                                  vs 45-55% in open markets — the strongest
@@ -140,6 +146,25 @@ def anchor_bar(race_class: int | None) -> float:
     return 6.0 if (race_class or 9) <= 3 else 5.0
 
 
+def still_to_run(off_time: str, now, buffer_minutes: int = 5):
+    """ONE SITE for 'has this race gone off' (audit 2026-09-02): the field
+    filter and the pre-bank re-check both ask here. True = still to run with
+    the buffer to spare; False = off or inside the buffer; None = the off time
+    is unparseable — and the CALLER treats None as off: a gate that cannot
+    check fails CLOSED, never open (the old inner function returned True on a
+    parse error, i.e. a race with a broken time read as safe to bank)."""
+    from datetime import timedelta as _td
+    try:
+        h, m = off_time.strip().split(":")[:2]
+        hh, mm = int(h), int(m[:2])
+        if 1 <= hh <= 9:
+            hh += 12
+        off = now.replace(hour=hh, minute=mm, second=0, microsecond=0)
+        return off > now + _td(minutes=buffer_minutes)
+    except (ValueError, AttributeError):
+        return None
+
+
 def _rank_key(p: NapPick) -> tuple[int, int, int, int, int, float]:
     # RACE QUALITY breaks ties (the master, 2026-07-05: "really bad race selections —
     # poor classes, anything could win"): between equal convictions, the pick in the
@@ -156,7 +181,9 @@ def _rank_key(p: NapPick) -> tuple[int, int, int, int, int, float]:
     return (p.race_quality,
             int(p.conviction.confident), int(p.conviction.mark_known),
             p.conviction.score, len(p.conviction.aligned),
-            -(p.race.race_class or 6), -(p.price or 999.0))
+            # unclassed (None) ranks BELOW Class 6, never level with it (audit
+            # 2026-09-02: `or 6` tied 'unknown' with 'known worst')
+            -(p.race.race_class if p.race.race_class else 7), -(p.price or 999.0))
 
 
 def evaluate_field(client: _Client, day: str = "today",
@@ -189,15 +216,11 @@ def evaluate_field(client: _Client, day: str = "today",
         _now = now                            # injectable clock — tests pass a morning
 
         def _still_to_run(r: Race) -> bool:
-            try:
-                h, m = r.off_time.strip().split(":")[:2]
-                hh, mm = int(h), int(m[:2])
-                if 1 <= hh <= 9:
-                    hh += 12
-                off = _now.replace(hour=hh, minute=mm, second=0)
-                return off > _now + _td(minutes=5)
-            except (ValueError, AttributeError):
-                return True
+            ok = still_to_run(r.off_time, _now)
+            if ok is None and progress:
+                progress(f"  time guard: {r.course} {r.off_time!r} unparseable — "
+                         "treated as OFF (the gate fails closed)")
+            return bool(ok)
         before = len(races)
         races = [r for r in races if _still_to_run(r)]
         if progress and before != len(races):
@@ -314,10 +337,8 @@ def evaluate_field(client: _Client, day: str = "today",
                            or ("STALE" in f)
                            for f in (*p.conviction.flags,
                                      *p.conviction.cautions)))
-        _code = {"Flat": "F"}.get(race.race_type) or \
-            ("H" if "Hurdle" in (race.race_type or "") else
-             "C" if "Chase" in (race.race_type or "") else None)
-        _glance = glance_for(_code, race.race_class, len(race_picks), fav)
+        _glance = glance_for(book_code(race.race_type), race.race_class,
+                             len(race_picks), fav)
         rq = race_quality_score(is_handicap=race.is_handicap, concentration=conc,
                                 race_class=race.race_class,
                                 race_type=race.race_type or "",
