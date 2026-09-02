@@ -53,15 +53,43 @@ def _digits(s: str) -> str:
     return "".join(ch for ch in (s or "") if ch.isdigit()) or "0"
 
 
-def fetch_day(day: str, auth: tuple[str, str]) -> list[dict]:
-    races, skip = [], 0
-    while True:
+RETRY_WAITS = (5, 15, 30, 60, 120)   # seconds — a 429 is a queue, not a failure
+
+
+def _get_page(day: str, skip: int, auth: tuple[str, str]):
+    """One results page, RIDING OUT the rate limit (2026-09-02, live on the
+    box: the 21-day backfill hit 429 Too Many Requests on the third day and
+    the whole night died with a traceback). 429 and 5xx wait and retry with
+    the server's Retry-After when it names one; anything else raises."""
+    last = None
+    for wait in RETRY_WAITS + (None,):
         resp = requests.get(
             f"{BASE}/results",
             params={"start_date": day, "end_date": day,
                     "region": ["gb", "ire"], "limit": 50, "skip": skip},
             auth=auth, timeout=60)
+        status = getattr(resp, "status_code", 200)
+        if status == 429 or 500 <= status < 600:
+            last = resp
+            if wait is None:
+                break
+            try:
+                wait = max(wait, int(resp.headers.get("Retry-After", 0)))
+            except (TypeError, ValueError):
+                pass
+            print(f"  {day} skip={skip}: HTTP {status} — waiting {wait}s", flush=True)
+            time.sleep(wait)
+            continue
         resp.raise_for_status()
+        return resp
+    last.raise_for_status()
+    return last
+
+
+def fetch_day(day: str, auth: tuple[str, str]) -> list[dict]:
+    races, skip = [], 0
+    while True:
+        resp = _get_page(day, skip, auth)
         data = resp.json()
         races += data.get("results", [])
         skip += 50
@@ -130,6 +158,7 @@ def main(argv=None):
                 # as a fact so tomorrow's night does not pay for it again
                 empty_marker(out).write_text(f"{day}: API returned 0 results\n")
             print(f"{day}: {len(rows)} runners", flush=True)
+            time.sleep(1.0)                   # a breath between days, for the rate limit
         d += timedelta(days=1)
     return 0
 
