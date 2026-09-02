@@ -523,4 +523,12 @@ THIRD SNAPSHOT — health writes 09:30, the guard names FLIP-FLOPs across
 07:30/09:30/12:30; THE DELTA LINE (today v last run: class, mark, trip,
 going, course) on every runner in the deep read. Deferred with reasons in the
 ledger: main() extraction, tag-keyed rulings recall, the corpus memo.
+THE BOX'S OWN LOG (20:50–20:54, pasted): the 07:30 email WAS delivered and
+IMAP-verified (Gmail threading hid it). The real fault: night school NEVER
+fetched on the box (creds in .env, night.py read os.environ) — 19 nights of
+corpus missing, fav benchmark n=0, ladder red against nothing. Fixed: one
+credentials door (config.racing_creds), a 21-day self-healing fetch window,
+a thin benchmark is NO VERDICT, health reds a stale fav benchmark. Tonight's
+22:00 run should fetch 08-15..09-02 and grade them; tomorrow's 09:30 health
+should read "night school grading (fav benchmark last graded 2026-09-02)".
 

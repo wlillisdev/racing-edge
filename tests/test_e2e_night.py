@@ -131,9 +131,17 @@ def test_night_runs_end_to_end_from_disk(school, capsys):
     policies_seen = {ln.split(",")[1] for ln in lines[1:]}
     assert "fav" in policies_seen
     assert CHALLENGER in policies_seen
+    # the night grades the trailing window (holes self-heal, 2026-09-02): every
+    # row sits inside it and the night's own day is graded
+    from datetime import date as _d, timedelta as _td
+    from racing_edge.school.night import BACKFILL_DAYS
+    _lo = (_d.fromisoformat(NIGHT_DAY) - _td(days=BACKFILL_DAYS - 1)).isoformat()
+    days_seen = set()
     for ln in lines[1:]:
         day, policy, picks, wins, returned = ln.split(",")
-        assert day == NIGHT_DAY
+        assert _lo <= day <= NIGHT_DAY
+        days_seen.add(day)
+    assert NIGHT_DAY in days_seen
 
 
 def test_night_verdict_string_is_produced(school, capsys):
@@ -292,3 +300,26 @@ def test_fetch_main_empty_day_is_remembered_as_confirmed_empty(
     bare = raw / "2026-03-06.csv"
     bare.write_text("")
     assert fetch_mod.day_fetched(bare) is False
+
+
+def test_night_takes_its_credentials_through_configs_door_not_the_shell(
+        school, monkeypatch):
+    """2026-09-02, the box: .env held the credentials, night.py asked
+    os.environ, the scheduler's shell had none — the fetch was skipped every
+    night since deployment. Night must fetch whenever config can produce
+    the credentials, whatever the shell says."""
+    for k in ("RACING_API_USERNAME", "RACING_API_PASSWORD"):
+        monkeypatch.delenv(k, raising=False)
+    monkeypatch.setattr("racing_edge.config.racing_creds", lambda: ("u", "p"))
+    called = []
+    monkeypatch.setattr("racing_edge.school.fetch.main",
+                        lambda argv: called.append(argv) or 0)
+    rc = night_mod.main(["--day", NIGHT_DAY, "--school", str(school),
+                         "--champion", CHALLENGER])
+    assert rc == 0
+    # the trailing window, not one day: holes in the last 21 days self-heal
+    from datetime import date, timedelta
+    from racing_edge.school.night import BACKFILL_DAYS
+    want = (date.fromisoformat(NIGHT_DAY) - timedelta(days=BACKFILL_DAYS - 1)).isoformat()
+    assert called and called[0][:4] == ["--start", want, "--end", NIGHT_DAY]
+
