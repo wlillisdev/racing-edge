@@ -473,3 +473,15 @@ every recall is counted; tier-0 scores every runner against the market nightly
 (data/school/tier0.md). For the master's ruling, unchanged: the reader-mode
 floors that are dead under engine mode; the shape-book gate's fail-open on an
 unreadable corpus; scoring the named danger / my-price at settle.
+
+THE READ IS THE PRODUCT (the master, 2026-09-02, after the audit — verbatim:
+"we want to read the form not depend on arithmetic"; "its an intelligence
+system. it needs proper structure to make it reliable, consistent. i want u to
+read the form like me only on steroids and scale. the edge is joining the dots
+not crunching numbers"): no weights engine, no learned scoring — STOPPED before
+a line was committed. The structure around the read instead: a read is not a
+read without a case (MorningPick.ok); every dot the read joins — the named
+danger, the crossed-off list, the reader's own price — banks in the nap row and
+is GRADED at settle (read_grade), with the scoreboard in health. The loop is:
+read every race in the morning, mark every read at night, autopsy the misses
+Rule-One style, the master's rulings verbatim in every read, walls around it.

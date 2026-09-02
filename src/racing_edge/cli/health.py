@@ -387,6 +387,19 @@ def main() -> int:
     # Every report ends with what is NOT being watched. Update this list
     # when an item is fixed or a new blind spot is found — a stale honest
     # half is the dishonest kind.
+    # THE READ'S OWN SCOREBOARD (audit 2026-09-02): the claims every read makes,
+    # marked against results — the learning loop's real gauge, not win/loss
+    try:
+        _lg = open_nap_log()
+        _rg = _lg.read_grades() if hasattr(_lg, "read_grades") else {}
+        _lg.close()
+        if _rg and _rg.get("graded"):
+            lines.append(f"  read scoreboard ({_rg['graded']} graded): named danger won "
+                         f"{_rg['danger_won']}, beat us {_rg['danger_beat_us']}; winner "
+                         f"was crossed off {_rg['winner_crossed_off']}; my price "
+                         f"shorter than SP {_rg['price_shorter_than_sp']}")
+    except Exception:
+        lines.append("  read scoreboard: unreadable")
     # THE MEMORY AND THE TIER-0 PASS (audit 2026-09-02, steps 5 and 6): knowledge
     # never consulted is named; a tier-0 report older than yesterday is red.
     try:

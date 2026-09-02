@@ -80,6 +80,14 @@ class NapLog:
             with contextlib.suppress(sqlite3.OperationalError):
                 self._conn.execute(
                     f"ALTER TABLE {table} ADD COLUMN void_reason TEXT DEFAULT ''")
+        # THE READ'S CLAIMS (audit 2026-09-02, the master: "the edge is joining
+        # the dots" — so every dot the read joins is banked and GRADED): the
+        # named danger, the crossed-off list, the reader's own price; read_grade
+        # is written at settle against the result.
+        for col, typ in (("danger", "TEXT DEFAULT ''"), ("crossed", "TEXT DEFAULT ''"),
+                         ("my_price", "REAL"), ("read_grade", "TEXT DEFAULT ''")):
+            with contextlib.suppress(sqlite3.OperationalError):
+                self._conn.execute(f"ALTER TABLE nap ADD COLUMN {col} {typ}")
         self._conn.commit()
 
     VOID = -2          # terminal: not a bet, not a pass — a pick the result could not settle
@@ -93,7 +101,8 @@ class NapLog:
     def record(self, *, day: date, race_id: str, course: str, horse: str, horse_id: str,
                price: float | None, score: int, confident: bool,
                case: str = "", deep_conf: str = "", aligned: str = "",
-               race_quality: int = 0, force: bool = False) -> None:
+               race_quality: int = 0, force: bool = False, danger: str = "",
+               crossed: str = "", my_price: float | None = None) -> None:
         """Bank the morning's nap (unsettled), WITH its reasoning.
 
         THE GUARD LIVES AT THE WRITE POINT (audit 2026-09-02, the master: "is
@@ -117,12 +126,38 @@ class NapLog:
                     "only from --force-rebank")
         self._conn.execute(
             "INSERT OR REPLACE INTO nap (date, race_id, course, horse, horse_id, price, "
-            "score, confident, won, sp_dec, case_text, deep_conf, aligned, race_quality) "
-            "VALUES (?,?,?,?,?,?,?,?,NULL,NULL,?,?,?,?)",
+            "score, confident, won, sp_dec, case_text, deep_conf, aligned, race_quality, "
+            "danger, crossed, my_price) "
+            "VALUES (?,?,?,?,?,?,?,?,NULL,NULL,?,?,?,?,?,?,?)",
             (day.isoformat(), race_id, course, horse, horse_id, price, score,
-             int(confident), case, deep_conf, aligned, int(race_quality)),
+             int(confident), case, deep_conf, aligned, int(race_quality),
+             danger or "", crossed or "", my_price),
         )
         self._conn.commit()
+
+    def grade_read(self, day: date, grade: str) -> None:
+        """The read's claims marked against the result — written once, at settle."""
+        self._conn.execute("UPDATE nap SET read_grade = ? WHERE date = ?",
+                           (grade, day.isoformat()))
+        self._conn.commit()
+
+    def read_grades(self) -> dict[str, int]:
+        """The scoreboard of the read's own claims over settled naps: how often
+        the named danger beat us, how often the winner stood in the crossed-off
+        list, how often our price was shorter than the SP (we called value the
+        market did not give). The learning loop reads THIS, not the win/loss."""
+        rows = self._conn.execute(
+            "SELECT read_grade FROM nap WHERE won IN (0, 1) AND read_grade != ''"
+        ).fetchall()
+        out = {"graded": len(rows), "danger_won": 0, "danger_beat_us": 0,
+               "winner_crossed_off": 0, "price_shorter_than_sp": 0}
+        for r in rows:
+            g = r["read_grade"]
+            out["danger_won"] += "danger WON" in g
+            out["danger_beat_us"] += "danger beat us" in g or "danger WON" in g
+            out["winner_crossed_off"] += "winner was CROSSED OFF" in g
+            out["price_shorter_than_sp"] += "shorter than SP" in g
+        return out
 
     def record_split(self, bar: int = 2) -> tuple[tuple[int, int], tuple[int, int]]:
         """((wins, settled) in BETTING races, (wins, settled) in the rest).

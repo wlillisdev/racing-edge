@@ -46,8 +46,9 @@ def test_preread_lays_out_the_pre_race_card_without_results() -> None:
 
 def test_parse_morning_pick_reads_a_pick_and_an_earned_pass() -> None:
     pick = parse_morning_pick(
-        'the read:\n{"race": "Thirsk 3:00", "horse": "Gem", "case": "well-in and a '
-        'finisher", "race_readable_because": "Cl3, exposed field, anchored market", '
+        'the read:\n{"race": "Thirsk 3:00", "horse": "Gem", "case": "well-in 5lb off a '
+        'winning mark and a proven finisher who asserted on the run-in last time", '
+        '"race_readable_because": "Cl3, exposed field, anchored market", '
         '"crossed_off": ["Rival — placer profile"], "cite": ["mark WELL-IN"], '
         '"owed": "live move", "danger": {"horse": "Hot Rival", "its_case": "won its '
         'last two", "beaten_because": "well-in 5lb vs raised 6lb, course jockey"}, '

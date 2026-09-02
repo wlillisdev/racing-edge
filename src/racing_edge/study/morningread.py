@@ -542,6 +542,8 @@ _SCHEMA_HINT = (
     'passing)",\n'
     '  "horse": "the chosen horse exactly as named in that readout (or \\"\\")",\n'
     '  "case": "the jigsaw, dots joined — why THIS horse in THIS race, citing facts",\n'
+    '  "my_price": "YOUR OWN PRICE for the pick as a decimal, e.g. 4.0 (the case '
+    'opens with it) — graded against the SP at settle",\n'
     '  "race_readable_because": "why this race passed the #31 checklist",\n'
     '  "crossed_off": ["horse — the fatal fact", "..."],\n'
     '  "cite": ["the exact readout/tool facts the case rests on"],\n'
@@ -576,14 +578,20 @@ class MorningPick:
     confidence: str = ""
     is_pass: bool = False
     pass_reason: str = ""
+    my_price: float | None = None
     raw: str = ""
+
+    MIN_CASE_CHARS = 40     # a blank or one-line 'case' is a label, not a read
 
     @property
     def ok(self) -> bool:
         # a pick is NOT ok without (a) the profile checklist and (b) the DANGER named
-        # and beaten — a case that only argues FOR its horse is half a case
+        # and beaten — a case that only argues FOR its horse is half a case — and
+        # (c) A CASE WITH WORDS IN IT (audit 2026-09-02, reads bot #1: an empty
+        # "case" passed as a deep read and banked as the argued jigsaw)
         pick_ok = bool(self.horse and self.race_label and self.profile_note
-                       and self.danger_horse and self.danger_beaten)
+                       and self.danger_horse and self.danger_beaten
+                       and len(self.case.strip()) >= self.MIN_CASE_CHARS)
         return pick_ok or (self.is_pass and bool(self.pass_reason))
 
 
@@ -708,5 +716,21 @@ def parse_morning_pick(text: str) -> MorningPick:
         confidence=str(d.get("confidence", "")).lower().strip(),
         is_pass=bool(d.get("pass")),
         pass_reason=str(d.get("pass_reason", "")),
+        my_price=_price(d.get("my_price")),
         raw=text,
     )
+
+
+def _price(v) -> float | None:
+    """The reader's own price as a decimal — 4.0, "4.0", "3/1" (-> 4.0) or None.
+    Never guessed: anything unparseable is None and the claim goes ungraded."""
+    if v is None or v == "":
+        return None
+    try:
+        if isinstance(v, str) and "/" in v:
+            a, b = v.split("/", 1)
+            return round(float(a) / float(b) + 1.0, 2)
+        f = float(v)
+        return f if f > 1.0 else None
+    except (ValueError, TypeError, ZeroDivisionError):
+        return None

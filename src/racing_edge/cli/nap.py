@@ -276,7 +276,58 @@ def _settle_tables(day, results, log, emit) -> dict[str, str]:
         settlers[table](day, won=won, sp_dec=me.sp_dec)
         out[table] = (f"{row['horse']} {'WON' if won else 'unplaced'} "
                       f"({me.position or status or '?'}) at SP {me.sp_dec or '?'}")
+        if table == "nap":
+            grade = grade_read_claims(row, race, me)
+            if grade:
+                log.grade_read(day, grade)
+                out[table] += f" | READ GRADED: {grade}"
     return out
+
+
+def grade_read_claims(row: dict, race, me) -> str:
+    """THE READ'S OWN CLAIMS, MARKED (audit 2026-09-02, the master: "the edge
+    is joining the dots") — the named danger, the crossed-off list and the
+    reader's own price were produced every morning and graded by nobody. Now:
+      danger  -> WON / beat us / behind us / absent
+      crossed -> did the WINNER stand in the crossed-off list (a cross that
+                 crossed the winner is the read's loudest lesson)
+      price   -> my price v the SP (shorter than SP = we called value the
+                 market did not give; longer = the market liked it more)
+    Pure: takes the banked row, the result race and our runner."""
+    parts: list[str] = []
+    runners = list(getattr(race, "runners", []) or [])
+
+    def _name(rr) -> str:
+        return (getattr(rr, "horse", "") or "").strip().lower()
+
+    def _pos(rr):
+        p = getattr(rr, "position", None)
+        return p if isinstance(p, int) else None
+
+    danger = (row.get("danger") or "").strip().lower()
+    if danger:
+        dr = next((rr for rr in runners if _name(rr) == danger), None)
+        if dr is None:
+            parts.append("danger absent")
+        elif _pos(dr) == 1:
+            parts.append("danger WON")
+        elif _pos(dr) is not None and (_pos(me) is None or _pos(dr) < _pos(me)):
+            parts.append(f"danger beat us ({_pos(dr)} v {_pos(me) or 'unplaced'})")
+        else:
+            parts.append("danger behind us")
+    crossed = [x.split(" — ")[0].split(" - ")[0].strip().lower()
+               for x in (row.get("crossed") or "").split("|") if x.strip()]
+    if crossed:
+        winner = next((rr for rr in runners if _pos(rr) == 1), None)
+        wname = _name(winner) if winner is not None else ""
+        parts.append("winner was CROSSED OFF" if wname and any(
+            c and (c == wname or c in wname or wname in c) for c in crossed)
+                     else "crossed-off all beaten")
+    mp = row.get("my_price")
+    sp = getattr(me, "sp_dec", None)
+    if mp and sp:
+        parts.append(f"my price {mp} {'shorter than' if mp < sp else 'longer than' if mp > sp else 'equal to'} SP {sp}")
+    return "; ".join(parts)
 
 
 def _sweep_backlog(day, log, emit, fetch=None) -> None:
@@ -1130,7 +1181,11 @@ def main() -> int:
                horse_id=nap.runner.horse_id, price=nap.price, score=c.score,
                confident=confident, case=case_text, deep_conf=deep_conf,
                aligned=" | ".join(c.aligned), race_quality=nap.race_quality,
-               force=args.force_rebank)
+               force=args.force_rebank,
+               # the read's claims ride in the row and are graded at settle
+               danger=(mp.danger_horse if mp is not None else ""),
+               crossed=("|".join(mp.crossed_off) if mp is not None else ""),
+               my_price=(mp.my_price if mp is not None else None))
     # THE SHADOW: the mechanical engine's own top survivor, banked silently for the
     # A/B record (one machine, two ledgers — the record decides which method earns
     # the stakes). Costs nothing: it was already computed.
