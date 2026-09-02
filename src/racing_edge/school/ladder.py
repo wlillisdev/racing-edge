@@ -64,6 +64,7 @@ def nap_policy_rows(history) -> list[tuple]:
     "best horse wins; we read the form; we pick winners — that is what we
     measure"). Every SETTLED real pick (won 0/1) is one graded pick at SP;
     passes and voids are positions, not picks, and carry no row."""
+    from racing_edge.study.naplog import version
     out = []
     for r in history:
         if r.get("won") not in (0, 1):
@@ -71,6 +72,9 @@ def nap_policy_rows(history) -> list[tuple]:
         won = int(r["won"])
         ret = float(r.get("sp_dec") or 0.0) if won else 0.0
         out.append((r["date"], "nap", 1, won, ret))
+        if version(r["date"]) == "v2":
+            # THE NEW BEAST on its own ladder line (the master, 2026-09-02)
+            out.append((r["date"], "nap-v2", 1, won, ret))
     return out
 
 

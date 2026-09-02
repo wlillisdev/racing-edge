@@ -55,6 +55,18 @@ CREATE TABLE IF NOT EXISTS favline (
 """
 
 
+V2_FROM = "2026-09-03"      # THE NEW BEAST: the first morning under the rebuilt read
+                            # (rulebook in engine mode, yardstick to the reader, bar then
+                            # best horse, the board, the delta line — 2026-09-02's rebuild)
+
+
+def version(day) -> str:
+    """'v2' from V2_FROM, 'v1' before — ONE SITE (the master, 2026-09-02:
+    "differentiate this version from the older version")."""
+    d = day.isoformat() if hasattr(day, "isoformat") else str(day)
+    return "v2" if d >= V2_FROM else "v1"
+
+
 class NapLog:
     def __init__(self, path: str | Path) -> None:
         self._conn = sqlite3.connect(str(path), timeout=30)
@@ -281,6 +293,23 @@ class NapLog:
         import os
         os.replace(tmp, p)
         return n
+
+    def record_by_version(self) -> dict[str, tuple[int, int, float]]:
+        """{version: (wins, settled, level-stakes P/L at SP)} — THE NEW BEAST
+        judged apart from the old one (the master, 2026-09-02: "we also need to
+        differentiate this version from the older version, I think this is a
+        better beast"). The line is one date, defined once: V2_FROM."""
+        out: dict[str, list] = {}
+        for won, sp, day in self._conn.execute(
+                "SELECT won, sp_dec, date FROM nap WHERE won IN (0, 1)").fetchall():
+            v = out.setdefault(version(day), [0, 0, 0.0])
+            v[1] += 1
+            if won == 1:
+                v[0] += 1
+                v[2] += (sp or 0.0) - 1.0
+            else:
+                v[2] -= 1.0
+        return {k: (a, b, round(c, 1)) for k, (a, b, c) in out.items()}
 
     def strike_rate(self, confident_only: bool = False) -> tuple[int, int]:
         """(naps won, naps settled). Pass confident_only to judge the real naps alone."""

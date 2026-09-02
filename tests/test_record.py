@@ -262,3 +262,26 @@ def test_objection_watch_counts_the_readers_recorded_doubts(tmp_path) -> None:
     log.settle(date.fromisoformat(d3), won=True, sp_dec=4.0)
     assert log.objection_watch(days=7) == (2, 1, 1)
     assert not hasattr(log, "veto_watch")
+
+
+def test_the_new_beast_is_judged_apart_from_the_old(tmp_path) -> None:
+    """The master, 2026-09-02: "differentiate this version from the older
+    version, I think this is a better beast." One line (V2_FROM), the record
+    split by it, the ladder given a nap-v2 policy, the subject tagged."""
+    from datetime import date
+    from racing_edge.school.ladder import nap_policy_rows
+    from racing_edge.study.naplog import V2_FROM, NapLog, version
+    assert V2_FROM == "2026-09-03"
+    assert version("2026-09-02") == "v1" and version(date(2026, 9, 3)) == "v2"
+    log = NapLog(tmp_path / "nap.db")
+    for d, won, sp in (("2026-09-01", True, 4.0), ("2026-09-03", False, 3.0),
+                       ("2026-09-04", True, 5.0)):
+        log.record(day=date.fromisoformat(d), race_id=f"R{d}", course="Bath",
+                   horse=f"H{d}", horse_id=f"H{d}", price=3.0, score=3,
+                   confident=False, case="x")
+        log.settle(date.fromisoformat(d), won=won, sp_dec=sp)
+    assert log.record_by_version() == {"v1": (1, 1, 3.0), "v2": (1, 2, 3.0)}
+    pols = [(r[0], r[1]) for r in nap_policy_rows(log.history())]
+    assert ("2026-09-01", "nap") in pols and ("2026-09-01", "nap-v2") not in pols
+    assert ("2026-09-03", "nap-v2") in pols and ("2026-09-04", "nap-v2") in pols
+

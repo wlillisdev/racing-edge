@@ -541,4 +541,8 @@ winners — that is what we measure." The nap column is the champion: settled
 picks ride into daily_policy.csv as 'nap' at every settle (backfilled from
 history), champion defaults to 'nap' everywhere, the engine's opinions stay on
 the ladder as the arithmetic's receipt. Verdict is NO VERDICT until 50.
+THE NEW BEAST (his words, 21:10): everything from 2026-09-03 is v2 — one
+constant naplog.V2_FROM; health prints "the new beast v the old"; the ladder
+carries nap-v2; email subjects are tagged [v2]. The ledger's VERSIONS table
+says what v2 is. Judge v2 on its own line; v1's 15/46 is the old beast.
 
