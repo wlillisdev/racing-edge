@@ -336,12 +336,24 @@ def main() -> int:
     # the two-column record read BEFORE close (same closed-DB trap)
     _bet, _dreck = (log2.record_split() if hasattr(log2, "record_split")
                     else ((0, 0), (0, 0)))
+    _byv_rows = log2.record_by_version() if hasattr(log2, "record_by_version") else {}
     log2.close()
     lines.append(f"  record: {w}/{n} settled naps won"
                  + (f" ({100 * w / n:.0f}%), level stakes at SP {pnl:+.1f}pt" if n else ""))
     if _bet[1] or _dreck[1]:
         lines.append(f"  two-column record: BETTING races {_bet[0]}/{_bet[1]} · "
                      f"forced/dreck days {_dreck[0]}/{_dreck[1]} — judge the first")
+    # THE NEW BEAST v THE OLD (the master, 2026-09-02): the rebuilt read from
+    # V2_FROM is judged on its own line, the old beast's record kept beside it
+    from racing_edge.study.naplog import V2_FROM as _V2
+    _byv = _byv_rows
+    if _byv:
+        def _vline(k):
+            w2, n2, p2 = _byv.get(k, (0, 0, 0.0))
+            return (f"{k} {w2}/{n2} ({100 * w2 / n2:.0f}%) {p2:+.1f}pt" if n2
+                    else f"{k} no settled picks yet")
+        lines.append(f"  the new beast (v2, from {_V2}) v the old: "
+                     f"{_vline('v2')} | {_vline('v1')}")
     # THE FAV LINE beside the value line (the master, 2026-08-16: 'lets do
     # favourite and value bet') — both bets, one glance, every day.
     fw, fn, fpnl = _fav

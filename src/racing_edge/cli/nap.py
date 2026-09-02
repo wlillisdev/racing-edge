@@ -1379,6 +1379,9 @@ def main() -> int:
         emit(f"  instrument: {_ew}")
 
     tag = "CONFIDENT NAP" if confident else "best candidate — NOT confident (declinable)"
+    # the beast's version in the subject line (the master, 2026-09-02)
+    from racing_edge.study.naplog import version as _version
+    tag = f"[{_version(nap.race.date)}] {tag}"
     emit(f"  {tag}: {nap.runner.horse}  —  {r.course} {r.off_time} ({r.race_type})")
     for line in deep_case:
         emit(line)
