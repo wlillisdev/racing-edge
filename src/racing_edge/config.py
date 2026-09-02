@@ -44,6 +44,16 @@ def _require(name: str) -> str:
     return value
 
 
+def racing_creds() -> tuple[str, str]:
+    """The Racing API credentials, from .env or the environment — ONE DOOR
+    (2026-09-02, the box: night school asked os.environ directly, the
+    scheduler's shell never carries .env, so the corpus fetch was SKIPPED
+    every night since deployment and the ladder's fav benchmark stayed at
+    n=0). Raises RuntimeError when neither holds them."""
+    load_dotenv(_PROJECT_ROOT / ".env")
+    return _require("RACING_API_USERNAME"), _require("RACING_API_PASSWORD")
+
+
 @lru_cache(maxsize=1)
 def get_config() -> Config:
     """Build Config from the environment (.env at the repo root). Cached."""

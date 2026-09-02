@@ -104,8 +104,8 @@ def main(argv=None):
     ap.add_argument("--end", required=True)
     ap.add_argument("--raw", default="data/school/raw")
     a = ap.parse_args(argv)
-    user = os.environ["RACING_API_USERNAME"]
-    pw = os.environ["RACING_API_PASSWORD"]
+    from racing_edge.config import racing_creds
+    user, pw = racing_creds()                 # .env or environment — one door
     raw = Path(a.raw)
     raw.mkdir(parents=True, exist_ok=True)
     cdir = raw.parent / "comments"
