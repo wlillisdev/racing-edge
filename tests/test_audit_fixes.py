@@ -605,3 +605,17 @@ def test_truncation_retry_grows_by_half_not_double() -> None:
     assert "budget = int(budget * 1.5)" in src
     assert "budget *= 2" not in src
 
+
+
+def test_preread_carries_the_delta_line_for_every_runner_with_a_prior_run() -> None:
+    from racing_edge.domain.models import Odds, PastRun, Race, Runner
+    from racing_edge.report.restudy import render_preread
+    race = Race(race_id="R", course="Thirsk", off_time="3:00", date=date(2026, 9, 2),
+                race_type="Flat", is_handicap=True, race_class=4, distance_f=8.0,
+                going="Good", runners=[
+                    Runner(horse_id="H", horse="Horse", official_rating=78,
+                           odds=Odds(consensus=4.0))])
+    last = PastRun(date=date(2026, 8, 1), position=2, race_class=5, going="Soft",
+                   distance_f=7.0, official_rating=74, course="Ripon", race_type="Flat")
+    out = render_preread(race, {"H": (last,)})
+    assert "today v last run (the delta line): class Cl4 v Cl5 last (UP 1)" in out
