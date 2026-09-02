@@ -623,6 +623,11 @@ def build_lessons(nap_history: list[dict], strike: tuple[int, int],
         missed = (aut.get("what_missed") or "")[:140] if aut else ""
         lines.append(f"- RECENT LOSS {x['date']} {x['horse']} ({x['course']})"
                      + (f": missed — {missed}" if missed else ""))
+    # THE READ'S OWN GRADES reach the next read (third audit 2026-09-02, bot
+    # P3: read_grade was written at settle and consulted by nobody but health)
+    for x in [x for x in nap_history if x.get("won") in (0, 1)
+              and (x.get("read_grade") or "").strip()][-5:]:
+        lines.append(f"- READ GRADED {x['date']} {x['horse']}: {x['read_grade']}")
     lines += [f"- MASTER-VALIDATED: {nu['nuance']}"
               for nu in nuances if nu["status"] == "validated"]
     # record-earned tier (2026-07-25): themes whose settled clues proved out

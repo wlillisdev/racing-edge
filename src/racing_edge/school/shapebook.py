@@ -21,6 +21,12 @@ Known v1 limit, named honestly: the corpus rows carry no handicap flag, so
 the fingerprint cannot yet split handicaps from conditions races. That
 column joins when the corpus loader next runs.
 
+Second v1 limit (third audit 2026-09-02): the cells are keyed on STARTING
+PRICE, the live glance is asked with the 07:30 consensus price — a favourite
+that shortens from 4/1 to 2/1 by the off was graded in the wrong band. A
+drift-tolerant band or a pre-off re-glance is the fix; until then the vote is
+an approximation and the decline gate stays the backstop.
+
 Usage: PYTHONPATH=src python -m racing_edge.school.shapebook \
            [--raw data/school/raw] [--out docs/SHAPE_BOOK.md] [--min-n 30]
 """
