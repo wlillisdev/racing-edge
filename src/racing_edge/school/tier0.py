@@ -54,7 +54,9 @@ def rows_from(races_scored) -> list[dict]:
             continue          # void / abandoned / unpriced winner: counted nowhere
         bar = place_bar(len(priced))
         for k, r in enumerate(priced, 1):
-            pos = int(r.pos) if r.pos.isdigit() else None
+            # "0" is the corpus's UNKNOWN position (fetch.py writes `or "0"`) —
+            # it is not a placing (second audit 2026-09-02: 0 <= bar read as placed)
+            pos = int(r.pos) if r.pos.isdigit() and int(r.pos) > 0 else None
             out.append({"date": r.date, "month": r.month, "rank": min(k, RANK_CAP),
                         "won": r.pos == "1",
                         "placed": pos is not None and pos <= bar,
