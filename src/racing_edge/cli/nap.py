@@ -760,9 +760,21 @@ def main() -> int:
                     cand_order.append(p.race.race_id)
         cand_races = [all_by_race[rid] for rid in cand_order[:3]]
         candidates = []
+        from racing_edge.school.sitting import sitting_floor as _floor
         for picks in cand_races:
             r0 = picks[0].race
             label = f"{r0.course} {r0.off_time}"
+            # LAW 5c AT THE MACHINE'S OWN READ (second audit 2026-09-02: the wall
+            # had no caller): a race whose class, distance or favourite the read
+            # cannot name is not read — a named pass line, never an order.
+            _favp = min((p for p in picks if p.price), key=lambda p: p.price,
+                        default=None)
+            _wall = _floor(r0.race_class,
+                           getattr(r0, "distance_f", None) or getattr(r0, "distance", None),
+                           _favp.runner.horse if _favp is not None else None)
+            if _wall:
+                emit(f"  ✗ {label}: {_wall}")
+                continue
             hists = {p.runner.horse_id: p.history for p in picks}
             race_flags = sorted({f for p in picks
                                  for f in _race_gate_flags(p.conviction.flags)})

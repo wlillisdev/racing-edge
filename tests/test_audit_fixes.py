@@ -276,3 +276,81 @@ def test_tier0_scores_every_runner_against_the_market_and_writes_the_report(tmp_
     assert "TIER-0" in text and "THE CONTROL" in text and "| 1 |" in text
     assert tier0.main(["--day", "2026-08-04", "--raw", str(tmp_path / "nowhere"),
                        "--out", str(out)]) == 1     # no corpus: fail loud
+
+
+# --------------------------------------------------------------------------- #
+# second audit (bot D's holes): the branches nobody had reached
+# --------------------------------------------------------------------------- #
+
+def test_grade_read_claims_names_a_beaten_danger_and_an_equal_price() -> None:
+    from racing_edge.cli.nap import grade_read_claims
+    me = NS(horse="Gem", position=2, sp_dec=4.0)
+    race = NS(runners=[NS(horse="Win", position=1, sp_dec=3.0), me,
+                       NS(horse="Rival", position=5, sp_dec=6.0)])
+    g = grade_read_claims({"danger": "Rival", "crossed": "Nobody — slow",
+                           "my_price": 4.0}, race, me)
+    assert "danger behind us" in g and "crossed-off all beaten" in g
+    assert "equal to SP 4.0" in g
+    assert grade_read_claims({"danger": "Ghost", "crossed": "", "my_price": None},
+                             race, me) == "danger absent"
+
+
+def test_sweep_backlog_names_a_fetch_failure_and_leaves_the_row_open(tmp_path):
+    from racing_edge.cli.nap import _sweep_backlog
+    log = _log(tmp_path)
+    _bank_all(log, date(2026, 9, 8))
+
+    def fetch(ds):
+        raise RuntimeError("api down")
+    lines: list[str] = []
+    _sweep_backlog(date(2026, 9, 10), log, lines.append, fetch=fetch)
+    assert any("results fetch failed (RuntimeError)" in ln for ln in lines)
+    assert log.existing(date(2026, 9, 8))["won"] is None
+
+
+def test_export_text_round_trips_a_shadow_row(tmp_path):
+    import csv
+    log = _log(tmp_path)
+    d = date(2026, 9, 2)
+    log.record_shadow(day=d, race_id="r", course="c", horse="Shade", horse_id="s",
+                      price=5.0, score=2)
+    log.settle_shadow(d, won=True, sp_dec=6.0)
+    twin = tmp_path / "twin.csv"
+    log.export_text(twin)
+    row = next(r for r in csv.DictReader(open(twin)) if r["table"] == "shadow")
+    assert row["horse"] == "Shade" and row["won"] == "1" and row["score"] == "2"
+
+
+def test_month_test_holds_fails_and_thin() -> None:
+    from racing_edge.school.tier0 import month_test, place_bar
+    holds = {"months": {"2026-07": [40, 10, 6.0], "2026-08": [40, 9, 6.0]}}
+    fails = {"months": {"2026-07": [40, 10, 6.0], "2026-08": [40, 3, 6.0]}}
+    thin = {"months": {"2026-07": [40, 10, 6.0], "2026-08": [10, 5, 1.0]}}
+    assert month_test(holds) == "HOLDS" and month_test(fails) == "FAILS"
+    assert month_test(thin) == "THIN"
+    assert place_bar(8) == 3 and place_bar(5) == 2 and place_bar(4) == 1
+
+
+def test_gem_shape_verdict_also_earns_the_bonus() -> None:
+    from racing_edge.pipeline.nap import race_quality_score
+    kw = dict(is_handicap=True, concentration=0.8, race_class=4, race_type="Flat",
+              field_size=6, n_race_flags=0)
+    assert race_quality_score(**kw, shape_verdict="GEM BEHIND THE JOLLY — x") == \
+        race_quality_score(**kw) + 1
+
+
+def test_git_stamp_never_crashes_without_git(monkeypatch) -> None:
+    import subprocess
+    from racing_edge.cli.nap import _git_stamp
+    monkeypatch.setattr(subprocess, "run",
+                        lambda *a, **k: (_ for _ in ()).throw(FileNotFoundError()))
+    assert _git_stamp() == ""
+
+
+def test_rulings_survive_a_corrupt_counts_twin(tmp_path):
+    from racing_edge.study import rulings as R
+    p = tmp_path / "rulings.csv"
+    R.add("fix it", tags="law", day="2026-09-01", path=p)
+    R._counts_path(p).write_text("{not json")
+    assert R.load(p)[0]["recalls"] == 0
+    assert R.recall(path=p)[0]["recalls"] == 1
