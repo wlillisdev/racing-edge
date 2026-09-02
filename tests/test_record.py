@@ -122,3 +122,54 @@ def test_export_text_writes_the_whole_book_as_one_csv(tmp_path):
     fav = next(r for r in rows if r["table"] == "favline")
     assert nap["horse"] == "Gem" and nap["won"] == "1" and nap["sp_dec"] == "3.5"
     assert fav["won"] == str(NapLog.VOID) and fav["void_reason"] == "fav withdrawn"
+
+
+def test_a_read_without_a_case_is_not_a_read() -> None:
+    """Audit 2026-09-02 (reads bot #1): an empty "case" passed MorningPick.ok and
+    banked as the argued jigsaw. Now a case needs words; a pass still needs only
+    its reason."""
+    import json
+    from racing_edge.study.morningread import parse_morning_pick
+    base = {"race": "Ripon 3:40", "horse": "Gem", "profile_match": {"note": "fits"},
+            "danger": {"horse": "Rival", "its_case": "in form", "beaten_because": "13lb"},
+            "confidence": "lean", "pass": False, "my_price": "3/1"}
+    assert not parse_morning_pick(json.dumps({**base, "case": ""})).ok
+    assert not parse_morning_pick(json.dumps({**base, "case": "good horse"})).ok
+    full = parse_morning_pick(json.dumps({**base, "case": "x" * 60}))
+    assert full.ok and full.my_price == 4.0
+    assert parse_morning_pick(json.dumps({**base, "my_price": "nonsense",
+                                          "case": "x" * 60})).my_price is None
+    assert parse_morning_pick(json.dumps({"pass": True, "pass_reason": "all dreck"})).ok
+
+
+def test_the_reads_claims_are_banked_and_graded_at_settle(tmp_path):
+    """The master: 'the edge is joining the dots' — so every dot the read joins
+    is marked: the named danger, the crossed-off list, the reader's own price."""
+    from types import SimpleNamespace as NS
+    from racing_edge.cli.nap import _settle_tables, grade_read_claims
+    log = _log(tmp_path)
+    d = date(2026, 9, 2)
+    log.record(day=d, race_id="rac_1", course="Ripon", horse="Gem", horse_id="h1",
+               price=3.0, score=3, confident=False, danger="Rival",
+               crossed="Plodder — no win in 20|Faller — manner placer", my_price=2.5)
+    row = log.existing(d)
+    assert row["danger"] == "Rival" and row["my_price"] == 2.5
+    race = NS(race_id="rac_1", runners=[
+        NS(horse="Plodder", horse_id="h9", position=1, status="", sp_dec=12.0),
+        NS(horse="Rival", horse_id="h2", position=2, status="", sp_dec=2.0),
+        NS(horse="Gem", horse_id="h1", position=3, status="", sp_dec=4.0),
+    ])
+    out = _settle_tables(d, [race], log, lambda s: None)
+    g = log.existing(d)["read_grade"]
+    assert "danger beat us (2 v 3)" in g
+    assert "winner was CROSSED OFF" in g
+    assert "my price 2.5 shorter than SP 4.0" in g
+    assert "READ GRADED" in out["nap"]
+    sb = log.read_grades()
+    assert sb == {"graded": 1, "danger_won": 0, "danger_beat_us": 1,
+                  "winner_crossed_off": 1, "price_shorter_than_sp": 1}
+    # a pure grade with the danger winning and nothing crossed
+    me = NS(horse="Gem", position=4, sp_dec=3.0)
+    r2 = NS(runners=[NS(horse="Rival", position=1, sp_dec=2.0), me])
+    assert grade_read_claims({"danger": "rival", "crossed": "", "my_price": None},
+                             r2, me) == "danger WON"
