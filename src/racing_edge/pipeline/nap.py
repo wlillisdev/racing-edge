@@ -33,10 +33,10 @@ class NapPick:
     price: float | None
     conviction: Conviction
     history: tuple = ()          # the contender's past runs — for the morning deep read
-    race_quality: int = 0        # race-first ranking (the master, 2026-08-17: 'picking
-                                 # the right race... is a weak point in the system'):
-                                 # +1 honest handicap (the record's winning profile),
-                                 # -1 per race gate flag. The RACE outranks the horse.
+    race_quality: int = 0        # the betting-race fingerprint (the master, 2026-08-17:
+                                 # 'picking the right race... is a weak point'): a BAR
+                                 # in _rank_key — below it the race loses whatever the
+                                 # horse; above it the best horse wins (ruling 09-02).
 
 
 def race_quality_score(*, is_handicap: bool, concentration: float,
@@ -138,14 +138,6 @@ def market_shape(prices) -> tuple[str, float]:
     return band, conc
 
 
-def anchor_bar(race_class: int | None) -> float:
-    """The fav price at which a race's market counts as ANCHORLESS — defined ONCE
-    (2026-07-25: the gate was class-tiered to 6.0 for Cl<=3 while the profile floor
-    kept a flat 5.0, so the exact races the Saturday recalibration opened could pass
-    the gate yet never bank). Top-class races earn the higher bar (rule #22)."""
-    return 6.0 if (race_class or 9) <= 3 else 5.0
-
-
 def still_to_run(off_time: str, now, buffer_minutes: int = 5):
     """ONE SITE for 'has this race gone off' (audit 2026-09-02): the field
     filter and the pre-bank re-check both ask here. True = still to run with
@@ -202,7 +194,7 @@ def _rank_key(p: NapPick) -> tuple:
 
 
 def evaluate_field(client: _Client, day: str = "today",
-                   codes: tuple[str, ...] = ("jump", "flat"), top_n: int = 4,
+                   codes: tuple[str, ...] = ("jump", "flat"),
                    progress: Callable[[str], None] | None = None,
                    as_of=None, now=None) -> list[NapPick]:
     """EVERY contender in every readable race (handicaps + the Zavateri pattern
@@ -212,16 +204,20 @@ def evaluate_field(client: _Client, day: str = "today",
 
     `progress`, if given, is called with a status line as each race is read — so the
     caller can NARRATE the (slow, per-horse) evidence fetch instead of sitting silent."""
+    # FETCH ONCE (fourth audit 2026-09-02): the bank-time scorecard used to
+    # re-fetch the pick's whole race (~47 API calls) that this loop had already
+    # paid for. The evidence of every race read here is kept on the function,
+    # keyed by race_id, for the caller — one fetch, one truth, no second bill.
+    evaluate_field.last_evidence = {}
     races = [r for r in racecards_from_raw(client.racecards(day))
              if r.is_readable and r.code in codes]
     # LIVE-DAY TIME GUARD (2026-07-13, an 8pm manual run): races already OFF must
     # never be pickable — banking a race whose result exists would corrupt the
     # pre-off ledger. Off-times print without am/pm; racing runs ~11:00-21:45, so
-    # hours 1-9 read as PM. Unparseable times are kept (safe: better shown than
-    # silently dropped).
+    # hours 1-9 read as PM. An UNPARSEABLE time is treated as OFF (audit
+    # 2026-09-02: the gate fails closed — see still_to_run).
     if day == "today" and as_of is None:
         from datetime import datetime
-        from datetime import timedelta as _td
         if now is None:
             # UK WALL-CLOCK, not box time (2026-07-25 reliability audit: the box
             # runs UTC; in BST a race gone off 55 minutes ago still read as 'still
@@ -246,6 +242,7 @@ def evaluate_field(client: _Client, day: str = "today",
                  f"(form first, price last — rule #29)…")
     out: list[NapPick] = []
     oddsless = 0
+    _caches: dict = {}                    # trainer/jockey lenses, once per RUN not per race
     for race in races:
         if progress:
             progress(f"    · {race.course} {race.off_time} — reading {race.field_size} runners")
@@ -256,8 +253,9 @@ def evaluate_field(client: _Client, day: str = "today",
         # that date, current-stats intent lenses skipped (they know the future)
         import time as _time
         _t0 = _time.monotonic()
-        evidence = {e.runner.horse_id: e
-                    for e in build_evidence(race, client, as_of=as_of)}
+        _ev_list = build_evidence(race, client, as_of=as_of, caches=_caches)
+        evaluate_field.last_evidence[race.race_id] = _ev_list
+        evidence = {e.runner.horse_id: e for e in _ev_list}
         _dt = _time.monotonic() - _t0
         if progress and _dt > 30:
             # slow must never masquerade as stuck (2026-08-01: the racecards
@@ -385,11 +383,14 @@ def evaluate_field(client: _Client, day: str = "today",
     return out
 
 
+evaluate_field.last_evidence = {}      # race_id -> the RunnerEvidence list of the last read
+
+
 def nominate_nap(client: _Client, day: str = "today",
-                 codes: tuple[str, ...] = ("jump", "flat"), top_n: int = 4,
+                 codes: tuple[str, ...] = ("jump", "flat"),
                  now=None) -> NapPick | None:
     """The day's nap: zero in on the strongest SURVIVOR after crossing off every horse
     with a flaw (rule #25 — eliminate first, then pick). None if all are crossed off."""
-    survivors = [p for p in evaluate_field(client, day, codes, top_n, now=now)
+    survivors = [p for p in evaluate_field(client, day, codes, now=now)
                  if not p.conviction.flags]
     return survivors[0] if survivors else None

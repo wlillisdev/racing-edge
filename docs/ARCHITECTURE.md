@@ -105,7 +105,7 @@ honest one — "nothing" is a finding, not a formatting choice.
 | 7 | morning opinions (every race) | `cli/nap.py` (opinions block) | inside 07:30 nap | `data/school/opinions/YYYY-MM-DD.csv` | settle-side coverage line (2026-08-24); NOT card coverage (honest half) |
 | 8 | email | `cli/nap.py:_maybe_email` → `report/mail.py:send` | every task with `--email` | the inbox; `engine code: <sha>` footer | nothing beyond the SMTP return value; a rejected/bounced mail is invisible |
 | 9 | health | `cli/health.py` | 09:30 UTC `trial.sh health` | health email | itself (a dead health task is caught by no one — no external heartbeat) |
-| 10 | guard (drift) | `cli/nap.py --guard` | 12:30 UTC `trial.sh guard` | stdout/log only | nothing |
+| 10 | guard (the board) | `cli/nap.py --guard` → `_board_read` + drift check on the banked pick | 12:30 UTC `trial.sh guard` | `data/market_snapshots/<day>-1230.json` (v the 07:30 snapshot); email "The board 12:30" on any STEAMER/DRIFTER | nothing (no health line watches the board mail yet) |
 | 11 | settle | `cli/nap.py:_settle` | 22:00 UTC `trial.sh night` (best-effort) | nap.db won/sp_dec; tracked-clue settle; 28-day broom | health "no stale unsettled naps" |
 | 12 | learn (night study) | `cli/learn.py` | 22:00 UTC after settle | `data/nuances.db` (nuances, tracked clues, rule tally) | health "self-study flowing", "rule scoreboard" |
 | 13 | night school | `school/night.py` → `school/fetch.py` (results corpus) → `school/daily.py` (policies) → `school/ladder.py` (verdict) | 22:00 UTC (best-effort) | `data/school/raw/<day>.csv`, `data/school/daily_policy.csv` | health "school ladder" (only when SCHOOL_CHAMPION set) |

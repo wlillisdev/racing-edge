@@ -120,7 +120,8 @@ class _Fetcher(Protocol):
         return []
 
 
-def build_evidence(race: Race, client: _Fetcher, as_of: date | None = None) -> list[RunnerEvidence]:
+def build_evidence(race: Race, client: _Fetcher, as_of: date | None = None,
+                   caches: dict | None = None) -> list[RunnerEvidence]:
     """Assemble each runner's evidence. `as_of` enforces NO LOOK-AHEAD for
     backtesting: a horse's history is filtered to runs strictly BEFORE that date.
 
@@ -129,11 +130,18 @@ def build_evidence(race: Race, client: _Fetcher, as_of: date | None = None) -> l
     the trainer's form AFTER the race (a look-ahead leak). The card's own
     trainer_14d form is point-in-time (as of the card) and is kept. (Testing the
     A/E/jockey-intent signals historically needs trailing A/E computed from past
-    results — a later build.)"""
+    results — a later build.)
+
+    `caches`, if given, is shared across the races of ONE run (fourth audit
+    2026-09-02, bot B4: a yard with runners in three races was fetched three
+    times — the trainer and jockey lenses were cached per race, not per run).
+    Keys carry the course, because the local-strike reads are per course."""
     backtest = as_of is not None
-    cache: dict[str, tuple] = {}
+    if caches is None:
+        caches = {}
+    cache: dict[tuple[str, str], tuple] = caches.setdefault("trainer", {})
     evidence: list[RunnerEvidence] = []
-    jcache: dict[str, tuple[float | None, int]] = {}
+    jcache: dict[tuple[str, str], tuple[float | None, int]] = caches.setdefault("jockey", {})
     for r in race.runners:
         # limit 20 (was the default 12): the form lenses now read SAME-CODE runs only,
         # and a dual-code horse whose last 12 runs are all one code would otherwise
@@ -171,7 +179,8 @@ def build_evidence(race: Race, client: _Fetcher, as_of: date | None = None) -> l
         if backtest or not r.jockey_id:
             j_strike, j_rides = None, 0
         else:
-            if r.jockey_id not in jcache:
+            _jk = (r.jockey_id, race.course)
+            if _jk not in jcache:
                 try:
                     jrows = client.jockey_course(r.jockey_id) if hasattr(
                         client, "jockey_course") else []
@@ -181,20 +190,21 @@ def build_evidence(race: Race, client: _Fetcher, as_of: date | None = None) -> l
                     owed_notes.append(f"{r.horse}: jockey-course lens unread "
                                       f"({exc.__class__.__name__})")
                     jrows = []                    # optional lens — OWED, not fatal
-                jcache[r.jockey_id] = course_strike_from_analysis(jrows, race.course)
-            j_strike, j_rides = jcache[r.jockey_id]
+                jcache[_jk] = course_strike_from_analysis(jrows, race.course)
+            j_strike, j_rides = jcache[_jk]
         if backtest:
             jockeys, ae, ae_runs = frozenset[str](), None, 0   # no current-stats leak
             local_strike, local_runs = None, 0
         else:
             tid = r.trainer_id
-            if tid not in cache:
+            _tk = (tid, race.course)
+            if _tk not in cache:
                 rows = client.trainer_jockeys(tid)
                 ae, ae_runs = stable_ae_from_analysis(rows)
                 crows = client.trainer_course(tid) if hasattr(client, "trainer_course") else []
-                cache[tid] = (stable_jockeys_from_analysis(rows), ae, ae_runs,
+                cache[_tk] = (stable_jockeys_from_analysis(rows), ae, ae_runs,
                               course_strike_from_analysis(crows, race.course))
-            jockeys, ae, ae_runs, (local_strike, local_runs) = cache[tid]
+            jockeys, ae, ae_runs, (local_strike, local_runs) = cache[_tk]
         evidence.append(RunnerEvidence(
             runner=r,
             history=history,

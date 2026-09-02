@@ -1,6 +1,5 @@
 """Pins for the school miner: leakage guard, rank ties, ROI, stability."""
 import csv
-from pathlib import Path
 
 from racing_edge.school.mine import (
     Cell, Runner, featurise, load_corpus, scan,

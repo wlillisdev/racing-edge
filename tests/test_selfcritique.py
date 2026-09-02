@@ -438,10 +438,12 @@ def test_a_vote_counts_as_fresh_learning() -> None:
         log.close()
 
 
-def test_veto_tripwire_convicts_a_veto_that_killed_a_winner() -> None:
-    """2026-08-08, the flip: the reader's one power is the veto, and the
-    fail-safe watches it — vetoes counted weekly, and a vetoed pick that WON
-    (banked in the shadow column, settled by the night task) is a conviction."""
+def test_objection_watch_judges_the_readers_doubt_by_the_result() -> None:
+    """2026-08-08, the flip: the reader's one power was the veto and the
+    fail-safe watched it. 2026-08-19: the veto became a recorded OBJECTION and
+    the pick STANDS at LEAN — so the watch now judges the doubt by the result
+    (fourth audit 2026-09-02: the old pattern matched nothing for two weeks).
+    The legacy 'reader veto' pass rows still count as doubts."""
     import tempfile
     from datetime import date
     from pathlib import Path
@@ -450,10 +452,10 @@ def test_veto_tripwire_convicts_a_veto_that_killed_a_winner() -> None:
     with tempfile.TemporaryDirectory() as td:
         log = NapLog(Path(td) / "n.db")
         d = date.today()
-        log.record_pass(day=d, reason="reader veto of engine pick Gem: stale anchor")
-        log.record_shadow(day=d, race_id="r1", course="Thirsk", horse="Gem",
-                          horse_id="h1", price=3.5, score=5)
-        assert log.veto_watch() == (1, 0)          # a veto, verdict pending
-        log.settle_shadow(d, won=True, sp_dec=3.5)
-        assert log.veto_watch() == (1, 1)          # the veto killed a winner
+        log.record(day=d, race_id="r1", course="Thirsk", horse="Gem", horse_id="h1",
+                   price=3.5, score=5, confident=False,
+                   case="  READER OBJECTION (2026-08-19 law):\n    stale anchor")
+        assert log.objection_watch() == (1, 0, 0)      # a doubt, verdict pending
+        log.settle(d, won=True, sp_dec=3.5)
+        assert log.objection_watch() == (1, 1, 0)      # the doubt was wrong
         log.close()

@@ -157,7 +157,8 @@ every policy must beat.
 
 - **The engine selects the nap** (its top survivor — the exact selection the
   shadow scored with). No floors, no reader discretion over selection.
-- **The reader (VETO_SYSTEM prompt) writes the case** and holds ONE power: a
+- **The reader (NAP_SYSTEM + VETO_SYSTEM — the whole rulebook rides in engine
+  mode since the third audit, 2026-09-02) writes the case** and holds ONE power: a
   veto on a CITED disqualifying fact. "I prefer another horse" is not a veto.
   Every vetoed pick banks in the shadow column so the record judges the veto;
   health's **veto tripwire** reds a veto that killed a winner, and flags 3+
@@ -499,9 +500,21 @@ cornered day banking against law 5; the dead reader-mode floors; engine mode's
 one-race deep read; the engine lenses citing law numbers the rulebook never
 spells out; "stop bottling" v the earned pass. The market is ONE price
 snapshot — laws 4b/4c/4d/4g have no data; snapshots through the day are the
-cut, on his word.
+cut, on his word. (SUPERSEDED BY THE NEXT PARAGRAPH — kept as the timeline.)
 THE MASTER RULED THE SAME NIGHT ("fix the above now"): race quality is a BAR
 then best horse wins; the cornered day PASSES; the floors cap in engine mode;
 two-race deep read; the engine's lenses are in the rulebook; law 5d the
 bottling line; THE BOARD — two price snapshots a day (07:30 from the read,
 12:30 from the guard), movers emailed. All with REVERT-IFs in the ledger.
+THE FOURTH WAVE (same night, ~20:30 UTC): the pipeline RUN end to end by six
+bots (ledger F1–F24) — 22 e2e tests now live in tests/test_e2e_*.py and run
+the 07:30 / 12:30 / 22:00 entry points with fake feeds every time the suite
+runs. Real bugs found and fixed: night school double-appended a re-run day
+into the policy ledger; the bank-time scorecard refetched the pick's race;
+the veto tripwire in health matched text nobody writes (now the objection
+scoreboard); the shape-book memo ignored its corpus path; health read three
+roots. For the master's ruling: the deep read's truncation retry doubles the
+token budget (money, F11). Named, not touched: main() at 800 lines (F12).
+Harness scar: NEVER restore a mutated file with `git checkout` while edits are
+uncommitted — copy the file aside first (it wiped pipeline/nap.py once tonight).
+

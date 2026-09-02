@@ -354,24 +354,25 @@ class NapLog:
                            (int(won), sp_dec, day.isoformat()))
         self._conn.commit()
 
-    def veto_watch(self, days: int = 7) -> tuple[int, int]:
-        """THE VETO TRIPWIRE (2026-08-08, the flip — the master: 'how do we
-        build a fail safe to stop you departing from it'). The reader's one
-        remaining power is the veto; over-use is departure by the back door,
-        and a veto that killed a WINNER must surface by name. Returns
-        (vetoes banked in the window, vetoed picks that then won — joined
-        against the shadow column where every vetoed pick banks)."""
+    def objection_watch(self, days: int = 7) -> tuple[int, int, int]:
+        """THE READER'S DOUBTS, JUDGED (fourth audit 2026-09-02, bot B5: the
+        old veto_watch counted case_text LIKE 'reader veto%' — a prefix no
+        writer has produced since the 2026-08-19 law made the pick STAND at
+        LEAN with a recorded 'READER OBJECTION'; the health line was theatre,
+        always zero). Returns (objections banked in the window, of those the
+        pick WON — the doubt was wrong, of those the pick LOST — the doubt was
+        right). The record judges whether the reader's doubts predict losses."""
         from datetime import timedelta
         cut = (date.today() - timedelta(days=days)).isoformat()
-        v = int(self._conn.execute(
-            "SELECT COUNT(*) FROM nap WHERE won = -1 AND date >= ? "
-            "AND case_text LIKE 'reader veto%'", (cut,)).fetchone()[0])
-        k = int(self._conn.execute(
-            "SELECT COUNT(*) FROM nap n JOIN shadow s ON s.date = n.date "
-            "WHERE n.won = -1 AND n.date >= ? "
-            "AND n.case_text LIKE 'reader veto%' AND s.won = 1",
-            (cut,)).fetchone()[0])
-        return v, k
+        where = ("date >= ? AND (case_text LIKE '%READER OBJECTION%' "
+                 "OR case_text LIKE 'reader veto%')")
+        n = int(self._conn.execute(
+            f"SELECT COUNT(*) FROM nap WHERE {where}", (cut,)).fetchone()[0])
+        won = int(self._conn.execute(
+            f"SELECT COUNT(*) FROM nap WHERE {where} AND won = 1", (cut,)).fetchone()[0])
+        lost = int(self._conn.execute(
+            f"SELECT COUNT(*) FROM nap WHERE {where} AND won = 0", (cut,)).fetchone()[0])
+        return n, won, lost
 
     # THE FAV LINE (the master, 2026-08-16: 'ok lets do favourite and value
     # bet, what have we got to lose the information is there'): the market's

@@ -27,6 +27,18 @@ def is_jump(race_type: str) -> bool:
     return race_code(race_type) == "jump"
 
 
+def norm_horse_name(s: str) -> str:
+    """ONE way to compare horse names (second audit 2026-09-02, bot E: the
+    danger was graded by exact string match — a curly apostrophe or an '(IRE)'
+    suffix scored a present danger as absent; fourth audit, bot B5: three
+    more ad-hoc strip().lower() matches lived in cli/nap.py and cli/learn.py):
+    lowercase, straight quotes, no country suffix, single spaces."""
+    import re
+    s = (s or "").replace("’", "'").replace("‘", "'").replace("`", "'")
+    s = re.sub(r"\s*\([A-Za-z]{2,3}\)\s*$", "", s.strip())
+    return re.sub(r"\s+", " ", s).strip().lower()
+
+
 def book_code(race_type: str | None) -> str | None:
     """The SHAPE BOOK's letter for a race type — F / H / C / N — ONE SITE
     (audit 2026-09-02: byte-identical copies lived in cli/nap.py and

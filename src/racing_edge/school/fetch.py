@@ -9,8 +9,8 @@ environment), NOT an api key.
 
 Usage: PYTHONPATH=src python -m racing_edge.school.fetch \
            --start 2026-01-01 --end 2026-08-14 [--raw data/school/raw]
-Skips days whose CSV already exists, so it is safe to re-run nightly with
---start yesterday --end yesterday to keep the corpus rolling.
+Skips days already fetched (rows on disk, or a confirmed-empty marker), so
+it is safe to re-run nightly with --start yesterday --end yesterday.
 """
 from __future__ import annotations
 
@@ -24,15 +24,27 @@ from pathlib import Path
 
 import requests
 
+from racing_edge.domain.units import book_code
+
 BASE = os.environ.get("RACING_API_BASE", "https://api.theracingapi.com/v1")
-TYPE_MAP = {"Flat": "F", "Hurdle": "H", "Chase": "C", "NH Flat": "N"}
+
+
+def empty_marker(path: Path) -> Path:
+    """The sidecar that says 'the API answered total=0 for this day' — a
+    blank day (no meetings) is a fact, not a failed fetch."""
+    return path.with_suffix(".empty")
 
 
 def day_fetched(path: Path) -> bool:
     """ONE definition of 'this day is on disk': the file exists AND holds at
-    least one runner row. fetch.main and school.night both ask here."""
+    least one runner row, OR the day is marked CONFIRMED EMPTY by the API
+    (fourth audit 2026-09-02, bot B3: a genuine no-racing day could never
+    hold a row, so it was refetched every night forever). fetch.main and
+    school.night both ask here."""
     try:
-        return path.exists() and path.stat().st_size > 0
+        if path.exists() and path.stat().st_size > 0:
+            return True
+        return empty_marker(path).exists()
     except OSError:
         return False
 
@@ -69,7 +81,9 @@ def day_rows(races: list[dict]) -> tuple[list[list], list[list]]:
         rid = _digits(rc.get("race_id"))
         course = (rc.get("course") or "").replace(" (IRE)", "").replace(",", " ")
         region = "I" if rc.get("region") == "IRE" else "G"
-        rtype = TYPE_MAP.get(rc.get("type"), (rc.get("type") or "O")[:1] or "O")
+        # the book letter (F/H/C/N) from ONE site — fourth audit 2026-09-02:
+        # a private TYPE_MAP here duplicated domain.units.book_code
+        rtype = book_code(rc.get("type")) or (rc.get("type") or "O")[:1] or "O"
         rclass = _digits(rc.get("class"))
         dist = (rc.get("dist_f") or "0").rstrip("f") or "0"
         for r in rc.get("runners", []):
@@ -105,11 +119,16 @@ def main(argv=None):
         # 'fetched' means ROWS INSIDE, not a file on disk (audit 2026-09-02: an
         # empty file from a failed day was never retried — the proxy, not the thing)
         if not day_fetched(out):
-            rows, comments = day_rows(fetch_day(day, (user, pw)))
+            races = fetch_day(day, (user, pw))
+            rows, comments = day_rows(races)
             with open(out, "w", newline="") as fh:
                 csv.writer(fh).writerows(rows)
             with open(cdir / f"{day}.csv", "w", newline="") as fh:
                 csv.writer(fh).writerows(comments)
+            if not races:
+                # the API said total=0 and raised nothing: a blank day, kept
+                # as a fact so tomorrow's night does not pay for it again
+                empty_marker(out).write_text(f"{day}: API returned 0 results\n")
             print(f"{day}: {len(rows)} runners", flush=True)
         d += timedelta(days=1)
     return 0

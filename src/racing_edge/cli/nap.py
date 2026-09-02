@@ -16,6 +16,7 @@ import argparse
 from racing_edge.cli._common import open_nap_log, open_nuance_log, resolve_date
 from racing_edge.data.client import get_client
 from racing_edge.data.evidence import build_evidence
+from racing_edge.domain.units import norm_horse_name  # noqa: F401 — one site, re-exported
 from racing_edge.data.normalise import results_from_raw
 from racing_edge.pipeline.nap import evaluate_field, ew_advice, market_shape
 from racing_edge.report.scorecard import build_scorecard, render_scorecard
@@ -113,6 +114,15 @@ def _record_nap(log, day, r, nap, c, confident, case_text, deep_conf, mp, args) 
                danger=(mp.danger_horse if mp is not None else ""),
                crossed=("|".join(mp.crossed_off) if mp is not None else ""),
                my_price=(mp.my_price if mp is not None else None))
+
+
+def _evidence_for(race, client):
+    """The race's evidence WITHOUT a second fetch (fourth audit 2026-09-02): the
+    field read already paid ~47 API calls for this race and kept the result on
+    evaluate_field.last_evidence. Only a race the read never saw is fetched."""
+    from racing_edge.pipeline.nap import evaluate_field as _ef
+    kept = getattr(_ef, "last_evidence", {}).get(race.race_id)
+    return kept if kept else build_evidence(race, client)
 
 
 def _bank_pass(day, reason: str) -> None:
@@ -402,17 +412,6 @@ def _settle_tables(day, results, log, emit) -> dict[str, str]:
                 log.grade_read(day, grade)
                 out[table] += f" | READ GRADED: {grade}"
     return out
-
-
-def norm_horse_name(s: str) -> str:
-    """ONE way to compare horse names (second audit 2026-09-02, bot E: the
-    danger was graded by exact string match — a curly apostrophe or an '(IRE)'
-    suffix scored a present danger as absent): lowercase, straight quotes, no
-    country suffix, single spaces."""
-    import re
-    s = (s or "").replace("’", "'").replace("‘", "'").replace("`", "'")
-    s = re.sub(r"\s*\([A-Za-z]{2,3}\)\s*$", "", s.strip())
-    return re.sub(r"\s+", " ", s).strip().lower()
 
 
 def grade_read_claims(row: dict, race, me) -> str:
@@ -855,9 +854,8 @@ def main() -> int:
     # gates had erased every flat race and left nothing but jumps dreck; same
     # mechanism as Max Of Stars 08-22). When the best survivor's own race
     # scores below the betting-race bar, the day is CORNERED, not chosen:
-    # the pick still banks (one pick a day, the master's standing order) but
-    # it is loudly labelled, never confident, and lands in the dreck column
-    # of the two-column record where the master said to judge it separately.
+    # a NAMED PASS under law 5 (the master's ruling 2026-09-02, below) — the
+    # old "still banks, loudly labelled" regime is gone.
     from racing_edge.pipeline.nap import BETTING_BAR as _BAR
     cornered = bool(survivors) and getattr(nap, "race_quality", 0) < _BAR
     if cornered:
@@ -1069,8 +1067,8 @@ def main() -> int:
                 # agreement path: the pick is FIXED — the case attaches only if
                 # the reader wrote it for the engine's horse; a re-pick attempt
                 # is not a power it has.
-                _same = bool(mp.horse) and (mp.horse.strip().lower()
-                                            == nap.runner.horse.strip().lower())
+                _same = bool(mp.horse) and (norm_horse_name(mp.horse)
+                                            == norm_horse_name(nap.runner.horse))
                 if _same and mp.case.strip():
                     deep_case = [
                         f"  DEEP READ ({resolve_model('nap')}) — the case for "
@@ -1131,8 +1129,8 @@ def main() -> int:
                     if not label_ok:
                         continue
                     for p in picks:
-                        if (mp.horse and p.runner.horse.strip().lower()
-                                == mp.horse.strip().lower()):
+                        if (mp.horse and norm_horse_name(p.runner.horse)
+                                == norm_horse_name(mp.horse)):
                             return p
                 return None
 
@@ -1264,7 +1262,7 @@ def main() -> int:
     # as a LEAN (Ebony Maw, 2026-07-06: the reader found the 12.0 rematch winner and
     # the fitted class/price floor threw it away — the number-cruncher overruling the
     # form reader, the exact thing the master said he does not want). Never CONFIDENT
-    # off-profile, and the shallow engine pick gets no such licence.
+    # off-profile; in engine mode the same licence applies, capped at LEAN (below).
     soft_fails = []
     # THE FLOORS LIVE IN ENGINE MODE TOO (the master, 2026-09-02, ruling on the
     # third audit: mark, class and anchor were dead under the default while
@@ -1377,7 +1375,7 @@ def main() -> int:
              " — the case above must answer this or the pick is a lean, not a nap")
     if not c.mark_known:
         emit("  ⚠ the MARK was not readable — never a confident nap without it.")
-    evidence = build_evidence(r, client)
+    evidence = _evidence_for(r, client)          # kept from the field read — no refetch
     emit("\n" + render_scorecard(build_scorecard(r, evidence)))
 
     day = nap.race.date

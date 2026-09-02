@@ -28,6 +28,7 @@ import argparse
 from racing_edge.ai.reason import get_investigator, get_reasoner, resolve_model
 from racing_edge.cli._common import open_nap_log, open_nuance_log, resolve_date
 from racing_edge.data.client import get_client
+from racing_edge.domain.units import norm_horse_name
 from racing_edge.pipeline.restudy import Restudy, gather
 from racing_edge.report.restudy import render_restudy
 from racing_edge.study.selfcritique import (
@@ -120,7 +121,7 @@ def _learn_one(st: Restudy, study, sceptic, day_iso: str) -> str:
     # rule evidence + forward clues bank regardless of the nuance's fate — the notebook
     # gets tested and the horses-to-follow list grows even on races teaching nothing new
     if crit.rule_evidence or crit.to_follow:
-        ids = {r.horse.strip().lower(): r.horse_id for r in st.race.runners}
+        ids = {norm_horse_name(r.horse): r.horse_id for r in st.race.runners}
         log = open_nuance_log()
         for rule, verdict, note in crit.rule_evidence:
             if rule and verdict in ("supports", "contradicts"):
@@ -133,7 +134,7 @@ def _learn_one(st: Restudy, study, sceptic, day_iso: str) -> str:
         for horse, angle, note, conditions, theme in crit.to_follow:
             if banked_clues >= 3:
                 break
-            hid = ids.get(horse.strip().lower(), "")
+            hid = ids.get(norm_horse_name(horse), "")
             if len(conditions.strip()) < 8:
                 continue                       # no named condition = inadmissible
             if horse and angle in ("follow", "oppose") and hid:   # only horses ON the card

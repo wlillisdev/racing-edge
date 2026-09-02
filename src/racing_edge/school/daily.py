@@ -101,14 +101,31 @@ def main(argv=None):
     csv_path = Path(a.csv)
     csv_path.parent.mkdir(parents=True, exist_ok=True)
     new = not csv_path.exists()
+    # ONE ROW PER (day, policy) — fourth audit 2026-09-02, bot B3: a re-run of
+    # night school for a day already graded appended that day's rows again and
+    # the ladder double-counted every pick, win and return. The ledger is
+    # append-only; a row that is already there is skipped and said so.
+    have: set[tuple[str, str]] = set()
+    if not new:
+        with open(csv_path, newline="") as fh:
+            for row in csv.reader(fh):
+                if len(row) >= 2 and row[0] != "day":
+                    have.add((row[0], row[1]))
+    skipped = 0
     with open(csv_path, "a", newline="") as fh:
         w = csv.writer(fh)
         if new:
             w.writerow(["day", "policy", "picks", "wins", "returned"])
         for p in policies:
             for day in sorted(graded[p]):
+                if (day, p) in have:
+                    skipped += 1
+                    continue
                 n, wins, ret = graded[p][day]
                 w.writerow([day, p, n, wins, f"{ret:.2f}"])
+    if skipped:
+        print(f"already graded: {skipped} (day, policy) row(s) skipped — "
+              "the ledger holds one row per day per policy")
 
     print(f"days graded: {len(by_day)}  races (5+ runners): "
           f"{sum(len(v) for v in by_day.values())}")
