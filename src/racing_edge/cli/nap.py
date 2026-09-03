@@ -1061,6 +1061,28 @@ def main() -> int:
                 [_lead_row(tp, t) for tp, t in _leads],
                 nlog2.rule_tally())
             nlog2.close()
+            # THE MEMORY, RECALLED (the master, 2026-09-03: "store it and
+            # remember and recall it... 30 years of experience"): for every
+            # candidate race, what won a race of this shape before and WHY,
+            # from the why ledger — the read walks in knowing the place.
+            try:
+                from racing_edge.domain.units import book_code as _bc
+                from racing_edge.school.why import recall as _why_recall
+                _mem: list[str] = []
+                for _picks in cand_races:
+                    _r0 = _picks[0].race
+                    _lines = _why_recall(_r0.course, _bc(_r0.race_type) or "",
+                                         _r0.race_class, _r0.distance_f, n=6)
+                    if _lines:
+                        _mem.append(f"MEMORY — what won here before, and why "
+                                    f"({_r0.course} {_r0.off_time}):")
+                        _mem.extend(f"  · {x}" for x in _lines)
+                if _mem:
+                    lesson_lines = list(lesson_lines) + [""] + _mem
+                    print(f"  memory recalled: {sum(1 for x in _mem if x.startswith('  ·'))} "
+                          "past results of this shape, with their whys", flush=True)
+            except Exception as _e:                  # the read outranks the memory
+                print(f"  ⚠ memory not recalled: {_e.__class__.__name__}", flush=True)
             print(f"  deep read: {resolve_model('nap')} on "
                   f"{len(candidates)} candidate race(s), "
                   f"{len(lesson_lines)} banked lesson(s) in hand…", flush=True)
