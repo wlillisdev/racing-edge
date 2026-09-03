@@ -472,6 +472,19 @@ def grade_read_claims(row: dict, race, me) -> str:
     return "; ".join(parts)
 
 
+def _settle_yardstick(day, results, emit) -> None:
+    """THE YARDSTICK LEDGER settles beside the record (the master, 2026-09-03:
+    the stored races as learning data): every runner's morning read for the
+    day gets its position, SP and won. Never fatal — the record comes first."""
+    try:
+        from racing_edge.school.yardstick import settle_day as _ysettle
+        n = _ysettle(day, results)
+        if n:
+            emit(f"  yardstick {day}: {n} morning reads graded")
+    except Exception as exc:
+        emit(f"  ⚠ yardstick {day} not graded: {exc.__class__.__name__}: {str(exc)[:80]}")
+
+
 def _sweep_backlog(day, log, emit, fetch=None) -> None:
     """Every open row OLDER than `day`, in every table: fetch that date's results
     once and settle; still open past VOID_AFTER_DAYS -> VOID with the reason and
@@ -494,6 +507,7 @@ def _sweep_backlog(day, log, emit, fetch=None) -> None:
         if res is not None:
             for t, o in _settle_tables(d, res, log, emit).items():
                 emit(f"  backlog {ds} {t}: {o}")
+            _settle_yardstick(d, res, emit)
         age = (day - d).days
         still = log.pending_all()
         for t in ("nap", "shadow", "favline"):
@@ -568,6 +582,7 @@ def _settle(day_str: str, email: bool) -> int:
     outcome = _settle_tables(day, results, log, emit)
     for _t, _o in outcome.items():
         emit(f"  {day} {_t}: {_o}")
+    _settle_yardstick(day, results, emit)
     # MARK THE MORNING OPINIONS (the master, 2026-08-18: 'this is the test').
     # Every race the engine studied this morning is graded against tonight's
     # winners and fed to the ladder as the 'engine' policy.
