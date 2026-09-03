@@ -728,6 +728,16 @@ def main() -> int:
     from racing_edge.data import evidence as _evmod
     _evmod.owed_notes.clear()                 # one run, one list
     field = evaluate_field(client, day=args.day, codes=codes, progress=_progress)
+    # THE YARDSTICK LEDGER (the master, 2026-09-03: "the stored races as
+    # learning data... the calibration of the system"): every runner's read,
+    # banked before anything is chosen, graded at settle. Never fatal.
+    try:
+        from racing_edge.school.yardstick import bank as _bank_yardstick
+        _yp = _bank_yardstick(resolve_date(args.day), field)
+        print(f"  yardstick banked: {len(field)} reads → {_yp}", flush=True)
+    except Exception as _e:
+        print(f"  ⚠ yardstick not banked: {_e.__class__.__name__}: {str(_e)[:80]}",
+              flush=True)
     # THE BOARD, SNAPSHOT ONE (the master, 2026-09-02: the market was one number
     # and laws 4b/4c/4d/4g had no data): every priced runner's 07:30 price is
     # kept so the 12:30 guard can read the whole card's character against it.

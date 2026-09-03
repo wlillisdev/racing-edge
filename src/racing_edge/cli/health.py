@@ -113,6 +113,24 @@ def main() -> int:
     except Exception as _e:
         lines.append(f"  board: 09:30 snapshot not written ({_e.__class__.__name__})")
 
+    # THE LIVE DOOR CHECK (2026-09-03, after the 22:00 crash — settle and learn
+    # died on HTTP 422 while 282 fake-client tests were green; the master:
+    # "even after all your testing, my point exactly"): every API door the
+    # tasks use, opened once for real, every morning. A refused door is RED
+    # by name at 09:30, not a crash at 22:00.
+    try:
+        from racing_edge.data import client as _cl2
+        from racing_edge.data.doors import all_open, check_doors, render
+        _doors = check_doors(_cl2.get_client(), today)
+        lines.extend(render(_doors))
+        all_ok &= _check(all_open(_doors), "every live API door answered",
+                         "LIVE DOOR REFUSED — see the door lines above; console "
+                         "`./trial.sh doors` after the fix, before the next task",
+                         lines)
+    except Exception as _e:
+        all_ok &= _check(False, "", f"LIVE DOOR CHECK could not run "
+                         f"({_e.__class__.__name__}: {str(_e)[:100]})", lines)
+
     log = open_nap_log()
     naps = log.history()
     log.close()
