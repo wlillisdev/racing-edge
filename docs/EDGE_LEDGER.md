@@ -852,3 +852,12 @@ The line is ONE constant, `naplog.V2_FROM`; the record is split by it in health 
 | THE BAR BACKTEST (`school/bar_backtest.py`) | v2's race-selection bar replayed on the 2,727-race corpus with no API and no model (terms the corpus can see: class, field, SP concentration, AW, code, shape cell built leak-safe from months strictly before); no handicap flag → every score biased DOWN by up to 1 | `data/school/bar_backtest.md`; the receipt below |
 THE RECEIPT (real corpus, Jan–Sep 2026): above the bar (n=322) fav 47.8% / ROI +0.5% / winner in the front three 85.7%; below (n=2,405) fav 35.8% / −5.8% / 70.1%. By band: ≤0 (n=1,811) top-3 66.6%; 1 (n=594) 80.8%; 2 (n=246) 83.7%, fav ROI +4.4%; 3+ (n=76) 92.1%, fav 50% but ROI −12% (short prices, thin sample). Readability climbs with the score band, monotonically. An observation on the resulted record, not a rule: v2's bar chooses more readable races than the races v1 was cornered into. It says nothing yet about the deep read — that is the yardstick ledger's and the nap column's job from today.
 
+### THE BRAIN, THE OTHER HALF (the master, 2026-09-03 ~02:45 — stored verbatim in data/rulings.csv: "read all races every day, then check results and see what won, what lost, and understand why a horse won or lost... store it and remember and recall it... 30 years of experience... all the information is in plain sight... the best horse wins")
+| piece | what it is |
+|---|---|
+| THE WHY LEDGER (`school/why.py`, `data/school/why/<day>.csv`) | every night, one model call for the whole card (task budget 'study'): for every race the morning read AND the result hold — why the winner won from what was in plain sight, what told it, whether the morning read had it (yes/no/owed), why our top-read horse lost, one lesson if the race teaches one. Facts, one line each, no excuses |
+| THE MEMORY, RECALLED | every morning, for each candidate race, the most recent whys of the same SHAPE (course 2, code 1, class ±1 1, trip ±2f 1; a match needs 2) ride into the deep read as "MEMORY — what won here before, and why" |
+| health | "why ledger: N races remembered over D days; the morning read had the winner in X%" — RED when last night added nothing |
+| night | `trial.sh night`: settle → learn → WHY → school → tier0 → yardstick; failure mails, never cancels the chain |
+Cost: ~15k tokens in, ~4k out a night — inside the study budget. Nothing here is a rule; it is his method at scale: the reverse-engineered result of every race, remembered, recalled at the point of use.
+

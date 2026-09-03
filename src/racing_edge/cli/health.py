@@ -489,6 +489,29 @@ def main() -> int:
                 lines)
     except Exception:
         lines.append("  tier-0: unreadable")
+    # THE WHY LEDGER (the master, 2026-09-03: the brain — every race
+    # reverse-engineered nightly, remembered, recalled): how much memory the
+    # read carries, and whether last night added to it.
+    try:
+        from racing_edge.school.why import load as _why_load
+        _wroot = _data_dir() / "school" / "why"
+        _wrows = _why_load(_wroot)
+        _wdays = sorted({r.get("date") for r in _wrows})
+        if not _wrows:
+            lines.append("  why ledger: empty (the first night after the yardstick banks)")
+        else:
+            _had = sum(1 for r in _wrows if (r.get("in_morning_read") or "").lower() == "yes")
+            _last_ok = _wdays[-1] >= yday.isoformat()
+            all_ok &= _check(
+                _last_ok,
+                f"why ledger: {len(_wrows)} races remembered over {len(_wdays)} day(s) "
+                f"(last {_wdays[-1]}); the morning read had the winner in "
+                f"{100 * _had / len(_wrows):.0f}%",
+                f"WHY LEDGER STALE — last night added nothing (last {_wdays[-1]}); "
+                "the night's why step failed or the model was off",
+                lines)
+    except Exception as _e:
+        lines.append(f"  why ledger: unreadable ({_e.__class__.__name__})")
     lines.append("\n  NOT WATCHED (the honest half — nobody is checking these):")
     lines.append("    · morning card coverage — races never STUDIED at all "
                  "(summaries vs opinions count); settle-side coverage of "

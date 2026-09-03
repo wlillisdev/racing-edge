@@ -93,6 +93,14 @@ case "${1:-nap}" in
            fi
            echo
            "$PY" -m racing_edge.cli.learn   --day today --email
+           # THE WHY LEDGER (the master, 2026-09-03: "read all races every day, then
+           # check results and understand why a horse won or lost... store it,
+           # remember it, recall it"): one model call for the whole card, every
+           # race reverse-engineered, banked, recalled tomorrow morning by shape.
+           if ! "$PY" -m racing_edge.school.why --day "$(date +%F)"; then
+             echo "WARNING: why ledger FAILED — the card goes unlearned tonight"
+             PYTHONPATH=src _crash_mail "night:why" 1
+           fi
            # THE NIGHT SCHOOL (2026-08-18, the master: 'study the form of every
            # race each day, then look at the winners in the evening, this is
            # the test'): grow the corpus with today's results (free on the API

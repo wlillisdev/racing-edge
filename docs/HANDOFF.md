@@ -553,4 +553,10 @@ a live door a fake-client suite could not see); the BAR BACKTEST on the
 corpus receipts v2's race selection (above the bar: fav +0.5% ROI, front-three
 85.7%; below: −5.8%, 70.1%). Read data/school/yardstick.md before judging a
 lens; nothing there is a rule until the master rings the doorbell.
+THE BRAIN'S OTHER HALF (03 Sep ~02:50, his words in data/rulings.csv): THE WHY
+LEDGER — every race reverse-engineered nightly (why the winner won, what told
+it, did the morning read have it, why our top lost), banked in
+data/school/why/, RECALLED every morning by race shape into the deep read
+("MEMORY — what won here before, and why"). Health watches it. First night:
+tonight (the yardstick banks this morning; the why runs on it at 22:00).
 
