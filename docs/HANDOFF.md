@@ -559,4 +559,10 @@ it, did the morning read have it, why our top lost), banked in
 data/school/why/, RECALLED every morning by race shape into the deep read
 ("MEMORY — what won here before, and why"). Health watches it. First night:
 tonight (the yardstick banks this morning; the why runs on it at 22:00).
+THE FRAMEWORK (03 Sep, ~03:00, binding — now the top section of CLAUDE.md):
+the loop is the work; the 09:30 page is proof of life; numbers judge; one
+cut a day; no new machinery without his word; cost is real money; sessions
+start from this file, not from zero. He has nearly pulled the plug several
+times. The next session's first act is to read the 09:30 mail and act only
+on its red lines.
 
