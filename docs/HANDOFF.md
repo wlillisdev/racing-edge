@@ -545,4 +545,12 @@ THE NEW BEAST (his words, 21:10): everything from 2026-09-03 is v2 — one
 constant naplog.V2_FROM; health prints "the new beast v the old"; the ladder
 carries nap-v2; email subjects are tagged [v2]. The ledger's VERSIONS table
 says what v2 is. Judge v2 on its own line; v1's 15/46 is the old beast.
+CALIBRATION (03 Sep, ~02:40): THE YARDSTICK LEDGER banks every runner's
+morning read and grades it nightly lens by lens against the market
+(data/school/yardstick.md) — the calibration data; the opinions ledger is
+split by version; the LIVE DOOR CHECK runs in health (the 22:00 crash was
+a live door a fake-client suite could not see); the BAR BACKTEST on the
+corpus receipts v2's race selection (above the bar: fav +0.5% ROI, front-three
+85.7%; below: −5.8%, 70.1%). Read data/school/yardstick.md before judging a
+lens; nothing there is a rule until the master rings the doorbell.
 

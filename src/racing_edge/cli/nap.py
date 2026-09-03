@@ -472,6 +472,19 @@ def grade_read_claims(row: dict, race, me) -> str:
     return "; ".join(parts)
 
 
+def _settle_yardstick(day, results, emit) -> None:
+    """THE YARDSTICK LEDGER settles beside the record (the master, 2026-09-03:
+    the stored races as learning data): every runner's morning read for the
+    day gets its position, SP and won. Never fatal — the record comes first."""
+    try:
+        from racing_edge.school.yardstick import settle_day as _ysettle
+        n = _ysettle(day, results)
+        if n:
+            emit(f"  yardstick {day}: {n} morning reads graded")
+    except Exception as exc:
+        emit(f"  ⚠ yardstick {day} not graded: {exc.__class__.__name__}: {str(exc)[:80]}")
+
+
 def _sweep_backlog(day, log, emit, fetch=None) -> None:
     """Every open row OLDER than `day`, in every table: fetch that date's results
     once and settle; still open past VOID_AFTER_DAYS -> VOID with the reason and
@@ -494,6 +507,7 @@ def _sweep_backlog(day, log, emit, fetch=None) -> None:
         if res is not None:
             for t, o in _settle_tables(d, res, log, emit).items():
                 emit(f"  backlog {ds} {t}: {o}")
+            _settle_yardstick(d, res, emit)
         age = (day - d).days
         still = log.pending_all()
         for t in ("nap", "shadow", "favline"):
@@ -568,6 +582,7 @@ def _settle(day_str: str, email: bool) -> int:
     outcome = _settle_tables(day, results, log, emit)
     for _t, _o in outcome.items():
         emit(f"  {day} {_t}: {_o}")
+    _settle_yardstick(day, results, emit)
     # MARK THE MORNING OPINIONS (the master, 2026-08-18: 'this is the test').
     # Every race the engine studied this morning is graded against tonight's
     # winners and fed to the ladder as the 'engine' policy.
@@ -618,6 +633,15 @@ def _settle(day_str: str, email: bool) -> int:
                 _prow = [(day.isoformat(), "engine", _n, _w, _ret)]
                 if _bn:
                     _prow.append((day.isoformat(), "engine-bet", _bn, _bw, _bret))
+                # THE NEW BEAST'S ARITHMETIC ON ITS OWN LINE (the master, 2026-09-03:
+                # "has it improved or made the system worse? how can we evaluate this
+                # without waiting months" — 20-40 opinions a day pass the 50-pick bar
+                # in two days; the ladder shows engine-v2 against engine within a week)
+                from racing_edge.study.naplog import version as _ver
+                if _ver(day) == "v2":
+                    _prow.append((day.isoformat(), "engine-v2", _n, _w, _ret))
+                    if _bn:
+                        _prow.append((day.isoformat(), "engine-bet-v2", _bn, _bw, _bret))
                 _apr(_Path("data/school/daily_policy.csv"), _prow)
                 emit(f"  MORNING OPINIONS marked: {_w}/{_n} races read right "
                      f"({100.0 * _w / _n:.0f}%), level stakes {_ret - _n:+.1f}pt "
@@ -719,6 +743,16 @@ def main() -> int:
     from racing_edge.data import evidence as _evmod
     _evmod.owed_notes.clear()                 # one run, one list
     field = evaluate_field(client, day=args.day, codes=codes, progress=_progress)
+    # THE YARDSTICK LEDGER (the master, 2026-09-03: "the stored races as
+    # learning data... the calibration of the system"): every runner's read,
+    # banked before anything is chosen, graded at settle. Never fatal.
+    try:
+        from racing_edge.school.yardstick import bank as _bank_yardstick
+        _yp = _bank_yardstick(resolve_date(args.day), field)
+        print(f"  yardstick banked: {len(field)} reads → {_yp}", flush=True)
+    except Exception as _e:
+        print(f"  ⚠ yardstick not banked: {_e.__class__.__name__}: {str(_e)[:80]}",
+              flush=True)
     # THE BOARD, SNAPSHOT ONE (the master, 2026-09-02: the market was one number
     # and laws 4b/4c/4d/4g had no data): every priced runner's 07:30 price is
     # kept so the 12:30 guard can read the whole card's character against it.

@@ -102,3 +102,6 @@ data/rulings_recalls.json
 data/task_runs.log
 data/model_usage.csv
 data/*.db
+data/school/yardstick/
+data/school/yardstick.md
+data/school/bar_backtest.md

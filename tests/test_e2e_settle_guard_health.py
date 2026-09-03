@@ -129,6 +129,11 @@ def test_settle_happy_path_grades_the_read_and_writes_the_csv(project, monkeypat
     # WHAT WE MEASURE (2026-09-02): the settled nap rides into the policy ledger
     _pol = (project / "data" / "school" / "daily_policy.csv").read_text()
     assert f"{today.isoformat()},nap,1,1," in _pol
+    # the engine's opinions split by version too (2026-09-03) — when the
+    # opinions file carries today's races, engine-v2 rides beside engine
+    from racing_edge.study.naplog import version as _ver
+    if f"{today.isoformat()},engine," in _pol:
+        assert (f"{today.isoformat()},engine-v2," in _pol) == (_ver(today) == "v2")
     assert f"{today} nap:" in out
 
 
