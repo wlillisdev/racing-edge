@@ -24,7 +24,7 @@ from pathlib import Path
 
 import requests
 
-from racing_edge.domain.units import book_code
+from racing_edge.domain.units import book_code, uk_today
 
 BASE = os.environ.get("RACING_API_BASE", "https://api.theracingapi.com/v1")
 
@@ -35,16 +35,34 @@ def empty_marker(path: Path) -> Path:
     return path.with_suffix(".empty")
 
 
+def _marker_valid(path: Path) -> bool:
+    """A CONFIRMED-EMPTY marker counts only if it was written on a LATER day
+    than the day it marks (2026-09-03 03:03, the box: the night ran early,
+    'today' had no results yet, and the marker would have made the 22:00
+    run skip the whole day). A marker without a 'written' date, or written
+    on the day itself, is ignored and the day is fetched again."""
+    m = empty_marker(path)
+    if not m.exists():
+        return False
+    try:
+        day = path.stem
+        txt = m.read_text()
+        written = txt.split("written ", 1)[1].strip()[:10] if "written " in txt else ""
+        return bool(written) and written > day
+    except OSError:
+        return False
+
+
 def day_fetched(path: Path) -> bool:
     """ONE definition of 'this day is on disk': the file exists AND holds at
-    least one runner row, OR the day is marked CONFIRMED EMPTY by the API
-    (fourth audit 2026-09-02, bot B3: a genuine no-racing day could never
-    hold a row, so it was refetched every night forever). fetch.main and
-    school.night both ask here."""
+    least one runner row, OR the day is marked CONFIRMED EMPTY by the API on
+    a later day (fourth audit 2026-09-02, bot B3: a genuine no-racing day
+    could never hold a row, so it was refetched every night forever).
+    fetch.main and school.night both ask here."""
     try:
         if path.exists() and path.stat().st_size > 0:
             return True
-        return empty_marker(path).exists()
+        return _marker_valid(path)
     except OSError:
         return False
 
@@ -153,10 +171,12 @@ def main(argv=None):
                 csv.writer(fh).writerows(rows)
             with open(cdir / f"{day}.csv", "w", newline="") as fh:
                 csv.writer(fh).writerows(comments)
-            if not races:
-                # the API said total=0 and raised nothing: a blank day, kept
-                # as a fact so tomorrow's night does not pay for it again
-                empty_marker(out).write_text(f"{day}: API returned 0 results\n")
+            if not races and day < uk_today().isoformat():
+                # the API said total=0 and raised nothing for a day that is
+                # OVER: a blank day, kept as a fact so tomorrow's night does not
+                # pay for it again. Today or a future day is never marked.
+                empty_marker(out).write_text(
+                    f"{day}: API returned 0 results — written {uk_today().isoformat()}\n")
             print(f"{day}: {len(rows)} runners", flush=True)
             time.sleep(1.0)                   # a breath between days, for the rate limit
         d += timedelta(days=1)

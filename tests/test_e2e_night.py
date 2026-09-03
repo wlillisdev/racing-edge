@@ -291,7 +291,18 @@ def test_fetch_main_empty_day_is_remembered_as_confirmed_empty(
     assert day_csv.exists() and day_csv.stat().st_size == 0
     assert (raw.parent / "comments" / "2026-03-05.csv").exists()
     assert fetch_mod.empty_marker(day_csv).exists()
+    assert "written " in fetch_mod.empty_marker(day_csv).read_text()
     assert fetch_mod.day_fetched(day_csv) is True
+    # THE 03:03 SCAR: a day that is not over is never confirmed empty, and a
+    # marker written on the day itself is ignored (the day is fetched again)
+    from racing_edge.domain.units import uk_today
+    today = uk_today().isoformat()
+    fetch_mod.main(["--start", today, "--end", today, "--raw", str(raw)])
+    assert not fetch_mod.empty_marker(raw / f"{today}.csv").exists()
+    stale = raw / "2026-03-07.csv"
+    stale.write_text("")
+    fetch_mod.empty_marker(stale).write_text("2026-03-07: API returned 0 results — written 2026-03-07\n")
+    assert fetch_mod.day_fetched(stale) is False
     # the second night asks the API nothing for that day
     n = len(calls)
     fetch_mod.main(["--start", "2026-03-05", "--end", "2026-03-05", "--raw", str(raw)])
