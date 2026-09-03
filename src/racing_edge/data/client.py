@@ -123,15 +123,35 @@ class RacingAPIClient:
         so settle read the API's default region set). An empty/None answer is
         an OUTAGE, raised — a genuinely blank day comes back 200 with an
         empty list, never as None (fail loud, never 'no races today')."""
+        # THE SCAR (2026-09-02 22:00, the box: settle FAILED and learn CRASHED —
+        # HTTP 422 "unrecognised query parameter, region_codes"). The morning
+        # audit added region filtering here by COPYING the racecards door's
+        # parameter name and pinned a test to the copy; the results door takes
+        # `region`, as school/fetch.py has proven live on 21 days. The test was
+        # a guess pinned to a guess. Law 6: a live door gets a live test, the
+        # same day. Pages of 50 with skip until total, the fetcher's proven shape.
         regions = [r.strip() for r in self._cfg.api.regions.split(",") if r.strip()]
-        params = ([("start_date", date_str), ("end_date", date_str), ("limit", 100)]
-                  + [("region_codes", r) for r in regions])
-        doc = self._get("/results", params=params, allow_404=True)
-        if doc is None:
-            raise RacingAPIError(404, f"{self._cfg.api.base_url}/results",
-                                 f"no results document for {date_str} — outage or "
-                                 "plan gate, not a blank day")
-        return doc
+        merged: dict = {}
+        results: list = []
+        skip = 0
+        while True:
+            params = ([("start_date", date_str), ("end_date", date_str),
+                       ("limit", 50), ("skip", skip)]
+                      + [("region", r) for r in regions])
+            doc = self._get("/results", params=params, allow_404=True)
+            if doc is None:
+                raise RacingAPIError(404, f"{self._cfg.api.base_url}/results",
+                                     f"no results document for {date_str} — outage "
+                                     "or plan gate, not a blank day")
+            merged = merged or dict(doc)
+            page = doc.get("results") or []
+            results += page
+            skip += 50
+            total = doc.get("total")
+            if total is None or not page or skip >= int(total):
+                break
+        merged["results"] = results
+        return merged
 
     def result_by_id(self, race_id: str) -> dict | None:
         """One past race's full result — the FRANKING door (#5/#15): who else was in
