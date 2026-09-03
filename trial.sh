@@ -109,13 +109,24 @@ case "${1:-nap}" in
              echo "WARNING: tier-0 pass FAILED — health goes red on a stale report"
              PYTHONPATH=src _crash_mail "night:tier0" 1   # a swallowed failure still mails (bot C)
            fi
+           # THE YARDSTICK LEDGER (the master, 2026-09-03: "the stored races as
+           # learning data... the calibration of the system"): every runner's
+           # morning read, settled tonight, scored lens by lens against the market.
+           if ! "${SDK_OFF[@]}" "$PY" -m racing_edge.school.yardstick --day "$(date +%F)"; then
+             echo "WARNING: yardstick scoreboard FAILED — the ledger keeps banking; the board is stale"
+             PYTHONPATH=src _crash_mail "night:yardstick" 1
+           fi
            # Sunday: the weekly synthesis rides in the same slot (no weekly task needed)
            if [ "$(date +%u)" = "7" ]; then echo; "$PY" -m racing_edge.cli.learn --synthesise --email; fi ;;
   all)     "$PY" -m racing_edge.cli.nap     --day today --both --email
            echo
            "${SDK_OFF[@]}" "$PY" -m racing_edge.cli.dissect --day today         --email ;;
+  doors)   # THE LIVE DOOR CHECK (2026-09-03, after the 22:00 crash a fake-client
+           # suite could not see): every API door the tasks use, opened once for real.
+           # Run it after ANY merge that touches data/client.py — before the next task.
+           "${SDK_OFF[@]}" "$PY" -m racing_edge.data.doors ;;
   read)    # ON-DEMAND READ (2026-07-25): ./trial.sh read "Salisbury 7:15" prints the
            # full pre-race form readout for one race — paste it to the reader in chat
            "${SDK_OFF[@]}" "$PY" -m racing_edge.cli.brief --race "${2:?usage: ./trial.sh read \"Course H:MM\"}" ;;
-  *) echo "usage: ./trial.sh [nap|dissect|settle|restudy|learn|synth|night|guard|health|read|all]"; exit 1 ;;
+  *) echo "usage: ./trial.sh [nap|dissect|settle|restudy|learn|synth|night|guard|health|doors|read|all]"; exit 1 ;;
 esac

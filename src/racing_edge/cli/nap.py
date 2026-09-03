@@ -618,6 +618,15 @@ def _settle(day_str: str, email: bool) -> int:
                 _prow = [(day.isoformat(), "engine", _n, _w, _ret)]
                 if _bn:
                     _prow.append((day.isoformat(), "engine-bet", _bn, _bw, _bret))
+                # THE NEW BEAST'S ARITHMETIC ON ITS OWN LINE (the master, 2026-09-03:
+                # "has it improved or made the system worse? how can we evaluate this
+                # without waiting months" — 20-40 opinions a day pass the 50-pick bar
+                # in two days; the ladder shows engine-v2 against engine within a week)
+                from racing_edge.study.naplog import version as _ver
+                if _ver(day) == "v2":
+                    _prow.append((day.isoformat(), "engine-v2", _n, _w, _ret))
+                    if _bn:
+                        _prow.append((day.isoformat(), "engine-bet-v2", _bn, _bw, _bret))
                 _apr(_Path("data/school/daily_policy.csv"), _prow)
                 emit(f"  MORNING OPINIONS marked: {_w}/{_n} races read right "
                      f"({100.0 * _w / _n:.0f}%), level stakes {_ret - _n:+.1f}pt "
