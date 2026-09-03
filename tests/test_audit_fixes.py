@@ -189,25 +189,41 @@ def test_day_fetched_measures_rows_not_a_file_on_disk(tmp_path) -> None:
     assert day_fetched(f)
 
 
-def test_results_by_date_carries_the_regions_and_raises_on_an_empty_document() -> None:
-    """Fetch bot #1/#3: the docstring claimed region filtering that the code
-    never passed; a None answer became 'no races today'."""
+def test_results_by_date_uses_the_results_doors_own_parameter_and_pages() -> None:
+    """THE SCAR of 2026-09-02 22:00: settle FAILED and learn CRASHED with HTTP
+    422 'unrecognised query parameter, region_codes'. The morning's audit had
+    copied the racecards door's parameter name into the results door and
+    pinned a test to the copy — a guess pinned to a guess. The results door
+    takes `region` (proven live by school/fetch.py on 21 days) and pages 50
+    at a time with skip until total."""
     from racing_edge.data.client import RacingAPIClient, RacingAPIError
-    cfg = NS(api=NS(username="u", password="p", base_url="http://x",
-                    regions="gb,ire"))
-    c = RacingAPIClient(cfg)
-    seen = {}
+    seen: list = []
 
-    def fake_get(path, params=None, allow_404=True):
-        seen["params"] = params
-        return {"results": []}
-    c._get = fake_get
-    assert c.results_by_date("2026-09-01") == {"results": []}
-    assert ("region_codes", "gb") in seen["params"] and ("region_codes", "ire") in seen["params"]
-    c._get = lambda path, params=None, allow_404=True: None
-    with pytest.raises(RacingAPIError, match="outage"):
-        c.results_by_date("2026-09-01")
+    class _C(RacingAPIClient):
+        def __init__(self):
+            self._cfg = NS(api=NS(regions="gb,ire", base_url="https://x"))
 
+        def _get(self, path, params=None, allow_404=True):
+            seen.append(list(params))
+            skip = dict(params)["skip"]
+            if skip == 0:
+                return {"results": [{"id": i} for i in range(50)], "total": 60}
+            return {"results": [{"id": i} for i in range(50, 60)], "total": 60}
+
+    doc = _C().results_by_date("2026-09-01")
+    assert len(doc["results"]) == 60 and doc["total"] == 60
+    assert [dict(p)["skip"] for p in seen] == [0, 50]
+    for p in seen:
+        assert ("region", "gb") in p and ("region", "ire") in p
+        assert not any(k == "region_codes" for k, _ in p)
+        assert dict(p)["limit"] == 50
+
+    class _Down(_C):
+        def _get(self, path, params=None, allow_404=True):
+            return None
+
+    with pytest.raises(RacingAPIError):
+        _Down().results_by_date("2026-09-01")
 
 def test_load_corpus_counts_the_rows_it_drops(tmp_path, capsys) -> None:
     from racing_edge.school.mine import load_corpus
