@@ -269,7 +269,7 @@ def main(argv=None) -> int:
         print(f"why ledger {a.day}: {len(yrows)} reads but no results yet — tomorrow's night")
         return 0
     from racing_edge.ai.reason import get_reasoner
-    reasoner = get_reasoner("study", max_tokens=6000)
+    reasoner = get_reasoner("why", max_tokens=6000)      # its own model row and budget
     if reasoner is None:
         print("why ledger: model OFF (no ANTHROPIC_API_KEY) — nothing reverse-engineered")
         return 0
