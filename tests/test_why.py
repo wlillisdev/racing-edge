@@ -108,3 +108,15 @@ def test_digest_counts_what_the_morning_read_had():
     assert "3 races reverse-engineered" in d[0] and "yes 1 · no 2 · owed 0" in d[0]
     assert "finisher (2)" in d[1]
     assert any("lesson: pace first" in x for x in d)
+
+
+def test_the_why_ledger_has_its_own_model_row_and_budget():
+    """The master, 2026-09-03: "cost effective, using the right models" — the
+    nightly why is its own task: sonnet, its own ceiling, never sharing the
+    self-study's pool."""
+    from racing_edge.ai import reason
+    assert reason.resolve_model("why") == "claude-sonnet-5"
+    assert reason._TASK_BUDGETS["why"] == 30_000
+    import inspect
+    assert 'get_reasoner("why"' in inspect.getsource(why.main)
+

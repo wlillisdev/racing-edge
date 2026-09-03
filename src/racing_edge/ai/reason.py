@@ -70,6 +70,12 @@ _TASK_MODELS = {
     "study": "claude-sonnet-5",       # per-race read: strong + affordable
     "sceptic": "claude-sonnet-5",     # cost cut 2026-07-08: sonnet vs sonnet is a fair fight
     "synthesis": "claude-sonnet-5",   # weekly; sonnet suffices for the summary
+    # THE WHY LEDGER (2026-09-03, the master: "cost effective, the right models"):
+    # one call a night over the whole card, facts in plain sight written in one
+    # line each — sonnet is the right tool (the lesson's quality is the point;
+    # a smaller model writes thin whys), on its OWN budget so it can never
+    # starve the self-study and the self-study can never starve it.
+    "why": "claude-sonnet-5",
     # THE pick: once a day, the one flagship call. Opus 5 (2026-08-01 cost pass):
     # flagship-class reasoning at HALF the premium tier's price ($5/$25 vs
     # $10/$50 per MTok) — the pick call was ~90% of the whole model bill.
@@ -100,7 +106,7 @@ def resolve_model(task: str) -> str:
 # via NAP_TOKEN_BUDGET_<TASK>). Numbers sized ~2x normal daily use: headroom for
 # a heavy card, a hard stop on a runaway.
 _TASK_BUDGETS = {"nap": 80_000, "study": 60_000, "sceptic": 30_000,
-                 "synthesis": 40_000}
+                 "synthesis": 40_000, "why": 30_000}     # why: ~19k a normal night
 
 
 def _budget_spent_today(task: str | None = None) -> int:
