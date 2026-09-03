@@ -237,7 +237,7 @@ def test_backtest_empty_corpus():
 def test_render_states_the_corpus_limits():
     result = backtest([])
     text = render(result)
-    assert f"BETTING_BAR" in text or str(BETTING_BAR) in text
+    assert "BETTING_BAR" in text or str(BETTING_BAR) in text
     assert "handicap flag" in text.lower()
     assert "07:30" in text
     assert "leak" in text.lower()

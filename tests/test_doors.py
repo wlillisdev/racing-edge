@@ -12,7 +12,6 @@ task — that is the live door a mock can never stand in for.
 
 from __future__ import annotations
 
-import pytest
 
 from racing_edge.data.client import RacingAPIError
 from racing_edge.data.doors import DOORS, all_open, check_doors, render
