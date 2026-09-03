@@ -46,19 +46,43 @@ def test_build_prompt_carries_the_morning_read_and_the_result_for_each_resulted_
     assert "RACE R1: Thirsk 3:00" in prompt
     assert "Alpha — mkt 1 @2.5, score 3, for: finisher, course winner" in prompt
     assert "1. Bravo SP 4.5 — 'led throughout, kept on well'" in prompt
-    assert "OUR TOP READ" not in prompt          # Alpha finished 3rd — in the first four
+    assert "OUR TOP READ" not in prompt          # Alpha finished 3rd — in the first eight
+    assert "most to teach" in prompt
 
 
-def test_our_top_read_is_named_when_it_finished_outside_the_first_four():
+def test_our_top_read_is_named_when_it_finished_outside_the_first_eight():
+    others = tuple(RunnerResult(horse_id=f"X{i}", position=i, sp_dec=9.0, horse=f"X{i}",
+                                comment="") for i in range(2, 9))
     res = [RaceResult(race_id="R1", date=date(2026, 9, 3), runners=(
         RunnerResult(horse_id="B", position=1, sp_dec=4.5, horse="Bravo", comment="led"),
-        RunnerResult(horse_id="C", position=2, sp_dec=9.0, horse="Charlie", comment=""),
-        RunnerResult(horse_id="X", position=3, sp_dec=9.0, horse="Xray", comment=""),
-        RunnerResult(horse_id="Y", position=4, sp_dec=9.0, horse="Yank", comment=""),
-        RunnerResult(horse_id="A", position=5, sp_dec=2.4, horse="Alpha", comment="weakened"),
+        *others,
+        RunnerResult(horse_id="A", position=9, sp_dec=2.4, horse="Alpha", comment="weakened"),
     ))]
     prompt, _ = why.build_prompt(DAY, _yrows(), res)
-    assert "OUR TOP READ Alpha finished 5 SP 2.4 — 'weakened'" in prompt
+    assert "OUR TOP READ Alpha finished 9 SP 2.4 — 'weakened'" in prompt
+
+
+def test_the_ten_races_with_most_to_teach_are_chosen_betting_races_first():
+    """Quality over quantity: betting races (at or above the bar) first, then
+    the worst misses of our top read, then the surprises — ten at most."""
+    yrows, results = [], []
+    for i in range(14):
+        rid = f"R{i:02d}"
+        rq = 2 if i in (3, 7) else 0                      # two betting races
+        yrows.append({"date": DAY, "race_id": rid, "course": "C", "off_time": f"{i}:00",
+                      "code": "F", "race_class": 5, "distance_f": 8.0, "field_size": 4,
+                      "race_quality": rq, "horse_id": f"T{i}", "horse": f"Top{i}",
+                      "mkt_rank": 1, "price": 3.0, "score": 2, "aligned": "", "flags": "",
+                      "cautions": ""})
+        pos_top = 4 if i == 11 else 1                     # race 11: our top finished last
+        runners = [RunnerResult(horse_id=f"T{i}", position=pos_top, sp_dec=3.0, horse=f"Top{i}")]
+        runners += [RunnerResult(horse_id=f"O{i}{k}", position=k, sp_dec=6.0, horse=f"O{i}{k}")
+                    for k in range(1, 5) if k != pos_top]
+        results.append(RaceResult(race_id=rid, date=date(2026, 9, 3), runners=tuple(runners)))
+    prompt, ids = why.build_prompt(DAY, yrows, results)
+    assert len(ids) == why.STUDY_RACES == 10
+    assert set(ids[:2]) == {"R03", "R07"}                  # betting races first
+    assert ids[2] == "R11"                                  # then the worst miss
 
 
 def test_parse_takes_the_json_and_nothing_else():
@@ -92,6 +116,8 @@ def test_bank_load_and_recall_by_shape(tmp_path):
     assert "the morning read had it: no" in lines[0]
     assert "our top Alpha finished 3rd: no pace" in lines[0]
     assert "lesson: front runner" in lines[0]
+    assert why.FIELDS[-7:] == ["how_it_was_run", "placed_because", "our_top",
+                               "our_top_finished", "why_lost", "should_have_seen", "lesson"]
     assert why.recall("Chepstow", "H", 4, 20.0, root=tmp_path) == []
     # same code, class and trip on another course still scores enough to recall
     assert len(why.recall("Ripon", "F", 5, 7.0, root=tmp_path)) == 1
