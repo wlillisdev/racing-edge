@@ -600,4 +600,16 @@ corpus backfilled to the door's 12 months. The sittings' discipline: name the
 best horse by class BEFORE writing; beat him with a fact or he is the pick;
 odds-on on the class horse is a pass. Tonight's 22:00 settles Captain Cool
 (looks a non-runner) and grades the day's yardstick.
+THE RACE INVERSION (05 Sep, 18:50Z, PR #105; his words: "we are not picking
+the right races... well maybe the engine is wrong?... I believe in what you
+say"): the fingerprint scored every ITV race 0-1 and gave Class 1 what it gave
+Class 6 — nothing. Now a Group/Listed race scores the class point twice,
+Class 1-2 once (same as 3-4); nothing else in race_quality_score moves. Today
+through it: Sprint Cup 0→2, Kempton 2:50 0→2, Ascot 2:10 1→2, Haydock 3:05
+0→1, Thirsk 3. The yardstick's RACE TYPE table (pattern / heritage /
+fingerprint / other) is the judge; the picker is rewritten from THAT, never
+from where the jolly wins. REVERT-IF: 15 settled picks from pattern/heritage
+races read worse than the fingerprint's. Tomorrow's 07:30 is the first
+morning of BOTH inversions — read the INVERSION line and which race the nap
+came from before anything else.
 
