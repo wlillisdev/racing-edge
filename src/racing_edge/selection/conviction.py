@@ -13,9 +13,66 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from racing_edge.domain.manner import nap_verdict, read_manner
-from racing_edge.domain.mark import mark_read, same_code_runs
+from racing_edge.domain.mark import STALE_RUNS, mark_read, same_code_runs
 from racing_edge.domain.models import PastRun, Race, Runner
 from racing_edge.domain.tells import match_tells
+
+# --------------------------------------------------------------------------- #
+# THE CLASS LADDER and THE BEST FORM LINE — the inversion (the master,
+# 2026-09-05, after five of six picks lost to the horse with the better class
+# line: "I picked a story over the best form line... yes do inversion, we need
+# to learn and improve, we keep getting it wrong"; his law of 2026-08-22:
+# "class horse form is temp class is permanent"; Rule One: THE BEST HORSE
+# WINS). One rung per level, lower is better. Group 1 sits above Group 2,
+# above Group 3, above Listed, above Class 1 (non-pattern) ... Class 7. The
+# best form line is the highest rung at which the horse WON or PLACED (first
+# three) inside the mark's own STALE window; a win outranks a place on the
+# same rung. It is the FIRST term of the rank key (pipeline/nap.py) — the
+# jigsaw crosses off and breaks ties, it no longer counts the horse.
+# --------------------------------------------------------------------------- #
+_PATTERN_RUNG = (("group 1", 1), ("group 2", 2), ("group 3", 3), ("listed", 4))
+NO_CLASS_LINE = 99
+
+
+def class_level(race_class, pattern) -> int:
+    """The ladder rung of a race: Group 1 = 1, Group 2 = 2, Group 3 = 3,
+    Listed = 4, then Class N = N + 4 (Class 1 non-pattern = 5 ... Class 7 =
+    11). Unknown = NO_CLASS_LINE, below every known rung."""
+    p = (pattern or "").strip().lower()
+    for name, rung in _PATTERN_RUNG:
+        if name in p:
+            return rung
+    try:
+        n = int(race_class) if race_class else 0
+    except (TypeError, ValueError):
+        n = 0
+    return n + 4 if 1 <= n <= 7 else NO_CLASS_LINE
+
+
+def _rung_name(level: int) -> str:
+    return {1: "Group 1", 2: "Group 2", 3: "Group 3", 4: "Listed"}.get(
+        level, f"Cl{level - 4}" if level < NO_CLASS_LINE else "unclassed")
+
+
+def best_form_line(hist: tuple[PastRun, ...]) -> tuple[int, bool, str]:
+    """(level, won, label) of the best PROVEN line in the last STALE_RUNS
+    same-code runs: the highest rung won or placed at; a win beats a place on
+    the same rung; a more recent line beats an older one on equal terms. No
+    line in the window = (NO_CLASS_LINE, False, '')."""
+    best: tuple[int, int, int] | None = None
+    label = ""
+    for i, h in enumerate(hist[:STALE_RUNS]):
+        if h.position is None or h.position > 3:
+            continue
+        lvl = class_level(h.race_class, getattr(h, "pattern", ""))
+        key = (lvl, 0 if h.position == 1 else 1, i)
+        if best is None or key < best:
+            best = key
+            what = "won" if h.position == 1 else f"{h.position}{'nd' if h.position == 2 else 'rd'}"
+            label = f"{what} {_rung_name(lvl)} ({h.date})"
+    if best is None:
+        return NO_CLASS_LINE, False, ""
+    return best[0], best[1] == 0, label
 
 # The lens FAMILIES — the currency conviction is scored in. The winning-era engine
 # had ~6 orthogonal lenses, so score>=3 meant half the jigsaw agreed. By 2026-07-12
@@ -48,6 +105,11 @@ class Conviction:
     # must answer; it still blocks CONFIDENT. REVERT-IF: a week of marked
     # mornings reads worse than the week before this shipped.
     cautions: tuple[str, ...] = ()
+    # THE BEST FORM LINE (the inversion, 2026-09-05): the rung, whether it was
+    # a win, and the printable line — the FIRST term of the rank key
+    best_class_level: int = NO_CLASS_LINE
+    best_class_won: bool = False
+    best_class_line: str = ""
 
     @property
     def score(self) -> int:
@@ -411,5 +473,7 @@ def conviction(runner: Runner, race: Race, history: tuple[PastRun, ...],
     if field_size >= 16:
         flags.append("big-field lottery")
 
+    _lvl, _won, _line = best_form_line(hist)
     return Conviction(tuple(dict.fromkeys(aligned)), tuple(dict.fromkeys(flags)),
-                      mr.known, tuple(dict.fromkeys(cautions)))
+                      mr.known, tuple(dict.fromkeys(cautions)),
+                      best_class_level=_lvl, best_class_won=_won, best_class_line=_line)

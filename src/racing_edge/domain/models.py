@@ -46,6 +46,7 @@ class PastRun:
     race_id: str = ""                # to fetch that race's field and FRANK the form
     comment: str = ""               # the in-running comment — HOW it ran (the OWED door)
     race_name: str = ""             # the race's title — the index into its earlier runnings (#29)
+    pattern: str = ""               # Group 1/2/3, Listed — the class ladder above Class 1 (the inversion, 2026-09-05)
 
     @property
     def won(self) -> bool:
@@ -108,6 +109,7 @@ class Race:
     region: str = ""
     runners: tuple[Runner, ...] = ()
     race_name: str = ""              # the card's title — 'the same race last year' matches on it
+    pattern: str = ""                # Group 1/2/3, Listed — blank for a non-pattern race
 
     @property
     def code(self) -> str:

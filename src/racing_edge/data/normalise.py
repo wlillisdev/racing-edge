@@ -18,6 +18,20 @@ from racing_edge.domain.models import Odds, PastRun, Race, RaceResult, Runner, R
 from racing_edge.domain.units import uk_today
 
 _CLASS_RE = re.compile(r"class\s*(\d)", re.IGNORECASE)
+_PATTERN_RE = re.compile(r"\b(group\s*[123]|listed)\b", re.IGNORECASE)
+
+
+def _pattern(raw: dict) -> str:
+    """Group 1/2/3 or Listed — the feed's own `pattern` key (present on the
+    racecards and results doors, verified live 2026-09-05), or dug out of the
+    race name ('... Stakes (Group 3)'). Blank for a non-pattern race. Without
+    it every pattern race is 'Class 1' and a Group 1 winner and a Listed
+    winner are invisible to each other (the inversion, 2026-09-05)."""
+    v = raw.get("pattern")
+    if isinstance(v, str) and v.strip():
+        return v.strip()
+    m = _PATTERN_RE.search(raw.get("race_name") or "")
+    return re.sub(r"\s+", " ", m.group(1)).title() if m else ""
 
 
 # --------------------------------------------------------------------------- #
@@ -156,6 +170,7 @@ def race_from_raw(raw: dict, race_date: date) -> Race:
         region=_str(raw.get("region")),
         runners=tuple(runner_from_raw(r) for r in (raw.get("runners") or [])),
         race_name=_str(raw.get("race_name")),
+        pattern=_pattern(raw),
     )
 
 
@@ -248,5 +263,6 @@ def past_runs_from_raw(rows: list[dict], horse_id: str = "") -> tuple[PastRun, .
             comment=_str(me.get("comment") or me.get("in_running_comment")
                          or r.get("comment")),
             race_name=_str(r.get("race_name")),
+            pattern=_pattern(r),
         ))
     return tuple(out)

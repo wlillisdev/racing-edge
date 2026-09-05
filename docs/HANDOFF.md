@@ -578,4 +578,26 @@ OWED: the first 07:30 run on main (06 Sep) must print "signposts: N runners
 carry a dot"; "⚠ signposts not built" two mornings running is the REVERT-IF.
 Not built from Signposts (no data held): first-time headgear by trainer,
 "money talks", the popular nap (noise).
+THE INVERSION (05 Sep evening, his word: "yes do inversion — we need to learn
+and improve, we keep getting it wrong"; the day: 1 from 6 sittings, the named
+danger won 5 of 6, every one with the better class line). Four bots reported
+(docs/DOWN_TO_TWO_2026-09-05.md): the shortlist is right (pick or danger 53%
+of 34 sittings), the verdict is the fault; the engine's tie-break had NO class
+term (four counts and the price); the corpus says class bleeds 9pts less ROI
+than volume but cannot settle the head-to-head (37-37, mean prior runs 0.95);
+his words in order: best horse wins → past winners → class is permanent →
+pound-a-length → floors/ceilings → beat the danger → Blanco → the bookmaker's
+question → the market's direction → pass. THE CUT: the best form line at the
+highest class (Group 1..Listed..Cl7 ladder, `pattern` now parsed, the mark's
+STALE window) is the FIRST term of _rank_key; the jigsaw crosses off and
+breaks ties. The 07:30 mail prints "INVERSION — class first: X; the old key
+would have picked Y" every morning — THAT LINE IS THE LIVE CHECK; the
+yardstick's THE CLASS LINE table is its judge. REVERT-IF: 15 settled picks
+at or below the old key. Still for his ruling (docs/DOWN_TO_TWO): the
+improver-favourite flag → caution; BEAT THE DANGER with teeth (an un-beaten
+danger passes the race?); race_quality stops penalising pattern races; the
+corpus backfilled to the door's 12 months. The sittings' discipline: name the
+best horse by class BEFORE writing; beat him with a fact or he is the pick;
+odds-on on the class horse is a pass. Tonight's 22:00 settles Captain Cool
+(looks a non-runner) and grades the day's yardstick.
 

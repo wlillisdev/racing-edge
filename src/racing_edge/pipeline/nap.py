@@ -181,15 +181,41 @@ def _rank_key(p: NapPick) -> tuple:
     # right race" reconciled: the race must CLEAR the betting bar first; among
     # races that clear it the BEST HORSE wins; race quality then breaks ties).
     # REVERT-IF: a week of picks reads worse than the race-first key.
+    # THE INVERSION (the master, 2026-09-05 — five of six picks lost to the
+    # horse with the better class line; "I picked a story over the best form
+    # line... yes do inversion, we need to learn and improve, we keep getting
+    # it wrong"): Rule One was the top line of the rulebook and the bottom
+    # line of this key — 'best horse' had been carved as 'most reasons', four
+    # counts and the price. Now the BEST FORM LINE AT THE HIGHEST CLASS is the
+    # first term; the jigsaw (confident, mark, families, labels) crosses off
+    # and breaks ties, it no longer counts the horse. Lower rung = better, so
+    # negated; a win beats a place on the same rung.
+    # REVERT-IF: over the next 15 settled picks the class-first pick's strike
+    # sits at or below the old key's pick on the same yardstick rows (the
+    # 07:30 log prints both every morning — the live check).
+    line = (-getattr(p.conviction, "best_class_level", 99),
+            int(getattr(p.conviction, "best_class_won", False)))
     horse = (int(p.conviction.confident), int(p.conviction.mark_known),
              p.conviction.score, len(p.conviction.aligned))
     # unclassed (None) ranks BELOW Class 6, never level with it (audit
     # 2026-09-02: `or 6` tied 'unknown' with 'known worst')
     tail = (-(p.race.race_class if p.race.race_class else 7), -(p.price or 999.0))
     if p.race_quality >= BETTING_BAR:
-        return (1, *horse, p.race_quality, *tail)      # above the bar: best horse first
+        return (1, *line, *horse, p.race_quality, *tail)   # above the bar: class first, then the jigsaw
     # below the bar the 2026-08-17 law still holds — the race outranks the
     # horse in duty water, so the dreck column stays honest for the record
+    return (0, p.race_quality, *line, *horse, *tail)
+
+
+def _rank_key_legacy(p: NapPick) -> tuple:
+    """The key BEFORE the inversion (2026-09-05) — kept for one purpose: the
+    07:30 log prints the old key's pick beside the new one, so the record can
+    grade the inversion day by day (REVERT-IF above)."""
+    horse = (int(p.conviction.confident), int(p.conviction.mark_known),
+             p.conviction.score, len(p.conviction.aligned))
+    tail = (-(p.race.race_class if p.race.race_class else 7), -(p.price or 999.0))
+    if p.race_quality >= BETTING_BAR:
+        return (1, *horse, p.race_quality, *tail)
     return (0, p.race_quality, *horse, *tail)
 
 
