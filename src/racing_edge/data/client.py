@@ -117,6 +117,12 @@ class RacingAPIClient:
         return self._get(f"/racecards/{tier}", params=params,
                          allow_404=True) or {"racecards": []}
 
+    def results_range(self, start: str, end: str) -> dict:
+        """Results over a DATE WINDOW, the same door and the same proven
+        parameters as results_by_date (start_date/end_date/region/limit 50/
+        skip) — 'the same race last year' needs last September's week."""
+        return self._results(start, end)
+
     def results_by_date(self, date_str: str) -> dict:
         """A day's results for the CONFIGURED regions (audit 2026-09-02: the
         module docstring claimed region filtering here; the code passed none,
@@ -130,12 +136,16 @@ class RacingAPIClient:
         # `region`, as school/fetch.py has proven live on 21 days. The test was
         # a guess pinned to a guess. Law 6: a live door gets a live test, the
         # same day. Pages of 50 with skip until total, the fetcher's proven shape.
+        return self._results(date_str, date_str)
+
+    def _results(self, start: str, end: str) -> dict:
+        date_str = start if start == end else f"{start}..{end}"
         regions = [r.strip() for r in self._cfg.api.regions.split(",") if r.strip()]
         merged: dict = {}
         results: list = []
         skip = 0
         while True:
-            params = ([("start_date", date_str), ("end_date", date_str),
+            params = ([("start_date", start), ("end_date", end),
                        ("limit", 50), ("skip", skip)]
                       + [("region", r) for r in regions])
             doc = self._get("/results", params=params, allow_404=True)

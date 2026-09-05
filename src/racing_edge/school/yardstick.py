@@ -41,6 +41,7 @@ FIELDS = [
     "is_handicap", "field_size", "race_quality", "horse_id", "horse",
     "mkt_rank", "price", "score", "confident", "mark_known", "aligned",
     "flags", "cautions", "pos", "sp_dec", "won",
+    "signposts",      # the master's old AI (2026-09-05) — dots, graded like a lens
 ]
 
 # --------------------------------------------------------------------------- #
@@ -81,11 +82,15 @@ def _day_str(day) -> str:
     return day.isoformat() if hasattr(day, "isoformat") else str(day)
 
 
-def rows_from_field(day, field) -> list[dict]:
+def rows_from_field(day, field, signposts: dict | None = None) -> list[dict]:
     """field: list[NapPick] (pipeline.nap) — EVERY priced runner in EVERY
     readable race the morning read touched, not just the nap. mkt_rank is
     1..n by price WITHIN the race (ties by horse_id, the mine's own rule).
-    pos/sp_dec/won start blank — settle_day fills them once the result is in."""
+    pos/sp_dec/won start blank — settle_day fills them once the result is in.
+    signposts: school.signposts.build's {horse_id: {"keys": [...]}} — each
+    key lands in the row's `signposts` column, '|'-joined, so the scoreboard
+    grades every Signpost against the market exactly like a lens."""
+    sp = signposts or {}
     by_race: dict[str, list] = defaultdict(list)
     for p in field:
         by_race[p.race.race_id].append(p)
@@ -122,6 +127,8 @@ def rows_from_field(day, field) -> list[dict]:
                 "pos": "",
                 "sp_dec": "",
                 "won": "",
+                "signposts": "|".join(dict.fromkeys(
+                    k for k in sp.get(p.runner.horse_id, {}).get("keys", []) if k)),
             })
     return rows
 
@@ -133,13 +140,13 @@ def _path_for(day, root: Path) -> Path:
     return root / f"{_day_str(day)}.csv"
 
 
-def bank(day, field, root: Path = LEDGER_DIR) -> Path:
+def bank(day, field, root: Path = LEDGER_DIR, signposts: dict | None = None) -> Path:
     """Write <root>/<day>.csv, OVERWRITING that day's file — one morning, one
     file, idempotent (a re-run of the morning read re-banks the same rows,
     never appends a second copy)."""
     root.mkdir(parents=True, exist_ok=True)
     path = _path_for(day, root)
-    rows = rows_from_field(day, field)
+    rows = rows_from_field(day, field, signposts)
     tmp = path.with_suffix(".tmp")
     with open(tmp, "w", newline="") as fh:
         w = csv.DictWriter(fh, fieldnames=FIELDS)
@@ -399,6 +406,13 @@ def scoreboard(rows: list[dict]) -> str:
         "same measure as above, over rows carrying this caution. Lift should "
         "be negative.",
         "cautions")
+    L += _section(
+        "SIGNPOSTS — the master's old AI (Racing Post Signposts, 2026-09-05)",
+        "combo / rating clear / yard at this course by type / ran here last "
+        "year / fresh / cold yard — each a dot, graded against the market "
+        "exactly like a lens. Belief comes from the month test, never from one "
+        "lift number.",
+        "signposts")
 
     bands = _race_bands(rows)
     L += ["", "## RACE QUALITY — below the bar (<2) vs a betting race (>=2)",

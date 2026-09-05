@@ -743,12 +743,41 @@ def main() -> int:
     from racing_edge.data import evidence as _evmod
     _evmod.owed_notes.clear()                 # one run, one list
     field = evaluate_field(client, day=args.day, codes=codes, progress=_progress)
+    # THE SIGNPOSTS (the master, 2026-09-05: "my AI back in the day... implement
+    # all of these, they are another dot"): combo, rating clear, the yard here
+    # by type, the same race last year, fresh, cold yard — one block per runner
+    # for the reader, one column in the yardstick for the record. ONE results
+    # call (last year's week), the corpus already on disk. Never fatal.
+    _signposts: dict = {}
+    try:
+        from pathlib import Path as _P
+        from racing_edge.school import signposts as _spmod
+        from racing_edge.school.mine import load_corpus as _load_corpus
+        _races = list({p.race.race_id: p.race for p in field}.values())
+        _day = resolve_date(args.day)
+        try:
+            _corpus = _load_corpus(_P("data/school/raw"))
+        except Exception:
+            _corpus = None
+        try:
+            _ly = client.results_range(*_spmod.last_year_window(_day))
+        except Exception as _e:
+            print(f"  ⚠ last year's results not read: {_e.__class__.__name__}", flush=True)
+            _ly = None
+        _signposts = _spmod.build(_day, _races,
+                                  getattr(evaluate_field, "last_evidence", {}),
+                                  corpus_races=_corpus, last_year_raw=_ly)
+        print(f"  signposts: {sum(1 for k in _signposts if not k.startswith('race:'))} "
+              f"runners carry a dot", flush=True)
+    except Exception as _e:
+        print(f"  ⚠ signposts not built: {_e.__class__.__name__}: {str(_e)[:80]}",
+              flush=True)
     # THE YARDSTICK LEDGER (the master, 2026-09-03: "the stored races as
     # learning data... the calibration of the system"): every runner's read,
     # banked before anything is chosen, graded at settle. Never fatal.
     try:
         from racing_edge.school.yardstick import bank as _bank_yardstick
-        _yp = _bank_yardstick(resolve_date(args.day), field)
+        _yp = _bank_yardstick(resolve_date(args.day), field, signposts=_signposts)
         print(f"  yardstick banked: {len(field)} reads → {_yp}", flush=True)
     except Exception as _e:
         print(f"  ⚠ yardstick not banked: {_e.__class__.__name__}: {str(_e)[:80]}",
@@ -1014,7 +1043,7 @@ def main() -> int:
                              + (f" | FLAGS: {'; '.join(_c.flags)}" if _c.flags else "")
                              + ("" if _c.mark_known else " | mark OWED"))
             candidates.append((label, warn + "\n".join(_yard) + "\n"
-                               + render_preread(r0, hists)))
+                               + render_preread(r0, hists, extra=_signposts)))
         # max_steps=6 (2026-07-25 audit: rules 4+8 demand ~2 lookups per candidate
         # race — franking the key form AND checking the danger — and at 4 the model
         # ran dry mid-frank on a 3-race Saturday shortlist)

@@ -119,6 +119,7 @@ def runner_from_raw(raw: dict) -> Runner:
         weight_lbs=_int(raw.get("lbs")),
         official_rating=_int(raw.get("ofr")),
         rpr=_int(raw.get("rpr")),
+        performance_rating=_int(raw.get("performance_rating")),
         form=_str(raw.get("form")),
         days_since_run=_int(raw.get("last_run")),
         headgear=_str(raw.get("headgear")),
@@ -154,6 +155,7 @@ def race_from_raw(raw: dict, race_date: date) -> Race:
         going_detailed=_str(raw.get("going_detailed")),
         region=_str(raw.get("region")),
         runners=tuple(runner_from_raw(r) for r in (raw.get("runners") or [])),
+        race_name=_str(raw.get("race_name")),
     )
 
 

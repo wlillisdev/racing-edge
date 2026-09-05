@@ -78,11 +78,14 @@ def delta_line(r, race, hist) -> str:
 
 
 def render_preread(race: Race, histories: dict[str, tuple[PastRun, ...]],
-                   past_n: int = 4) -> str:
+                   past_n: int = 4, extra: dict | None = None) -> str:
     """The PRE-RACE full-form readout — same honest layout as the re-study, no result.
     This is what the morning deep-read (the nap picker) reasons over: mark, form,
     manner read, each contender's past runs WITH comments, market rank off the morning
-    prices. Blanks say OWED. Contenders ordered by market."""
+    prices. Blanks say OWED. Contenders ordered by market.
+    extra: school.signposts.build's dict — the SIGNPOSTS block per runner and the
+    race-level 'THIS RACE LAST YEAR' line (the master's old AI, 2026-09-05)."""
+    extra = extra or {}
     priced = sorted([r for r in race.runners if r.odds.consensus and r.odds.consensus > 1],
                     key=lambda r: r.odds.consensus)  # type: ignore[arg-type,return-value]
     mkt_rank = {r.horse_id: i + 1 for i, r in enumerate(priced)}
@@ -92,6 +95,8 @@ def render_preread(race: Race, histories: dict[str, tuple[PastRun, ...]],
     if race.race_class:
         head += f" (Cl{race.race_class})"
     lines = [f"  PRE-RACE CARD: {head}  ({race.field_size} declared)"]
+    for _sl in extra.get(f"race:{race.race_id}", {}).get("lines", []):
+        lines.append(f"  {_sl}")
     # THE PACE MAP (#20 — the master, 2026-07-26: fixed as one of 'the silliest
     # things'): who is likely to LEAD, read from the comments already in hand.
     # No leader = muddling-pace risk; several = a contested, honest gallop.
@@ -136,6 +141,9 @@ def render_preread(race: Race, histories: dict[str, tuple[PastRun, ...]],
         _dl = delta_line(r, race, hist)
         if _dl:
             lines.append(f"        {_dl}")
+        _sp = extra.get(r.horse_id, {}).get("lines", [])
+        if _sp:
+            lines.append("        SIGNPOSTS: " + " | ".join(_sp))
         _mh = same_code_runs(hist, race.code)[:4]
         mv = nap_verdict([h.comment for h in _mh],
                          positions=[h.position for h in _mh])
