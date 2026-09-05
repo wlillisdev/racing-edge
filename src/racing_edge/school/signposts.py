@@ -129,10 +129,26 @@ def _strip_sponsor(name: str) -> str:
     return " ".join(w for w in words if w not in drop)
 
 
+PAST_YEARS = 8                # the Racing Post's Past Winners table runs to ten
+
+
 def last_year_window(day) -> tuple[str, str]:
     d = day - timedelta(days=365)
     return ((d - timedelta(days=LAST_YEAR_WINDOW)).isoformat(),
             (d + timedelta(days=LAST_YEAR_WINDOW)).isoformat())
+
+
+def past_windows(day, years: int = PAST_YEARS) -> list[tuple[str, str]]:
+    """One ±7-day window per year back — ONE results call per year for the
+    whole card (the master, 2026-08-31, law #29: 'past winners will show you
+    the shape of horse that wins this previously'; 2026-09-05, twice, after
+    two losses: 'past winners give key clues to find a potential winner')."""
+    out = []
+    for y in range(1, years + 1):
+        d = day - timedelta(days=365 * y + (y // 4))      # leap days, roughly
+        out.append(((d - timedelta(days=LAST_YEAR_WINDOW)).isoformat(),
+                    (d + timedelta(days=LAST_YEAR_WINDOW)).isoformat()))
+    return out
 
 
 def same_race_last_year(raw_results: dict, race) -> dict | None:
@@ -162,6 +178,7 @@ def same_race_last_year(raw_results: dict, race) -> dict | None:
         return None
     runners = {}
     win = None
+    lbs = []
     for x in best.get("runners") or []:
         try:
             pos = int(x.get("position"))
@@ -169,11 +186,92 @@ def same_race_last_year(raw_results: dict, race) -> dict | None:
             pos = None
         runners[str(x.get("horse_id"))] = (pos, len(best.get("runners") or []),
                                            x.get("sp_dec"), x.get("or"))
+        try:
+            lbs.append(int(x.get("weight_lbs") or 0))
+        except (TypeError, ValueError):
+            pass
         if pos == 1:
             win = x
+    w = win or {}
+    try:
+        w_lbs = int(w.get("weight_lbs") or 0) or None
+    except (TypeError, ValueError):
+        w_lbs = None
     return {"date": best.get("date"), "name": best.get("race_name"),
-            "winner": (win or {}).get("horse", "?"), "winner_sp": (win or {}).get("sp_dec"),
-            "winner_or": (win or {}).get("or"), "runners": runners}
+            "winner": w.get("horse", "?"), "winner_sp": w.get("sp_dec"),
+            "winner_or": w.get("or"), "runners": runners,
+            "winner_wt": w.get("weight") or "", "winner_lbs": w_lbs,
+            "top_weight_won": bool(w_lbs and lbs and w_lbs >= max(lbs)),
+            "winner_fav": bool(str(w.get("sp") or "").upper().endswith("F")
+                               or str(w.get("sp") or "").upper().endswith("J")),
+            "winner_trainer": w.get("trainer") or "", "winner_jockey": w.get("jockey") or "",
+            "winner_draw": w.get("draw") or "", "field": len(runners)}
+
+
+def past_winners_roll(raw_by_year, race) -> list[dict]:
+    """The same race in each past year's window, newest first — the Racing
+    Post's PAST WINNERS table, from the results door."""
+    roll = []
+    for raw in raw_by_year or []:
+        m = same_race_last_year(raw, race)
+        if m:
+            roll.append(m)
+    roll.sort(key=lambda m: str(m.get("date") or ""), reverse=True)
+    return roll
+
+
+def _fmt_sp(sp_dec) -> str:
+    try:
+        return f"{float(sp_dec):.2f}"
+    except (TypeError, ValueError):
+        return "?"
+
+
+def race_dna(roll: list[dict]) -> list[str]:
+    """Law #29 in lines: the roll, then the shape written down — the weight
+    band the winners carried, how often the top weight won, how often the
+    favourite, which yards keep winning it. Facts, no verdict."""
+    if not roll:
+        return []
+    lines = [f"THIS RACE, PAST WINNERS ({len(roll)} runnings): " + " · ".join(
+        f"{str(m['date'])[:4]} {m['winner']} {m['winner_wt'] or '?'} SP {_fmt_sp(m['winner_sp'])}"
+        f"{' (fav)' if m['winner_fav'] else ''} off {m['winner_or'] or '?'}"
+        f" ({m['winner_trainer'] or '?'}/{m['winner_jockey'] or '?'}"
+        f"{', dr ' + str(m['winner_draw']) if m['winner_draw'] else ''})"
+        for m in roll)]
+    lbs = [m["winner_lbs"] for m in roll if m.get("winner_lbs")]
+    parts = []
+    if lbs:
+        lo, hi = min(lbs), max(lbs)
+        parts.append(f"winners carried {lo // 14}-{lo % 14} to {hi // 14}-{hi % 14}")
+        parts.append(f"top weight won {sum(1 for m in roll if m['top_weight_won'])}/{len(roll)}")
+    parts.append(f"favourite won {sum(1 for m in roll if m['winner_fav'])}/{len(roll)}")
+    yards: dict[str, int] = defaultdict(int)
+    for m in roll:
+        if m["winner_trainer"]:
+            yards[m["winner_trainer"]] += 1
+    rep = [f"{t} {n}" for t, n in sorted(yards.items(), key=lambda kv: -kv[1]) if n >= 2]
+    if rep:
+        parts.append("yards that keep winning it: " + ", ".join(rep))
+    lines.append("THE RACE'S DNA (#29): " + " · ".join(parts))
+    return lines
+
+
+def dna_fit_line(roll: list[dict], runner) -> tuple[str, str] | None:
+    """Does today's runner fit the winners' weight band? (the master, law #29:
+    'whether today's candidates fit it') — the line either way when the roll
+    holds three runnings or more and the runner's weight is known."""
+    lbs = [m["winner_lbs"] for m in roll if m.get("winner_lbs")]
+    w = getattr(runner, "weight_lbs", None)
+    if len(lbs) < 3 or not w:
+        return None
+    lo, hi = min(lbs), max(lbs)
+    if lo <= w <= hi:
+        return f"carries {w // 14}-{w % 14}: inside the winners' band ({len(lbs)} runnings)", "fits DNA weight"
+    side = "above" if w > hi else "below"
+    return (f"carries {w // 14}-{w % 14}: {side} every winner of this race in "
+            f"{len(lbs)} runnings ({lo // 14}-{lo % 14} to {hi // 14}-{hi % 14})",
+            f"{side} DNA weight")
 
 
 # --------------------------------------------------------------------------- #
@@ -209,10 +307,13 @@ def build(day, races, evidence_by_race: dict, corpus_races=None,
     (or None). Never raises on a missing source — the dot is simply absent."""
     out: dict[str, dict] = {}
     tables, cold = yard_tables(corpus_races) if corpus_races else ({}, {})
+    raw_years = ([last_year_raw] if isinstance(last_year_raw, dict)
+                 else list(last_year_raw or []))
     for race in races:
         ev_by = {e.runner.horse_id: e for e in (evidence_by_race or {}).get(race.race_id, [])}
         clear = rating_clear(race)
-        last = same_race_last_year(last_year_raw, race) if last_year_raw else None
+        roll = past_winners_roll(raw_years, race) if raw_years else []
+        last = roll[0] if roll else None
         code = getattr(race, "code_letter", None) or _code_of(race)
         for r in race.runners:
             lines, keys = [], []
@@ -233,13 +334,17 @@ def build(day, races, evidence_by_race: dict, corpus_races=None,
                 cy = cold_yard_line(cold, r.trainer_id, day)
                 if cy:
                     lines.append(cy[0]); keys.append(cy[1])
-            if last:
-                mine = last["runners"].get(r.horse_id)
+            for m in roll:
+                mine = m["runners"].get(r.horse_id)
                 if mine:
                     pos, n, sp, or_ = mine
-                    lines.append(f"ran in this race last year ({last['date']}): "
+                    lines.append(f"ran in this race ({m['date']}): "
                                  f"{pos or 'unplaced'} of {n} at SP {sp or '?'} off {or_ or '?'}")
-                    keys.append("ran here last year" + (" — placed" if pos and pos <= 3 else ""))
+                    keys.append("ran here before" + (" — placed" if pos and pos <= 3 else ""))
+            if roll:
+                fit = dna_fit_line(roll, r)
+                if fit:
+                    lines.append(fit[0]); keys.append(fit[1])
             if ev is not None:
                 fs = fresh_start_line(ev.history, day)
                 if fs:
@@ -247,9 +352,7 @@ def build(day, races, evidence_by_race: dict, corpus_races=None,
             if lines:
                 out[r.horse_id] = {"lines": lines, "keys": keys}
         if last:
-            out.setdefault(f"race:{race.race_id}", {"lines": [
-                f"THIS RACE LAST YEAR ({last['date']}): won by {last['winner']} at SP "
-                f"{last['winner_sp'] or '?'} off {last['winner_or'] or '?'}"], "keys": []})
+            out.setdefault(f"race:{race.race_id}", {"lines": race_dna(roll), "keys": []})
     return out
 
 

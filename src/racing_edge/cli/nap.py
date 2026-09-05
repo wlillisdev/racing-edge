@@ -759,11 +759,16 @@ def main() -> int:
             _corpus = _load_corpus(_P("data/school/raw"))
         except Exception:
             _corpus = None
-        try:
-            _ly = client.results_range(*_spmod.last_year_window(_day))
-        except Exception as _e:
-            print(f"  ⚠ last year's results not read: {_e.__class__.__name__}", flush=True)
-            _ly = None
+        # law #29 (the master, 2026-08-31; again 2026-09-05 after two losses:
+        # "past winners give key clues to find a potential winner"): one
+        # results window per year back, the whole card matched against each
+        _ly = []
+        for _w in _spmod.past_windows(_day):
+            try:
+                _ly.append(client.results_range(*_w))
+            except Exception as _e:
+                print(f"  ⚠ past winners {_w[0][:4]} not read: {_e.__class__.__name__}",
+                      flush=True)
         _signposts = _spmod.build(_day, _races,
                                   getattr(evaluate_field, "last_evidence", {}),
                                   corpus_races=_corpus, last_year_raw=_ly)

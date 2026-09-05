@@ -82,9 +82,13 @@ def _last_year_raw():
     return {"results": [
         {"date": "2025-09-06", "course": "Thirsk", "dist_f": "6f", "class": "Class 4",
          "race_name": "Acme Sponsor Handicap (Div 1)",
-         "runners": [{"horse_id": "X", "horse": "Xray", "position": "1", "sp_dec": "5.0", "or": "80"},
-                     {"horse_id": "A", "horse": "Alpha", "position": "3", "sp_dec": "9.0", "or": "77"},
-                     {"horse_id": "Y", "horse": "Yank", "position": "PU", "sp_dec": "21.0", "or": "70"}]},
+         "runners": [{"horse_id": "X", "horse": "Xray", "position": "1", "sp_dec": "5.0", "sp": "4/1",
+                      "or": "80", "weight": "9-2", "weight_lbs": "128", "trainer": "A Balding",
+                      "jockey": "D Probert", "draw": "4"},
+                     {"horse_id": "A", "horse": "Alpha", "position": "3", "sp_dec": "9.0", "or": "77",
+                      "weight": "9-9", "weight_lbs": "135"},
+                     {"horse_id": "Y", "horse": "Yank", "position": "PU", "sp_dec": "21.0", "or": "70",
+                      "weight": "8-11", "weight_lbs": "123"}]},
         {"date": "2025-09-06", "course": "Thirsk", "dist_f": "8f", "class": "Class 4",
          "race_name": "Acme Sponsor Handicap (Div 2)", "runners": []},
         {"date": "2025-09-06", "course": "Ripon", "dist_f": "6f", "class": "Class 4",
@@ -135,16 +139,59 @@ def test_build_gives_each_runner_its_dots_and_the_race_its_last_year_line():
     out = sp.build(DAY, [race], ev, corpus_races=_corpus(), last_year_raw=_last_year_raw())
     a = out["A"]
     assert a["keys"] == ["combo 33%+", "rating clear", "yard here/flat 25%+", "cold yard",
-                         "ran here last year — placed", "won fresh before"]
+                         "ran here before — placed", "won fresh before"]
     assert "rating clear in the handicap by 6lb (the Postmark)" in a["lines"]
-    assert "ran in this race last year (2025-09-06): 3 of 3 at SP 9.0 off 77" in a["lines"]
+    assert "ran in this race (2025-09-06): 3 of 3 at SP 9.0 off 77" in a["lines"]
     assert "B" not in out                                  # nothing to say: no entry
-    assert out["race:r"]["lines"] == [
-        "THIS RACE LAST YEAR (2025-09-06): won by Xray at SP 5.0 off 80"]
+    assert out["race:r"]["lines"][0].startswith(
+        "THIS RACE, PAST WINNERS (1 runnings): 2025 Xray 9-2 SP 5.00 off 80 (A Balding/D Probert, dr 4)")
+    assert "THE RACE'S DNA (#29): winners carried 9-2 to 9-2 · top weight won 0/1 · favourite won 0/1" \
+        in out["race:r"]["lines"][1]
     # every source missing: no dot, no crash
     assert sp.build(DAY, [race], {}, corpus_races=None, last_year_raw=None) == {
         "A": {"lines": ["rating clear in the handicap by 6lb (the Postmark)"],
               "keys": ["rating clear"]}}
+
+
+def test_the_past_winners_roll_writes_the_races_dna_and_whether_today_fits_it():
+    """The master, 2026-09-05, after Ascot 2:10 (Archers Bay 9-9 top weight,
+    3rd; nine runnings, not one winner above 9-6): 'i have said this before
+    but past winners give key clues to find a potential winner'. Law #29."""
+    def year(y, winner, lbs, sp, trainer, top_lbs):
+        return {"results": [{"date": f"{y}-09-06", "course": "Ascot", "dist_f": "12f",
+                             "class": "Class 2", "race_name": "Sponsor Handicap (Heritage Handicap)",
+                             "runners": [{"horse_id": f"W{y}", "horse": winner, "position": "1",
+                                          "sp_dec": "5.0", "sp": sp, "or": "90", "weight_lbs": str(lbs),
+                                          "weight": f"{lbs // 14}-{lbs % 14}", "trainer": trainer,
+                                          "jockey": "J", "draw": "3"},
+                                         {"horse_id": f"T{y}", "horse": "Top", "position": "5",
+                                          "sp_dec": "8.0", "or": "99", "weight_lbs": str(top_lbs)}]}]}
+    raws = [year(2025, "Tenability", 124, "85/40", "W Haggas", 135),
+            year(2024, "The Reverend", 124, "4/1", "W Haggas", 135),
+            year(2023, "Alsakib", 120, "5/1", "A Balding", 135),
+            year(2022, "La Yakel", 117, "100/30F", "W Haggas", 133)]
+    assert len(sp.past_windows(date(2026, 9, 5), 3)) == 3
+    assert sp.past_windows(date(2026, 9, 5), 1) == [sp.last_year_window(date(2026, 9, 5))]
+    race = Race(race_id="r", course="Ascot", off_time="2:10", date=DAY, race_type="Flat",
+                is_handicap=True, race_class=2, distance_f=12.0,
+                race_name="Other Sponsor Handicap (Heritage Handicap)",
+                runners=(Runner(horse_id="A", horse="Archers Bay", weight_lbs=135),
+                         Runner(horse_id="B", horse="Turty Tree", weight_lbs=126)))
+    roll = sp.past_winners_roll(raws, race)
+    assert [m["winner"] for m in roll] == ["Tenability", "The Reverend", "Alsakib", "La Yakel"]
+    assert roll[0]["top_weight_won"] is False and roll[3]["winner_fav"] is True
+    dna = sp.race_dna(roll)
+    assert dna[0].startswith("THIS RACE, PAST WINNERS (4 runnings): 2025 Tenability 8-12 SP 5.00 off 90 (W Haggas/J, dr 3)")
+    assert dna[1] == ("THE RACE'S DNA (#29): winners carried 8-5 to 8-12 · top weight won 0/4 · "
+                      "favourite won 1/4 · yards that keep winning it: W Haggas 3")
+    out = sp.build(DAY, [race], {}, last_year_raw=raws)
+    assert out["A"] == {"lines": ["carries 9-9: above every winner of this race in 4 runnings (8-5 to 8-12)"],
+                        "keys": ["above DNA weight"]}
+    assert out["B"]["keys"] == ["above DNA weight"]      # 9-0 is above 8-12 too — the line, no verdict
+    assert out["race:r"]["lines"] == dna
+    # a single dict still works (the one-year form of the morning)
+    assert sp.build(DAY, [race], {}, last_year_raw=raws[0])["race:r"]["lines"][0].startswith(
+        "THIS RACE, PAST WINNERS (1 runnings)")
 
 
 def test_the_yardstick_carries_the_signposts_column_and_grades_it():
