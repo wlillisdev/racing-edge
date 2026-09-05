@@ -295,7 +295,7 @@ def test_the_yardstick_carries_the_signposts_column_and_grades_it():
                 conviction=Conviction(aligned=(), flags=(), mark_known=True))
     rows = ys.rows_from_field(DAY, [p], {"A": {"lines": ["x", "y"],
                                               "keys": ["combo 33%+", "cold yard", "combo 33%+"]}})
-    assert ys.FIELDS[-1] == "signposts"
+    assert "signposts" in ys.FIELDS
     assert rows[0]["signposts"] == "combo 33%+|cold yard"
     assert ys.rows_from_field(DAY, [p])[0]["signposts"] == ""
     board = ys.scoreboard([{**ys._typed({**rows[0], "won": "1", "sp_dec": "3.0"})}])

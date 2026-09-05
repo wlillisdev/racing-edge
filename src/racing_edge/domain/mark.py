@@ -13,6 +13,10 @@ from dataclasses import dataclass
 
 from racing_edge.domain.models import PastRun
 
+STALE_RUNS = 10   # a win this many same-code runs back is STALE — the one window the
+                  # record has receipted; the class line (conviction.best_form_line)
+                  # reads inside the same window, never a threshold of its own
+
 
 @dataclass(frozen=True)
 class MarkRead:
@@ -39,7 +43,7 @@ class MarkRead:
         """The anchor is from a dead era (2026-07-25, the Woodstock audit): a horse
         that hasn't won in 10+ runs reads 'well-in' against its ancient winning mark
         precisely BECAUSE it kept losing — the opposite of the handicapper missing it."""
-        return self.since is not None and self.since >= 10
+        return self.since is not None and self.since >= STALE_RUNS
 
     @property
     def verdict(self) -> str:

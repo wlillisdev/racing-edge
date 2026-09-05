@@ -892,6 +892,7 @@ def main() -> int:
         # a caution warns but no longer erases (2026-08-22) — the case must answer it
         warn = f"  ⚠ must answer: {'; '.join(c.cautions)}" if c.cautions else ""
         emit(f"    • {p.runner.horse:22} {p.race.course} {p.race.off_time}  "
+             f"line: {getattr(c, 'best_class_line', '') or 'none in the last 10'} | "
              f"conv {c.score}{mark}: {', '.join(c.aligned) or 'thin'}{warn}")
     emit("")
 
@@ -933,6 +934,25 @@ def main() -> int:
     # race and THE horse — or earns a pass race by race. Fallback: the engine's
     # strongest survivor, honestly labelled as the shallow pick.
     nap = survivors[0] if survivors else field[0]
+    # THE INVERSION'S LIVE CHECK (the master, 2026-09-05: "yes do inversion —
+    # we need to learn and improve, we keep getting it wrong"): class is the
+    # first term of the key from today. Every morning the log prints the
+    # class-first pick beside the pick the OLD key would have made, so the
+    # record grades the inversion day by day (REVERT-IF in pipeline/nap.py).
+    try:
+        from racing_edge.pipeline.nap import _rank_key_legacy as _rkl
+        _old = max(survivors, key=_rkl) if survivors else None
+        _cl = getattr(nap.conviction, "best_class_line", "") or "none in the last 10"
+        if _old is None or _old is nap:
+            emit(f"  INVERSION — class first: {nap.runner.horse} ({nap.race.course} "
+                 f"{nap.race.off_time}), best line {_cl}; the old key agrees")
+        else:
+            emit(f"  INVERSION — class first: {nap.runner.horse} ({nap.race.course} "
+                 f"{nap.race.off_time}), best line {_cl}; THE OLD KEY WOULD HAVE PICKED "
+                 f"{_old.runner.horse} ({_old.race.course} {_old.race.off_time}), best line "
+                 f"{getattr(_old.conviction, 'best_class_line', '') or 'none in the last 10'}")
+    except Exception as _e:
+        emit(f"  ⚠ inversion line not printed: {_e.__class__.__name__}")
     # THE CORNERED-DAY KLAXON (2026-08-27, the master: 'we need to fix this,
     # selection was bizarre' — Lady Kara, last at 5/2, picked only because the
     # gates had erased every flat race and left nothing but jumps dreck; same
@@ -1042,7 +1062,9 @@ def main() -> int:
                      "must ANSWER each caution and flag it argues past:"]
             for _p in sorted(picks, key=lambda x: (x.price or 999.0)):
                 _c = _p.conviction
-                _yard.append(f"    {_p.runner.horse} @{_p.price or '?'}: conv {_c.score}"
+                _yard.append(f"    {_p.runner.horse} @{_p.price or '?'}: "
+                             f"best line {getattr(_c, 'best_class_line', '') or 'none in the last 10'}"
+                             f" | conv {_c.score}"
                              + (f" — for: {', '.join(_c.aligned)}" if _c.aligned else "")
                              + (f" | cautions: {'; '.join(_c.cautions)}" if _c.cautions else "")
                              + (f" | FLAGS: {'; '.join(_c.flags)}" if _c.flags else "")

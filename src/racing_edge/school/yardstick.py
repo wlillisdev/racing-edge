@@ -42,7 +42,29 @@ FIELDS = [
     "mkt_rank", "price", "score", "confident", "mark_known", "aligned",
     "flags", "cautions", "pos", "sp_dec", "won",
     "signposts",      # the master's old AI (2026-09-05) — dots, graded like a lens
+    "best_class",     # the inversion (2026-09-05): the best form line's rung, bucketed, graded like a lens
+    "class_level",    # ... and the rung itself (1 = Group 1 ... 11 = Cl7, 99 = no line)
 ]
+
+
+def class_bucket(level) -> str:
+    """The rung as a lens key: 'line G1-G3' / 'line Listed' / 'line Cl1-2' /
+    'line Cl3-4' / 'line Cl5-7' / 'no line'."""
+    try:
+        lv = int(level)
+    except (TypeError, ValueError):
+        return "no line"
+    if lv <= 3:
+        return "line G1-G3"
+    if lv == 4:
+        return "line Listed"
+    if lv <= 6:
+        return "line Cl1-2"
+    if lv <= 8:
+        return "line Cl3-4"
+    if lv <= 11:
+        return "line Cl5-7"
+    return "no line"
 
 # --------------------------------------------------------------------------- #
 # lens_key — one stable key per aligned/flag/caution tag, figures stripped so
@@ -129,6 +151,8 @@ def rows_from_field(day, field, signposts: dict | None = None) -> list[dict]:
                 "won": "",
                 "signposts": "|".join(dict.fromkeys(
                     k for k in sp.get(p.runner.horse_id, {}).get("keys", []) if k)),
+                "best_class": class_bucket(getattr(c, "best_class_level", 99)),
+                "class_level": getattr(c, "best_class_level", 99),
             })
     return rows
 
@@ -232,6 +256,7 @@ def _typed(row: dict) -> dict:
     r["confident"] = _int(row.get("confident")) or 0
     r["mark_known"] = _int(row.get("mark_known")) or 0
     r["sp_dec"] = _float(row.get("sp_dec"))
+    r["class_level"] = _int(row.get("class_level"))
     won_raw = row.get("won")
     r["won"] = _int(won_raw) if won_raw not in (None, "") else None
     pos_raw = row.get("pos") or ""
@@ -413,6 +438,12 @@ def scoreboard(rows: list[dict]) -> str:
         "exactly like a lens. Belief comes from the month test, never from one "
         "lift number.",
         "signposts")
+    L += _section(
+        "THE CLASS LINE — the inversion (the master, 2026-09-05: 'yes do inversion')",
+        "each runner's best proven line (highest rung won or placed at in the "
+        "last ten same-code runs), graded against the market like a lens. The "
+        "first term of the rank key since 2026-09-05; this table is its judge.",
+        "best_class")
 
     bands = _race_bands(rows)
     L += ["", "## RACE QUALITY — below the bar (<2) vs a betting race (>=2)",
