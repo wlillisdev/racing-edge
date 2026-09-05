@@ -186,6 +186,26 @@ def test_the_yardstick_splits_its_race_table_by_type():
     assert "pattern" in ys.FIELDS
 
 
+def test_the_yardsticks_our_pick_mirrors_the_inverted_key():
+    """The judge must score the key that runs: a Cl2-placed horse with one
+    family is 'our pick' over a Cl5 winner with four."""
+    from racing_edge.school import yardstick as ys
+    base = {"date": "2026-09-05", "version": "v2", "course": "T", "off_time": "3:15", "code": "F",
+            "race_class": 3, "is_handicap": 1, "field_size": 6, "race_quality": 3, "horse": "h",
+            "confident": 0, "mark_known": 1, "aligned": "", "flags": "", "cautions": "",
+            "pos": "", "sp_dec": "", "signposts": "", "best_class": "", "pattern": "", "race_id": "r"}
+    rows = [ys._typed({**base, "horse_id": "OOLONG", "mkt_rank": 1, "price": 2.25, "won": "1",
+                       "score": 1, "class_level": 6}),
+            ys._typed({**base, "horse_id": "PROPOSAL", "mkt_rank": 2, "price": 3.0, "won": "0",
+                       "score": 4, "class_level": 9})]
+    bands = ys._race_bands(rows)
+    assert bands["betting"]["pick_n"] == 1 and bands["betting"]["pick_win"] == 1
+    # rows banked before the inversion carry no level: the families still decide
+    old = [ys._typed({**base, "horse_id": "A", "mkt_rank": 1, "price": 2.0, "won": "0", "score": 4}),
+           ys._typed({**base, "horse_id": "B", "mkt_rank": 2, "price": 3.0, "won": "1", "score": 1})]
+    assert ys._race_bands(old)["betting"]["pick_win"] == 0
+
+
 def test_the_yardstick_banks_the_class_line_and_grades_it():
     from datetime import date as _d
     from racing_edge.domain.models import Odds, Race, Runner
