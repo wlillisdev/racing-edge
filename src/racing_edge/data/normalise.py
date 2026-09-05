@@ -247,5 +247,6 @@ def past_runs_from_raw(rows: list[dict], horse_id: str = "") -> tuple[PastRun, .
             # the old normaliser dropped it. Empty stays empty (OWED), never invented.
             comment=_str(me.get("comment") or me.get("in_running_comment")
                          or r.get("comment")),
+            race_name=_str(r.get("race_name")),
         ))
     return tuple(out)

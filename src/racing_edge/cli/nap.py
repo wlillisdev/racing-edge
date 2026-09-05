@@ -759,11 +759,16 @@ def main() -> int:
             _corpus = _load_corpus(_P("data/school/raw"))
         except Exception:
             _corpus = None
-        try:
-            _ly = client.results_range(*_spmod.last_year_window(_day))
-        except Exception as _e:
-            print(f"  ⚠ last year's results not read: {_e.__class__.__name__}", flush=True)
-            _ly = None
+        # law #29 (the master, 2026-08-31; again 2026-09-05 after two losses:
+        # "past winners give key clues to find a potential winner"): one
+        # results window per year back, the whole card matched against each
+        _ly = []
+        for _w in _spmod.past_windows(_day):
+            try:
+                _ly.append(client.results_range(*_w))
+            except Exception as _e:
+                print(f"  ⚠ past winners {_w[0][:4]} not read: {_e.__class__.__name__}",
+                      flush=True)
         _signposts = _spmod.build(_day, _races,
                                   getattr(evaluate_field, "last_evidence", {}),
                                   corpus_races=_corpus, last_year_raw=_ly)
@@ -1042,6 +1047,18 @@ def main() -> int:
                              + (f" | cautions: {'; '.join(_c.cautions)}" if _c.cautions else "")
                              + (f" | FLAGS: {'; '.join(_c.flags)}" if _c.flags else "")
                              + ("" if _c.mark_known else " | mark OWED"))
+            # THE PAST WINNERS THROUGH THE HORSES (the master, 2026-09-05: "find
+            # a workaround... not just the easy way"): for the races the reader
+            # sees, the roll is extended by id beyond the date door's 12 months.
+            try:
+                from racing_edge.school import signposts as _spmod2
+                _roll = _spmod2.deepen(client, r0, hists, _signposts, resolve_date(args.day))
+                if _roll:
+                    print(f"  past winners {label}: {len(_roll)} runnings "
+                          f"({_roll[-1]['date']} to {_roll[0]['date']})", flush=True)
+            except Exception as _e:
+                print(f"  ⚠ past winners {label} not deepened: {_e.__class__.__name__}",
+                      flush=True)
             candidates.append((label, warn + "\n".join(_yard) + "\n"
                                + render_preread(r0, hists, extra=_signposts)))
         # max_steps=6 (2026-07-25 audit: rules 4+8 demand ~2 lookups per candidate
