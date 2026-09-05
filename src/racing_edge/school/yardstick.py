@@ -45,6 +45,7 @@ FIELDS = [
     "best_class",     # the inversion (2026-09-05): the best form line's rung, bucketed, graded like a lens
     "class_level",    # ... and the rung itself (1 = Group 1 ... 11 = Cl7, 99 = no line)
     "pattern",        # the race's own rung (Group 1/2/3, Listed) — the RACE TYPE table splits on it
+    "distance_f",     # the trip — the why ledger's memory recalls by trip (±2f) and was reading a blank
 ]
 
 
@@ -155,6 +156,7 @@ def rows_from_field(day, field, signposts: dict | None = None) -> list[dict]:
                 "best_class": class_bucket(getattr(c, "best_class_level", 99)),
                 "class_level": getattr(c, "best_class_level", 99),
                 "pattern": getattr(race, "pattern", "") or "",
+                "distance_f": race.distance_f if race.distance_f is not None else "",
             })
     return rows
 
@@ -259,6 +261,7 @@ def _typed(row: dict) -> dict:
     r["mark_known"] = _int(row.get("mark_known")) or 0
     r["sp_dec"] = _float(row.get("sp_dec"))
     r["class_level"] = _int(row.get("class_level"))
+    r["distance_f"] = _float(row.get("distance_f"))
     won_raw = row.get("won")
     r["won"] = _int(won_raw) if won_raw not in (None, "") else None
     pos_raw = row.get("pos") or ""
