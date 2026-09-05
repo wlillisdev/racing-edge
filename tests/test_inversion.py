@@ -141,6 +141,51 @@ def test_stubs_without_the_line_still_rank_by_the_jigsaw():
     assert _rank_key(old(4)) > _rank_key(old(2))
 
 
+def test_the_race_picker_scores_the_class_the_race_holds():
+    """The master, 2026-09-05: the fingerprint scored every ITV race 0-1 and
+    sent the nap to a fillies' handicap; 'well maybe the engine is wrong?...
+    I believe in what you say'. A Group/Listed race scores the class point
+    twice; Class 1-2 scores it once, the same as Class 3-4; nothing else moves."""
+    from racing_edge.pipeline.nap import race_quality_score as rq
+    base = dict(is_handicap=False, concentration=0.5, race_type="Flat", field_size=8,
+                n_race_flags=0)
+    # the Sprint Cup: Group 1, not a handicap, open market — at the bar now, 0 before
+    assert rq(**base, race_class=1, pattern="Group 1") == 2
+    assert rq(**base, race_class=1) == 1                      # a non-pattern Class 1
+    assert rq(**base, race_class=2) == rq(**base, race_class=3) == 1
+    assert rq(**base, race_class=6) == 0
+    # Kempton 2:50: Group 3, concentrated, all-weather → 2 + 1 - 1 = 2 (was 0)
+    assert rq(**{**base, "concentration": 0.93}, race_class=1, pattern="Group 3", is_aw=True) == 2
+    # Ascot 2:10: a Class 2 heritage handicap → handicap + class = 2 (was 1)
+    assert rq(**{**base, "is_handicap": True}, race_class=2) == 2
+    # the fingerprint race is unchanged: Thirsk 3:15 → 3
+    assert rq(**{**base, "is_handicap": True, "concentration": 0.79}, race_class=3) == 3
+    # the pattern point never stacks with the class point
+    assert rq(**base, race_class=1, pattern="Listed") == 2
+
+
+def test_the_yardstick_splits_its_race_table_by_type():
+    from racing_edge.school import yardstick as ys
+    assert ys.race_type_band({"pattern": "Group 3", "race_class": 1, "is_handicap": 0}) == "pattern"
+    assert ys.race_type_band({"pattern": "", "race_class": 2, "is_handicap": 1}) == "heritage"
+    assert ys.race_type_band({"pattern": "", "race_class": 3, "is_handicap": 1}) == "fingerprint"
+    assert ys.race_type_band({"pattern": "", "race_class": 3, "is_handicap": 0}) == "other"
+    assert ys.race_type_band({"pattern": "", "race_class": "", "is_handicap": 1}) == "other"
+    base = {"date": "2026-09-05", "version": "v2", "course": "K", "off_time": "2:50", "code": "F",
+            "race_class": 1, "is_handicap": 0, "field_size": 5, "race_quality": 2, "horse": "h",
+            "score": 1, "confident": 0, "mark_known": 1, "aligned": "", "flags": "", "cautions": "",
+            "pos": "", "sp_dec": "", "signposts": "", "best_class": "", "class_level": 99}
+    rows = [ys._typed({**base, "race_id": "r", "horse_id": "A", "mkt_rank": 1, "price": 1.73,
+                       "won": "0", "pattern": "Group 3"}),
+            ys._typed({**base, "race_id": "r", "horse_id": "B", "mkt_rank": 3, "price": 6.5,
+                       "won": "1", "score": 2, "pattern": "Group 3"})]
+    board = ys.scoreboard(rows)
+    assert "## RACE TYPE" in board
+    assert "| pattern | 1 | 0/1 (0.0%) | 1/1 (100.0%) | 1/1 (100.0%) |" in board
+    assert "| fingerprint | 0 |" in board
+    assert "pattern" in ys.FIELDS
+
+
 def test_the_yardstick_banks_the_class_line_and_grades_it():
     from datetime import date as _d
     from racing_edge.domain.models import Odds, Race, Runner
