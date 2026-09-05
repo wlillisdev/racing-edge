@@ -612,4 +612,20 @@ from where the jolly wins. REVERT-IF: 15 settled picks from pattern/heritage
 races read worse than the fingerprint's. Tomorrow's 07:30 is the first
 morning of BOTH inversions — read the INVERSION line and which race the nap
 came from before anything else.
+THE SHADOW (05 Sep, late — his word: "we have 50 races a day... do all the
+testing on the shadow"; "they are fair points that should be rectified, it is
+a slow process"; "we don't really need to do the nap so early?"; "yes" to the
+receipts register + its test). THE PLAN IS docs/PLAN_SHADOW_2026-09-05.md —
+the day-by-day order for the next week, one cut a day, each PR waiting for
+its green check on GitHub (he is asked to lock main to the "test" check).
+Sun 06: the receipts register + test; the shadow ladder (cut A the guard,
+cut B the grader) — docs/plans/shadow_ladder.md. Mon 07: the nap at 12:30
+(07:30 shortlist, the board's direction makes the bet). Tue-Wed: the backward
+replay (docs/plans/backward_replay.md) — sittings then 7 days overnight; the
+head-to-head to his doorbell. Thu: the reader ladder + the four-line block
+(docs/plans/reader_loop.md). Fri: danger_beatable wired, no teeth. Still for
+his ruling: which teeth; the improver flag; pattern races on the bar; the
+corpus columns + 12-month backfill. The ten problems: docs/AGE_OLD_PROBLEMS.
+Next session's first act, unchanged: the 07:30 mail (INVERSION line, which
+race the nap came from), then the 09:30 page, then Sunday's cuts.
 
