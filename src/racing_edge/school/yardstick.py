@@ -371,7 +371,11 @@ def _bands_by(rows: list[dict], names: tuple[str, ...], keyfn) -> dict[str, dict
             b["fav_n"] += 1
             b["fav_win"] += fav["won"]
         b["top3_hit"] += 1 if winner["mkt_rank"] <= 3 else 0
-        pick = max(settled, key=lambda r: (r["score"], -r["mkt_rank"]))
+        # "our pick" mirrors the RANK KEY as it stands (the inversion,
+        # 2026-09-05): the best class line first, then the families, then
+        # the shorter price — a judge that scores the old key grades nothing
+        pick = max(settled, key=lambda r: (-(r.get("class_level") or 99),
+                                           r["score"], -r["mkt_rank"]))
         b["pick_n"] += 1
         b["pick_win"] += pick["won"]
     return bands
