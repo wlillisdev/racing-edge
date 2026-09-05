@@ -45,6 +45,7 @@ class PastRun:
     field_size: int | None = None    # how competitive the race was — quality of a win
     race_id: str = ""                # to fetch that race's field and FRANK the form
     comment: str = ""               # the in-running comment — HOW it ran (the OWED door)
+    race_name: str = ""             # the race's title — the index into its earlier runnings (#29)
 
     @property
     def won(self) -> bool:
