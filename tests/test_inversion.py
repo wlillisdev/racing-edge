@@ -206,6 +206,31 @@ def test_the_yardsticks_our_pick_mirrors_the_inverted_key():
     assert ys._race_bands(old)["betting"]["pick_win"] == 0
 
 
+def test_the_memory_gets_the_trip_and_the_reader_gets_the_class_line():
+    """Two wiring gaps found by pushing a synthetic day end to end (05 Sep,
+    'have we 100% got the plumbing and wiring and learning dialled in'):
+    the why ledger recalls memory by trip (±2f) off yardstick rows that
+    never carried distance_f, so the trip never matched; and the reader's
+    page never printed the class line the key now ranks on."""
+    from datetime import date as _d
+    from racing_edge.domain.models import Odds, Race, Runner
+    from racing_edge.pipeline.nap import NapPick
+    from racing_edge.report.restudy import render_preread
+    from racing_edge.school import yardstick as ys
+    rA = Runner(horse_id="A", horse="Alpha", odds=Odds(consensus=3.0))
+    race = Race(race_id="r1", course="Thirsk", off_time="3:15", date=_d(2026, 9, 5),
+                race_type="Flat", is_handicap=True, race_class=3, distance_f=7.0, runners=(rA,))
+    row = ys.rows_from_field(_d(2026, 9, 5), [NapPick(race=race, runner=rA, price=3.0,
+                             conviction=cv.Conviction(aligned=(), flags=(), mark_known=True),
+                             race_quality=2)])[0]
+    assert row["distance_f"] == 7.0 and "distance_f" in ys.FIELDS
+    assert ys._typed({**row, "distance_f": "7.0"})["distance_f"] == 7.0
+    hist = (PastRun(date=_d(2026, 8, 20), position=3, race_class=2, race_type="Flat"),)
+    page = render_preread(race, {"A": hist})
+    assert "class line (#3c): 3rd Cl2 (2026-08-20)" in page
+    assert "class line (#3c): none in the last 10 same-code runs" in render_preread(race, {"A": ()})
+
+
 def test_the_yardstick_banks_the_class_line_and_grades_it():
     from datetime import date as _d
     from racing_edge.domain.models import Odds, Race, Runner

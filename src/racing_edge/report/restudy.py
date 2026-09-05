@@ -138,6 +138,12 @@ def render_preread(race: Race, histories: dict[str, tuple[PastRun, ...]],
         drw = f" | draw {r.draw}" if r.draw is not None else ""
         lines.append(f"        mark: {marktxt}  | form {r.form or '?'} "
                      f"| OR {r.official_rating or '?'} RPR {r.rpr or '?'}{gear}{wt}{drw}")
+        # THE CLASS LINE (the inversion, 2026-09-05): the best proven line at the
+        # highest rung, on the reader's page — the first term of the key, so
+        # the case is written from it, not around it
+        from racing_edge.selection.conviction import best_form_line as _bfl
+        _lvl, _won, _cl = _bfl(same_code_runs(hist, race.code))
+        lines.append(f"        class line (#3c): {_cl or 'none in the last 10 same-code runs'}")
         _dl = delta_line(r, race, hist)
         if _dl:
             lines.append(f"        {_dl}")
