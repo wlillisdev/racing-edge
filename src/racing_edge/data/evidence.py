@@ -83,6 +83,21 @@ def trip_strike_from_analysis(rows: list[dict],
     return None, 0
 
 
+def combo_from_analysis(rows: list[dict], jockey_id: str) -> tuple[int, int]:
+    """(rides, wins) for ONE jockey in the yard's jockey table — the
+    Signposts 'jockey bookings' line ('Bament/Honeyball 5-8 63%'), from the
+    rows build_evidence already fetches. (0, 0) when the rider is absent."""
+    if not jockey_id:
+        return 0, 0
+    for r in rows or []:
+        if str(r.get("jockey_id") or "") != str(jockey_id):
+            continue
+        rides = int(_flt(r.get("rides") or r.get("runners")) or 0)
+        wins = int(_flt(r.get("1st") or r.get("wins") or r.get("win")) or 0)
+        return rides, wins
+    return 0, 0
+
+
 def stable_jockeys_from_analysis(rows: list[dict]) -> frozenset[str]:
     """The yard's number-one rider(s): the most-used jockey(s) clearing a real
     body of rides and a meaningful share of the yard's bookings."""
@@ -192,6 +207,7 @@ def build_evidence(race: Race, client: _Fetcher, as_of: date | None = None,
                     jrows = []                    # optional lens — OWED, not fatal
                 jcache[_jk] = course_strike_from_analysis(jrows, race.course)
             j_strike, j_rides = jcache[_jk]
+        combo_rides, combo_wins = 0, 0
         if backtest:
             jockeys, ae, ae_runs = frozenset[str](), None, 0   # no current-stats leak
             local_strike, local_runs = None, 0
@@ -203,8 +219,11 @@ def build_evidence(race: Race, client: _Fetcher, as_of: date | None = None,
                 ae, ae_runs = stable_ae_from_analysis(rows)
                 crows = client.trainer_course(tid) if hasattr(client, "trainer_course") else []
                 cache[_tk] = (stable_jockeys_from_analysis(rows), ae, ae_runs,
-                              course_strike_from_analysis(crows, race.course))
-            jockeys, ae, ae_runs, (local_strike, local_runs) = cache[_tk]
+                              course_strike_from_analysis(crows, race.course), rows)
+            jockeys, ae, ae_runs, (local_strike, local_runs), _rows = cache[_tk]
+            # THE COMBINATION (Signposts, the master 2026-09-05: "another dot"):
+            # this runner's own jockey in the yard's table — rides and wins
+            combo_rides, combo_wins = combo_from_analysis(_rows, r.jockey_id)
         evidence.append(RunnerEvidence(
             runner=r,
             history=history,
@@ -219,5 +238,7 @@ def build_evidence(race: Race, client: _Fetcher, as_of: date | None = None,
             trip_runs=trip_runs,
             jockey_course_strike=j_strike,
             jockey_course_rides=j_rides,
+            combo_rides=combo_rides,
+            combo_wins=combo_wins,
         ))
     return evidence

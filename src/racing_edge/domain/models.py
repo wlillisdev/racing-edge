@@ -70,6 +70,7 @@ class Runner:
     weight_lbs: int | None = None
     official_rating: int | None = None
     rpr: int | None = None
+    performance_rating: int | None = None   # the card's own rating (the Postmark reads it)
     form: str = ""
     days_since_run: int | None = None
     headgear: str = ""
@@ -105,6 +106,7 @@ class Race:
     going_detailed: str = ""
     region: str = ""
     runners: tuple[Runner, ...] = ()
+    race_name: str = ""              # the card's title — 'the same race last year' matches on it
 
     @property
     def code(self) -> str:
