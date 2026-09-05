@@ -43,7 +43,8 @@ def race_quality_score(*, is_handicap: bool, concentration: float,
                        race_class: int | None, race_type: str,
                        field_size: int, n_race_flags: int,
                        is_aw: bool = False, hollow: bool = False,
-                       shape_verdict: str | None = None) -> int:
+                       shape_verdict: str | None = None,
+                       pattern: str = "") -> int:
     """THE BETTING-RACE FINGERPRINT (the master, 2026-08-17: 'we need to give
     ourself the best chance of winning consistently... lets go'), every term
     receipted by the 1,978-race study of that date (RECEIPT, audit 2026-09-02:
@@ -75,7 +76,23 @@ def race_quality_score(*, is_handicap: bool, concentration: float,
     # coin-flip in a phone box, not a readable hierarchy. The concentration
     # bonus counts only when the field's QUALITY earned it.
     q += 1 if concentration > 0.75 and not hollow else 0
-    q += 1 if race_class in (3, 4) else 0
+    # THE CLASS THE RACE HOLDS (the inversion reaches the race — the master,
+    # 2026-09-05, after the fingerprint scored every ITV race 0-1 and sent
+    # the nap to a fillies' handicap nobody was watching: "we are not picking
+    # the right races... well maybe the engine is wrong?... I believe in what
+    # you say"). The fingerprint was a map of where the FAVOURITE wins, and
+    # it gave Class 1 exactly what it gave Class 6: nothing — against his law
+    # of 2026-08-22 ("class horse form is temp class is permanent": in a
+    # pattern race the best horse is allowed to be the best horse). Now a
+    # Group or Listed race scores the class point twice (it is never a
+    # handicap, so it earns nothing else); Class 1-2 scores it once, the same
+    # as Class 3-4. The handicap, concentration, field, AW and gate terms are
+    # untouched. REVERT-IF: 15 settled picks from pattern/heritage races
+    # read worse than the fingerprint's own (the yardstick RACE TYPE table).
+    if pattern:
+        q += 2
+    elif race_class in (1, 2, 3, 4):
+        q += 1
     q -= 1 if "hurdle" in (race_type or "").lower() else 0
     q -= 1 if not race_class else 0
     q -= 1 if field_size >= 12 else 0
@@ -397,7 +414,8 @@ def evaluate_field(client: _Client, day: str = "today",
                                 n_race_flags=len(race_flags),
                                 is_aw="(AW)" in (race.course or ""),
                                 hollow=_dead * 2 > len(race_picks),
-                                shape_verdict=(_glance or {}).get("verdict"))
+                                shape_verdict=(_glance or {}).get("verdict"),
+                                pattern=getattr(race, "pattern", "") or "")
         race_picks = [replace(p, race_quality=rq) for p in race_picks]
         out.extend(race_picks)
     if oddsless and progress:

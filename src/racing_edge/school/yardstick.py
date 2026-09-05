@@ -44,6 +44,7 @@ FIELDS = [
     "signposts",      # the master's old AI (2026-09-05) — dots, graded like a lens
     "best_class",     # the inversion (2026-09-05): the best form line's rung, bucketed, graded like a lens
     "class_level",    # ... and the rung itself (1 = Group 1 ... 11 = Cl7, 99 = no line)
+    "pattern",        # the race's own rung (Group 1/2/3, Listed) — the RACE TYPE table splits on it
 ]
 
 
@@ -153,6 +154,7 @@ def rows_from_field(day, field, signposts: dict | None = None) -> list[dict]:
                     k for k in sp.get(p.runner.horse_id, {}).get("keys", []) if k)),
                 "best_class": class_bucket(getattr(c, "best_class_level", 99)),
                 "class_level": getattr(c, "best_class_level", 99),
+                "pattern": getattr(race, "pattern", "") or "",
             })
     return rows
 
@@ -325,21 +327,43 @@ def _lens_table(rows: list[dict], field_name: str,
     return agg
 
 
-def _race_bands(rows: list[dict]) -> dict[str, dict]:
-    """Per race-quality band (<2 below the bar, >=2 a betting race): races
-    with a settled winner among these rows, favourite strike, whether the
-    winner sat in the market top-3, and our own top-score horse's strike."""
+def race_type_band(row: dict) -> str:
+    """'pattern' (Group/Listed) · 'heritage' (a Class 1-2 handicap) ·
+    'fingerprint' (a Class 3-4 handicap, the 2026-08-17 study's sweet spot)
+    · 'other'. The split the master asked for on 2026-09-05 ("we are not
+    picking the right races") — the numbers, by race type, judge the picker."""
+    if (row.get("pattern") or "").strip():
+        return "pattern"
+    cls = row.get("race_class")
+    try:
+        cls = int(cls) if cls not in (None, "") else None
+    except (TypeError, ValueError):
+        cls = None
+    hcap = bool(_int(row.get("is_handicap")))
+    if hcap and cls in (1, 2):
+        return "heritage"
+    if hcap and cls in (3, 4):
+        return "fingerprint"
+    return "other"
+
+
+def _bands_by(rows: list[dict], names: tuple[str, ...], keyfn) -> dict[str, dict]:
+    """Per band (keyfn(race rows) -> name): races with a settled winner among
+    these rows, favourite strike, whether the winner sat in the market top-3,
+    and our own top-score horse's strike."""
     by_race: dict[str, list[dict]] = defaultdict(list)
     for r in rows:
         by_race[r["race_id"]].append(r)
     bands = {b: {"n": 0, "fav_n": 0, "fav_win": 0, "top3_hit": 0,
-                "pick_n": 0, "pick_win": 0} for b in ("below", "betting")}
+                "pick_n": 0, "pick_win": 0} for b in names}
     for rs in by_race.values():
         settled = [r for r in rs if r["won"] in (0, 1)]
         winner = next((r for r in settled if r["won"] == 1), None)
         if winner is None or not settled:
             continue                          # no identified winner among priced rows
-        band = "betting" if rs[0]["race_quality"] >= 2 else "below"
+        band = keyfn(rs)
+        if band not in bands:
+            continue
         b = bands[band]
         b["n"] += 1
         fav = next((r for r in settled if r["mkt_rank"] == 1), None)
@@ -351,6 +375,18 @@ def _race_bands(rows: list[dict]) -> dict[str, dict]:
         b["pick_n"] += 1
         b["pick_win"] += pick["won"]
     return bands
+
+
+def _race_bands(rows: list[dict]) -> dict[str, dict]:
+    """Below the bar (<2) v a betting race (>=2)."""
+    return _bands_by(rows, ("below", "betting"),
+                     lambda rs: "betting" if rs[0]["race_quality"] >= 2 else "below")
+
+
+def _race_type_bands(rows: list[dict]) -> dict[str, dict]:
+    """pattern · heritage · fingerprint · other — which race type we read best."""
+    return _bands_by(rows, ("pattern", "heritage", "fingerprint", "other"),
+                     lambda rs: race_type_band(rs[0]))
 
 
 def _version_table(rows: list[dict]) -> dict[str, dict]:
@@ -455,6 +491,22 @@ def scoreboard(rows: list[dict]) -> str:
                       ("betting", ">= 2 (betting race)")):
         b = bands[band]
         L.append(f"| {lab} | {b['n']} | "
+                 f"{b['fav_win']}/{b['fav_n']} ({_pct(b['fav_win'], b['fav_n'])}) | "
+                 f"{b['top3_hit']}/{b['n']} ({_pct(b['top3_hit'], b['n'])}) | "
+                 f"{b['pick_win']}/{b['pick_n']} ({_pct(b['pick_win'], b['pick_n'])}) |")
+
+    tb = _race_type_bands(rows)
+    L += ["", "## RACE TYPE — which races we read best (the master, 2026-09-05: "
+          "'we are not picking the right races')",
+          "pattern = Group/Listed · heritage = a Class 1-2 handicap · fingerprint = "
+          "a Class 3-4 handicap (the 2026-08-17 study's sweet spot) · other. Same "
+          "columns as above. The picker is rewritten from THIS table, never from "
+          "where the jolly wins.",
+          "| race type | races | fav strike | top-3 coverage | our pick strike |",
+          "|---|---|---|---|---|"]
+    for band in ("pattern", "heritage", "fingerprint", "other"):
+        b = tb[band]
+        L.append(f"| {band} | {b['n']} | "
                  f"{b['fav_win']}/{b['fav_n']} ({_pct(b['fav_win'], b['fav_n'])}) | "
                  f"{b['top3_hit']}/{b['n']} ({_pct(b['top3_hit'], b['n'])}) | "
                  f"{b['pick_win']}/{b['pick_n']} ({_pct(b['pick_win'], b['pick_n'])}) |")
