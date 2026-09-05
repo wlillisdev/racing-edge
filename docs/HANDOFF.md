@@ -565,4 +565,17 @@ cut a day; no new machinery without his word; cost is real money; sessions
 start from this file, not from zero. He has nearly pulled the plug several
 times. The next session's first act is to read the 09:30 mail and act only
 on its red lines.
+THE SIGNPOSTS (05 Sep, his word: "my AI back in the day... implement all of
+these, they are another dot" — PR #101, merged ~13:00Z): school/signposts.py
+derives six Racing Post Signposts in code from data already paid for —
+jockey/trainer combo, rating clear in a handicap (the Postmark), the yard at
+this course by race type (corpus), THIS RACE LAST YEAR (one results_range
+call, ±7 days a year back), fresh (has it won fresh before), cold yard. The
+morning read prints a SIGNPOSTS line per runner; the yardstick banks the keys
+in its 'signposts' column and grades them like a lens (SIGNPOSTS table in
+data/school/yardstick.md). Dots only — no score moves, no rule. LIVE CHECK
+OWED: the first 07:30 run on main (06 Sep) must print "signposts: N runners
+carry a dot"; "⚠ signposts not built" two mornings running is the REVERT-IF.
+Not built from Signposts (no data held): first-time headgear by trainer,
+"money talks", the popular nap (noise).
 
