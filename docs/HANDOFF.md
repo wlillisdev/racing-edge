@@ -628,4 +628,29 @@ his ruling: which teeth; the improver flag; pattern races on the bar; the
 corpus columns + 12-month backfill. The ten problems: docs/AGE_OLD_PROBLEMS.
 Next session's first act, unchanged: the 07:30 mail (INVERSION line, which
 race the nap came from), then the 09:30 page, then Sunday's cuts.
+06 SEP, morning. THE SCAR OF 06 SEP: the box's 07:30 nap run CRASHED on the
+results door inside the pick's frank (HTTP 422 — a frankable race older than
+the date door's 12 months); the frank now asks the id door first, a refused
+door is an UNREAD frank (never a veto, never a crash), the call site wraps it
+(PR #111); the past-winners window sits inside the door at 364 days (#112).
+REVERT-IF: 'frank OWED/UNREAD' three mornings running. THE DUTY (no engine
+sighted): York 3:50 Garrowby (Listed) REGIONAL each-way 15/2, danger America
+Queen, grade B- — the class line first, the story horse (Double Rush, 9/4, a
+handicapper) not taken; banked 08:36Z, off 14:50Z; settle tonight with the
+autopsy either way. THE SHADOW LADDER LANDED (cut A #113 the guard, cut B
+#114 the grader): five variant keys — shadow:key-old / key-class /
+key-class-noflag / key-class-pattern / fav — graded every night inside the
+22:00 yardstick step off the banked yardstick rows into
+data/school/daily_policy.csv; the ladder's verdict SKIPS the shadow:
+namespace (measured, never crowned; promotion rings the doorbell); the 09:30
+page prints a 'shadow ladder' block, never red. Two fidelity gaps, named:
+best_class_won is not in the ledger (equal rungs fall through to the jigsaw
+— cut 2, a later day, adds the column); len(aligned) is the deduped lens
+count. PROVISIONAL until 500 picks; nothing under 50 is judged. LIVE CHECK
+OWED TONIGHT: the 22:00 mail prints 'SHADOW LADDER —', five 'shadow:… picks='
+lines and 'shadow ladder: N row(s) written, 0 already graded'; tomorrow's
+09:30 page shows the block AND the 'school ladder:' verdict line unchanged.
+REVERT-IF: that verdict line changes wording, or night:yardstick mails a
+crash. Never compare a shadow line to the corpus fav — different populations
+(the engine's readable races v every 5+ runner result).
 
