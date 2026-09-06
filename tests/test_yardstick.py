@@ -161,7 +161,9 @@ def _row(**kw):
                 off_time="14:00", code="C", race_class=4, is_handicap=1,
                 field_size=4, race_quality=2, horse_id="H", horse="Horse",
                 mkt_rank=1, price=3.0, score=1, confident=0, mark_known=1,
-                aligned="", flags="", cautions="", pos=1, sp_dec=3.0, won=1)
+                aligned="", flags="", cautions="", pos=1, sp_dec=3.0, won=1,
+                signposts="", best_class="no line", class_level=99, pattern="",
+                distance_f=6.0)
     base.update(kw)
     return base
 
@@ -222,6 +224,92 @@ def test_scoreboard_race_bands_and_version() -> None:
 
 
 # --------------------------------------------------------------------------- #
+# THE SHADOW LADDER — variant keys graded off the banked rows (2026-09-05:
+# "do all the testing on the shadow"). Measured, never crowned.
+# --------------------------------------------------------------------------- #
+def _abc(c_flags: str = "big-field lottery") -> list[dict]:
+    # A: no class line but the strongest jigsaw and the shortest price
+    # B: a Listed line (rung 4), a weak jigsaw, a long price
+    # C: a Group 2 line (rung 2), the best score — but carries a flag
+    return [
+        _row(race_id="r1", horse_id="A", mkt_rank=1, price=2.5, score=4,
+             confident=1, class_level=99, won=0),
+        _row(race_id="r1", horse_id="B", mkt_rank=3, price=8.0, score=1,
+             confident=0, class_level=4, won=1, sp_dec=9.0),
+        _row(race_id="r1", horse_id="C", mkt_rank=2, price=3.0, score=5,
+             confident=1, class_level=2, flags=c_flags, won=0),
+    ]
+
+
+def test_shadow_pick_mirrors_the_live_key_and_crosses_off_flags() -> None:
+    rows = _abc()
+    assert ys.shadow_pick(rows, "key-class")["horse_id"] == "B"   # class first
+    assert ys.shadow_pick(rows, "key-old")["horse_id"] == "A"     # the jigsaw
+    for k in ("key-old", "key-class", "key-class-noflag"):
+        assert ys.shadow_pick(rows, k)["horse_id"] != "C"         # flagged
+    assert ys.shadow_pick(rows, "fav")["horse_id"] == "A"
+    # fails with the crossed_off filter deleted: C's Group 2 line would win
+    assert ys.crossed_off(rows[2]) and not ys.crossed_off(rows[1])
+
+
+def test_shadow_keeps_the_improver_favourite_only_for_the_noflag_variant() -> None:
+    rows = _abc(c_flags="improver-favourite")
+    assert ys.shadow_pick(rows, "key-class")["horse_id"] == "B"
+    assert ys.shadow_pick(rows, "key-class-noflag")["horse_id"] == "C"
+    rows = _abc(c_flags="improver-favourite|big-field lottery")
+    assert ys.shadow_pick(rows, "key-class")["horse_id"] == "B"
+    assert ys.shadow_pick(rows, "key-class-noflag")["horse_id"] == "B"
+
+
+def test_shadow_grades_only_settled_races_and_voids_a_non_runner_pick() -> None:
+    rows = _abc()
+    # r2: no settled winner among the rows -> graded by nobody
+    rows += [_row(race_id="r2", horse_id="D", mkt_rank=1, won=None),
+             _row(race_id="r2", horse_id="E", mkt_rank=2, won=None)]
+    # r3: the favourite (key-old's pick) is a non-runner -> key-old and fav
+    # void the race; key-class still picks the Listed-line horse G
+    rows += [_row(race_id="r3", horse_id="F", mkt_rank=1, price=2.0, score=4,
+                  confident=1, class_level=99, won=None, sp_dec=None),
+             _row(race_id="r3", horse_id="G", mkt_rank=2, price=4.0, score=1,
+                  class_level=4, won=1, sp_dec=4.5)]
+    by = {p: (n, w, ret) for _d, p, n, w, ret in ys.shadow_day_rows(rows)}
+    assert by["shadow:key-class"] == (2, 2, 9.0 + 4.5)
+    assert by["shadow:key-old"] == (1, 0, 0.0)        # r3 voided (F a non-runner)
+    assert by["shadow:fav"] == (1, 0, 0.0)
+    assert "shadow:key-class-pattern" not in by       # a Cl4 handicap: no row
+
+
+def test_shadow_pattern_variant_grades_only_pattern_and_heritage_races() -> None:
+    rows = _abc()                                                  # Cl4 hcp
+    rows += [_row(race_id="rp", horse_id="P", mkt_rank=1, price=2.0, score=2,
+                  class_level=3, pattern="Group 3", won=1, sp_dec=3.0),
+             _row(race_id="rp", horse_id="Q", mkt_rank=2, price=5.0, score=1,
+                  class_level=99, pattern="Group 3", won=0)]
+    rows += [_row(race_id="rh", horse_id="H1", mkt_rank=1, price=3.0, score=1,
+                  class_level=6, race_class=2, won=0),
+             _row(race_id="rh", horse_id="H2", mkt_rank=2, price=6.0, score=3,
+                  class_level=5, race_class=2, won=1, sp_dec=7.0)]
+    by = {p: (n, w, ret) for _d, p, n, w, ret in ys.shadow_day_rows(rows)}
+    assert by["shadow:key-class-pattern"] == (2, 2, 3.0 + 7.0)   # rp + rh only
+    assert by["shadow:key-class"][0] == 3                          # all three
+
+
+def test_shadow_rows_are_namespaced_and_idempotent(tmp_path) -> None:
+    rows = _abc()
+    csvp = tmp_path / "daily_policy.csv"
+    written, skipped = ys.grade_shadow(rows, csvp)
+    assert written > 0 and skipped == 0
+    first = csvp.read_bytes()
+    assert ys.grade_shadow(rows, csvp) == (0, written)
+    assert csvp.read_bytes() == first
+    policies = [ln.split(",")[1] for ln in csvp.read_text().splitlines()[1:]]
+    assert policies and all(p.startswith("shadow:") for p in policies)
+    table = ys.shadow_table(rows)
+    assert "SHADOW LADDER" in table and "PROVISIONAL until 500" in table
+    assert "shadow:key-class: picks=1 strike=100.0% ROI=+800.0%" in table
+
+
+# --------------------------------------------------------------------------- #
 # main — writes the .md
 # --------------------------------------------------------------------------- #
 def test_main_writes_markdown(tmp_path) -> None:
@@ -233,6 +321,8 @@ def test_main_writes_markdown(tmp_path) -> None:
                 runners=(rA,))
     p = _pick(race, rA, 3.0, rq=2)
     ys.bank(day, [p], root=root)
+    ys.settle_day(day, [RaceResult(race_id="r1", date=day, runners=(
+        RunnerResult(horse_id="A", position=1, sp_dec=3.2),))], root=root)
 
     rc = ys.main(["--root", str(root)])
     assert rc == 0
@@ -241,3 +331,8 @@ def test_main_writes_markdown(tmp_path) -> None:
     text = out.read_text()
     assert "THE YARDSTICK" in text
     assert "doorbell" in text
+    # the shadow ladder grades the same night, into the ledger BESIDE the root
+    # (never the repo's own daily_policy.csv when --root is a tmp dir)
+    pol = root.parent / "daily_policy.csv"
+    assert pol.exists()
+    assert ",shadow:fav," in pol.read_text()

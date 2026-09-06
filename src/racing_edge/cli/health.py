@@ -443,6 +443,23 @@ def main() -> int:
             "console `tail -40 data/task_runs.log` after 22:00 and "
             "`ls -la data/school/raw | tail -5`",
             lines)
+        # THE SHADOW LADDER (the master, 2026-09-05: "do all the testing on
+        # the shadow"): the variant keys' rollup, printed never judged — a
+        # shadow line is MEASURED, not CROWNED, and never turns this page red.
+        from racing_edge.school.ladder import SHADOW_PREFIX as _sp
+        from racing_edge.school.ladder import WINDOW as _win
+        from racing_edge.school.ladder import window_stats as _ws
+        _shadow = {p: _ws(dr) for p, dr in _rows.items() if p.startswith(_sp)}
+        if _shadow:
+            lines.append(f"  shadow ladder ({len(_shadow)} variant keys, "
+                         f"rolling {_win}):")
+            for p, (n, s, roi) in sorted(_shadow.items(),
+                                         key=lambda kv: -kv[1][1]):
+                lines.append(f"    {p} n={n} strike={s:.1f}% ROI={roi:+.1f}%")
+            _sday = max(_ld(_rows, p) for p in _shadow)
+            lines.append(f"    last graded {_sday} · PROVISIONAL until {_win} "
+                         "picks (the graduation bar) — nothing here moves a "
+                         "pick or a rule.")
     # THE HONEST HALF (dog-school lesson, 2026-08-24: "a dashboard showing
     # only what it measures is how a system looks healthy while rotting").
     # Every report ends with what is NOT being watched. Update this list
