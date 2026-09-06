@@ -97,7 +97,7 @@ def _last_year_raw():
 
 
 def test_same_race_last_year_matches_course_trip_and_name():
-    assert sp.last_year_window(DAY) == ("2025-09-05", "2025-09-12")   # start clamped to the door
+    assert sp.last_year_window(DAY) == ("2025-09-06", "2025-09-12")   # start clamped inside the door
     race = Race(race_id="r", course="Thirsk", off_time="3:15", date=DAY, race_type="Flat",
                 is_handicap=True, race_class=4, distance_f=6.0,
                 race_name="Other Sponsor Handicap (Div 1)", runners=())
@@ -172,8 +172,8 @@ def test_the_past_winners_roll_writes_the_races_dna_and_whether_today_fits_it():
             year(2022, "La Yakel", 117, "100/30F", "W Haggas", 133)]
     # the date door serves 12 months and no more (live, 2026-09-05: 422 on a
     # start 372 days back) — the window's start is clamped, older years dropped
-    assert sp.last_year_window(date(2026, 9, 5)) == ("2025-09-05", "2025-09-12")
-    assert sp.past_windows(date(2026, 9, 5), 3) == [("2025-09-05", "2025-09-12")]
+    assert sp.last_year_window(date(2026, 9, 5)) == ("2025-09-06", "2025-09-12")
+    assert sp.past_windows(date(2026, 9, 5), 3) == [("2025-09-06", "2025-09-12")]
     race = Race(race_id="r", course="Ascot", off_time="2:10", date=DAY, race_type="Flat",
                 is_handicap=True, race_class=2, distance_f=12.0,
                 race_name="Other Sponsor Handicap (Heritage Handicap)",
