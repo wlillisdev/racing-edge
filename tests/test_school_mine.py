@@ -143,6 +143,38 @@ def test_ladder_change_tack_and_hold_and_silence_under_50():
     assert verdict(rows, "champ").startswith("HOLD")
 
 
+def test_shadow_policies_never_challenge_the_champion():
+    # THE SHADOW LADDER (the master, 2026-09-05: "do all the testing on the
+    # shadow"). Fifty races a day clears MIN_JUDGE in a morning, so a
+    # shadow key at +200% ROI would hijack the nap's verdict on day one
+    # ("CHANGE TACK — challenger shadow:..."). Shadow policies are MEASURED,
+    # never CROWNED: the verdict must read the same with and without them.
+    # Fails with the SHADOW_PREFIX skip removed from the challenger loop.
+    from racing_edge.school.ladder import SHADOW_PREFIX, verdict
+
+    def days(n_days, picks, wins, ret_per_day):
+        return [(f"2026-09-{d + 1:02d}", picks, wins, ret_per_day)
+                for d in range(n_days)]
+
+    base = {"fav": days(6, 10, 3, 9.0),           # ROI -10%
+            "nap": days(6, 10, 4, 11.0)}          # ROI +10% — HOLD
+    without = verdict(base, "nap")
+    assert without.startswith("HOLD")
+
+    with_shadow = dict(base)
+    with_shadow[f"{SHADOW_PREFIX}key-class-pattern"] = days(6, 10, 6, 30.0)
+    with_shadow[f"{SHADOW_PREFIX}fav"] = days(6, 10, 6, 30.0)   # +200%
+    v = verdict(with_shadow, "nap")
+    assert v == without
+    assert "shadow:" not in v
+
+    # the skip must not swallow a REAL challenger beside the shadow rows
+    with_shadow["cell:x"] = days(6, 10, 5, 15.0)                # +50%
+    v = verdict(with_shadow, "nap")
+    assert v.startswith("CHANGE TACK") and "cell:x" in v
+    assert "shadow:" not in v
+
+
 def test_tight2_reads_direction_not_state(tmp_path):
     # the Gower Prince nuance (self-study 2026-08-15, PROPOSED): two
     # runner-up finishes with the margin tightening = progressive finisher.

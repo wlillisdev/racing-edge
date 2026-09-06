@@ -40,6 +40,13 @@ from pathlib import Path
 
 MIN_JUDGE = 50      # the master: judge nothing on fewer than 50 picks
 WINDOW = 500        # the master: 500+ unseen races is the graduation bar
+SHADOW_PREFIX = "shadow:"   # THE SHADOW LADDER (the master, 2026-09-05: "we have
+                            # 50 races a day... do all the testing on the
+                            # shadow"): variant rank keys graded nightly off the
+                            # banked yardstick rows. Namespaced because they are
+                            # MEASURED, never CROWNED — a shadow policy never
+                            # enters the verdict as a challenger; promotion is a
+                            # doorbell decision, always.
 
 
 def load_rows(csv_path: Path):
@@ -124,7 +131,7 @@ def verdict(rows, champion: str, window: int = WINDOW) -> str:
 
     challengers = []
     for p, dr in rows.items():
-        if p in (champion, "fav"):
+        if p in (champion, "fav") or p.startswith(SHADOW_PREFIX):
             continue
         n, s, roi = window_stats(dr, window)
         if n >= MIN_JUDGE and roi > broi and roi > croi:
