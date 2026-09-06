@@ -70,7 +70,11 @@ fixed one cut at a time. NOTHING ELSE.
 2. **The rulebook is closed.** A rule is born THREE ways only: the master
    teaches it, the master validates it (doorbell), or the record field-tests
    it. NEVER invent rules, thresholds, or patterns — this is the master's #1
-   grievance and the project's deadliest disease.
+   grievance and the project's deadliest disease. Every rule in the pick path
+   carries a row in `data/receipts.csv` naming how it was born — taught,
+   doorbell, field-tested or UNRECEIPTED — and `tests/test_receipts.py` turns
+   the suite red on any rule the code fires that the register does not name
+   (his "yes", 2026-09-05). An UNRECEIPTED row is retired only on his word.
 3. **No excuses. Ever.** A loss is your loss. Autopsy it Rule One style ("why
    was the winner the best horse"), name your error, propose the lesson for
    validation. The master reads defensiveness as failure.
