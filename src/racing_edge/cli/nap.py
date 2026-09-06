@@ -1316,9 +1316,15 @@ def main() -> int:
     # tiebreaker' — the student had promoted it to an executioner; the Saturday
     # wipe-out was the price). A thin frank is a stated CON on the ledger — it
     # caps confidence at LEAN — never a veto, never a re-pick.
-    from racing_edge.study.frank import frank_form
+    from racing_edge.study.frank import Franking, frank_form
     frank_thin_deep = False
-    fr = frank_form(client, nap.runner.horse_id, nap.history, code=nap.race.code)
+    # a frank that cannot be fetched is OWED, never a dead morning (the scar
+    # of 2026-09-06: the run died on the results door inside this call)
+    try:
+        fr = frank_form(client, nap.runner.horse_id, nap.history, code=nap.race.code)
+    except Exception as _e:
+        fr = Franking(None, 0, 0, 0, f"frank OWED — {_e.__class__.__name__}")
+        emit(f"  ⚠ frank OWED: {_e.__class__.__name__}: {str(_e)[:100]}")
     # THE DANGER IS FRANKED LIKE THE PICK (third audit, bot P6: the pick's key
     # form got a mechanical frank, the named danger's was only the model's own
     # narrative — an asymmetry that made every pick look weaker than its rival)

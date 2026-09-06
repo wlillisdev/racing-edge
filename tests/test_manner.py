@@ -193,6 +193,48 @@ def test_frank_form_counts_rivals_scored_since() -> None:
     assert "FRANKED" in f.note
 
 
+def test_frank_asks_the_id_door_first_and_a_refused_door_is_unread_not_a_crash() -> None:
+    """THE SCAR OF 2026-09-06: the 07:30 nap run died, unhandled, on HTTP 422
+    'start date must be 12 months or less in the past' — the pick's frankable
+    race was older than the results-by-DATE door serves. The results-by-ID
+    door has no date limit and is asked first; a refusal from the door is an
+    UNREAD frank (not thin, not a veto), never a dead morning."""
+    from racing_edge.data.client import RacingAPIError
+    from racing_edge.domain.models import PastRun
+    from racing_edge.study.frank import frank_form
+
+    doc = {"race_id": "old1", "date": "2025-03-01", "runners": [
+        {"horse_id": "W"}, {"horse_id": "R1"}, {"horse_id": "R2"}, {"horse_id": "R3"}]}
+    hist = {"R1": [{"date": "2025-04-15", "position": "1"}],
+            "R2": [{"date": "2025-04-20", "position": "2"}],
+            "R3": [{"date": "2025-04-18", "position": "9"}]}
+
+    class _ById:
+        date_calls = 0
+        def result_by_id(self, race_id):
+            return doc if race_id == "old1" else None
+        def results_by_date(self, ds):
+            self.date_calls += 1
+            raise RacingAPIError(422, "/results", "start date must be 12 months or less in the past")
+        def horse_results(self, hid, limit=12):
+            return hist.get(hid, [])
+
+    history = (PastRun(date=date(2025, 3, 1), position=1, race_id="old1"),)
+    c = _ById()
+    f = frank_form(c, "W", history)
+    assert f.is_franked is True and c.date_calls == 0          # the id door answered; the date door never asked
+
+    class _DateOnly:
+        def results_by_date(self, ds):
+            raise RacingAPIError(422, "/results", "start date must be 12 months or less in the past")
+        def horse_results(self, hid, limit=12):
+            return hist.get(hid, [])
+
+    g = frank_form(_DateOnly(), "W", history)                    # no exception escapes
+    assert g.is_franked is False and g.is_thin is False
+    assert "frank UNREAD" in g.note and "RacingAPIError" in g.note
+
+
 def test_study_race_reports_franking_when_present() -> None:
     runners = [StudiedRunner("Gem", 1, 4.0, "won well",
                              frank_note="last race FRANKED: 3/5 rivals won/placed since")]
