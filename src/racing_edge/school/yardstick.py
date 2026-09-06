@@ -396,6 +396,141 @@ def _race_type_bands(rows: list[dict]) -> dict[str, dict]:
                      lambda rs: race_type_band(rs[0]))
 
 
+# --------------------------------------------------------------------------- #
+# THE SHADOW LADDER — variant rank keys graded nightly off the banked rows
+# (the master, 2026-09-05: "we have 50 races a day surely with 5.1 we can
+# easily be testing this and learning even if it is just a shadow system, to
+# feed into the main system... do all the testing on the shadow"). Every key
+# orders runners WITHIN a race, so the race-level terms of the live key (the
+# bar, race_quality, race_class) drop out; what survives is the class line,
+# the jigsaw and the shorter price. MEASURED, NEVER CROWNED: the rows land in
+# daily_policy.csv under the shadow: namespace, the ladder's verdict skips
+# them, and promotion is a doorbell decision — always.
+# Two fidelity gaps, named: (1) best_class_won (the live key's second term)
+# is not in the ledger — on equal rungs the shadow falls through to the
+# jigsaw; (2) len(aligned) is the deduped lens_key count, a lower bound.
+# --------------------------------------------------------------------------- #
+from racing_edge.school.daily import append_policy_rows
+from racing_edge.school.ladder import MIN_JUDGE as _MIN_JUDGE
+from racing_edge.school.ladder import SHADOW_PREFIX
+from racing_edge.school.ladder import WINDOW as _WINDOW
+
+SHADOW_KEYS = ("key-old", "key-class", "key-class-noflag", "key-class-pattern", "fav")
+_IMPROVER_FAV = "improver-favourite"     # the flag the noflag variant lets through
+
+
+def _tags(row: dict, field: str) -> set[str]:
+    return {t for t in (row.get(field) or "").split("|") if t}
+
+
+def _n_aligned(row: dict) -> int:
+    """len(conviction.aligned) as the LEDGER can see it — the deduped
+    lens_key count, a lower bound on the live key's term."""
+    return len(_tags(row, "aligned"))
+
+
+def crossed_off(row: dict, keep: tuple[str, ...] = ()) -> bool:
+    """Mirror pipeline/nap.nominate_nap: ANY flag disqualifies, cautions never
+    do. `keep` names flag keys that do NOT cross off."""
+    return bool(_tags(row, "flags") - set(keep))
+
+
+def shadow_rank_key(row: dict, *, class_first: bool) -> tuple:
+    """SMALLER IS BETTER (min()). class_first=True mirrors pipeline.nap._rank_key
+    (the inversion, 2026-09-05); False mirrors _rank_key_legacy. Race-level
+    terms dropped on purpose — every key orders within one race."""
+    horse = (-int(row.get("confident") or 0),
+             -int(row.get("mark_known") or 0),
+             -int(row.get("score") or 0),
+             -_n_aligned(row),
+             float(row.get("price") or 9e9),
+             int(row.get("mkt_rank") or 99),
+             str(row.get("horse_id") or ""))
+    if not class_first:
+        return horse
+    lvl = row.get("class_level")
+    return (99 if lvl in (None, "") else int(lvl), *horse)
+
+
+def shadow_pick(race_rows: list[dict], key: str) -> dict | None:
+    """The row one shadow key would have picked in this race, or None (no
+    candidate — the engine's own gates cross off every runner of a gated race;
+    that cost is exactly what shadow:fav, which never crosses off, makes
+    visible)."""
+    if key == "fav":
+        cands = [r for r in race_rows if r.get("mkt_rank") == 1]
+        return (min(cands, key=lambda r: str(r.get("horse_id") or ""))
+                if cands else None)
+    if key == "key-class-pattern" and race_type_band(race_rows[0]) not in (
+            "pattern", "heritage"):
+        return None
+    keep = (_IMPROVER_FAV,) if key == "key-class-noflag" else ()
+    cands = [r for r in race_rows if not crossed_off(r, keep)]
+    if not cands:
+        return None
+    return min(cands, key=lambda r: shadow_rank_key(r, class_first=(key != "key-old")))
+
+
+def shadow_day_rows(rows: list[dict], keys=SHADOW_KEYS) -> list[tuple]:
+    """(day, 'shadow:<key>', picks, wins, returned) — the five-tuple
+    append_policy_rows takes; level stakes at SP. A race is graded only once
+    it has a settled winner among the banked rows; a key whose pick is a
+    non-runner/withdrawn row contributes NO pick for that race (a void, never
+    a hindsight re-pick)."""
+    by_day_race: dict[tuple, list[dict]] = defaultdict(list)
+    for r in rows:
+        by_day_race[(r.get("date") or "", r.get("race_id") or "")].append(r)
+    tally: dict[tuple, list] = defaultdict(lambda: [0, 0, 0.0])
+    for (day, _rid), rs in by_day_race.items():
+        if not any(r.get("won") == 1 for r in rs):
+            continue
+        for k in keys:
+            p = shadow_pick(rs, k)
+            if p is None or p.get("won") not in (0, 1):
+                continue
+            t = tally[(day, k)]
+            t[0] += 1
+            if p["won"] == 1:
+                t[1] += 1
+                t[2] += float(p.get("sp_dec") or 0.0)
+    return [(day, f"{SHADOW_PREFIX}{k}", t[0], t[1], t[2])
+            for (day, k), t in sorted(tally.items()) if t[0]]
+
+
+def grade_shadow(rows: list[dict], csv_path: Path, keys=SHADOW_KEYS) -> tuple[int, int]:
+    """Append the shadow's day rows to the policy ledger; -> (written,
+    skipped). Idempotent through append_policy_rows (one row per day per
+    policy), so re-grading the whole ledger every night is free and
+    self-backfilling."""
+    day_rows = shadow_day_rows(rows, keys)
+    skipped = append_policy_rows(csv_path, day_rows)
+    return len(day_rows) - skipped, skipped
+
+
+def shadow_table(rows: list[dict], keys=SHADOW_KEYS) -> str:
+    """The night's rollup over the whole ledger — the columns daily.main
+    prints for the corpus policies, so the two read alike. PROVISIONAL until
+    the graduation bar; nothing here moves a pick or a rule."""
+    tot: dict[str, list] = {f"{SHADOW_PREFIX}{k}": [0, 0, 0.0] for k in keys}
+    for _day, p, n, w, ret in shadow_day_rows(rows, keys):
+        t = tot[p]
+        t[0] += n
+        t[1] += w
+        t[2] += ret
+    L = ["SHADOW LADDER — five variant keys over the banked yardstick rows "
+         "(measured, never crowned)"]
+    for p, (n, w, ret) in tot.items():
+        if n:
+            L.append(f"{p}: picks={n} strike={100.0 * w / n:.1f}% "
+                     f"ROI={100.0 * (ret - n) / n:+.1f}%")
+        else:
+            L.append(f"{p}: picks=0")
+    L.append(f"PROVISIONAL until {_WINDOW} picks (the graduation bar; nothing "
+             f"under {_MIN_JUDGE} is judged) — nothing here moves a pick or a "
+             "rule; promotion rings the doorbell.")
+    return "\n".join(L)
+
+
 def _version_table(rows: list[dict]) -> dict[str, dict]:
     """{version: {"n","wins","pnl"}} over settled rows — level stakes at SP,
     the same money gauge naplog.profit_loss uses."""
@@ -542,6 +677,9 @@ def main(argv=None) -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--day", default=(uk_today() - timedelta(days=1)).isoformat())
     ap.add_argument("--root", default=str(LEDGER_DIR))
+    # the policy ledger the shadow rows land in — derived from --root so a
+    # test that passes a tmp root never touches the repo's daily_policy.csv
+    ap.add_argument("--policy-csv", default=None)
     a = ap.parse_args(argv)
     root = Path(a.root)
     rows = load(root)
@@ -551,6 +689,10 @@ def main(argv=None) -> int:
     out.write_text(text)
     print(text)
     print(f"yardstick: {len(rows)} row(s) in the ledger (as of {a.day}) -> {out}")
+    csvp = Path(a.policy_csv) if a.policy_csv else root.parent / "daily_policy.csv"
+    written, skipped = grade_shadow(rows, csvp)
+    print(shadow_table(rows))
+    print(f"shadow ladder: {written} row(s) written, {skipped} already graded -> {csvp}")
     return 0
 
 
