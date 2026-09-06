@@ -732,4 +732,15 @@ name-matched) and OWNER RECORD (raw figures, no threshold) — graded in the
 yardstick for weeks; plumbing = owner/owner_id onto Runner + normalise +
 fetch (a corpus re-fetch to backfill). REVERT-IF if he says yes: no lift in
 the owner column over 30 graded days.
+HIS CORRECTION ON THE OWNER (same night): "you are just looking at raw
+facts... it's how you frame it... big owners consistently win big races,
+these are the races they target and want to win, for the prestige and prize
+money." The pooled all-races ROI was the WRONG FRAME (mine, relayed as the
+answer). The dot is CLASS-CONDITIONAL: in a pattern / Listed / heritage
+race a powerhouse's runner is there to win and is never a make-weight; in a
+seller the silks mean little. The measure that answers him: powerhouse
+win% and a/e IN big races v the rest of the same fields — the yardstick's
+race-type split grades it from the first morning once owner/owner_id are
+plumbed (models, normalise, fetch + the corpus re-fetch). That plumbing is
+the cut, on his word, after Monday's.
 
