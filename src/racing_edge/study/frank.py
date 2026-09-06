@@ -88,11 +88,22 @@ def frank_form(client: _Fetcher, horse_id: str, history: tuple[PastRun, ...],
                      if h.race_type and race_code(h.race_type) == code)
         pool = same or history
 
+    refused = None
     for last in pool[:max_lookback]:
         if not (last.race_id and last.date):
             continue
-        field = next((r for r in results_from_raw(client.results_by_date(last.date.isoformat()))
-                      if r.race_id == last.race_id), None)
+        # THE SCAR OF 2026-09-06 (the 07:30 nap run DIED here, unhandled: HTTP
+        # 422 'start date must be 12 months or less in the past'): the pick's
+        # frankable race can be older than the results-by-DATE door serves.
+        # The results-by-ID door serves any race in full (live-checked on a
+        # 16-month-old race, 2026-09-05) — ask it first; fall back to the date
+        # door only when the client has no id door; and a refusal from either
+        # is an UNREAD frank, never a dead run.
+        try:
+            field = _field_for(client, last)
+        except Exception as exc:                       # RacingAPIError, network, plan gate
+            refused = exc
+            continue
         if field is None:
             continue
         rivals = [rr.horse_id for rr in field.runners
@@ -114,5 +125,23 @@ def frank_form(client: _Fetcher, horse_id: str, history: tuple[PastRun, ...],
                             f"{last.date.isoformat()} race {verdict}: "
                             f"{franked}/{ran_since} re-runners won/placed since")
 
+    if refused is not None:
+        return Franking(None, 0, 0, 0,
+                        f"frank UNREAD — the results door refused "
+                        f"({refused.__class__.__name__}); not a thin frank, not a veto")
     return Franking(pool[0].date, 0, 0, 0,
                     "too soon to frank — rivals from recent races haven't run again yet")
+
+
+def _field_for(client, last: PastRun):
+    """The past race's full field: by ID when the client has that door (no
+    date limit), else by DATE (12 months on the standard plan). None when the
+    race is not in the answer."""
+    by_id = getattr(client, "result_by_id", None)
+    if callable(by_id):
+        doc = by_id(last.race_id)
+        if doc and doc.get("runners"):
+            fields = results_from_raw({"results": [doc]})
+            return fields[0] if fields else None
+    matches = results_from_raw(client.results_by_date(last.date.isoformat()))
+    return next((r for r in matches if r.race_id == last.race_id), None)
