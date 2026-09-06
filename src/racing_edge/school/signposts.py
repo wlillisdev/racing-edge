@@ -130,9 +130,11 @@ def _strip_sponsor(name: str) -> str:
 
 
 PAST_YEARS = 1                # the results-by-DATE door serves 12 months, no more
-RESULTS_DOOR_DAYS = 365       # (live, 2026-09-05: 422 'start date must be 12 months
-                              # or less in the past') — earlier runnings come
-                              # through the HORSES (earlier_runnings below)
+RESULTS_DOOR_DAYS = 364       # (live, 2026-09-05: 422 'start date must be 12 months
+                              # or less in the past'; 364 not 365 so the window
+                              # sits INSIDE the door however the door counts a
+                              # year) — earlier runnings come through the HORSES
+                              # (earlier_runnings below)
 CHAIN_FETCH_MAX = 24          # history fetches per race for the chain, at most
 CHAIN_HISTORY_LIMIT = 40      # runs per horse the chain reads
 
