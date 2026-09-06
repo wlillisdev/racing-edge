@@ -880,3 +880,14 @@ FOR HIS RULING (the tie-break is the method, never mine to change): (a) between 
 | the second guard | `signposts.RESULTS_DOOR_DAYS` 365 → 364 so the past-winners window sits inside the door however it counts a year |
 | REVERT-IF | 'frank OWED' or 'frank UNREAD' three mornings running |
 | the day | engine not sighted; the duty read the card itself: York 3:50 Garrowby, REGIONAL each-way @ 15/2 by the class line, danger America Queen |
+
+### THE FAULT OF 06 SEP — the highest rung ever is not the best horse today (York 3:50 Garrowby, Listed)
+| what | detail |
+|---|---|
+| the bet | REGIONAL each-way 15/2 (banked 08:36Z), danger America Queen, second danger Double Rush; grade B- with the risk written in the grade ('an 8yo's class against a filly's form') |
+| the result | Extremely Zain 9/2 (a 3yo Haggas colt, C&D winner here in a 19-runner handicap, the ladder's SIXTH); Double Rush 6/5F 2nd by 0.5L; REGIONAL 4th at 14/1, drifted from 15/2; America Queen 8th. Each-way lost both halves, −1.00 |
+| the fault | the inversion's first term (best_class_level over the last ten same-code runs) ranked a four-month-old Group 2 placing on an 8yo 0-5 with every line since worse — 10th, 9th, 6th — above a 3yo's rising lines at this exact course and trip. 'Class is permanent' is THIRD in his order, behind 'best horse wins' and 'past winners'; the sheet treated it as first |
+| the second fault | the board's direction, again: Regional 15/2 → 14/1, the favourite 9/4 → 6/5, banked before either move — the same drift that named Proposal the loser at Thirsk on 05 Sep. The receipt for Monday's cut (the 07:30 shortlist, the 12:30 board makes the bet) |
+| the third fault | the danger: the market's first (Double Rush) ran 2nd; the named danger (the form horse) was 8th. Bot A's record said the winner sits in the market's 1st/2nd in 6 of 9 danger-wins |
+| PROPOSED, not carved | on equal or near rungs the DIRECTION of the last three lines decides (law 3b, already validated, extended to the class ladder); and the class line's AGE on an aged horse is a fact the sheet must name before the verdict. His ruling |
+| where it is measured | the shadow ladder's first night: shadow:key-class would have taken Regional too — the fault is in the KEY, and the shadow is where the key is graded before anything moves |

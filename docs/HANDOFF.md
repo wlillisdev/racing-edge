@@ -653,4 +653,40 @@ lines and 'shadow ladder: N row(s) written, 0 already graded'; tomorrow's
 REVERT-IF: that verdict line changes wording, or night:yardstick mails a
 crash. Never compare a shadow line to the corpus fav — different populations
 (the engine's readable races v every 5+ runner result).
+06 SEP, afternoon. THE DUTY LOST: Regional 4th at 14/1 (drifted from 15/2);
+Extremely Zain 9/2 won (the ladder's SIXTH — a 3yo C&D winner here, rising
+lines), Double Rush 6/5F 2nd, America Queen (my danger) 8th. THE FAULT (edge
+ledger, 'THE FAULT OF 06 SEP'): the highest rung EVER is not the best horse
+TODAY — the inversion's first term ranked a four-month-old G2 placing on an
+8yo 0-5 with every line since worse above a 3yo's rising lines at this
+course and trip; 'class is permanent' is THIRD in his order and the sheet
+ran it first; and the board's direction named the loser again (two duties
+running: Proposal 05 Sep, Regional 06 Sep) — the receipt for MONDAY'S CUT
+(the nap at 12:30). PROPOSED for his ruling, not carved: on equal or near
+rungs the direction of the last three lines decides (law 3b extended to the
+ladder); the line's age on an aged horse is named before the verdict; the
+danger is the market's first unless a fact beats it. Watch the shadow's
+first night: shadow:key-class takes Regional too — the fault is in the key.
+THE RECEIPTS REGISTER LANDED (his "yes", 05 Sep): data/receipts.csv — 200
+rows, one per rule/flag/caution/aligned/bonus/penalty/gate/term/constant in
+the live pick path, each with born_by (taught 74 · field-tested 36 ·
+doorbell 15 · UNRECEIPTED 75) and its receipt; tests/test_receipts.py turns
+the suite red on any label the engine fires that the register does not
+name, any race_quality term without a row, any of eleven named constants
+without a row, any blank born_by — and PRINTS the UNRECEIPTED count, never
+asserts it (retiring a rule is his word). CLAUDE.md law 2 carries the
+sentence. The 75 are listed in docs/UNRECEIPTED_2026-09-06.md by kind. The
+three that matter most, for his ruling: flag:all-weather-caution (the
+rulebook says a caution, the code crosses off — every AW runner);
+market_shape's 0.62/0.52 bands (two invented numbers on every race, and the
+OPEN band rides onto every runner); placer_risk's 'no win in 6' (a hard
+cross-off with no quote, and law 3b runs the other way). Receipts that
+CONTRADICT the code, also for him: improver-favourite (the rulebook says
+the species question decides; the code just crosses off at <=4 runs);
+#14 AW (caution in the book, flag in the code); placer risk v law 3b;
+#22's price cliff is in the BOOK, not the code (he struck it 2026-07-26 —
+the text should follow the code); shapebook.triage's verdicts score the bar
+since 09-01 though its docstring says 'not betting rules'. profile.py is
+dead code (no caller); its twelve weights sit in the count. Adding a rule
+now means adding its row; the test says so by file:line.
 
