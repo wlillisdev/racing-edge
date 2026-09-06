@@ -710,4 +710,26 @@ Post shows 10 for, two mornings running. THE DUTY'S STANDING RULE FROM
 TONIGHT: no sheet without the roll — when the engine has not run, chain by
 hand through the MCP (result by id, then each field's careers) before the
 verdict; a sheet that says 'past winners: 1' is a sheet not finished.
+THE OWNER BOT (his word: "make run a bot on this and educate yourself") —
+docs/OWNERS_2026-09-06.md. Three findings for his ruling: (1) every
+powerhouse LOSES at SP — eleven for eleven, 70,061 runs pooled −17.9%,
+McManus −25%, Godolphin −9% at a 22.8% strike; the API's own a/e sits
+0.87-0.99 — the market OVER-rates famous silks. So the owner is a
+DO-NOT-DISMISS dot, never a back-it dot — we lost the Garrowby by dismissing
+Extremely Zain, not by failing to back him. (2) the corpus carries NO owner
+(fetch.py:137-141 throws it away); the racecard and /results DO send
+owner + owner_id on every runner; the Runner model has no field
+(models.py:84-89, normalise.py:143-145). (3) owner_id is not a usable key
+(Amo has ~20 ids); match on the normalised name; and Sheikh Juma's 2026 row
+was there to read: York 3/7, a/e 3.23, +12.5pts — his best row of the
+season, the day before he beat us there; the owner-TRAINER pair carries
+the signal the owner alone does not (Juma/Balding +54.5pts, Juma/Hannon a/e
+0.26). Corrections to my list: Amo is Joorabchian (no Maktoum link);
+Sheikh Mohammed Obaid died 29 Dec 2025 (the RP result today reads 'Exors
+of the late'); Shadwell cut to ~85 horses; Wathnan rising. PROPOSED, not
+carved: two dots in signposts — POWERHOUSE (his named list, his words,
+name-matched) and OWNER RECORD (raw figures, no threshold) — graded in the
+yardstick for weeks; plumbing = owner/owner_id onto Runner + normalise +
+fetch (a corpus re-fetch to backfill). REVERT-IF if he says yes: no lift in
+the owner column over 30 graded days.
 
