@@ -1,0 +1,123 @@
+==============================================================================
+AUDIT — does the results corpus carry an owner per runner?
+==============================================================================
+  corpus dir      : /home/user/racing-edge/data/school/raw
+  files           : 88  (88 csv, 0 json)
+  sample file     : 2026-03-06.csv  (306 runner rows)
+  columns per row : [13]  (headerless)
+
+  the writer is racing_edge.school.fetch.day_rows() — fetch.py:137-141.
+  its 13 columns, in order:
+     [ 0] date        e.g. '2026-03-06'
+     [ 1] race_id     e.g. '11893908'
+     [ 2] course      e.g. 'Newcastle'
+     [ 3] region      e.g. 'G'
+     [ 4] type        e.g. 'F'
+     [ 5] class       e.g. '6'
+     [ 6] dist_f      e.g. '6'
+     [ 7] horse_id    e.g. '34471864'
+     [ 8] sp_dec      e.g. '3.50'
+     [ 9] position    e.g. '1'
+     [10] btn         e.g. '0'
+     [11] jockey_id   e.g. '305310'
+     [12] trainer_id  e.g. '160758'
+
+  total runner rows across the corpus: 24,011
+
+  VERDICT: there is NO owner column and NO owner_id column.
+  Owner cannot be computed from this corpus at all — not for one
+  owner, not for thirty. Section 3 of the brief stops here.
+
+  BUT the gap is in OUR writer, not in the API. A live call to the
+  same /results endpoint that builds this corpus returns `owner` and
+  `owner_id` on every runner (quoted in OWNERS.md section 2). The
+  fields are being fetched and then dropped on the floor.
+
+================================================================================================
+THE OWNER RECORD — The Racing API owner analysis, GB+IRE, career to date
+pulled 2026-09-06 via mcp__The_Racing_API__get_owner_distance_analysis (plan: standard)
+================================================================================================
+
+a/e~ is a runners-weighted mean of the API's per-row a/e and is
+APPROXIMATE (zero-win rows report a/e 0, so expected wins cannot be
+inverted out of them). runs / wins / win% / £1 P/L / ROI are EXACT sums.
+ROI is the return on a £1 win stake at SP on every single runner.
+
+------------------------------------------------------------------------------------------------
+TABLE 1 — by number of runners (the biggest strings in Britain and Ireland)
+------------------------------------------------------------------------------------------------
+  owner                             code      runs   wins     win%    a/e~     £1 P/L      ROI
+  John P McManus                    jumps   30,798  4,481    14.5%    0.87   -7,770.4    -25.2%
+  Godolphin                         flat    16,522  3,761    22.8%    0.94   -1,479.0     -9.0%
+  Gigginstown House Stud            jumps   10,858  1,761    16.2%    0.88   -2,188.3    -20.2%
+  Sheikh Mohammed Obaid Al Maktoum  flat     2,696    560    20.8%    0.99      -94.2     -3.5%
+  Amo Racing Limited                flat     2,145    324    15.1%    0.90     -346.5    -16.2%
+  Al Shaqab Racing                  flat     1,751    304    17.4%    0.93      -27.4     -1.6%
+  Shadwell Estate Company Ltd       flat     1,654    346    20.9%    0.92     -142.1     -8.6%
+  Juddmonte                         flat     1,520    337    22.2%    0.87      -60.6     -4.0%
+  Robcour                           jumps    1,226    227    18.5%    0.87     -290.0    -23.7%
+  Wathnan Racing                    flat       790    140    17.7%    0.88     -137.0    -17.3%
+  Westerberg                        flat       101     17    16.8%    1.05      -11.3    -11.2%
+
+------------------------------------------------------------------------------------------------
+TABLE 2 — by ROI: does backing the silks blind at SP make money?
+------------------------------------------------------------------------------------------------
+  owner                             code      runs   wins     win%    a/e~     £1 P/L      ROI
+  Al Shaqab Racing                  flat     1,751    304    17.4%    0.93      -27.4     -1.6%
+  Sheikh Mohammed Obaid Al Maktoum  flat     2,696    560    20.8%    0.99      -94.2     -3.5%
+  Juddmonte                         flat     1,520    337    22.2%    0.87      -60.6     -4.0%
+  Shadwell Estate Company Ltd       flat     1,654    346    20.9%    0.92     -142.1     -8.6%
+  Godolphin                         flat    16,522  3,761    22.8%    0.94   -1,479.0     -9.0%
+  Westerberg                        flat       101     17    16.8%    1.05      -11.3    -11.2%
+  Amo Racing Limited                flat     2,145    324    15.1%    0.90     -346.5    -16.2%
+  Wathnan Racing                    flat       790    140    17.7%    0.88     -137.0    -17.3%
+  Gigginstown House Stud            jumps   10,858  1,761    16.2%    0.88   -2,188.3    -20.2%
+  Robcour                           jumps    1,226    227    18.5%    0.87     -290.0    -23.7%
+  John P McManus                    jumps   30,798  4,481    14.5%    0.87   -7,770.4    -25.2%
+
+  ALL 11 POWERHOUSES POOLED                 70,061 12,258    17.5%          -12,546.9    -17.9%
+
+  Not one of them shows a profit to blind SP backing. The silks are
+  the most heavily advertised fact on the racecard, and the market
+  charges full price for them.
+
+================================================================================================
+SHEIKH JUMA DALMOOK AL MAKTOUM (own_804908) — the owner of Extremely Zain
+================================================================================================
+
+BY TRAINER, career, GB+IRE  (get_owner_trainer_analysis)
+  trainer                        runs   wins     win%     a/e    £1 P/L      ROI
+  William Haggas                  532    117    22.0%    0.98     -28.7    -5.4%
+  James Tate                      477     84    17.6%    0.91    -118.8   -24.9%
+  Andrew Balding                  211     35    16.6%    0.91      54.5    25.8%
+  David Simcock                   102     14    13.7%    0.85     -36.2   -35.5%
+  Simon & Ed Crisford             102     12    11.8%    0.52     -55.2   -54.1%
+  Ismail Mohammed                  84     17    20.2%    1.53       6.3     7.5%
+  Richard Fahey                    70     11    15.7%    1.18      23.4    33.4%
+  Simon Crisford                   64     14    21.9%    0.92       9.3    14.6%
+  John Gosden                      55     14    25.5%    1.15      33.5    60.9%
+  K R Burke                        54      7    13.0%    0.68      -8.7   -16.1%
+  Richard Hannon                   46      2     4.3%    0.26     -32.0   -69.6%
+  John & Thady Gosden              43      7    16.3%    0.66      -4.7   -10.9%
+  Clive Brittain                   40      4    10.0%    1.49       5.5    13.8%
+  Kevin Ryan                       37      5    13.5%    1.13      -3.6    -9.8%
+  Charles Hills                    36      3     8.3%    0.70     -16.2   -45.0%
+  Archie Watson                    20      3    15.0%    0.86     -10.3   -51.6%
+  Richard & Peter Fahey            19      2    10.5%    1.16       4.0    21.1%
+  Hugo Palmer                      18      1     5.6%    0.27      -8.0   -44.4%
+  Ed Walker                        18      2    11.1%    0.66      20.0   111.1%
+  Richard Hannon Snr               15      1     6.7%    0.30     -13.0   -86.7%
+  Roger Varian                     14      1     7.1%    0.41     -11.8   -83.9%
+  Roger Charlton                   14      4    28.6%    1.11      -4.8   -34.6%
+  Ed Vaughan                       13      4    30.8%    2.26       8.2    63.5%
+  Sir Mark Prescott Bt             10      2    20.0%    1.11      -1.2   -12.5%
+  TOTAL                          2120    368    17.4%    0.92    -208.8    -9.8%
+  (API reports total_runners = 2,120)
+
+THIS SEASON, from 2026-01-01, GB+IRE  (get_owner_course_analysis)
+  runs 127   wins 19   win% 15.0%   £1 P/L -33.7   ROI -26.5%
+  best tracks by a/e: York 3/7 a/e 3.23, Lingfield (AW) 1/3 a/e 2.52, Haydock 1/5 a/e 2.1, Kempton (AW) 2/6 a/e 1.46
+
+  READ IT STRAIGHT: 22% for Haggas off 532 runners is a serious
+  operation — but a/e 0.98 and -28.7pts says the market already
+  knows. He is a dot that says DO NOT DISMISS. He is not a bet.
