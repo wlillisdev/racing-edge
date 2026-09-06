@@ -265,7 +265,10 @@ def test_earlier_runnings_are_found_through_the_horses_and_fetched_by_id():
     hists = {"STRESS": past_runs_from_raw(client.histories["STRESS"], "STRESS"), "NEWBOY": ()}
     roll = sp.deepen(client, race, hists, sps, DAY)
     assert [m["winner"] for m in roll] == ["Tenability", "The Reverend", "Paddy"]
-    assert client.history_calls == ["W25", "PADDY"] or sorted(client.history_calls) == ["PADDY", "W25"]
+    # last year's field is asked first (Stress is already in hand); then the
+    # chain asks the fields it found (The Reverend, Zed) — link by link
+    assert client.history_calls[:2] == ["W25", "PADDY"]
+    assert sorted(client.history_calls) == ["PADDY", "W24", "W25", "Z"]
     assert sorted(client.id_calls) == ["R2023", "R2024"]
     dna = sps["race:r"]["lines"]
     assert dna[0].startswith("THIS RACE, PAST WINNERS (3 runnings): 2025 Tenability 8-12")
@@ -282,6 +285,47 @@ def test_earlier_runnings_are_found_through_the_horses_and_fetched_by_id():
             raise RuntimeError("door down")
     sps2 = sp.build(DAY, [race], {}, last_year_raw=last)
     assert [m["winner"] for m in sp.deepen(_Dead(), race, hists, sps2, DAY)] == ["Tenability"]
+
+
+def test_the_chain_follows_every_field_it_finds_link_by_link():
+    """The master, 2026-09-06, the Garrowby (the sheet held one past winner,
+    the Racing Post's table ten): 'why 1 year, we need to get rid of these
+    mistakes'. The 2022 running is known only to Zed, who ran in 2023 — no
+    runner of today's, and nobody in last year's field, ever met it. One hop
+    (last year's field only) stops at 2023; the chain reaches 2022. Fails
+    with the chain cut back to one hop."""
+    from racing_edge.data.normalise import past_runs_from_raw
+    client = _ChainClient()
+    client.histories["Z"] = [{"race_id": "R2022", "date": "2022-09-10", "course": "Ascot",
+                              "dist_f": "12f", "class": "Class 2",
+                              "race_name": "Oldest Sponsor Handicap (Heritage Handicap)",
+                              "runners": [{"horse_id": "Z", "position": "3"}]}]
+    client.results["R2022"] = {
+        "race_id": "R2022", "date": "2022-09-10",
+        "race_name": "Oldest Sponsor Handicap (Heritage Handicap)",
+        "runners": [{"horse_id": "W22", "horse": "Ancestor", "position": "1", "sp_dec": "4.0",
+                     "sp": "3/1", "or": "92", "weight": "8-10", "weight_lbs": "122",
+                     "trainer": "W Haggas", "jockey": "C Fallon", "draw": "2"},
+                    {"horse_id": "Z", "horse": "Zed", "position": "3", "weight_lbs": "130"}]}
+    race = Race(race_id="r", course="Ascot", off_time="2:10", date=DAY, race_type="Flat",
+                is_handicap=True, race_class=2, distance_f=12.0,
+                race_name="New Sponsor Handicap (Heritage Handicap)",
+                runners=(Runner(horse_id="STRESS", horse="Stress", weight_lbs=136),))
+    last = {"results": [{"race_id": "R2025", "date": "2025-09-06", "course": "Ascot", "dist_f": "12f",
+                         "class": "Class 2", "race_name": "Sponsor Handicap (Heritage Handicap)",
+                         "runners": [{"horse_id": "W25", "horse": "Tenability", "position": "1",
+                                      "sp_dec": "3.1", "weight_lbs": "124", "trainer": "W Haggas"},
+                                     {"horse_id": "PADDY", "horse": "Paddy", "position": "5", "weight_lbs": "132"}]}]}
+    sps = sp.build(DAY, [race], {}, last_year_raw=last)
+    hists = {"STRESS": past_runs_from_raw(client.histories["STRESS"], "STRESS")}
+    roll = sp.deepen(client, race, hists, sps, DAY)
+    assert [m["winner"] for m in roll] == ["Tenability", "The Reverend", "Paddy", "Ancestor"]
+    assert "Z" in client.history_calls and "R2022" in client.id_calls
+    assert sps["race:r"]["lines"][0].startswith("THIS RACE, PAST WINNERS (4 runnings)")
+    # the budget still binds: two fetches reach last year's field and no further
+    sps2 = sp.build(DAY, [race], {}, last_year_raw=last)
+    short = sp.earlier_runnings(_ChainClient(), race, hists, sps2["race:r"]["roll"], max_fetch=2)
+    assert [m["winner"] for m in short] == ["Tenability", "The Reverend", "Paddy"]
 
 
 def test_the_yardstick_carries_the_signposts_column_and_grades_it():

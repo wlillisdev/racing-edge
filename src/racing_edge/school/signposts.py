@@ -135,7 +135,11 @@ RESULTS_DOOR_DAYS = 364       # (live, 2026-09-05: 422 'start date must be 12 mo
                               # sits INSIDE the door however the door counts a
                               # year) — earlier runnings come through the HORSES
                               # (earlier_runnings below)
-CHAIN_FETCH_MAX = 24          # history fetches per race for the chain, at most
+CHAIN_FETCH_MAX = 60          # history fetches per race for the chain, at most
+                              # (24 → 60 on 2026-09-06, "why 1 year": ~6 new
+                              # horses a field reaches the ten runnings the
+                              # Racing Post's own table shows; free calls,
+                              # one race a morning)
 CHAIN_HISTORY_LIMIT = 40      # runs per horse the chain reads
 
 
@@ -343,33 +347,49 @@ def earlier_runnings(client, race, histories: dict, roll: list[dict],
 
     for hid in {r.horse_id for r in race.runners}:
         _scan(histories.get(hid, ()))
+    # THE CHAIN, LINK BY LINK (the master, 2026-09-06, the Garrowby: "why 1
+    # year, we need to get rid of these mistakes" — the Racing Post's table
+    # held ten years; the sheet held one). Last year's field finds the year
+    # before; THAT field finds the year before that; and so on until the
+    # fetch budget is spent or no field names an earlier running. One hop was
+    # the bug: the 2024 running was fetched and its horses never asked.
     fetched = 0
-    field_ids = list((roll[0].get("runners") or {}).keys()) if roll else []
-    for hid in field_ids:
-        if fetched >= max_fetch:
-            break
-        if hid in histories:
-            continue
-        try:
-            rows = client.horse_results(hid, limit=CHAIN_HISTORY_LIMIT)
-        except Exception:
-            continue
-        fetched += 1
-        _scan(past_runs_from_raw(rows, hid))
+    seen_h: set[str] = set(histories)
+    queue: list[str] = list((roll[0].get("runners") or {}).keys()) if roll else []
+    asked_ids: set[str] = set()
     out = list(roll)
-    for rid, y in found.items():
-        if y in known_years:
-            continue
-        try:
-            doc = client.result_by_id(rid)
-        except Exception:
-            doc = None
-        if not doc or not doc.get("runners"):
-            continue
-        e = _entry(doc)
-        e["race_id"] = rid
-        out.append(e)
-        known_years.add(y)
+    while True:
+        while queue and fetched < max_fetch:
+            hid = queue.pop(0)
+            if hid in seen_h:
+                continue
+            seen_h.add(hid)
+            try:
+                rows = client.horse_results(hid, limit=CHAIN_HISTORY_LIMIT)
+            except Exception:
+                continue
+            fetched += 1
+            _scan(past_runs_from_raw(rows, hid))
+        new = [(rid, y) for rid, y in found.items()
+               if rid not in asked_ids and y not in known_years]
+        if not new:
+            break
+        for rid, y in sorted(new, key=lambda t: t[1], reverse=True):
+            asked_ids.add(rid)
+            if y in known_years:
+                continue
+            try:
+                doc = client.result_by_id(rid)
+            except Exception:
+                doc = None
+            if not doc or not doc.get("runners"):
+                continue
+            e = _entry(doc)
+            e["race_id"] = rid
+            out.append(e)
+            known_years.add(y)
+            # the next link: this running's field is asked in turn
+            queue.extend(k for k in (e.get("runners") or {}) if k not in seen_h)
     out.sort(key=lambda m: str(m.get("date") or ""), reverse=True)
     return out
 

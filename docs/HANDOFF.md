@@ -689,4 +689,25 @@ the text should follow the code); shapebook.triage's verdicts score the bar
 since 09-01 though its docstring says 'not betting rules'. profile.py is
 dead code (no caller); its twelve weights sit in the count. Adding a rule
 now means adding its row; the test says so by file:line.
+06 SEP, evening — HIS TEACHING ON THE GARROWBY (rulings.csv, verbatim):
+three Signposts dots — SCOPE (the younger horse improves from a run and
+experience), PEDIGREE (entered in a high-class race = good breed and
+stock), OWNER (a notable owner is not to be trifled with). The carve is a
+cut this week after Monday's; the owner is not parsed onto the runner yet,
+and 'notable' needs his line (a named list, or the owner's own Group/Listed
+record from the API) — asked, not invented. "WHY 1 YEAR": the sheet held
+one past winner (the date door's year); the Racing Post's table held ten —
+no winner older than 6 in ten years, 3yos 3 of 10 at 9-0/9-2, Haggas/Fallon
+back-to-back; Regional (8yo) was outside the race's DNA before a line of
+form was read. Two faults: the chain was ONE HOP (last year's field only —
+the 2024 running was fetched and its horses never asked) and the hand duty
+never ran it. FIXED: earlier_runnings follows every field it finds, link by
+link, within CHAIN_FETCH_MAX (24 → 60, his word); test pins the 2022
+running reached only through the 2023 field. LIVE CHECK OWED: tomorrow's
+07:30 mail's PAST WINNERS block on the reader's race shows several
+runnings, not one. REVERT-IF: fewer than 5 runnings on a race the Racing
+Post shows 10 for, two mornings running. THE DUTY'S STANDING RULE FROM
+TONIGHT: no sheet without the roll — when the engine has not run, chain by
+hand through the MCP (result by id, then each field's careers) before the
+verdict; a sheet that says 'past winners: 1' is a sheet not finished.
 
