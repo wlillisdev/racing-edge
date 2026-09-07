@@ -743,4 +743,32 @@ win% and a/e IN big races v the rest of the same fields — the yardstick's
 race-type split grades it from the first morning once owner/owner_id are
 plumbed (models, normalise, fetch + the corpus re-fetch). That plumbing is
 the cut, on his word, after Monday's.
+07 SEP. THE BOX'S FIRST MORNING OF THE INVERSION LOST, AND HE CALLED IT:
+"today nap was rubbish worst in a long time... I fear you have inflicted
+changes and damage to the system." Saint Polo 3rd at 7/4F (the engine's own
+#2 Juggernaut won); the key's Venetian Prince 2nd at 66/1 and rightly
+vetoed; THE OLD KEY'S Edelak WON at 11/10F. Edge ledger: THE FAULT OF 07
+SEP. His word: "apply fixes as recommended but also make sure we're getting
+better." THREE CUTS, one PR, merged after the 22:00 run: (1) the
+inversion's first term REVERTED — _rank_key is the jigsaw again,
+_rank_key_class is the shadow; the 07:30 line reads 'THE KEY: X; THE
+CLASS-FIRST SHADOW WOULD HAVE PICKED Y'; the yardstick's our-pick mirrors
+the key that runs; the way back is shadow:key-class beating key-old over
+500 on the ladder — his doorbell. (2) THE FLOOR CAPS, NEVER RE-PICKS (his
+09-02 ruling, now done): in engine mode a reader veto + floor refusal
+sends the bank to the key's NEXT survivor, LEAN; a floor refusal alone
+leaves the pick standing, LEAN; reader mode unchanged. (3) lean_cap: a
+capped bet is never labelled CONFIDENT. Receipts: the gate registered
+taught; the class-first term marked reverted. THE DUTY: NO PICK — the
+session suspended 07:36Z→19:06Z, a stale clock (a missed day, named; the
+trigger's one turn is not surviving the day — twice now). GETTING BETTER
+IS MEASURED, NOT ARGUED: the 07:30 KEY line, the 22:00 SHADOW LADDER
+(key-old v key-class v fav), the 09:30 block. LIVE CHECKS OWED: the 22:00
+mail of 06 Sep (the shadow ladder's first print — he has not pasted it);
+tomorrow's 07:30 mail: 'THE KEY:' line, PAST WINNERS with several
+runnings, the tag matching the body (LEAN never CONFIDENT after a floor
+line). STILL FOR HIS RULING: the class ladder with direction; the danger
+as the market's first; the owner steer's plumbing; the three worst
+unreceipted rules; rule-8 teeth; the improver flag; the corpus backfill;
+ITV-first; branch protection.
 
