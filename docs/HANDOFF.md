@@ -771,4 +771,26 @@ line). STILL FOR HIS RULING: the class ladder with direction; the danger
 as the market's first; the owner steer's plumbing; the three worst
 unreceipted rules; rule-8 teeth; the improver flag; the corpus backfill;
 ITV-first; branch protection.
+THE FINAL CALL, COUNTED (his "learn and improve", 07 Sep night) —
+docs/FINAL_CALL_2026-09-07.md, 396 corpus races where the market's top two
+held the winner, every feature from runs strictly earlier. THE SHAPE, and
+it is monotone across three bands of ~130 races each: the market's first
+wins 49.3% of the pair when the second is within 25% of its price, 61.4%
+when the second is 25-75% longer, 67.7% beyond that. The market's
+confidence in its own order is CALIBRATED. Consequences: (1) when the
+market separates the two the final call is already made — every computable
+lens is 46-56% there and deviating costs ~15pp; (2) the only place a lens
+has room is the SPLIT band, where the market is a coin flip; best of the
+computable ones is DIRECTION of the last three lines then the class line,
+52.7% on 112 — suggestive, NOT proven (3.4pp on 112 is inside the noise);
+(3) no universal tie-break exists in these features — across all 396 the
+market's first is 59.3%, the best rule 54.8%. This is the third
+independent study to say the same thing (bot C's corpus, the owner bot,
+now this). MANNER IS ABSENT from all of it — the comments file is on the
+box, not in the repo — and the six-week synthesis names manner as the one
+lens winning consistently. THAT is the case for the backward replay:
+the engine's real final two, comments door open, direction-then-class
+scored ONLY in split markets. PROPOSED for his ruling, nothing carved:
+the final call is a market-state question first (split or not), and the
+sheet says which band it is in before it names a horse.
 
