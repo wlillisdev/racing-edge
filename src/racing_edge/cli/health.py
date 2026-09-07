@@ -460,6 +460,20 @@ def main() -> int:
             lines.append(f"    last graded {_sday} · PROVISIONAL until {_win} "
                          "picks (the graduation bar) — nothing here moves a "
                          "pick or a rule.")
+    # THE LESSON REGISTER (the master, 2026-09-07: "nothing changing has to
+    # change or else it is pointless"). The why ledger dissects ten races a
+    # night and the weekly synthesis surfaces what repeats; until tonight
+    # nothing noticed that a lesson had been surfaced and then ignored. An
+    # open lesson past the bar is RED here — the same trick that made an
+    # unreceipted rule fail the suite. The register decides nothing: a lesson
+    # leaves SURFACED only by his word.
+    try:
+        from racing_edge.school.lessons import health_line as _lh
+        from racing_edge.school.lessons import load as _ll
+        _ok, _lline = _lh(_ll(_data_dir() / "lessons.csv"))
+        all_ok &= _check(_ok, _lline, _lline, lines)
+    except Exception as _e:
+        lines.append(f"  ⚠ lesson register unread: {_e.__class__.__name__}")
     # THE HONEST HALF (dog-school lesson, 2026-08-24: "a dashboard showing
     # only what it measures is how a system looks healthy while rotting").
     # Every report ends with what is NOT being watched. Update this list
