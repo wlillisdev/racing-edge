@@ -297,6 +297,15 @@ def main() -> int:
                 "jky_n": jn, "jky_sr": (jw / jn if jn else 0.0),
                 "n_prior": len(p)}
 
+    # THE HELD-OUT HALF (the master, 2026-09-07: "can we not run the same set
+    # of criteria and lenses on our set of results and keep fine tuning it
+    # until we get a better win percentage?"). Yes — with the discipline his
+    # own graduation bar already names: 500+ UNSEEN races. Tune on the first
+    # half of the record, then look ONCE at the half never touched. A rule
+    # that only works on the half it was chosen from was chosen by chance.
+    days = sorted({r.date for r in runs})
+    cut = days[len(days) // 2]
+
     # tally[rule][band] = [decided, wins, returned]
     tally: dict[str, dict[str, list]] = {k: defaultdict(lambda: [0, 0, 0.0])
                                          for k in RULES}
@@ -322,13 +331,16 @@ def main() -> int:
         # the crowd itself cannot separate them: if a lens is ever going to
         # beat the market's order, it is here, where that order means least.
         gap = b.sp / a.sp
+        split = "SPLIT" if gap <= 1.25 else "CLEAR" if gap <= 1.75 else "DECIDED"
+        half = "TUNED ON" if a.date < cut else "HELD OUT"
         bands = ["ALL",
                  f"code {a.rtype}",
                  ("Cl1-2" if cls in (1, 2) else "Cl3-4" if cls in (3, 4)
                   else "Cl5-7" if cls else "unclassed"),
-                 ("market SPLIT (2nd within 25%)" if gap <= 1.25 else
-                  "market CLEAR (2nd 25-75% longer)" if gap <= 1.75 else
-                  "market DECIDED (2nd 75%+ longer)")]
+                 {"SPLIT": "market SPLIT (2nd within 25%)",
+                  "CLEAR": "market CLEAR (2nd 25-75% longer)",
+                  "DECIDED": "market DECIDED (2nd 75%+ longer)"}[split],
+                 f"market {split} · {half}"]
         for name, fn in RULES.items():
             side = fn(fa, fb)
             if side is None:
@@ -356,9 +368,15 @@ def main() -> int:
           "one lens the weekly synthesis says wins consistently is NOT tested "
           "here. Market rank is by SP, which makes the benchmark harder than a "
           "07:30 read would face. Nothing below is a rule.\n")
+    print(f"\nTHE HELD-OUT TEST: the record is cut at {cut}. A rule is TUNED ON "
+          f"the earlier half and then looked at ONCE on the later half it never "
+          f"saw. A rule that only works on the half it was chosen from was "
+          f"chosen by chance.\n")
     for band in ["ALL",
                  "market SPLIT (2nd within 25%)",
+                 "market SPLIT · TUNED ON", "market SPLIT · HELD OUT",
                  "market CLEAR (2nd 25-75% longer)",
+                 "market CLEAR · TUNED ON", "market CLEAR · HELD OUT",
                  "market DECIDED (2nd 75%+ longer)",
                  "Cl1-2", "Cl3-4", "Cl5-7", "unclassed",
                  "code F", "code H", "code C", "code N"]:
