@@ -891,3 +891,14 @@ FOR HIS RULING (the tie-break is the method, never mine to change): (a) between 
 | the third fault | the danger: the market's first (Double Rush) ran 2nd; the named danger (the form horse) was 8th. Bot A's record said the winner sits in the market's 1st/2nd in 6 of 9 danger-wins |
 | PROPOSED, not carved | on equal or near rungs the DIRECTION of the last three lines decides (law 3b, already validated, extended to the class ladder); and the class line's AGE on an aged horse is a fact the sheet must name before the verdict. His ruling |
 | where it is measured | the shadow ladder's first night: shadow:key-class would have taken Regional too — the fault is in the KEY, and the shadow is where the key is graded before anything moves |
+
+### THE FAULT OF 07 SEP — the floor picked the nap (Newton Abbot 3:00, Saint Polo 3rd at 7/4F)
+| what | detail |
+|---|---|
+| the mail | the box's first morning of the inversion: THE KEY named Venetian Prince (Winter Hill G3; a June G2 win, then 5th of 5 at Ascot); the reader objected on cited facts; the floor refused him (mark OWED); `_best_floor_fit` fell to the first WELL-IN survivor, Saint Polo, and the subject read CONFIDENT NAP while the body read LEAN only |
+| the result | Saint Polo 3rd of 5, beaten 16.5L, 'jumped raggedly, reminders after the 5th, dropped to last'; JUGGERNAUT — the engine's own #2 in the race, its first-time-headgear tell printed in his favour — won at 100/30. Venetian Prince 2nd at 66/1; Maho Bay (conv 4, Godolphin) won the Winter Hill at 5/2; EDELAK, the horse THE OLD KEY WOULD HAVE PICKED, won at 11/10F |
+| the faults | (1) the class-first term put up the oldest peak in the race for the second day running; (2) the fallback after the veto went to the FLOOR's horse, not the key's next — past four better-placed survivors including two of the day's winners — the exact thing his 2026-09-02 ruling said the floor never does; (3) a LEAN labelled CONFIDENT; (4) down to two, wrong one — the tell beside the loser's well-in mark, again |
+| his word | "today nap was rubbish worst in a long time... I fear you have inflicted changes and damage to the system" — "apply fixes as recommended but also make sure we're getting better" |
+| the cuts | the first term reverted (the class line is the printed shadow and shadow:key-class on the ladder); the floor caps and never re-picks in engine mode, a veto sends the bank to the key's next survivor; lean_cap governs the label. Three tests, each red with its bug put back |
+| the duty | NO PICK — the session suspended 07:36Z→19:06Z; a stale clock is a late-day report. A missed day, named |
+| getting better, measured | the 07:30 line prints THE KEY beside THE CLASS-FIRST SHADOW every morning; the 22:00 yardstick prints shadow:key-old v shadow:key-class v shadow:fav nightly; the 09:30 page carries the block. Those three numbers, not words, say whether the revert was right |

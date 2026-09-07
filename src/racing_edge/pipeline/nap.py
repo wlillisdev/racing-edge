@@ -210,30 +210,40 @@ def _rank_key(p: NapPick) -> tuple:
     # REVERT-IF: over the next 15 settled picks the class-first pick's strike
     # sits at or below the old key's pick on the same yardstick rows (the
     # 07:30 log prints both every morning — the live check).
-    line = (-getattr(p.conviction, "best_class_level", 99),
-            int(getattr(p.conviction, "best_class_won", False)))
+    # REVERTED (the master, 2026-09-07, "apply fixes as recommended"): two
+    # days on the record, two losses to the oldest peak in the race —
+    # Regional (a May G2 third on an 8yo 0-5, 4th at 14/1) and Venetian
+    # Prince (a June G2 win, then 5th of 5, put up at 66/1 and vetoed) while
+    # THE OLD KEY'S Edelak won at 11/10F. The class line is a printed fact
+    # and a shadow key (school/yardstick SHADOW LADDER: key-class v key-old,
+    # graded every night); it is not the first term until the numbers earn
+    # it back. The class-first order lives on as _rank_key_class below.
     horse = (int(p.conviction.confident), int(p.conviction.mark_known),
              p.conviction.score, len(p.conviction.aligned))
     # unclassed (None) ranks BELOW Class 6, never level with it (audit
     # 2026-09-02: `or 6` tied 'unknown' with 'known worst')
     tail = (-(p.race.race_class if p.race.race_class else 7), -(p.price or 999.0))
     if p.race_quality >= BETTING_BAR:
-        return (1, *line, *horse, p.race_quality, *tail)   # above the bar: class first, then the jigsaw
+        return (1, *horse, p.race_quality, *tail)   # above the bar: the jigsaw, then race quality
     # below the bar the 2026-08-17 law still holds — the race outranks the
     # horse in duty water, so the dreck column stays honest for the record
-    return (0, p.race_quality, *line, *horse, *tail)
+    return (0, p.race_quality, *horse, *tail)
 
 
-def _rank_key_legacy(p: NapPick) -> tuple:
-    """The key BEFORE the inversion (2026-09-05) — kept for one purpose: the
-    07:30 log prints the old key's pick beside the new one, so the record can
-    grade the inversion day by day (REVERT-IF above)."""
+def _rank_key_class(p: NapPick) -> tuple:
+    """THE CLASS-FIRST KEY (the inversion, 2026-09-05; reverted from the pick
+    path 2026-09-07) — kept for one purpose: the 07:30 log prints the horse
+    this key would have picked beside the pick, so the record grades the
+    class line day by day; the shadow ladder grades it nightly. Lower rung =
+    better, so negated; a win beats a place on the same rung; then the jigsaw."""
+    line = (-getattr(p.conviction, "best_class_level", 99),
+            int(getattr(p.conviction, "best_class_won", False)))
     horse = (int(p.conviction.confident), int(p.conviction.mark_known),
              p.conviction.score, len(p.conviction.aligned))
     tail = (-(p.race.race_class if p.race.race_class else 7), -(p.price or 999.0))
     if p.race_quality >= BETTING_BAR:
-        return (1, *horse, p.race_quality, *tail)
-    return (0, p.race_quality, *horse, *tail)
+        return (1, *line, *horse, p.race_quality, *tail)
+    return (0, p.race_quality, *line, *horse, *tail)
 
 
 def evaluate_field(client: _Client, day: str = "today",

@@ -11,7 +11,7 @@ from types import SimpleNamespace as NS
 
 from racing_edge.data.normalise import past_runs_from_raw, race_from_raw
 from racing_edge.domain.models import PastRun
-from racing_edge.pipeline.nap import BETTING_BAR, _rank_key, _rank_key_legacy
+from racing_edge.pipeline.nap import BETTING_BAR, _rank_key, _rank_key_class
 from racing_edge.selection import conviction as cv
 
 
@@ -105,20 +105,24 @@ def _pick(level, won, score, rq=3, cls=4, price=3.0, confident=False, mark=True)
                             best_class_won=won, best_class_line="l"))
 
 
-def test_the_rank_key_puts_the_best_form_line_before_the_jigsaw():
-    """Kempton 2:50 in the key: a Group 2 winner (score 1) beats a Listed winner
-    with six aligned lenses. Haydock 3:40: a Group 1 winner beats a Group 2
-    winner. Thirsk 3:15: a Cl2 3rd beats a Cl3 winner that was 'confident'."""
+def test_the_class_first_key_is_the_shadow_and_the_jigsaw_picks_again():
+    """The inversion (2026-09-05) ran the pick path for two days; on 2026-09-07
+    the master reverted it ("apply fixes as recommended") after it put up a
+    66/1 shot while the old key's Edelak won at 11/10. The class-first order
+    lives on as _rank_key_class — printed beside the pick every morning and
+    graded nightly in the shadow ladder — and the jigsaw key picks again.
+    Fails with the class line put back as the pick key's first term."""
     g2_win, listed_win = _pick(2, True, 1), _pick(4, True, 6, confident=True)
-    assert _rank_key(g2_win) > _rank_key(listed_win)
-    assert _rank_key_legacy(listed_win) > _rank_key_legacy(g2_win)     # the old key disagrees
-    assert _rank_key(_pick(1, True, 2)) > _rank_key(_pick(2, True, 5))
-    assert _rank_key(_pick(6, False, 2)) > _rank_key(_pick(7, True, 4, confident=True))
-    # a win beats a place on the same rung; then the jigsaw breaks the tie
-    assert _rank_key(_pick(4, True, 2)) > _rank_key(_pick(4, False, 5))
-    assert _rank_key(_pick(4, True, 5)) > _rank_key(_pick(4, True, 2))
-    # no line at all ranks below any line
-    assert _rank_key(_pick(11, False, 1)) > _rank_key(_pick(cv.NO_CLASS_LINE, False, 6, confident=True))
+    assert _rank_key(listed_win) > _rank_key(g2_win)              # the jigsaw picks
+    assert _rank_key_class(g2_win) > _rank_key_class(listed_win)  # the shadow disagrees
+    assert _rank_key_class(_pick(1, True, 2)) > _rank_key_class(_pick(2, True, 5))
+    assert _rank_key_class(_pick(6, False, 2)) > _rank_key_class(_pick(7, True, 4, confident=True))
+    # in the shadow a win beats a place on the same rung; then the jigsaw breaks the tie
+    assert _rank_key_class(_pick(4, True, 2)) > _rank_key_class(_pick(4, False, 5))
+    assert _rank_key_class(_pick(4, True, 5)) > _rank_key_class(_pick(4, True, 2))
+    # no line at all ranks below any line — in the shadow; the pick key does not look
+    assert _rank_key_class(_pick(11, False, 1)) > _rank_key_class(_pick(cv.NO_CLASS_LINE, False, 6, confident=True))
+    assert _rank_key(_pick(cv.NO_CLASS_LINE, False, 6, confident=True)) > _rank_key(_pick(11, False, 1))
 
 
 def test_the_bar_still_outranks_the_class_line():
@@ -128,7 +132,8 @@ def test_the_bar_still_outranks_the_class_line():
     assert _rank_key(_pick(9, False, 1, rq=2)) > _rank_key(_pick(1, True, 6, rq=1))
     # below the bar the race still outranks the horse, then class, then the jigsaw
     assert _rank_key(_pick(9, False, 1, rq=1)) > _rank_key(_pick(1, True, 6, rq=0))
-    assert _rank_key(_pick(1, True, 1, rq=1)) > _rank_key(_pick(9, False, 6, rq=1))
+    assert _rank_key_class(_pick(1, True, 1, rq=1)) > _rank_key_class(_pick(9, False, 6, rq=1))
+    assert _rank_key_class(_pick(9, False, 1, rq=2)) > _rank_key_class(_pick(1, True, 6, rq=1))
 
 
 def test_stubs_without_the_line_still_rank_by_the_jigsaw():
@@ -186,9 +191,11 @@ def test_the_yardstick_splits_its_race_table_by_type():
     assert "pattern" in ys.FIELDS
 
 
-def test_the_yardsticks_our_pick_mirrors_the_inverted_key():
-    """The judge must score the key that runs: a Cl2-placed horse with one
-    family is 'our pick' over a Cl5 winner with four."""
+def test_the_yardsticks_our_pick_mirrors_the_key_that_runs():
+    """The judge must score the key that runs. Since the revert of 2026-09-07
+    that is the jigsaw again: the four-family Cl5 winner is 'our pick' over the
+    Cl2-placed horse with one family (the class-first order is graded by the
+    shadow ladder, not here)."""
     from racing_edge.school import yardstick as ys
     base = {"date": "2026-09-05", "version": "v2", "course": "T", "off_time": "3:15", "code": "F",
             "race_class": 3, "is_handicap": 1, "field_size": 6, "race_quality": 3, "horse": "h",
@@ -199,8 +206,8 @@ def test_the_yardsticks_our_pick_mirrors_the_inverted_key():
             ys._typed({**base, "horse_id": "PROPOSAL", "mkt_rank": 2, "price": 3.0, "won": "0",
                        "score": 4, "class_level": 9})]
     bands = ys._race_bands(rows)
-    assert bands["betting"]["pick_n"] == 1 and bands["betting"]["pick_win"] == 1
-    # rows banked before the inversion carry no level: the families still decide
+    assert bands["betting"]["pick_n"] == 1 and bands["betting"]["pick_win"] == 0
+    # rows with no level: the families decide, the same
     old = [ys._typed({**base, "horse_id": "A", "mkt_rank": 1, "price": 2.0, "won": "0", "score": 4}),
            ys._typed({**base, "horse_id": "B", "mkt_rank": 2, "price": 3.0, "won": "1", "score": 1})]
     assert ys._race_bands(old)["betting"]["pick_win"] == 0
