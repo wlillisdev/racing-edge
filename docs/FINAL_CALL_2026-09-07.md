@@ -1,53 +1,67 @@
 # THE FINAL CALL — what the record says, counted not argued
 
-The master, 2026-09-07: "there has to be a better way of making the final
-call, surely you can get it right if you think hard enough", then "learn and
-improve", then the question that shaped this page: "can we not run the same
-set of criteria and lenses on our set of results and keep fine tuning it
-until we get a better win percentage, instead of waiting months?"
+The master, 2026-09-07, in order: "there has to be a better way of making the
+final call"; "learn and improve"; "can we not run the same set of criteria and
+lenses on our set of results and keep fine tuning it until we get a better win
+percentage, instead of waiting months?"; and then, on the first draft of this
+page, "I would stick to the rule, why the market?"
 
-Yes. With one discipline, which his own graduation bar of 2026-08-15 already
-names in his own words: 500+ UNSEEN races. Tune on one half of the record,
-then look ONCE at the half never touched. Tuning on everything and reporting
-the best number is how the last three tie-breaks were born.
+He was right, and the correction is the most useful thing on this page.
 
-## THE ANSWER IN FOUR LINES
+## THE ERROR IN THE FIRST DRAFT
 
-1. **When the market separates the two, the call is already made.** With the
-   second 25-75% longer the market's first wins 61.4% of the pair; every lens
-   is 46-56%. Deviating there costs about fifteen points.
-2. **When the market cannot separate them it is a coin flip**, 49.3%, and
-   that is the only place a lens has room.
-3. **THE HELD-OUT TEST KILLED MOST OF IT.** In split markets the best rule on
-   the tuned half, direction of the last three lines then the class line, read
-   56.9% against a 52.5% benchmark. On the half it had never seen it read
-   49.2% against 46.7%. It beat the benchmark in both halves, which no other
-   rule did, but by two and a half points on 61 races. That is a candidate,
-   not an answer. Freshness looked strong on the held-out half alone and had
-   no verdict on the other, which is what noise looks like.
-4. **No universal tie-break exists in these features.** Across all 396 the
-   market's first is 59.3% and the best rule 54.8%.
+I benchmarked the final call on STRIKE RATE alone. Strike rate always flatters
+the shorter horse, because the shorter horse is shorter precisely for being
+likelier to win. Measured that way the market's order looks unbeatable and the
+conclusion writes itself: take the market's first. That is a benchmark turned
+into a rule, which is exactly what his own law forbids — the market confirms
+or warns, it never picks. The market is here as the YARDSTICK (his graduation
+bar of 2026-08-15: beat the SP-favourite benchmark), never as the picker.
 
-## WHAT THIS PAGE IS REALLY SAYING
+## THE ANSWER, HELD OUT
 
-The corpus cannot answer the question. Split the 396 usable pairs by market
-state and by half and the cells fall to 50-75 races, where a four-point
-difference is inside the noise. The method is right and the sample is too
-small. That is the case for the backward replay, which adds races, adds our
-OWN final two rather than the market's, and opens the one door this study
-could not: MANNER OF RUNNING, absent from every line below because the
-comments file lives on the box, and named by the six-week synthesis as the
-lens that has been winning consistently.
+The record is cut in half by date. Rules are tuned on the earlier half and
+looked at ONCE on the later half. Only what survives that is reported here.
+
+**Where the market cannot separate the two, the form beats it on BOTH counts,
+on data it had never seen.** Held-out split markets, 51 to 75 races:
+
+| rule | strike | return |
+|---|---|---|
+| market's first | 46.7% | +66.6% |
+| better class line | 49.0% | +91.9% |
+| direction, then class line | 49.2% | +85.0% |
+
+**Where the market IS decided, overruling it costs and pays nothing back.**
+Held out, 60 to 77 races: the market's first 74.0% and +53.9%, the class line
+60.0% and +54.8%. Fourteen points of strike given away for nine tenths of a
+point of return. The return edge that looked real on the whole set did not
+survive the split.
+
+**Nothing beats the market overall**, and that is the wrong target anyway:
+across all 396 the market's first is 59.3% at +60.2% and the best rule 54.8%
+at +61.5%.
+
+## WHAT IT ADDS UP TO
+
+The form earns its keep exactly where the market has no opinion, and only
+there. That is one honest finding, twice held out, on 51 to 75 races. It is a
+candidate for his ruling, not a rule, and the samples are too thin to bet a
+system on.
+
+Two things the corpus cannot do, both fixed by the backward replay: it uses
+the MARKET's top two as a stand-in for OUR final two, and it cannot see
+MANNER OF RUNNING, the lens the six-week synthesis names as the one winning
+consistently, because the comments file lives on the box.
 
 ## HOW TO READ THE TABLES
 
-- `decided` is the races where that rule had an opinion. A rule that cannot
+- `decided` is the races where the rule had an opinion. A rule that cannot
   separate two horses is not charged for them.
 - `strike` answers "given the winner is one of these two, how often did this
-  rule name it". Comparable between rules on the same rows.
-- `ROI at SP` is comparable BETWEEN rules and is NOT an absolute return:
-  every race here was selected because the pair held the winner. A rule that
-  prefers the longer of the two is paid more when it is right.
+  rule name it".
+- `ROI at SP` is comparable BETWEEN rules on the same rows and is NOT an
+  absolute return: every race was selected because the pair held the winner.
 - Nothing here is a rule (CLAUDE.md law 2). Judge nothing under 50.
 
 corpus: 24011 runner rows, 2727 races, 396 races where the top two held the winner and both had form
@@ -185,6 +199,38 @@ THE HELD-OUT TEST: the record is cut at 2026-03-06. A rule is TUNED ON the earli
 | hotter jockey (30d) | 94 | 45.7% | +21.3% | |
 | fresher (fewer days) | 120 | 51.7% | +55.9% | |
 | beaten less last time | 110 | 57.3% | +49.6% | |
+
+## market DECIDED · TUNED ON
+
+| rule | decided | strike | ROI at SP | |
+|---|---|---|---|---|
+| market's first (BENCHMARK) | 53 | 58.5% | +14.7% | |
+| better class line | 39 | — | — | under 50, no verdict |
+| rising lines (law 3b) | 15 | — | — | under 50, no verdict |
+| class line, direction within a rung | 31 | — | — | under 50, no verdict |
+| direction, then class line | 43 | — | — | under 50, no verdict |
+| won last time out | 21 | — | — | under 50, no verdict |
+| hotter yard (30d) | 43 | — | — | under 50, no verdict |
+| hotter yard, else market | 53 | 49.1% | +12.7% | |
+| hotter jockey (30d) | 38 | — | — | under 50, no verdict |
+| fresher (fewer days) | 49 | — | — | under 50, no verdict |
+| beaten less last time | 44 | — | — | under 50, no verdict |
+
+## market DECIDED · HELD OUT
+
+| rule | decided | strike | ROI at SP | |
+|---|---|---|---|---|
+| market's first (BENCHMARK) | 77 | 74.0% | +53.9% | |
+| better class line | 60 | 60.0% | +54.8% | |
+| rising lines (law 3b) | 36 | — | — | under 50, no verdict |
+| class line, direction within a rung | 59 | 57.6% | +45.5% | |
+| direction, then class line | 66 | 54.5% | +49.0% | |
+| won last time out | 22 | — | — | under 50, no verdict |
+| hotter yard (30d) | 45 | — | — | under 50, no verdict |
+| hotter yard, else market | 77 | 66.2% | +49.8% | |
+| hotter jockey (30d) | 56 | 46.4% | +32.0% | |
+| fresher (fewer days) | 71 | 57.7% | +73.4% | |
+| beaten less last time | 66 | 62.1% | +56.5% | |
 
 ## Cl3-4
 

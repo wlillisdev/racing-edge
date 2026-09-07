@@ -378,6 +378,7 @@ def main() -> int:
                  "market CLEAR (2nd 25-75% longer)",
                  "market CLEAR · TUNED ON", "market CLEAR · HELD OUT",
                  "market DECIDED (2nd 75%+ longer)",
+                 "market DECIDED · TUNED ON", "market DECIDED · HELD OUT",
                  "Cl1-2", "Cl3-4", "Cl5-7", "unclassed",
                  "code F", "code H", "code C", "code N"]:
         rows = [line(n, band) for n in RULES]
