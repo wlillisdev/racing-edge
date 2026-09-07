@@ -72,13 +72,18 @@ def _fav_band(fav_sp: float) -> str:
     return "fav>3/1"
 
 
-def build(raw: Path, min_n: int = 30):
+def build(raw: Path, min_n: int = 30, before: str = ""):
+    """The book's cells from the corpus. `before` (an ISO day) keeps only races
+    STRICTLY earlier — the backward replay's guard, so a replayed day is never
+    in the book that judges it. Default "" is every race, as before."""
     cells: dict[tuple, dict] = defaultdict(
         lambda: {"n": 0, "fav": 0, "r2": 0, "r3": 0, "out": 0,
                  "no_win": 0, "win_sps": []})
     for race in load_corpus(raw):
         priced = sorted([r for r in race if r.sp > 1.0], key=lambda r: r.sp)
         if len(priced) < 2:
+            continue
+        if before and priced[0].date >= before:
             continue
         winner = next((r for r in priced if r.pos == "1"), None)
         key = (priced[0].rtype, _class_band(priced[0].rclass),

@@ -123,6 +123,84 @@ def test_a_non_finisher_is_a_status_not_a_crash():
     assert winner_of(out) == ""
 
 
+# --------------------------------------------------------------------------- #
+# the client — serves a past day, refuses every door that knows today
+# --------------------------------------------------------------------------- #
+class _Api:
+    def __init__(self):
+        self.calls = []
+
+    def horse_results(self, horse_id, limit=12):
+        self.calls.append(horse_id)
+        return [{"race_id": "old", "date": "2026-08-01", "course": "York",
+                 "runners": [{"horse_id": horse_id, "position": "2"}]}]
+
+
+def test_the_client_serves_the_rebuilt_card_and_caches_histories(tmp_path):
+    from racing_edge.school.replay import ReplayClient
+    api = _Api()
+    c = ReplayClient(api, [card_from_result(DOC)], tmp_path, date(2026, 9, 6))
+    assert c.racecards("2026-09-06")["racecards"][0]["race_id"] == "rac_32296677400"
+    first = c.horse_results("hrs_1", limit=30)
+    second = c.horse_results("hrs_1", limit=30)
+    assert first == second
+    assert api.calls == ["hrs_1"]            # the door was asked ONCE
+    assert c.fetched == 1 and c.served_from_cache == 1
+    # a re-run of the same day is free
+    c2 = ReplayClient(api, [card_from_result(DOC)], tmp_path, date(2026, 9, 6))
+    c2.horse_results("hrs_1", limit=30)
+    assert api.calls == ["hrs_1"]
+    # a DIFFERENT as_of is a different question and is fetched again
+    c3 = ReplayClient(api, [card_from_result(DOC)], tmp_path, date(2026, 9, 5))
+    c3.horse_results("hrs_1", limit=30)
+    assert api.calls == ["hrs_1", "hrs_1"]
+
+
+def test_every_current_stats_door_raises():
+    """These doors answer about TODAY. build_evidence already skips them when
+    as_of is set, so in a correct run they are never called — which is why
+    they raise: an as_of that failed to arrive must kill the replay, not
+    quietly score it with knowledge the morning never had."""
+    import pytest
+
+    from racing_edge.school.replay import LookAheadError, ReplayClient
+    c = ReplayClient(_Api(), [], "/tmp", date(2026, 9, 6))
+    for call in (lambda: c.trainer_jockeys("trn_1"),
+                 lambda: c.trainer_course("trn_1"),
+                 lambda: c.jockey_course("jky_1"),
+                 lambda: c.horse_distance_times("hrs_1")):
+        with pytest.raises(LookAheadError):
+            call()
+
+
+def test_the_shape_book_never_judges_a_race_it_has_seen(tmp_path):
+    """The book that grades a replayed race must be built from races BEFORE
+    it. Fails with the `before` filter removed."""
+    from racing_edge.school import shapebook as sb
+    from racing_edge.school.replay import seed_shapebook
+    raw = tmp_path / "raw"
+    raw.mkdir()
+    # 40 identical Class 6 flat races on one old day, 40 more on the replay day
+    def rows(day, rid0):
+        out = []
+        for i in range(40):
+            for j, (sp, pos) in enumerate([("2.0", "1"), ("5.0", "2"),
+                                           ("9.0", "3"), ("11.0", "4"),
+                                           ("15.0", "5")]):
+                out.append(f"{day},{rid0 + i},Kempton,G,F,Class 6,6,"
+                           f"h{rid0 + i}_{j},{sp},{pos},0,jky,trn")
+        return out
+    (raw / "2026-08-01.csv").write_text("\n".join(rows("2026-08-01", 1000)) + "\n")
+    (raw / "2026-09-06.csv").write_text("\n".join(rows("2026-09-06", 2000)) + "\n")
+
+    all_cells = sb.build(raw)
+    seeded = seed_shapebook(date(2026, 9, 6), raw)
+    key = next(iter(all_cells))
+    assert all_cells[key]["n"] == 80                 # both days
+    assert sb._CELLS_CACHE[raw.resolve()][key]["n"] == 40   # only the earlier one
+    assert seeded == len(all_cells)
+
+
 def test_the_replay_imports_no_model_module():
     """Cost is real money (law 5). The replay reads the record; it never
     calls a model."""

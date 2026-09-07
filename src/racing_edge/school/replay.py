@@ -29,6 +29,9 @@ clean while the absolute strike is inflated against a live morning.
 """
 from __future__ import annotations
 
+import json
+from datetime import date
+from pathlib import Path
 from typing import Any
 
 from racing_edge.data.normalise import _dist_f, _str
@@ -122,3 +125,93 @@ def winner_of(outcome: dict) -> str:
         if o["position"] == 1:
             return hid
     return ""
+
+
+# --------------------------------------------------------------------------- #
+# the client — the morning's client pointed at a past day
+# --------------------------------------------------------------------------- #
+class LookAheadError(RuntimeError):
+    """A door that knows TODAY was asked about a race run months ago.
+
+    `build_evidence` already skips the current-stats lenses when `as_of` is
+    set, so in a correct run these doors are never called. That is exactly
+    why they raise: if `as_of` ever fails to reach the evidence build, the
+    replay must die loudly rather than quietly score itself with knowledge
+    the morning could not have had.
+    """
+
+
+class ReplayClient:
+    """Serves ONE rebuilt past race to the real engine.
+
+    `racecards` hands back the rebuilt card whatever day is asked for, because
+    `evaluate_field` passes the day through from its caller and the card is
+    already the right one. `horse_results` goes to the real door through a
+    per-(horse, as_of) disk cache, so a re-run of the same day costs nothing.
+    Every current-stats door raises.
+    """
+
+    def __init__(self, api, cards: list[dict], cache_dir: Path, as_of: date):
+        self.api = api
+        self.cards = cards
+        self.cache_dir = Path(cache_dir)
+        self.as_of = as_of
+        self.fetched = 0
+        self.served_from_cache = 0
+        self.cache_dir.mkdir(parents=True, exist_ok=True)
+
+    # -- the card ---------------------------------------------------------- #
+    def racecards(self, day: str = "today") -> dict:
+        return {"racecards": self.cards}
+
+    # -- histories, cached --------------------------------------------------#
+    def _cache_path(self, horse_id: str) -> Path:
+        safe = "".join(c for c in horse_id if c.isalnum() or c in "-_")
+        return self.cache_dir / f"{safe}@{self.as_of.isoformat()}.json"
+
+    def horse_results(self, horse_id: str, limit: int = 12) -> list[dict]:
+        p = self._cache_path(horse_id)
+        if p.exists():
+            self.served_from_cache += 1
+            try:
+                return json.loads(p.read_text())
+            except ValueError:
+                pass                                # a torn file: refetch below
+        rows = self.api.horse_results(horse_id, limit=limit)
+        self.fetched += 1
+        try:
+            p.write_text(json.dumps(rows))
+        except OSError:
+            pass                                    # a cache miss is not fatal
+        return rows
+
+    # -- the doors that know today ------------------------------------------#
+    def trainer_jockeys(self, trainer_id: str) -> list[dict]:
+        raise LookAheadError(
+            f"trainer_jockeys({trainer_id}) asked during a replay of "
+            f"{self.as_of}: the stable's CURRENT table would leak the future")
+
+    def trainer_course(self, trainer_id: str, course_id: str = "") -> list[dict]:
+        raise LookAheadError(
+            f"trainer_course({trainer_id}) asked during a replay of {self.as_of}")
+
+    def jockey_course(self, jockey_id: str) -> list[dict]:
+        raise LookAheadError(
+            f"jockey_course({jockey_id}) asked during a replay of {self.as_of}")
+
+    def horse_distance_times(self, horse_id: str) -> list[dict]:
+        raise LookAheadError(
+            f"horse_distance_times({horse_id}) asked during a replay of {self.as_of}")
+
+
+def seed_shapebook(as_of: date, raw: Path = Path("data/school/raw")) -> int:
+    """Fill the shape book's cache with cells built ONLY from races strictly
+    before `as_of`, and return how many cells survived the floor.
+
+    Without this the book that judges a replayed race is built from a corpus
+    that CONTAINS that race, and the glance gate would be reading the answer.
+    """
+    from racing_edge.school import shapebook as sb
+    rk = Path(raw).resolve()
+    sb._CELLS_CACHE[rk] = sb.build(raw, before=as_of.isoformat())
+    return len(sb._CELLS_CACHE[rk])
