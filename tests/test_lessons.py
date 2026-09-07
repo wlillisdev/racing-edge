@@ -23,7 +23,7 @@ def _row(id_, status, first_seen, lesson="a lesson"):
 def test_an_open_lesson_past_the_bar_turns_the_page_red():
     fresh = [_row("a", "SURFACED", "2026-09-05")]
     ok, line = L.health_line(fresh, TODAY)
-    assert ok and "none open past" in line
+    assert ok and "nothing waiting past" in line
 
     old = [_row("a", "SURFACED", "2026-07-27", "manner beats the bare figure")]
     ok, line = L.health_line(old, TODAY)
@@ -32,25 +32,29 @@ def test_an_open_lesson_past_the_bar_turns_the_page_red():
     assert "manner beats the bare figure" in line
 
 
-def test_a_ruled_lesson_stops_shouting_and_a_killed_one_stays_dead():
-    """CARVED and KILLED are closed. Only SURFACED, DOORBELL and TESTING are
-    open — a lesson he has ruled on is not nagging him about it again."""
-    for status in ("CARVED", "KILLED"):
+def test_red_means_nothing_is_happening_not_merely_unresolved():
+    """CARVED and KILLED are closed. TESTING is unresolved but ACTED ON — it
+    carries a named test and bar, and making it red forever would punish the
+    one behaviour we want (his word, 2026-09-07: "why not test them"). Only
+    SURFACED and DOORBELL go red."""
+    for status in ("CARVED", "KILLED", "TESTING"):
         ok, _ = L.health_line([_row("a", status, "2026-01-01")], TODAY)
-        assert ok, f"{status} should be closed"
-    for status in L.OPEN:
+        assert ok, f"{status} should not be red"
+    for status in L.NEEDS_ACTION:
         ok, _ = L.health_line([_row("a", status, "2026-01-01")], TODAY)
-        assert not ok, f"{status} should still be open"
+        assert not ok, f"{status} should be red"
+    # and TESTING is still counted as OPEN — unresolved, just not shouting
+    assert "TESTING" in L.OPEN and "TESTING" not in L.NEEDS_ACTION
 
 
 def test_the_oldest_open_lesson_is_the_one_named():
     rows = [_row("recent", "SURFACED", "2026-08-25", "the recent one"),
             _row("ancient", "DOORBELL", "2026-07-01", "the ignored one"),
-            _row("middle", "TESTING", "2026-08-01", "the middling one")]
+            _row("under-test", "TESTING", "2026-07-01", "the one being tested")]
     st = L.stale(rows, TODAY)
-    assert [r["id"] for r in st] == ["ancient", "middle", "recent"]
+    assert [r["id"] for r in st] == ["ancient", "recent"]   # the tested one is acted on
     _, line = L.health_line(rows, TODAY)
-    assert "the ignored one" in line and "3 of 3" in line
+    assert "the ignored one" in line and "2 of 2" in line
 
 
 def test_note_counts_a_repeat_and_never_changes_a_status():

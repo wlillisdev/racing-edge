@@ -49,7 +49,14 @@ REGISTER = Path("data/lessons.csv")
 STALE_DAYS = 7
 
 STATUSES = ("SURFACED", "DOORBELL", "TESTING", "CARVED", "KILLED")
-OPEN = ("SURFACED", "DOORBELL", "TESTING")
+OPEN = ("SURFACED", "DOORBELL", "TESTING")      # not yet resolved
+# RED is for lessons where NOTHING IS HAPPENING. A lesson under TESTING has a
+# named test, a named bar and a date; making that red forever would punish the
+# one behaviour we want and teach everyone to ignore the line (the master,
+# 2026-09-07, on being handed four questions instead of four tests: "why not
+# test them"). A test that never reports shows up instead as a test whose
+# outcome column stays empty, which the report prints.
+NEEDS_ACTION = ("SURFACED", "DOORBELL")
 
 FIELDS = ["id", "first_seen", "last_seen", "count", "status", "lesson",
           "shape", "source", "test", "bar", "ruling", "outcome"]
@@ -109,7 +116,7 @@ def stale(rows: list[dict], today: date | None = None,
           stale_days: int = STALE_DAYS) -> list[dict]:
     """Open lessons that have sat longer than the bar — the red line. Sorted
     oldest first, because the oldest is the one that has been ignored most."""
-    out = [r for r in rows if r.get("status") in OPEN
+    out = [r for r in rows if r.get("status") in NEEDS_ACTION
            and days_open(r, today) >= stale_days]
     return sorted(out, key=lambda r: days_open(r, today), reverse=True)
 
@@ -119,18 +126,19 @@ def health_line(rows: list[dict], today: date | None = None) -> tuple[bool, str]
     the bar: the record learned something, said so, and nothing happened."""
     if not rows:
         return True, "lessons: register empty — the why ledger has taught nothing yet"
-    open_rows = [r for r in rows if r.get("status") in OPEN]
+    waiting = [r for r in rows if r.get("status") in NEEDS_ACTION]
     st = stale(rows, today)
     counts = {s: sum(1 for r in rows if r.get("status") == s) for s in STATUSES}
     tail = " · ".join(f"{s.lower()} {counts[s]}" for s in STATUSES if counts[s])
     if not st:
-        return True, f"lessons: {len(rows)} known ({tail}); none open past {STALE_DAYS} days"
+        return True, (f"lessons: {len(rows)} known ({tail}); nothing waiting past "
+                      f"{STALE_DAYS} days")
     oldest = st[0]
     return False, (
-        f"LESSONS NOT ACTED ON — {len(st)} of {len(open_rows)} open lesson(s) "
+        f"LESSONS NOT ACTED ON — {len(st)} of {len(waiting)} waiting lesson(s) "
         f"past {STALE_DAYS} days; oldest {days_open(oldest, today)}d: "
         f"{oldest['id']} — {oldest['lesson'][:90]}. The record learned it and "
-        f"nothing changed: rule on it, test it, or kill it.")
+        f"nothing is happening: test it, rule on it, or kill it.")
 
 
 def report(rows: list[dict], only_open: bool = False,

@@ -39,8 +39,35 @@ one. A rule with no opinion on a pair is not charged for it.
 | 8 | the one better off at the weights | law 3e, pound-a-length |
 | 9 | the closer when the pace is contested | the Garrowby shape, 06 Sep: three front-runners, the winner came from off it |
 
-The market state (split / clear / decided, by the price ratio of the two) is
-a CONDITION every rule is scored under, not an eleventh rule.
+## TWO MORE, ADDED ON HIS WORD — TWELVE TRIED, NOT TEN
+
+The master, 2026-09-07, when the register's four open lessons were put to
+him as questions: "why not test them". Right — the record field-testing a
+lesson is the third birth route in law 2 and the whole reason the register
+exists. Asking him was the reflex the register was built to replace.
+
+Two of the four open lessons were not on the list above. They are now, and
+the count this report must quote is TWELVE, not ten.
+
+| # | rule | the open lesson it settles |
+|---|---|---|
+| 10 | the one NOT raised in the weights since its last win | `weight-rise-argued-both-ways` — called a red flag and a non-issue in the same fortnight, threshold never named |
+| 11 | the one running off no higher a mark than when it last won | `no-well-in-argued-both-ways` — read as a hidden positive in some races and as noise in others |
+
+The other two open lessons are already covered: `manner-beats-the-figure` is
+candidates 1 and 2, and `owed-comments-rotating-menu` is not a rule at all
+but a CONDITION — every rule is scored twice, once where the comments are
+readable and once where they are not, which is exactly the question that
+lesson has been asking unanswered for six weeks.
+
+## THE CONDITIONS EVERY RULE IS SCORED UNDER
+
+Not rules, and not counted as such:
+
+- **market state** — split, clear or decided, by the price ratio of the two.
+- **comments readable or OWED** — the settling of the six-week menu question:
+  if a rule only works when the comments are there, that is the answer to
+  what we do when they are not.
 
 ## THE BAR A RULE MUST CLEAR
 
