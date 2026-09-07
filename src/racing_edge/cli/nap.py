@@ -54,6 +54,56 @@ def _best_floor_fit(survivors, field):
     return None
 
 
+def _next_in_key_order(survivors, nap):
+    """The key's NEXT survivor after `nap` — None when nap is last or absent."""
+    ids = [s.runner.horse_id for s in survivors]
+    if nap.runner.horse_id not in ids:
+        return None
+    i = ids.index(nap.runner.horse_id)
+    return survivors[i + 1] if i + 1 < len(survivors) else None
+
+
+def _floor_refusal_fallback(engine_mode: bool, reader_objected: bool,
+                            survivors, field, nap):
+    """What the bank does when the profile floor refuses the pick.
+    -> (pick, why). Either way the bank is LEAN — the floor CAPS.
+
+    THE FLOOR NEVER RE-PICKS IN ENGINE MODE (the master, 2026-09-02, ruling
+    on the third audit: 'in engine mode the pick is fixed, so a floor never
+    re-picks — it CAPS'). The code below this docstring said so and did the
+    opposite: on 2026-09-07 the reader objected to the key's Venetian Prince
+    on cited facts, the floor refused him, and `_best_floor_fit` jumped past
+    Morris Dancer, On Message, Maho Bay (won the race, 5/2) and Edelak (won,
+    11/10F) to the first WELL-IN survivor, Saint Polo — 3rd at 7/4F, beaten
+    by the engine's own #2. His word the same night ("apply fixes as
+    recommended"): after a VETO the bank goes to THE KEY'S NEXT SURVIVOR,
+    capped at LEAN; a floor refusal with no veto leaves the pick standing,
+    capped at LEAN. Reader mode is unchanged: the best floor-fit survivor."""
+    if engine_mode:
+        if reader_objected:
+            nxt = _next_in_key_order(survivors, nap)
+            if nxt is not None:
+                return nxt, "the reader objected and the floor refused — the key's next survivor"
+            return nap, "the reader objected and the floor refused — no next survivor, the pick stands"
+        return nap, "the floor caps, it never re-picks in engine mode — the pick stands"
+    fb = _best_floor_fit(survivors, field)
+    if fb is not None and fb.runner.horse_id != nap.runner.horse_id:
+        return fb, "reader mode — the engine's best floor-fit survivor"
+    return nap, "reader mode — no floor-fit survivor stands"
+
+
+def _is_confident(deep_conf: str, deep_case, c, off_profile: bool,
+                  frank_thin_deep: bool, cornered: bool, lean_cap: bool) -> bool:
+    """CONFIDENT is earned, never inherited. The 2026-09-07 mail carried
+    'CONFIDENT NAP: Saint Polo' in its subject and 'LEAN only' in its body:
+    the floor fallback reset off_profile and the fallback horse's own
+    conviction relabelled a capped bet. `lean_cap` is set by every fallback
+    and every floor refusal and it is never reset."""
+    base = (deep_conf == "confident") if deep_case else bool(c.confident)
+    return bool(base and not off_profile and not c.flags and not c.cautions
+                and not frank_thin_deep and not cornered and not lean_cap)
+
+
 def _git_stamp() -> str:
     """The running code, named in the email itself (the master, 2026-09-01:
     'how do I know this is pushed and will actually run?') — the box pulls
@@ -939,20 +989,25 @@ def main() -> int:
     # first term of the key from today. Every morning the log prints the
     # class-first pick beside the pick the OLD key would have made, so the
     # record grades the inversion day by day (REVERT-IF in pipeline/nap.py).
+    # REVERTED 2026-09-07 (the master: "apply fixes as recommended" — day one
+    # on the box the class-first key put up a 66/1 shot and the old key's
+    # Edelak won at 11/10): the jigsaw key picks again; the class-first key
+    # is the SHADOW, printed beside the pick every morning and graded nightly
+    # in the shadow ladder (key-class v key-old). THAT line is the live check.
     try:
-        from racing_edge.pipeline.nap import _rank_key_legacy as _rkl
-        _old = max(survivors, key=_rkl) if survivors else None
+        from racing_edge.pipeline.nap import _rank_key_class as _rkc
+        _cls = max(survivors, key=_rkc) if survivors else None
         _cl = getattr(nap.conviction, "best_class_line", "") or "none in the last 10"
-        if _old is None or _old is nap:
-            emit(f"  INVERSION — class first: {nap.runner.horse} ({nap.race.course} "
-                 f"{nap.race.off_time}), best line {_cl}; the old key agrees")
+        if _cls is None or _cls is nap:
+            emit(f"  THE KEY: {nap.runner.horse} ({nap.race.course} {nap.race.off_time}), "
+                 f"best line {_cl}; the class-first shadow agrees")
         else:
-            emit(f"  INVERSION — class first: {nap.runner.horse} ({nap.race.course} "
-                 f"{nap.race.off_time}), best line {_cl}; THE OLD KEY WOULD HAVE PICKED "
-                 f"{_old.runner.horse} ({_old.race.course} {_old.race.off_time}), best line "
-                 f"{getattr(_old.conviction, 'best_class_line', '') or 'none in the last 10'}")
+            emit(f"  THE KEY: {nap.runner.horse} ({nap.race.course} {nap.race.off_time}), "
+                 f"best line {_cl}; THE CLASS-FIRST SHADOW WOULD HAVE PICKED "
+                 f"{_cls.runner.horse} ({_cls.race.course} {_cls.race.off_time}), best line "
+                 f"{getattr(_cls.conviction, 'best_class_line', '') or 'none in the last 10'}")
     except Exception as _e:
-        emit(f"  ⚠ inversion line not printed: {_e.__class__.__name__}")
+        emit(f"  ⚠ key line not printed: {_e.__class__.__name__}")
     # THE CORNERED-DAY KLAXON (2026-08-27, the master: 'we need to fix this,
     # selection was bizarre' — Lady Kara, last at 5/2, picked only because the
     # gates had erased every flat race and left nothing but jumps dreck; same
@@ -977,6 +1032,7 @@ def main() -> int:
         return 0
     deep_case: list[str] = []
     mp = None
+    reader_objected = False     # the reader's cited veto (engine mode) — see _floor_refusal_fallback
     try:
         from racing_edge.ai.reason import get_investigator, resolve_model
         from racing_edge.report.restudy import render_preread
@@ -1197,6 +1253,7 @@ def main() -> int:
                 # reader's hand — the record starves without picks.
                 emit(f"  READER OBJECTION (recorded — the pick STANDS, LEAN): "
                      f"{mp.pass_reason}")
+                reader_objected = True
                 deep_case = [
                     "  READER OBJECTION (2026-08-19 law: objection recorded, "
                     "pick stands at LEAN — the record judges the doubt):",
@@ -1318,6 +1375,7 @@ def main() -> int:
     # caps confidence at LEAN — never a veto, never a re-pick.
     from racing_edge.study.frank import Franking, frank_form
     frank_thin_deep = False
+    lean_cap = False        # set by every fallback and floor refusal; never reset
     # a frank that cannot be fetched is OWED, never a dead morning (the scar
     # of 2026-09-06: the run died on the results door inside this call)
     try:
@@ -1386,6 +1444,7 @@ def main() -> int:
                  f"({why_mark}) — falling back to the engine's best profile-fit "
                  f"survivor, LEAN only:")
             nap, deep_case, mp = fb, [], None
+            lean_cap = True
             fr = frank_form(client, nap.runner.horse_id, nap.history,
                             code=nap.race.code)
             frank_thin_deep = fr.is_thin
@@ -1443,14 +1502,18 @@ def main() -> int:
         why = ("the race itself is gated — no off-profile licence in a flagged race"
                if race_gated and deep_case else
                "no argued multi-fact case to override")
-        _fb2 = _best_floor_fit(survivors, field)
-        if _fb2 is not None and _fb2.runner.horse_id != nap.runner.horse_id:
+        _fb2, _fb_why = _floor_refusal_fallback(engine_mode, reader_objected,
+                                                survivors, field, nap)
+        lean_cap = True                      # a refused floor is a LEAN, whoever banks
+        if _fb2.runner.horse_id != nap.runner.horse_id:
             emit(f"  ✗ floor refused {nap.runner.horse} ({'; '.join(soft_fails)}; "
-                 f"{why}) — falling back to the engine's floor-fit "
-                 f"{_fb2.runner.horse}, LEAN only.")
+                 f"{why}) — {_fb_why}: {_fb2.runner.horse}, LEAN only.")
             nap, deep_case, mp = _fb2, [], None
-            fr = frank_form(client, nap.runner.horse_id, nap.history,
-                            code=nap.race.code)
+            try:
+                fr = frank_form(client, nap.runner.horse_id, nap.history,
+                                code=nap.race.code)
+            except Exception as _e:
+                fr = Franking(None, 0, 0, 0, f"frank OWED — {_e.__class__.__name__}")
             frank_thin_deep = fr.is_thin
             c, r = nap.conviction, nap.race
             _mr = mark_read(nap.runner.official_rating, nap.history,
@@ -1460,6 +1523,9 @@ def main() -> int:
                             if p.race.race_id == r.race_id and p.price),
                            default=None)
             soft_fails, off_profile = [], False
+        elif engine_mode:
+            emit(f"  ✗ floor refused {nap.runner.horse} ({'; '.join(soft_fails)}; "
+                 f"{why}) — {_fb_why}. LEAN only.")
         else:
             emit(f"  ✗ PROFILE FLOOR: {nap.runner.horse} — {'; '.join(soft_fails)} "
                  f"and {why}; no floor-fit fallback stands. No bet.")
@@ -1478,9 +1544,8 @@ def main() -> int:
     if deep_case and c.flags:
         emit(f"  ⚠ the engine flags this horse ({', '.join(c.flags)}) — the reader "
              f"may overrule, but never at full confidence. LEAN only.")
-    confident = ((deep_conf == "confident") if deep_case else c.confident) \
-        and not off_profile and not c.flags and not c.cautions \
-        and not frank_thin_deep and not cornered
+    confident = _is_confident(deep_conf, deep_case, c, off_profile,
+                              frank_thin_deep, cornered, lean_cap)
     # THE GLANCE DECLINE GATE (the master, 2026-08-31 — Play Me, 4th in the
     # market inside a top-3-94% shape, banked as a "declinable" lean nobody
     # declined: "we need to stop making these mistakes"): before a LEAN banks,
