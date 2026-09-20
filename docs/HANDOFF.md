@@ -1,7 +1,87 @@
 # HANDOFF — the apprenticeship's living memory
 
-Last updated: **2026-09-02** (the audit night) (update this file whenever state changes — it is
-how every new chat remembers everything).
+Last updated: **2026-09-20** (the full audit, and his ruling on it) (update this file whenever
+state changes — it is how every new chat remembers everything).
+
+## 2026-09-20 — HIS RULING: THE BOX PICKS, THE APPRENTICE STUDIES
+
+**Read this before anything else. It changes what this session is for.**
+
+The master, 2026-09-20: *"we need to do a full audit and fix on this system
+it is not performing well and very inconsistent we need to make it work or
+quit at this point."* The audit is `docs/AUDIT_2026-09-20.md`. He read it and
+ruled: **the box picks, the apprentice studies.**
+
+### What the audit found
+
+Between 2 and 20 September the hand-duty banked **three picks in nineteen
+days** (5, 6 and 12 Sep). Sixteen days produced nothing.
+
+**The cause, proven inside one turn on 20 Sep:** `date -u` returned
+`07:36:13Z` and later, in the same turn, `14:45:15Z`, with no long-running
+work between. **This session suspends mid-turn for hours and resumes as if no
+time has passed.** The clock is honest. The turn is not continuous. So the
+morning read finishes after racing has started, and the clock guards then
+correctly void the day. They were never malfunctioning; they were voiding
+real days, exactly as designed.
+
+**Why four fixes failed:** three guards ran *inside* the session that
+suspends, and the 10:00 backstop woke that same session, inheriting the
+stall. The 11:00 fresh-session backstop escaped it but carried no connector
+grants and could not read a card. **A watchdog inside the process it is
+watching is not a watchdog.** Those two weeks of guard-building are the worst
+work in this repo's history, because each one looked like diligence and
+manufactured the appearance of coverage.
+
+**The blanks were the hand-duty's, not the box's.** The engine banks a NAMED
+PASS when it declines (`cli/nap.py`: "NO BET banked — an earned pass, not a
+failure"), so `nap.db` has a row every day. The record is intact; the parallel
+hand-duty is what was inconsistent.
+
+### What changed, 2026-09-20
+
+- **The daily pick belongs to the box.** The engine on PythonAnywhere banks at
+  07:30 on cron, on a real clock that cannot suspend. This session does not
+  read a card to bank a pick and does not write `data/school/picks/duty-*.csv`.
+- **Routine `trig_01GHqLGELcgadYxQqim9ZZL3`** re-pointed from "morning duty" to
+  **apprentice study, 21:30 UTC** — settle and grade the box's pick, the why
+  ledger, the numbers, one plumbing cut. **It has no deadline**, which is the
+  whole point: a seven-hour suspension costs latency, not the day.
+- **Retired:** `trig_012fvwgFBj3oboTxzbbfKJSr` (10:00 backstop) and
+  `trig_01J5kMnNPaWUpQfU5e38BKSv` (11:00 fresh-session backstop). Disabled, not
+  deleted, so their history stays readable.
+- **Never reintroduce a pre-off deadline into this session's work.**
+
+### Still open from the audit — one per day, in this order
+
+1. **The box must commit a settled record** (results and prices only, nothing
+   dated inside the corpus window). `nap.db`, the yardstick and the why ledger
+   are gitignored, so **the record that judges the work cannot be read from
+   this session** — grading has been done from summaries of the record rather
+   than the record.
+2. **One writer, one schema for the settled files**, pinned by a test that
+   fails on a corrupt row. Several existing rows are spilled sheet text in the
+   wrong column, so no count here has ever been machine-checked.
+3. **A `TESTING` lesson must go red when its named test has not reported** by
+   its named date. Five sit at TESTING, none has reported; the status is a
+   parking space.
+
+### The record as it stands
+
+| | |
+|---|---|
+| 5 Sep | Proposal, Thirsk 3:15, 2/1 |
+| 6 Sep | Regional, York 3:50, 15/2 e/w |
+| 12 Sep | Constitution River, Leopardstown 5:00, 11/8F — **LOST, 3rd of 8** |
+| 13-19 Sep | blanks (system fault, recorded as blanks, not passes) |
+| 20 Sep | named pass — tripwire fired |
+
+12 Sep autopsy, error in one sentence: the sheet named the pace as the
+question it could not answer, and that exact hole is what beat me — the fault
+was banking a race whose decisive question was already written down as
+unresolved. Against it: instinct wanted Item, the evidence said the market's
+first, I followed the evidence, and **Item ran sixth, three places behind the
+pick.**
 
 ## 2026-08-15 — THE SCHOOL (new standing method, master-dictated)
 
