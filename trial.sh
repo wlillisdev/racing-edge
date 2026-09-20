@@ -77,7 +77,14 @@ fi
 echo
 
 case "${1:-nap}" in
-  nap)     "$PY" -m racing_edge.cli.nap     --day today --both --email ;;   # keeps the key: the DEEP READ needs it (SDK-free)
+  nap)     "$PY" -m racing_edge.cli.nap     --day today --both --email       # keeps the key: the DEEP READ needs it (SDK-free)
+           # THE FAVOURITE FILTER (taught 2026-09-20, his words: "look at all
+           # the favourites every day, rule out the bad ones and dial in the
+           # ones that are left"). Runs AFTER the engine so it can never delay
+           # or break the bank, and best-effort so a bad morning for it is a
+           # missing list, never a missing pick. Paper, graded nightly.
+           echo
+           "${SDK_OFF[@]}" "$PY" -m racing_edge.school.favfilter --day today || true ;;
   dissect) "${SDK_OFF[@]}" "$PY" -m racing_edge.cli.dissect --day today        --email ;;
   # THE RECORD, MADE READABLE (audit 2026-09-20). Law 1 says nap.db is the
   # record, and .gitignore correctly keeps it off the repo — so the session

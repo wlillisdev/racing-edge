@@ -635,3 +635,22 @@ def test_preread_carries_the_delta_line_for_every_runner_with_a_prior_run() -> N
                    distance_f=7.0, official_rating=74, course="Ripon", race_type="Flat")
     out = render_preread(race, {"H": (last,)})
     assert "today v last run (the delta line): class Cl4 v Cl5 last (UP 1)" in out
+
+
+def test_the_holdout_corpus_also_stays_out_of_the_boxs_namespace() -> None:
+    """2026-09-20: the gap-fill fetched races after the box's cutover and they
+    were committed under data/school/raw — the suite caught it. A file there
+    (or under comments/) named for a day the box writes nightly makes the
+    box's `git pull` fail FOREVER, which costs a pick a day. Held-out material
+    lives under data/school/holdout/ instead, where no nightly file can
+    collide with it."""
+    import subprocess
+    for d in ("data/school/raw", "data/school/comments"):
+        out = subprocess.run(["git", "ls-files", d], capture_output=True,
+                             text=True).stdout.split()
+        if not out:
+            continue
+        latest = max(Path(f).stem for f in out)
+        assert latest <= "2026-08-14", (
+            f"tracked {d} reaches {latest} — the box owns later days and a "
+            "collision breaks its pull")
