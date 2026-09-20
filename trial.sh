@@ -134,6 +134,15 @@ case "${1:-nap}" in
              echo "WARNING: yardstick scoreboard FAILED — the ledger keeps banking; the board is stale"
              PYTHONPATH=src _crash_mail "night:yardstick" 1
            fi
+           # THE RECORD, MADE READABLE (audit 2026-09-20) — LAST, so it sees
+           # tonight's settle. It also has to be HERE and not only in the
+           # `settle)` case: the box's 22:00 task is `night`, which runs its own
+           # inline settle and never touches that case, so wiring the export
+           # there alone would have meant it never ran on the box at all.
+           if ! "${SDK_OFF[@]}" "$PY" -m racing_edge.school.record_export; then
+             echo "WARNING: record export FAILED — the repo copy of the record is stale"
+             PYTHONPATH=src _crash_mail "night:record_export" 1
+           fi
            # Sunday: the weekly synthesis rides in the same slot (no weekly task needed)
            if [ "$(date +%u)" = "7" ]; then echo; "$PY" -m racing_edge.cli.learn --synthesise --email; fi ;;
   all)     "$PY" -m racing_edge.cli.nap     --day today --both --email
