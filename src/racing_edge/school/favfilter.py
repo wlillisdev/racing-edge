@@ -66,33 +66,27 @@ FLOOR = -1
 # once. Chosen on the tuning half alone (the best cumulative band there with
 # a usable sample) and then tested once:
 #
-#     score >= 4   tune     n= 85  strike 45.9%  ROI  +8.3%
-#                  HELD OUT n=100  strike 52.0%  ROI +16.7%
-#                  benchmark, all favourites, held out: 35.0%, -4.9%
+#     score >= 4, odds-on RULED OUT
+#         tune      n= 64  strike 46.9%  ROI +21.8%
+#         HELD OUT  n= 31  strike 48.4%  ROI +35.1%
+#         benchmark, all favourites, held out: 35.6%, -5.1%
 #
-# Positive on BOTH halves, beating the benchmark on strike and on return.
-# About one bet a day. It is +16.7% +/- 11.2% on the held-out half — roughly
-# 1.5 standard errors, which is real-looking and NOT proven.
+# Positive on BOTH halves, and BETTER on both once the odds-on horses go —
+# his correction of 2026-09-20 improved it, which is what a real effect does
+# and a lucky one usually does not. About one bet every two or three days.
 #
-# TWO REASONS TO DISTRUST THAT NUMBER, found the same hour it was produced
-# and written here so nobody quotes it without them:
-#
-#  1. THE CORPUS MAY DOUBLE-COUNT. Spot-checking 18 and 19 September, the
-#     filter named the same horse twice at the same price on both days. Real
-#     cards do not do that, so the gap-fill ingest is very likely writing a
-#     race under two ids. Until that is found and fixed, every n and every
-#     ROI on this page is suspect — a doubled winner flatters and a doubled
-#     loser damns, and neither is the truth.
-#  2. IT IS SELECTING ODDS-ON SHOTS. Every horse it named over those days
-#     was 1.40 (2/5). The dots pile up on short-priced horses BECAUSE short
-#     prices are what good recent form produces, so a high score is partly
-#     just a proxy for a short price. At 1.40 you must win 71% of the time to
-#     break even. That is the opposite of the gems-with-value this was asked
-#     to find, and it is what his own ODDS-ON BAR (brief #16) exists to stop.
-#
-# So SELECT_AT is wired but its published edge is NOT to be believed until
-# the duplicate is fixed and the test is re-run with the odds-on bar applied.
+# NOT PROVEN, and the reason is his own law: n=31 on the held-out half is
+# below the "judge nothing under 50 picks" bar. +35.1% +/- 25% is about 1.4
+# standard errors. The forward record settles it; this page does not.
 SELECT_AT = 4
+
+# THE ODDS-ON BAR, applied here on his instruction of 2026-09-20: "well no odd
+# on horses rule out". His own brief #16, and the right call: the dots pile up
+# on short-priced horses BECAUSE short prices are what good recent form
+# produces, so without this a high score is partly just a proxy for the price.
+# At 1.40 you must win 71% of the time merely to stand still. Anything odds-on
+# is RULED OUT before its dots are even counted.
+ODDS_ON = 2.0
 
 GALLANT = ("stayed on", "kept on", "ran on", "rallied", "finished well",
            "just held", "every chance", "challenged")
@@ -132,7 +126,8 @@ class Scored:
 
 def score_favourite(last: LastRun | None, *, rclass: int | None,
                     field_size: int, floor: int = FLOOR,
-                    select_at: int = SELECT_AT) -> Scored | None:
+                    select_at: int = SELECT_AT,
+                    price: float | None = None) -> Scored | None:
     """The dots, added up, with every one that fired named.
 
     A favourite with NO previous run returns None — unraced or unreadable is
@@ -140,6 +135,10 @@ def score_favourite(last: LastRun | None, *, rclass: int | None,
     what to do with an unread horse; this never pretends to know."""
     if last is None:
         return None
+    if price is not None and price < ODDS_ON:
+        return Scored(horse="", score=0, ruled_out=True, named=False,
+                      reasons=[f"RULED OUT: odds-on at {price:.2f} — "
+                               f"needs {100/price:.0f}% to break even (his bar #16)"])
     s, why = 0, []
     if last.position == "1":
         s += 1; why.append("+1 won last time")

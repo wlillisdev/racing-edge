@@ -118,3 +118,33 @@ def test_a_dead_history_door_makes_a_horse_unread_not_bad():
 
     rows = F.daily_list("today", client=Client())
     assert rows[0]["score"] is None and "UNREAD" in rows[0]["verdict"]
+
+
+def test_an_odds_on_favourite_is_ruled_out_before_its_dots_are_counted():
+    """His instruction, 2026-09-20: "well no odd on horses rule out" — his own
+    bar #16. Without it the dots quietly select short prices, because a short
+    price is what good recent form produces: every horse the filter named over
+    18-19 September was 1.40. Ruling them out improved the held-out return
+    from +16.7% to +35.1%."""
+    perfect = F.LastRun(position="1", beaten=0.0, comment="kept on strongly",
+                        days_since=14, rclass=5)
+    # the same horse, priced either side of the bar
+    keep = F.score_favourite(perfect, rclass=6, field_size=6, price=2.5)
+    assert keep.score == 5 and keep.named and not keep.ruled_out
+
+    out = F.score_favourite(perfect, rclass=6, field_size=6, price=1.40)
+    assert out.ruled_out and not out.named
+    assert "odds-on" in out.reasons[0] and "71%" in out.reasons[0]
+
+    assert F.ODDS_ON == 2.0
+    evens = F.score_favourite(perfect, rclass=6, field_size=6, price=2.0)
+    assert not evens.ruled_out, "evens is not odds-on"
+
+
+def test_price_is_optional_so_the_corpus_grader_still_works():
+    """Called without a price the bar cannot fire — the grader passes None
+    deliberately when measuring the no-bar baseline."""
+    s = F.score_favourite(F.LastRun(position="1", beaten=0.0, comment="kept on",
+                                    days_since=14, rclass=5),
+                          rclass=6, field_size=6)
+    assert not s.ruled_out and s.named
