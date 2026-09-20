@@ -79,7 +79,17 @@ echo
 case "${1:-nap}" in
   nap)     "$PY" -m racing_edge.cli.nap     --day today --both --email ;;   # keeps the key: the DEEP READ needs it (SDK-free)
   dissect) "${SDK_OFF[@]}" "$PY" -m racing_edge.cli.dissect --day today        --email ;;
-  settle)  "${SDK_OFF[@]}" "$PY" -m racing_edge.cli.nap     --settle today      --email ;;
+  # THE RECORD, MADE READABLE (audit 2026-09-20). Law 1 says nap.db is the
+  # record, and .gitignore correctly keeps it off the repo — so the session
+  # that grades the work could not read the thing that judges it, and every
+  # strike rate quoted came from a summary or from memory. The settle now
+  # exports OUR OWN picks and their SPs (never a card, never a runner we did
+  # not back) to data/record.csv + docs/THE_RECORD.md. Derived and rewritten
+  # each run: nap.db stays the source of truth, this is only a readable copy.
+  # It runs AFTER the settle so it sees tonight's result, and `|| true` keeps
+  # a broken export from ever failing the settle that matters.
+  settle)  "${SDK_OFF[@]}" "$PY" -m racing_edge.cli.nap     --settle today      --email
+           "${SDK_OFF[@]}" "$PY" -m racing_edge.school.record_export || true ;;
   restudy) "${SDK_OFF[@]}" "$PY" -m racing_edge.cli.restudy --day today ${RESTUDY_TIME:+--time "$RESTUDY_TIME"} --email ;;
   learn)   "$PY" -m racing_edge.cli.learn   --day today ${LEARN_TIME:+--time "$LEARN_TIME"} --email ;;
   synth)   "$PY" -m racing_edge.cli.learn   --synthesise --email ;;
