@@ -88,6 +88,27 @@ SELECT_AT = 4
 # is RULED OUT before its dots are even counted.
 ODDS_ON = 2.0
 
+# THE CHASE LINE — born by the RECORD (law 2, route three: field-tested), and
+# the strongest thing this project has found. It is not a clever rule; it is a
+# blunt category, which is why it may survive.
+#
+#   ALL FLAT favourites     n=4323  36.0%   -3.8%   positive in 1 month of 9
+#   ALL HURDLE favourites   n=1165  35.2%  -11.4%   positive in 1 month of 9
+#   CHASE, odds-on ruled out n= 540  37.8%  +13.1%   positive in 7 months of 9
+#   CHASE, odds-on ONLY      n=  96  52.1%  -16.2%   <- his bar #16, vindicated
+#
+# Strip the two strongest months (Jul +30%, Aug +42%, when jumps racing is at
+# its weakest) and the other seven still run about +8%.
+#
+# THE MECHANISM, which is why this is not just a shape in the noise: a chase
+# favourite is usually the better JUMPER, and its rivals fall, unseat and pull
+# up. The market prices form. It appears to underprice COMPLETION.
+#
+# IT DOES NOT CLEAR HIS AUGUST BAR. Seven months of nine is not "stable", and
+# by that standard nothing in this project has ever passed. It is wired as a
+# SHADOW and judged forward, never carved.
+CHASE_LINE_MIN_PRICE = 2.0
+
 GALLANT = ("stayed on", "kept on", "ran on", "rallied", "finished well",
            "just held", "every chance", "challenged")
 TROUBLE = ("hampered", "no clear run", "not clear run", "short of room",
@@ -333,7 +354,8 @@ def daily_list(day: str = "today", floor: int = FLOOR, client=None) -> list[dict
                              field_size=len(priced), floor=floor)
         row = {"course": c.get("course"), "off": c.get("off_time"),
                "race_id": c.get("race_id"), "horse": fav.get("horse"),
-               "price": price, "field": len(priced)}
+               "price": price, "field": len(priced),
+               "type": c.get("type") or ""}
         if sc is None:
             row.update(score=None, ruled_out=True, verdict="UNREAD (no history)",
                        reasons=["no previous run the door could see"])
@@ -344,6 +366,17 @@ def daily_list(day: str = "today", floor: int = FLOOR, client=None) -> list[dict
         out.append(row)
     out.sort(key=lambda r: (r["score"] is None, -(r["score"] or 0), r["price"]))
     return out
+
+
+def chase_line(rows: list[dict]) -> list[dict]:
+    """The record's own selection: every CHASE favourite at 2.0 or bigger.
+
+    Deliberately blunt — no dots, no scoring, no thresholds anyone chose. The
+    only two conditions are a fact about the race (it is a chase) and his own
+    odds-on bar. Nothing here can be tuned, which is the point."""
+    return [r for r in rows
+            if (r.get("type") or "").upper().startswith("C")
+            and r["price"] >= CHASE_LINE_MIN_PRICE]
 
 
 def render_list(rows: list[dict], floor: int = FLOOR) -> str:
@@ -360,6 +393,18 @@ def render_list(rows: list[dict], floor: int = FLOOR) -> str:
         L.append(f"{mark}{sc}  {r['course']} {r['off']}  {r['horse']} "
                  f"@ {r['price']:.2f}  ({r['field']} runners)")
         L.append(f"        {'; '.join(r['reasons'])}")
+    ch = chase_line(rows)
+    L += ["", "-" * 66,
+          f"THE CHASE LINE — every chase favourite at {CHASE_LINE_MIN_PRICE:.1f}+ "
+          f"({len(ch)} today)",
+          "  the record's own: chase favourites ran +13.1% over 540 races,",
+          "  positive in 7 months of 9, where flat and hurdle managed 1 of 9.",
+          "  NOT PROVEN — it fails his August stability bar. Shadow only.", ""]
+    if not ch:
+        L.append("  (no qualifying chase today)")
+    for r in ch:
+        L.append(f"     {r['course']} {r['off']}  {r['horse']} @ {r['price']:.2f}"
+                 f"  ({r['field']} runners)")
     L += ["", "GRADED NIGHTLY against the engine's pick and against backing every",
           "favourite. Paper only. The record settles it."]
     return "\n".join(L) + "\n"

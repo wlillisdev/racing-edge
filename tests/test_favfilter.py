@@ -148,3 +148,26 @@ def test_price_is_optional_so_the_corpus_grader_still_works():
                                     days_since=14, rclass=5),
                           rclass=6, field_size=6)
     assert not s.ruled_out and s.named
+
+
+def test_the_chase_line_is_blunt_on_purpose():
+    """Born by the RECORD (law 2 route three): chase favourites at 2.0+ ran
+    +13.1% over 540 races, positive in 7 months of 9, where flat and hurdle
+    managed 1 of 9. Two conditions only — a fact about the race and his own
+    odds-on bar — so there is nothing here anyone can tune."""
+    rows = [
+        {"type": "Chase", "price": 3.0, "course": "Ayr", "off": "2:00",
+         "horse": "Jumper", "field": 7},
+        {"type": "Chase", "price": 1.80, "course": "Ayr", "off": "2:30",
+         "horse": "Too Short", "field": 6},          # odds-on: out
+        {"type": "Hurdle", "price": 3.0, "course": "Ayr", "off": "3:00",
+         "horse": "Wrong Code", "field": 8},         # hurdle: out
+        {"type": "Flat", "price": 4.0, "course": "Ayr", "off": "3:30",
+         "horse": "Wrong Code Too", "field": 9},     # flat: out
+    ]
+    picked = F.chase_line(rows)
+    assert [r["horse"] for r in picked] == ["Jumper"]
+    assert F.CHASE_LINE_MIN_PRICE == 2.0
+    # exactly 2.0 is kept — evens is not odds-on
+    assert F.chase_line([{"type": "Chase", "price": 2.0, "course": "x",
+                          "off": "1:00", "horse": "Evens", "field": 6}])
