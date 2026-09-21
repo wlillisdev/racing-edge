@@ -54,9 +54,9 @@ PY="venv/bin/python"
 # SDK_OFF = "make NO model calls for this task" — a COST/SCOPE switch, nothing else.
 # (2026-07-25 reliability audit: the old comment claimed an SDK/httpx clash; the SDK
 # was deleted long ago — everything uses the direct-HTTP reasoner. DO NOT "fix" the
-# nap or learn cases by adding this prefix: nap MUST keep the key for the morning
-# deep read, learn MUST keep it for the night study. Blanking either would silently
-# lobotomise the scheduled runs while manual runs kept working.)
+# nap case by adding this prefix: nap MUST keep the key for the morning deep read.
+# The learn/why/synth steps no longer run in `night` by default — see the night
+# case — so the nightly bill is now the 07:30 deep read and nothing else.)
 SDK_OFF=(env ANTHROPIC_API_KEY=)
 
 # ONE BRAIN (PR #56, 2026-08-18, the master: 'is the system fixed now one
@@ -109,14 +109,34 @@ case "${1:-nap}" in
              PYTHONPATH=src _crash_mail "night:settle" 1   # a swallowed failure still mails (bot C)
            fi
            echo
-           "$PY" -m racing_edge.cli.learn   --day today --email
-           # THE WHY LEDGER (the master, 2026-09-03: "read all races every day, then
-           # check results and understand why a horse won or lost... store it,
-           # remember it, recall it"): one model call for the whole card, every
-           # race reverse-engineered, banked, recalled tomorrow morning by shape.
-           if ! "$PY" -m racing_edge.school.why --day "$(date +%F)"; then
-             echo "WARNING: why ledger FAILED — the card goes unlearned tonight"
-             PYTHONPATH=src _crash_mail "night:why" 1
+           # THE HINDSIGHT STEPS ARE OFF (his word, 2026-09-21: "learning loop
+           # needs also to change as i feel its just wasteing credits and
+           # acheiving nothing"). He is right, and the record says so.
+           #
+           # self-study (cli.learn) and the why ledger (school.why) are the only
+           # paid steps at night. Both read races AFTER the result is known and
+           # write down why the winner won. On 2026-09-20 the lens that came out
+           # of that synthesis -- "back the favourite whose last run says it
+           # stayed on" -- was tested properly for the first time: +13.4% over
+           # 414 bets on the half it was fitted to, -10.0% over 450 bets on the
+           # half it had never seen. The lesson register they feed carried five
+           # lessons at TESTING for a fortnight and not one reported.
+           #
+           # Every FREE step below is kept, because those are the ones that
+           # MEASURE rather than narrate: the night school grades policies,
+           # tier-0 scores every runner against the market, the yardstick scores
+           # every lens, and the record export sends the strike rate upstream.
+           #
+           # TO TURN THEM BACK ON: LEARN=1 ./trial.sh night  (or set it in the
+           # scheduled task). Nothing is deleted; this is a switch, not a burial.
+           if [ "${LEARN:-0}" = "1" ]; then
+             "$PY" -m racing_edge.cli.learn   --day today --email
+             if ! "$PY" -m racing_edge.school.why --day "$(date +%F)"; then
+               echo "WARNING: why ledger FAILED — the card goes unlearned tonight"
+               PYTHONPATH=src _crash_mail "night:why" 1
+             fi
+           else
+             echo "hindsight steps OFF (his word 2026-09-21) — LEARN=1 restores them"
            fi
            # THE NIGHT SCHOOL (2026-08-18, the master: 'study the form of every
            # race each day, then look at the winners in the evening, this is
@@ -165,8 +185,12 @@ case "${1:-nap}" in
              && git pull --rebase -q origin main \
              && git push -q origin main \
              && echo "record pushed to main" ) || echo "record not pushed (nothing to send, or git refused) — harmless"
-           # Sunday: the weekly synthesis rides in the same slot (no weekly task needed)
-           if [ "$(date +%u)" = "7" ]; then echo; "$PY" -m racing_edge.cli.learn --synthesise --email; fi ;;
+           # Sunday: the weekly synthesis rode in this slot. It is the third and
+           # last paid hindsight step and it is off with the other two — it is
+           # the step that actually produced the reversing lens. Same switch.
+           if [ "$(date +%u)" = "7" ] && [ "${LEARN:-0}" = "1" ]; then
+             echo; "$PY" -m racing_edge.cli.learn --synthesise --email
+           fi ;;
   all)     "$PY" -m racing_edge.cli.nap     --day today --both --email
            echo
            "${SDK_OFF[@]}" "$PY" -m racing_edge.cli.dissect --day today         --email ;;

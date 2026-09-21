@@ -678,3 +678,32 @@ def test_the_box_pushes_whatever_it_rewrites() -> None:
                 "commits it — it will sit dirty and freeze the box's pull")
     if "data/record.csv" in sh:
         assert "push" in sh, "the record is committed on the box but never pushed"
+
+
+def test_the_nightly_hindsight_steps_are_off_by_default() -> None:
+    """His word, 2026-09-21: the learning loop "is just wasteing credits and
+    acheiving nothing". cli.learn, school.why and the Sunday synthesis are the
+    only paid steps in the night run and all three read races AFTER the result
+    is known. The lens they produced -- back the favourite whose last run says
+    it stayed on -- went +13.4% on the half it was fitted to and -10.0% on the
+    half it had never seen (docs/COMMENTS_TEST.md).
+
+    They are switched off, not deleted: LEARN=1 restores all three. This test
+    fails if any of them creeps back into the default path, and if the free
+    measuring steps are ever dropped alongside them."""
+    sh = Path("trial.sh").read_text()
+    night = sh[sh.index("\n  night)"):]
+    night = night[:night.index("\n  all)")] if "\n  all)" in night else night
+    # CODE ONLY — the comment above the guard names these steps too, and an
+    # earlier version of this test matched that prose and failed itself.
+    code = [ln for ln in night.splitlines() if not ln.strip().startswith("#")]
+    for paid in ("cli.learn", "school.why"):
+        hits = [i for i, ln in enumerate(code) if paid in ln]
+        assert hits, f"{paid} was deleted rather than switched off"
+        guard = next((i for i, ln in enumerate(code) if "LEARN:-0" in ln), None)
+        assert guard is not None, "the LEARN guard is gone"
+        assert min(hits) > guard, f"{paid} runs before the LEARN guard"
+    # the free steps that MEASURE must survive the cut
+    for free in ("school.night", "school.tier0", "school.yardstick",
+                 "school.record_export"):
+        assert free in night, f"{free} is a free measuring step and must stay"
