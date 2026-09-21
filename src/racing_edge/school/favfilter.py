@@ -107,7 +107,7 @@ ODDS_ON = 2.0
 # IT DOES NOT CLEAR HIS AUGUST BAR. Seven months of nine is not "stable", and
 # by that standard nothing in this project has ever passed. It is wired as a
 # SHADOW and judged forward, never carved.
-CHASE_LINE_MIN_PRICE = 2.0
+CHASE_LINE_MIN_PRICE = ODDS_ON   # one constant, so the bar can never drift apart
 
 GALLANT = ("stayed on", "kept on", "ran on", "rallied", "finished well",
            "just held", "every chance", "challenged")
@@ -196,24 +196,53 @@ def score_favourite(last: LastRun | None, *, rclass: int | None,
 # grading on the corpus — the record settles it, not either of us
 # --------------------------------------------------------------------------- #
 
-def _comments(dirpath: str = "data/school/comments") -> dict:
+COMMENT_DIRS = ("data/school/comments", "data/school/holdout/comments")
+
+
+def _comments(dirpaths=COMMENT_DIRS) -> dict:
+    """Every run comment, from BOTH corpus directories.
+
+    The held-out days live apart so their filenames cannot collide with the
+    ones the box writes nightly. Reading only the first directory left every
+    held-out horse with no manner dots at all, which silently shrank the
+    named set rather than erroring (caught 2026-09-21: n fell from 31 to 22
+    when adding days should have raised it)."""
+    if isinstance(dirpaths, str):
+        dirpaths = (dirpaths,)
     out = {}
-    for f in glob.glob(f"{dirpath}/*.csv"):
-        for r in csv.reader(open(f)):
-            if len(r) >= 3:
-                out[(r[0], r[1])] = r[2]
+    for d in dirpaths:
+        for f in glob.glob(f"{d}/*.csv"):
+            for r in csv.reader(open(f)):
+                if len(r) >= 3:
+                    out[(r[0], r[1])] = r[2]
     return out
 
 
+HOLDOUT = Path("data/school/holdout/raw")
+
+
 def grade(raw: Path = Path("data/school/raw"), floor: int = FLOOR,
-          split: str = "2026-08-14") -> dict:
-    """Score every favourite in the corpus, rule out the bad, and report what
-    the kept ones returned — against backing every favourite."""
+          split: str = "2026-08-14", holdout: Path = HOLDOUT) -> dict:
+    """Score every favourite in the corpus and report the HIT RATE — his
+    instruction of 2026-09-21: "forget about roi let me decide".
+
+    Reads the held-out days too. They live in a separate directory because a
+    file named for a day the box writes nightly would break its git pull
+    forever; grading only `raw` silently reported an empty held-out half
+    (caught 2026-09-21 before the number was quoted, not after)."""
     from collections import defaultdict
     from racing_edge.school.mine import load_corpus
 
     com = _comments()
-    races = [r for r in load_corpus(raw) if len([x for x in r if x.sp > 1.0]) >= 4]
+    pool = list(load_corpus(raw))
+    if Path(holdout).exists():
+        pool += list(load_corpus(holdout))
+    seen, races = set(), []
+    for r in pool:
+        if len([x for x in r if x.sp > 1.0]) < 4 or r[0].race_id in seen:
+            continue
+        seen.add(r[0].race_id)
+        races.append(r)
     races.sort(key=lambda r: (r[0].date, r[0].race_id))
     hist = defaultdict(list)
     for r in races:
@@ -235,6 +264,7 @@ def grade(raw: Path = Path("data/school/raw"), floor: int = FLOOR,
     for name, pool in (("tune", [r for r in races if r[0].date <= split]),
                        ("held_out", [r for r in races if r[0].date > split])):
         kept = [0, 0, 0.0]
+        named = [0, 0, 0.0]
         allf = [0, 0, 0.0]
         for r in pool:
             p = sorted([x for x in r if x.sp > 1.0], key=lambda x: x.sp)
@@ -243,12 +273,16 @@ def grade(raw: Path = Path("data/school/raw"), floor: int = FLOOR,
             if f.pos == "1":
                 allf[1] += 1; allf[2] += f.sp
             sc = score_favourite(last_of(f, f.date), rclass=f.rclass,
-                                 field_size=len(p), floor=floor)
+                                 field_size=len(p), floor=floor, price=f.sp)
             if sc is None or sc.ruled_out:
                 continue
             kept[0] += 1
             if f.pos == "1":
                 kept[1] += 1; kept[2] += f.sp
+            if sc.named:
+                named[0] += 1
+                if f.pos == "1":
+                    named[1] += 1; named[2] += f.sp
 
         def roi(t):
             return 100 * (t[2] - t[0]) / t[0] if t[0] else 0.0
@@ -257,23 +291,30 @@ def grade(raw: Path = Path("data/school/raw"), floor: int = FLOOR,
             return 100 * t[1] / t[0] if t[0] else 0.0
         out[name] = {"kept_n": kept[0], "kept_strike": strike(kept),
                      "kept_roi": roi(kept), "all_n": allf[0],
-                     "all_strike": strike(allf), "all_roi": roi(allf)}
+                     "all_strike": strike(allf), "all_roi": roi(allf),
+                     "named_n": named[0], "named_strike": strike(named),
+                     "named_roi": roi(named)}
     return out
 
 
 def render_grade(g: dict, floor: int = FLOOR) -> str:
+    """STRIKE RATE FIRST — his instruction, 2026-09-21: "forget about roi let
+    me decide". The return is still printed, because hiding a number is worse
+    than showing one he did not ask for, but it is no longer the verdict and
+    nothing is killed on it. He judges the price; this reports the hit rate."""
     L = ["THE FAVOURITE FILTER — his method, graded on the corpus",
-         f"(rule out any favourite scoring below {floor}; back the rest)", ""]
+         f"(odds-on ruled out; below {floor} ruled out; {SELECT_AT}+ is NAMED)", ""]
     for half in ("tune", "held_out"):
         d = g[half]
-        L.append(f"  {half:9}  kept n={d['kept_n']:5d} strike={d['kept_strike']:5.1f}% "
-                 f"ROI={d['kept_roi']:+6.1f}%   |  all favs n={d['all_n']:5d} "
-                 f"strike={d['all_strike']:5.1f}% ROI={d['all_roi']:+6.1f}%")
+        L.append(f"  {half:9}  NAMED strike={d['named_strike']:5.1f}% (n={d['named_n']:4d})"
+                 f"  ·  kept {d['kept_strike']:4.1f}% (n={d['kept_n']:4d})"
+                 f"  ·  all favourites {d['all_strike']:4.1f}% (n={d['all_n']:4d})")
     d = g["held_out"]
-    edge = d["kept_roi"] - d["all_roi"]
-    L += ["", f"  On races it had never seen the filter is {edge:+.1f} points "
-              f"against backing every favourite.",
-          "  It needs about +5 to break even. The record decides, not the author."]
+    L += ["", f"  On races it had never seen the NAMED horses struck "
+              f"{d['named_strike']:.1f}% against {d['all_strike']:.1f}% for every "
+              f"favourite.",
+          f"  (return, printed for the record and not as a verdict: "
+          f"{d['named_roi']:+.1f}% v {d['all_roi']:+.1f}%)"]
     return "\n".join(L) + "\n"
 
 
@@ -397,9 +438,9 @@ def render_list(rows: list[dict], floor: int = FLOOR) -> str:
     L += ["", "-" * 66,
           f"THE CHASE LINE — every chase favourite at {CHASE_LINE_MIN_PRICE:.1f}+ "
           f"({len(ch)} today)",
-          "  the record's own: chase favourites ran +13.1% over 540 races,",
-          "  positive in 7 months of 9, where flat and hurdle managed 1 of 9.",
-          "  NOT PROVEN — it fails his August stability bar. Shadow only.", ""]
+          "  the record's own: chase favourites strike 37.8% over 540 races,",
+          "  against 36.0% flat and 35.2% hurdle — and unlike those two it was",
+          "  in front in 7 months of 9. NOT PROVEN. Shadow only.", ""]
     if not ch:
         L.append("  (no qualifying chase today)")
     for r in ch:

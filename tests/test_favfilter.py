@@ -171,3 +171,18 @@ def test_the_chase_line_is_blunt_on_purpose():
     # exactly 2.0 is kept — evens is not odds-on
     assert F.chase_line([{"type": "Chase", "price": 2.0, "course": "x",
                           "off": "1:00", "horse": "Evens", "field": 6}])
+
+
+def test_both_corpus_directories_are_read(tmp_path, monkeypatch):
+    """The held-out days live in a second directory so their filenames cannot
+    collide with the box's nightly files. Every reader must follow them there:
+    reading only the first silently drops the held-out manner dots instead of
+    failing, which shrank the named set on 2026-09-21."""
+    a, b = tmp_path / "main", tmp_path / "hold"
+    a.mkdir(); b.mkdir()
+    (a / "2026-01-01.csv").write_text("r1,h1,kept on well\n")
+    (b / "2026-09-01.csv").write_text("r2,h2,weakened badly\n")
+    com = F._comments((str(a), str(b)))
+    assert com[("r1", "h1")] == "kept on well"
+    assert com[("r2", "h2")] == "weakened badly", "held-out comments were dropped"
+    assert "holdout" in " ".join(F.COMMENT_DIRS)
