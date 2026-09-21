@@ -654,3 +654,18 @@ def test_the_holdout_corpus_also_stays_out_of_the_boxs_namespace() -> None:
         assert latest <= "2026-08-14", (
             f"tracked {d} reaches {latest} — the box owns later days and a "
             "collision breaks its pull")
+
+
+def test_no_box_written_file_is_tracked() -> None:
+    """2026-09-21: the record export writes data/record.csv and
+    docs/THE_RECORD.md on the box every night. Tracking a file the box
+    rewrites nightly means the next change to it on main makes the box's
+    `git pull` conflict, and the daily run stops — the same hazard as the
+    corpus filenames, one directory over."""
+    import subprocess
+    tracked = subprocess.run(["git", "ls-files"], capture_output=True,
+                             text=True).stdout.split()
+    if not tracked:
+        pytest.skip("no git here")
+    for f in ("data/record.csv", "docs/THE_RECORD.md"):
+        assert f not in tracked, f"{f} is written by the box and must not be tracked"
