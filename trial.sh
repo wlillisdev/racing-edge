@@ -150,6 +150,21 @@ case "${1:-nap}" in
              echo "WARNING: record export FAILED — the repo copy of the record is stale"
              PYTHONPATH=src _crash_mail "night:record_export" 1
            fi
+           # AND SEND IT (2026-09-21, once the box got an SSH deploy key). The
+           # export is worthless if it only ever lands here: law 1 says the
+           # record judges everything, and until tonight it could not be read
+           # from anywhere but this machine. A tracked file the box rewrites
+           # MUST also be pushed, or it sits dirty and freezes the next pull —
+           # that pairing is pinned by tests/test_audit_fixes.py.
+           # Wholly best-effort: a git failure must never touch the night run.
+           ( git add data/record.csv docs/THE_RECORD.md 2>/dev/null \
+             && ! git diff --cached --quiet \
+             && git -c user.name="racing-edge box" \
+                    -c user.email="box@racing-edge.local" \
+                    commit -q -m "record: $(date -u +%F) settle" \
+             && git pull --rebase -q origin main \
+             && git push -q origin main \
+             && echo "record pushed to main" ) || echo "record not pushed (nothing to send, or git refused) — harmless"
            # Sunday: the weekly synthesis rides in the same slot (no weekly task needed)
            if [ "$(date +%u)" = "7" ]; then echo; "$PY" -m racing_edge.cli.learn --synthesise --email; fi ;;
   all)     "$PY" -m racing_edge.cli.nap     --day today --both --email

@@ -656,16 +656,25 @@ def test_the_holdout_corpus_also_stays_out_of_the_boxs_namespace() -> None:
             "collision breaks its pull")
 
 
-def test_no_box_written_file_is_tracked() -> None:
-    """2026-09-21: the record export writes data/record.csv and
-    docs/THE_RECORD.md on the box every night. Tracking a file the box
-    rewrites nightly means the next change to it on main makes the box's
-    `git pull` conflict, and the daily run stops — the same hazard as the
-    corpus filenames, one directory over."""
+def test_the_box_pushes_whatever_it_rewrites() -> None:
+    """2026-09-21, both halves of the same rule.
+
+    A file the box rewrites nightly is safe to track ONLY if the box also
+    sends it upstream; otherwise it sits dirty and the next pull that touches
+    it conflicts, and the daily run stops. The export was untracked while the
+    box had no push. It now has an SSH deploy key, so the files are tracked
+    AND trial.sh must commit and push them. This test pins the pair together
+    so neither half can be changed alone."""
     import subprocess
     tracked = subprocess.run(["git", "ls-files"], capture_output=True,
                              text=True).stdout.split()
     if not tracked:
         pytest.skip("no git here")
+    sh = Path("trial.sh").read_text()
     for f in ("data/record.csv", "docs/THE_RECORD.md"):
-        assert f not in tracked, f"{f} is written by the box and must not be tracked"
+        if f in tracked:
+            assert f in sh, (
+                f"{f} is tracked and the box rewrites it, but trial.sh never "
+                "commits it — it will sit dirty and freeze the box's pull")
+    if "data/record.csv" in sh:
+        assert "push" in sh, "the record is committed on the box but never pushed"
