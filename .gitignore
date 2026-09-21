@@ -106,3 +106,11 @@ data/school/yardstick/
 data/school/yardstick.md
 data/school/bar_backtest.md
 data/school/why/
+
+# THE RECORD EXPORT (audit 2026-09-21): the box rewrites these every night in
+# trial.sh's settle. A TRACKED file the box rewrites is the same trap as the
+# corpus filenames — the next time main changes one, the box's `git pull`
+# conflicts and the daily run stops. They stay local until the box can push,
+# at which point the box commits them and this exclusion is revisited.
+data/record.csv
+docs/THE_RECORD.md

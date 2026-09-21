@@ -77,9 +77,26 @@ fi
 echo
 
 case "${1:-nap}" in
-  nap)     "$PY" -m racing_edge.cli.nap     --day today --both --email ;;   # keeps the key: the DEEP READ needs it (SDK-free)
+  nap)     "$PY" -m racing_edge.cli.nap     --day today --both --email       # keeps the key: the DEEP READ needs it (SDK-free)
+           # THE FAVOURITE FILTER (taught 2026-09-20, his words: "look at all
+           # the favourites every day, rule out the bad ones and dial in the
+           # ones that are left"). Runs AFTER the engine so it can never delay
+           # or break the bank, and best-effort so a bad morning for it is a
+           # missing list, never a missing pick. Paper, graded nightly.
+           echo
+           "${SDK_OFF[@]}" "$PY" -m racing_edge.school.favfilter --day today || true ;;
   dissect) "${SDK_OFF[@]}" "$PY" -m racing_edge.cli.dissect --day today        --email ;;
-  settle)  "${SDK_OFF[@]}" "$PY" -m racing_edge.cli.nap     --settle today      --email ;;
+  # THE RECORD, MADE READABLE (audit 2026-09-20). Law 1 says nap.db is the
+  # record, and .gitignore correctly keeps it off the repo — so the session
+  # that grades the work could not read the thing that judges it, and every
+  # strike rate quoted came from a summary or from memory. The settle now
+  # exports OUR OWN picks and their SPs (never a card, never a runner we did
+  # not back) to data/record.csv + docs/THE_RECORD.md. Derived and rewritten
+  # each run: nap.db stays the source of truth, this is only a readable copy.
+  # It runs AFTER the settle so it sees tonight's result, and `|| true` keeps
+  # a broken export from ever failing the settle that matters.
+  settle)  "${SDK_OFF[@]}" "$PY" -m racing_edge.cli.nap     --settle today      --email
+           "${SDK_OFF[@]}" "$PY" -m racing_edge.school.record_export || true ;;
   restudy) "${SDK_OFF[@]}" "$PY" -m racing_edge.cli.restudy --day today ${RESTUDY_TIME:+--time "$RESTUDY_TIME"} --email ;;
   learn)   "$PY" -m racing_edge.cli.learn   --day today ${LEARN_TIME:+--time "$LEARN_TIME"} --email ;;
   synth)   "$PY" -m racing_edge.cli.learn   --synthesise --email ;;
@@ -123,6 +140,15 @@ case "${1:-nap}" in
            if ! "${SDK_OFF[@]}" "$PY" -m racing_edge.school.yardstick --day "$(date +%F)"; then
              echo "WARNING: yardstick scoreboard FAILED — the ledger keeps banking; the board is stale"
              PYTHONPATH=src _crash_mail "night:yardstick" 1
+           fi
+           # THE RECORD, MADE READABLE (audit 2026-09-20) — LAST, so it sees
+           # tonight's settle. It also has to be HERE and not only in the
+           # `settle)` case: the box's 22:00 task is `night`, which runs its own
+           # inline settle and never touches that case, so wiring the export
+           # there alone would have meant it never ran on the box at all.
+           if ! "${SDK_OFF[@]}" "$PY" -m racing_edge.school.record_export; then
+             echo "WARNING: record export FAILED — the repo copy of the record is stale"
+             PYTHONPATH=src _crash_mail "night:record_export" 1
            fi
            # Sunday: the weekly synthesis rides in the same slot (no weekly task needed)
            if [ "$(date +%u)" = "7" ]; then echo; "$PY" -m racing_edge.cli.learn --synthesise --email; fi ;;
