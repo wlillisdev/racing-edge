@@ -186,3 +186,42 @@ def test_both_corpus_directories_are_read(tmp_path, monkeypatch):
     assert com[("r1", "h1")] == "kept on well"
     assert com[("r2", "h2")] == "weakened badly", "held-out comments were dropped"
     assert "holdout" in " ".join(F.COMMENT_DIRS)
+
+
+def test_at_least_two_horses_every_day():
+    """His instruction, 2026-09-21: "pick at least 2 horses". A day with one
+    qualifier still names two — the second is flagged as a top-up so it is
+    never mistaken for one that cleared the bar, and it carries its own lower
+    base rate."""
+    rows = [
+        {"course": "Ayr", "off": "2:00", "race_id": "r1", "horse": "Alpha",
+         "price": 2.5, "field": 6, "type": "Flat", "score": 4,
+         "ruled_out": False, "verdict": "NAMED", "reasons": []},
+        {"course": "Ayr", "off": "2:30", "race_id": "r2", "horse": "Beta",
+         "price": 3.0, "field": 8, "type": "Chase", "score": 1,
+         "ruled_out": False, "verdict": "kept", "reasons": []},
+        {"course": "Ayr", "off": "3:00", "race_id": "r3", "horse": "Rejected",
+         "price": 4.0, "field": 9, "type": "Flat", "score": -3,
+         "ruled_out": True, "verdict": "RULED OUT", "reasons": []},
+    ]
+    picks = F.todays_picks(rows)
+    assert len(picks) >= F.MIN_NAMED == 2
+    assert picks[0]["horse"] == "Alpha" and picks[0]["cleared"] is True
+    assert picks[1]["cleared"] is False, "the filler must be flagged as a top-up"
+    assert all(p["horse"] != "Rejected" for p in picks), \
+        "a ruled-out horse is never named, not even to reach the minimum"
+
+
+def test_confidence_is_a_base_rate_from_the_record_not_an_opinion():
+    """Every figure is the historical strike rate of favourites that scored
+    the same way, with its sample size carried beside it so a 46% built on 88
+    runners can never be read as a 46% built on thousands."""
+    pct, n = F.confidence(4)
+    assert (pct, n) == (46.6, 88)
+    assert F.confidence(-2) == (21.5, 177)
+    # off the top and bottom of the table it clamps, never extrapolates
+    assert F.confidence(9) == F.CONFIDENCE[max(F.CONFIDENCE)]
+    assert F.confidence(-9) == F.CONFIDENCE[min(F.CONFIDENCE)]
+    assert F.confidence(None) == F.BASE_RATE
+    # the named band must actually beat backing any eligible favourite
+    assert F.CONFIDENCE[4][0] > F.BASE_RATE[0] > F.CONFIDENCE[-2][0]

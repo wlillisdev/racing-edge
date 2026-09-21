@@ -109,6 +109,39 @@ ODDS_ON = 2.0
 # SHADOW and judged forward, never carved.
 CHASE_LINE_MIN_PRICE = ODDS_ON   # one constant, so the bar can never drift apart
 
+# CONFIDENCE — his instruction, 2026-09-21: "pick at least 2 horses and put a
+# % in relation to confidence". The number is NOT an opinion and NOT a feeling.
+# It is the HISTORICAL STRIKE RATE of favourites that scored the same way, on
+# 3,781 eligible favourites across 6,247 races, odds-on excluded:
+#
+#     score -2  n=177  21.5%      score  2  n=754  33.2%
+#     score -1  n=467  31.9%      score  3  n=344  34.9%
+#     score  0  n=904  29.3%      score  4  n= 88  46.6%
+#     score  1  n=998  33.0%
+#     every eligible favourite    n=3781  31.9%
+#     chase favourite at 2.0+     n= 340  39.1%
+#
+# READ IT HONESTLY: "46%" means horses scoring 4 have won 46% of the time
+# before. It is not a prediction about THIS horse, and it is a base rate with
+# a sample attached — the 46% rests on 88 runners and will move. The n is
+# printed beside every figure for that reason.
+CONFIDENCE = {-2: (21.5, 177), -1: (31.9, 467), 0: (29.3, 904), 1: (33.0, 998),
+              2: (33.2, 754), 3: (34.9, 344), 4: (46.6, 88)}
+CONFIDENCE_CHASE = (39.1, 340)
+BASE_RATE = (31.9, 3781)
+MIN_NAMED = 2            # his floor: at least two horses every day
+
+
+def confidence(score: int | None) -> tuple[float, int]:
+    """The base rate for this score, or the overall one when off the table."""
+    if score is None:
+        return BASE_RATE
+    if score in CONFIDENCE:
+        return CONFIDENCE[score]
+    return CONFIDENCE[max(CONFIDENCE)] if score > max(CONFIDENCE) \
+        else CONFIDENCE[min(CONFIDENCE)]
+
+
 GALLANT = ("stayed on", "kept on", "ran on", "rallied", "finished well",
            "just held", "every chance", "challenged")
 TROUBLE = ("hampered", "no clear run", "not clear run", "short of room",
@@ -420,6 +453,29 @@ def chase_line(rows: list[dict]) -> list[dict]:
             and r["price"] >= CHASE_LINE_MIN_PRICE]
 
 
+def todays_picks(rows: list[dict], minimum: int = MIN_NAMED) -> list[dict]:
+    """HIS FLOOR: at least two horses, every day.
+
+    Everything scoring SELECT_AT or better is named. If that is fewer than
+    two, the list is topped up with the best remaining eligible favourites —
+    because a day with nothing to say is not what he asked for. A topped-up
+    pick is flagged so it is never mistaken for one that cleared the bar, and
+    it carries its own (lower) base rate."""
+    live = [r for r in rows if not r["ruled_out"] and r["score"] is not None]
+    live.sort(key=lambda r: (-r["score"], r["price"]))
+    picks = [dict(r, cleared=True) for r in live if r["score"] >= SELECT_AT]
+    for r in live:
+        if len(picks) >= minimum:
+            break
+        if any(p["race_id"] == r["race_id"] for p in picks):
+            continue
+        picks.append(dict(r, cleared=False))
+    for p in picks:
+        pct, n = confidence(p["score"])
+        p["confidence"], p["confidence_n"] = pct, n
+    return picks
+
+
 def render_list(rows: list[dict], floor: int = FLOOR) -> str:
     kept = [r for r in rows if not r["ruled_out"]]
     L = ["THE FAVOURITE FILTER — his method, 2026-09-20",
@@ -434,6 +490,19 @@ def render_list(rows: list[dict], floor: int = FLOOR) -> str:
         L.append(f"{mark}{sc}  {r['course']} {r['off']}  {r['horse']} "
                  f"@ {r['price']:.2f}  ({r['field']} runners)")
         L.append(f"        {'; '.join(r['reasons'])}")
+    picks = todays_picks(rows)
+    L = [L[0], L[1], L[2], "",
+         "=" * 66,
+         f"TODAY'S {len(picks)} — best first, with the record's own confidence",
+         "  confidence = how often favourites scoring the same have WON before.",
+         "  It is a base rate with its sample beside it, not a tip on this horse.",
+         ""] + L[3:]
+    for p in picks:
+        mark = "NAMED " if p["cleared"] else "top-up"
+        L.insert(7 + picks.index(p),
+                 f"  {mark} {p['confidence']:.0f}% (n={p['confidence_n']})  "
+                 f"{p['course']} {p['off']}  {p['horse']} @ {p['price']:.2f}"
+                 f"  [score {p['score']:+d}]")
     ch = chase_line(rows)
     L += ["", "-" * 66,
           f"THE CHASE LINE — every chase favourite at {CHASE_LINE_MIN_PRICE:.1f}+ "
