@@ -707,3 +707,30 @@ def test_the_nightly_hindsight_steps_are_off_by_default() -> None:
     for free in ("school.night", "school.tier0", "school.yardstick",
                  "school.record_export"):
         assert free in night, f"{free} is a free measuring step and must stay"
+
+
+def test_a_failed_record_push_is_never_silent() -> None:
+    """2026-09-22. The first version of the push printed "harmless" on every
+    failure path and mailed nobody. A full day then passed with an empty
+    record and neither of us knew until he asked about a pick I could not
+    see — a silent non-push is the exact fault the export exists to cure.
+
+    Every outcome must now be distinguishable and a real failure must mail."""
+    sh = Path("trial.sh").read_text()
+    assert "_rec_push" in sh, "the record push helper is gone"
+    # each failure mode says which it is, rather than one catch-all line
+    for case in ("git add failed", "commit failed", "pull --rebase failed",
+                 "PUSH REFUSED", "nothing changed"):
+        assert case in sh, f"the push no longer distinguishes: {case}"
+    # and a genuine failure reaches him
+    assert "night:record_push" in sh, "a failed push mails nobody"
+    assert "night:record_EMPTY" in sh, "an empty record mails nobody"
+    # CODE ONLY: the comment above the helper quotes the old wording on
+    # purpose. Checking the whole file matched that prose and failed itself —
+    # the same slip as the LEARN guard test, so the rule is now written down:
+    # a test about behaviour reads executable lines, never the story beside
+    # them.
+    code = "\n".join(ln for ln in sh.splitlines()
+                     if not ln.strip().startswith("#"))
+    assert "harmless" not in code, \
+        "a non-push described as harmless is what cost a day of blindness"

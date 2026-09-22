@@ -172,19 +172,43 @@ case "${1:-nap}" in
            fi
            # AND SEND IT (2026-09-21, once the box got an SSH deploy key). The
            # export is worthless if it only ever lands here: law 1 says the
-           # record judges everything, and until tonight it could not be read
-           # from anywhere but this machine. A tracked file the box rewrites
-           # MUST also be pushed, or it sits dirty and freezes the next pull —
-           # that pairing is pinned by tests/test_audit_fixes.py.
-           # Wholly best-effort: a git failure must never touch the night run.
-           ( git add data/record.csv docs/THE_RECORD.md 2>/dev/null \
-             && ! git diff --cached --quiet \
-             && git -c user.name="racing-edge box" \
-                    -c user.email="box@racing-edge.local" \
-                    commit -q -m "record: $(date -u +%F) settle" \
-             && git pull --rebase -q origin main \
-             && git push -q origin main \
-             && echo "record pushed to main" ) || echo "record not pushed (nothing to send, or git refused) — harmless"
+           # record judges everything, and until it is pushed it can be read
+           # from nowhere but this machine.
+           #
+           # IT MUST FAIL LOUDLY (2026-09-22). The first version printed
+           # "harmless" on every failure path and mailed nobody, so a full day
+           # passed with an empty record and neither of us knew until he asked
+           # about a pick I could not see. A silent non-push is the exact fault
+           # the whole export exists to cure. Each case now says which it is,
+           # and a real failure mails.
+           _rec_push() {
+             git add data/record.csv docs/THE_RECORD.md 2>/dev/null || {
+               echo "RECORD: git add failed"; return 1; }
+             if git diff --cached --quiet; then
+               # not an error, but NOT silent: an unchanged record after a
+               # settle means nap.db gave the export nothing, which is itself
+               # worth knowing and is the likeliest reason it stays empty.
+               echo "RECORD: nothing changed — the export found no rows in nap.db"
+               return 2
+             fi
+             git -c user.name="racing-edge box" \
+                 -c user.email="box@racing-edge.local" \
+                 commit -q -m "record: $(date -u +%F) settle" || {
+               echo "RECORD: commit failed"; return 1; }
+             git pull --rebase -q origin main || {
+               echo "RECORD: pull --rebase failed (diverged?)"; return 1; }
+             git push -q origin main || {
+               echo "RECORD: PUSH REFUSED — check the deploy key has write access"
+               return 1; }
+             echo "record pushed to main"
+             return 0
+           }
+           _rec_push; _rc=$?
+           if [ "$_rc" = "1" ]; then
+             PYTHONPATH=src _crash_mail "night:record_push" 1
+           elif [ "$_rc" = "2" ]; then
+             PYTHONPATH=src _crash_mail "night:record_EMPTY" 2
+           fi
            # Sunday: the weekly synthesis rode in this slot. It is the third and
            # last paid hindsight step and it is off with the other two — it is
            # the step that actually produced the reversing lens. Same switch.
