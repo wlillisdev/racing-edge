@@ -14,17 +14,17 @@ date,engine,course,race_id,horse,banked_price,sp_dec,won,confident,status,fav_ho
 2026-07-13,v1,Windsor,rac_11999767,Kalokalo,3.95,4.0,0,1,LOST,,,
 2026-07-15,v1,Catterick,rac_13000000624,Aberama Gold,4.8,4.5,0,1,LOST,,,
 2026-07-19,v1,Newton Abbot,rac_13000003588,Time To Bite,6.2,4.5,0,0,LOST,,,
-2026-07-21,v1,,PASS,NO BET,,,-1,0,WON,,,
+2026-07-21,v1,,PASS,NO BET,,,-1,0,PASS,,,
 2026-07-22,v1,Leicester,rac_32291964679,Miss Nightcap,4.4,3.5,1,1,WON,,,
 2026-07-23,v1,Leopardstown,rac_32292046033,Dark Viper,8.4,10.0,1,0,WON,,,
 2026-07-24,v1,Chepstow,rac_32292286221,Kodi Fire,7.8,6.0,0,0,LOST,,,
 2026-07-25,v1,Chester,rac_32292392756,Woodstock,4.9,4.5,0,0,LOST,,,
 2026-07-26,v1,Uttoxeter,rac_32292464425,Divilabother,3.1,2.88,0,1,LOST,,,
-2026-07-27,v1,,PASS,NO BET,,,-1,0,WON,,,
-2026-07-28,v1,,PASS,NO BET,,,-1,0,WON,,,
-2026-07-29,v1,,PASS,NO BET,,,-1,0,WON,,,
-2026-07-30,v1,,PASS,NO BET,,,-1,0,WON,,,
-2026-07-31,v1,,PASS,NO BET,,,-1,0,WON,,,
+2026-07-27,v1,,PASS,NO BET,,,-1,0,PASS,,,
+2026-07-28,v1,,PASS,NO BET,,,-1,0,PASS,,,
+2026-07-29,v1,,PASS,NO BET,,,-1,0,PASS,,,
+2026-07-30,v1,,PASS,NO BET,,,-1,0,PASS,,,
+2026-07-31,v1,,PASS,NO BET,,,-1,0,PASS,,,
 2026-08-01,v1,Newmarket (July),rac_32293092013,First Officer,7.2,5.5,0,0,LOST,,,
 2026-08-02,v1,Galway,rac_32293243099,Jp's Express,4.4,4.5,0,0,LOST,,,
 2026-08-03,v1,Ripon,rac_32293202422,Poet's Dawn,3.75,3.0,1,1,WON,,,
@@ -34,16 +34,16 @@ date,engine,course,race_id,horse,banked_price,sp_dec,won,confident,status,fav_ho
 2026-08-07,v1,Musselburgh,rac_32293651806,Roc De Fer,2.0,2.1,0,0,LOST,,,
 2026-08-08,v1,Haydock,rac_32293748656,Brighton View,1.73,1.4,0,0,LOST,,,
 2026-08-09,v1,Downpatrick,rac_32293928797,Tropical Twist,4.33,4.0,0,0,LOST,,,
-2026-08-10,v1,,PASS,NO BET,,,-1,0,WON,,,
+2026-08-10,v1,,PASS,NO BET,,,-1,0,PASS,,,
 2026-08-11,v1,Carlisle,rac_32294019836,Great,5.6,4.5,0,1,LOST,,,
 2026-08-12,v1,Beverley,rac_32294114749,Glenfinnan,6.2,6.5,1,1,WON,,,
-2026-08-13,v1,,PASS,NO BET,,,-1,0,WON,,,
+2026-08-13,v1,,PASS,NO BET,,,-1,0,PASS,,,
 2026-08-14,v1,Thirsk,rac_32294308449,Moulin Booj,4.0,3.25,0,1,LOST,,,
-2026-08-15,v1,,PASS,NO BET,,,-1,0,WON,,,
-2026-08-16,v1,,PASS,NO BET,,,-1,0,WON,,,
-2026-08-17,v1,,PASS,NO BET,,,-1,0,WON,,,
+2026-08-15,v1,,PASS,NO BET,,,-1,0,PASS,,,
+2026-08-16,v1,,PASS,NO BET,,,-1,0,PASS,,,
+2026-08-17,v1,,PASS,NO BET,,,-1,0,PASS,,,
 2026-08-18,v1,Chepstow,rac_32294722967,Rogue Exile,4.7,4.5,0,0,LOST,,,
-2026-08-19,v1,,PASS,NO BET,,,-1,0,WON,Smugglers Haven,2.75,0
+2026-08-19,v1,,PASS,NO BET,,,-1,0,PASS,Smugglers Haven,2.75,0
 2026-08-20,v1,Newmarket (July),rac_32294910856,Cherry Cobbler,2.96,2.38,0,0,LOST,Cherry Cobbler,2.38,0
 2026-08-21,v1,Hamilton,rac_32295036761,Dandy Magic,6.6,5.0,0,1,LOST,City Captain,4.0,1
 2026-08-22,v1,Newton Abbot,rac_32295201406,Max Of Stars,10.0,4.33,0,0,LOST,Arctic Voyage,,-2
@@ -60,12 +60,12 @@ date,engine,course,race_id,horse,banked_price,sp_dec,won,confident,status,fav_ho
 2026-09-02,v1,Hamilton,rac_32296257071,Harley,3.8,3.25,0,0,LOST,Battle Fever,2.0,0
 2026-09-03,v2,Haydock,rac_32296332614,Hollywell Stream,7.6,5.0,0,0,LOST,Hoseki,2.25,1
 2026-09-04,v2,Bangor-on-Dee,rac_32296491448,Thickthorn Tom,2.63,3.12,0,1,LOST,Thickthorn Tom,3.12,0
-2026-09-05,v2,Stratford,rac_32296636723,Captain Cool,4.4,,-2,0,WON,Gower Prince,3.0,0
+2026-09-05,v2,Stratford,rac_32296636723,Captain Cool,4.4,,-2,0,VOID,Gower Prince,3.0,0
 2026-09-07,v2,Newton Abbot,rac_32296739384,Saint Polo,2.5,2.75,0,1,LOST,Saint Polo,2.75,0
 2026-09-08,v2,Goodwood,rac_32296857541,Over Spiced,5.5,4.0,0,0,LOST,Spring Bloom,,-2
 2026-09-09,v2,Sedgefield,rac_32297010564,Loriko,2.8,3.5,1,1,WON,Loriko,3.5,1
 2026-09-10,v2,Doncaster,rac_32296900155,Keep Grating,10.5,6.0,0,0,LOST,Al Wathba,2.75,0
-2026-09-11,v2,Doncaster,rac_32297186831,Queenstown,2.63,,-2,1,WON,Caballo De Mar,1.83,1
+2026-09-11,v2,Doncaster,rac_32297186831,Queenstown,2.63,,-2,1,VOID,Caballo De Mar,1.83,1
 2026-09-12,v2,Leopardstown,rac_12008308,City Of Memphis,13.5,10.0,0,0,LOST,Blue Bolt,1.8,1
 2026-09-13,v2,Curragh,rac_12008347,Dr Rascal,4.5,5.0,0,0,LOST,Monogram,3.25,0
 2026-09-14,v2,Sedgefield,rac_32297498688,Mr McWhinny,1.74,1.91,1,0,WON,Mr McWhinny,1.91,1
@@ -73,7 +73,8 @@ date,engine,course,race_id,horse,banked_price,sp_dec,won,confident,status,fav_ho
 2026-09-16,v2,Kelso,rac_32297721443,Loriko,2.02,1.62,0,1,LOST,Loriko,1.62,0
 2026-09-17,v2,Pontefract,rac_32297787301,Milteye,9.6,5.5,0,0,LOST,Venetian Lion,3.75,1
 2026-09-18,v2,Newbury,rac_32298306417,Interstate,3.25,4.0,0,1,LOST,Interstate,4.0,0
-2026-09-19,v2,Newbury,rac_32297851222,Drymee,7.8,,-2,0,WON,Abundant,1.4,1
-2026-09-20,v2,,PASS,NO BET,,,-1,0,WON,,,
+2026-09-19,v2,Newbury,rac_32297851222,Drymee,7.8,,-2,0,VOID,Abundant,1.4,1
+2026-09-20,v2,,PASS,NO BET,,,-1,0,PASS,,,
 2026-09-21,v2,Hamilton,rac_32298252181,City Captain,3.6,2.2,0,0,LOST,City Captain,2.2,0
 2026-09-22,v2,Beverley,rac_32298352905,Supreme Clarets,4.9,4.0,0,0,LOST,Misunderstood,2.88,0
+2026-09-23,v2,Perth,rac_32298469125,Tamarind Bay,4.4,,-2,0,VOID,Tamarind Bay,,-2

@@ -4,11 +4,11 @@ Derived from `data/nap.db` by `PYTHONPATH=src python -m racing_edge.school.recor
 
 Level stakes, one point a bet, settled at SP. A pass is shown as a position, not a missing day. The favourite line is the benchmark the ledger already keeps on the same races — it is the thing to beat, never the picker.
 
-**78 settled** · 18 wins · strike **23.1%** · P/L **-11.37 pts** · ROI **-14.6%**
+**62 settled** · 18 wins · strike **29.0%** · P/L **+4.63 pts** · ROI **+7.5%**
 
-**The favourite on the same races:** 33 settled · 14 wins · strike 42.4% · P/L +0.04 pts · ROI +0.1%
+**The favourite on the same races:** 29 settled · 12 wins · strike 41.4% · P/L +0.81 pts · ROI +2.8%
 
-(78 days banked · 78 bets · 0 passes · 0 pending)
+(79 days banked · 62 bets · 13 passes · 4 voids · 0 pending)
 
 | date | eng | course | horse | price | SP | result | fav | fav SP | fav |
 |---|---|---|---|---|---|---|---|---|---|
@@ -27,17 +27,17 @@ Level stakes, one point a bet, settled at SP. A pass is shown as a position, not
 | 2026-07-13 | v1 | Windsor | Kalokalo | 3.95 | 4.00 | LOST | - | - | - |
 | 2026-07-15 | v1 | Catterick | Aberama Gold | 4.80 | 4.50 | LOST | - | - | - |
 | 2026-07-19 | v1 | Newton Abbot | Time To Bite | 6.20 | 4.50 | LOST | - | - | - |
-| 2026-07-21 | v1 |  | NO BET | - | - | WON | - | - | - |
+| 2026-07-21 | v1 |  | NO BET | - | - | PASS | - | - | - |
 | 2026-07-22 | v1 | Leicester | Miss Nightcap | 4.40 | 3.50 | WON | - | - | - |
 | 2026-07-23 | v1 | Leopardstown | Dark Viper | 8.40 | 10.00 | WON | - | - | - |
 | 2026-07-24 | v1 | Chepstow | Kodi Fire | 7.80 | 6.00 | LOST | - | - | - |
 | 2026-07-25 | v1 | Chester | Woodstock | 4.90 | 4.50 | LOST | - | - | - |
 | 2026-07-26 | v1 | Uttoxeter | Divilabother | 3.10 | 2.88 | LOST | - | - | - |
-| 2026-07-27 | v1 |  | NO BET | - | - | WON | - | - | - |
-| 2026-07-28 | v1 |  | NO BET | - | - | WON | - | - | - |
-| 2026-07-29 | v1 |  | NO BET | - | - | WON | - | - | - |
-| 2026-07-30 | v1 |  | NO BET | - | - | WON | - | - | - |
-| 2026-07-31 | v1 |  | NO BET | - | - | WON | - | - | - |
+| 2026-07-27 | v1 |  | NO BET | - | - | PASS | - | - | - |
+| 2026-07-28 | v1 |  | NO BET | - | - | PASS | - | - | - |
+| 2026-07-29 | v1 |  | NO BET | - | - | PASS | - | - | - |
+| 2026-07-30 | v1 |  | NO BET | - | - | PASS | - | - | - |
+| 2026-07-31 | v1 |  | NO BET | - | - | PASS | - | - | - |
 | 2026-08-01 | v1 | Newmarket (July) | First Officer | 7.20 | 5.50 | LOST | - | - | - |
 | 2026-08-02 | v1 | Galway | Jp's Express | 4.40 | 4.50 | LOST | - | - | - |
 | 2026-08-03 | v1 | Ripon | Poet's Dawn | 3.75 | 3.00 | WON | - | - | - |
@@ -47,16 +47,16 @@ Level stakes, one point a bet, settled at SP. A pass is shown as a position, not
 | 2026-08-07 | v1 | Musselburgh | Roc De Fer | 2.00 | 2.10 | LOST | - | - | - |
 | 2026-08-08 | v1 | Haydock | Brighton View | 1.73 | 1.40 | LOST | - | - | - |
 | 2026-08-09 | v1 | Downpatrick | Tropical Twist | 4.33 | 4.00 | LOST | - | - | - |
-| 2026-08-10 | v1 |  | NO BET | - | - | WON | - | - | - |
+| 2026-08-10 | v1 |  | NO BET | - | - | PASS | - | - | - |
 | 2026-08-11 | v1 | Carlisle | Great | 5.60 | 4.50 | LOST | - | - | - |
 | 2026-08-12 | v1 | Beverley | Glenfinnan | 6.20 | 6.50 | WON | - | - | - |
-| 2026-08-13 | v1 |  | NO BET | - | - | WON | - | - | - |
+| 2026-08-13 | v1 |  | NO BET | - | - | PASS | - | - | - |
 | 2026-08-14 | v1 | Thirsk | Moulin Booj | 4.00 | 3.25 | LOST | - | - | - |
-| 2026-08-15 | v1 |  | NO BET | - | - | WON | - | - | - |
-| 2026-08-16 | v1 |  | NO BET | - | - | WON | - | - | - |
-| 2026-08-17 | v1 |  | NO BET | - | - | WON | - | - | - |
+| 2026-08-15 | v1 |  | NO BET | - | - | PASS | - | - | - |
+| 2026-08-16 | v1 |  | NO BET | - | - | PASS | - | - | - |
+| 2026-08-17 | v1 |  | NO BET | - | - | PASS | - | - | - |
 | 2026-08-18 | v1 | Chepstow | Rogue Exile | 4.70 | 4.50 | LOST | - | - | - |
-| 2026-08-19 | v1 |  | NO BET | - | - | WON | Smugglers Haven | 2.75 | lost |
+| 2026-08-19 | v1 |  | NO BET | - | - | PASS | Smugglers Haven | 2.75 | lost |
 | 2026-08-20 | v1 | Newmarket (July) | Cherry Cobbler | 2.96 | 2.38 | LOST | Cherry Cobbler | 2.38 | lost |
 | 2026-08-21 | v1 | Hamilton | Dandy Magic | 6.60 | 5.00 | LOST | City Captain | 4.00 | WON |
 | 2026-08-22 | v1 | Newton Abbot | Max Of Stars | 10.00 | 4.33 | LOST | Arctic Voyage | - | - |
@@ -73,12 +73,12 @@ Level stakes, one point a bet, settled at SP. A pass is shown as a position, not
 | 2026-09-02 | v1 | Hamilton | Harley | 3.80 | 3.25 | LOST | Battle Fever | 2.00 | lost |
 | 2026-09-03 | v2 | Haydock | Hollywell Stream | 7.60 | 5.00 | LOST | Hoseki | 2.25 | WON |
 | 2026-09-04 | v2 | Bangor-on-Dee | Thickthorn Tom | 2.63 | 3.12 | LOST | Thickthorn Tom | 3.12 | lost |
-| 2026-09-05 | v2 | Stratford | Captain Cool | 4.40 | - | WON | Gower Prince | 3.00 | lost |
+| 2026-09-05 | v2 | Stratford | Captain Cool | 4.40 | - | VOID | Gower Prince | 3.00 | lost |
 | 2026-09-07 | v2 | Newton Abbot | Saint Polo | 2.50 | 2.75 | LOST | Saint Polo | 2.75 | lost |
 | 2026-09-08 | v2 | Goodwood | Over Spiced | 5.50 | 4.00 | LOST | Spring Bloom | - | - |
 | 2026-09-09 | v2 | Sedgefield | Loriko | 2.80 | 3.50 | WON | Loriko | 3.50 | WON |
 | 2026-09-10 | v2 | Doncaster | Keep Grating | 10.50 | 6.00 | LOST | Al Wathba | 2.75 | lost |
-| 2026-09-11 | v2 | Doncaster | Queenstown | 2.63 | - | WON | Caballo De Mar | 1.83 | WON |
+| 2026-09-11 | v2 | Doncaster | Queenstown | 2.63 | - | VOID | Caballo De Mar | 1.83 | WON |
 | 2026-09-12 | v2 | Leopardstown | City Of Memphis | 13.50 | 10.00 | LOST | Blue Bolt | 1.80 | WON |
 | 2026-09-13 | v2 | Curragh | Dr Rascal | 4.50 | 5.00 | LOST | Monogram | 3.25 | lost |
 | 2026-09-14 | v2 | Sedgefield | Mr McWhinny | 1.74 | 1.91 | WON | Mr McWhinny | 1.91 | WON |
@@ -86,7 +86,8 @@ Level stakes, one point a bet, settled at SP. A pass is shown as a position, not
 | 2026-09-16 | v2 | Kelso | Loriko | 2.02 | 1.62 | LOST | Loriko | 1.62 | lost |
 | 2026-09-17 | v2 | Pontefract | Milteye | 9.60 | 5.50 | LOST | Venetian Lion | 3.75 | WON |
 | 2026-09-18 | v2 | Newbury | Interstate | 3.25 | 4.00 | LOST | Interstate | 4.00 | lost |
-| 2026-09-19 | v2 | Newbury | Drymee | 7.80 | - | WON | Abundant | 1.40 | WON |
-| 2026-09-20 | v2 |  | NO BET | - | - | WON | - | - | - |
+| 2026-09-19 | v2 | Newbury | Drymee | 7.80 | - | VOID | Abundant | 1.40 | WON |
+| 2026-09-20 | v2 |  | NO BET | - | - | PASS | - | - | - |
 | 2026-09-21 | v2 | Hamilton | City Captain | 3.60 | 2.20 | LOST | City Captain | 2.20 | lost |
 | 2026-09-22 | v2 | Beverley | Supreme Clarets | 4.90 | 4.00 | LOST | Misunderstood | 2.88 | lost |
+| 2026-09-23 | v2 | Perth | Tamarind Bay | 4.40 | - | VOID | Tamarind Bay | - | - |
