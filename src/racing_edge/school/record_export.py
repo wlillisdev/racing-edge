@@ -69,13 +69,33 @@ def _cols(conn: sqlite3.Connection, table: str) -> set[str]:
     return {r[1] for r in conn.execute(f"pragma table_info({table})")}
 
 
+# nap.db's `won` column is NOT a boolean. Discovered 2026-09-23, the first
+# night the record could actually be read:
+#     1  won        0  lost       -1  named pass       -2  void
+# The first version of this function did `"WON" if row["won"] else "LOST"`,
+# and -1 and -2 are TRUTHY — so all thirteen named passes and all three voids
+# were reported as WINS. It also looked for a BLANK horse to spot a pass, but
+# the engine writes the horse as "NO BET". Sixteen of seventy-eight rows were
+# wrong, and the instrument built to make the record honest was the thing
+# lying about it.
+WON, LOST, PASS, VOID = 1, 0, -1, -2
+
+
 def _status(row: dict) -> str:
-    """A pass is a position, not a missing day — it must be visible as such."""
-    if not (row.get("horse") or "").strip():
+    """A pass is a position, not a win and not a missing day.
+
+    ORDER MATTERS. The pass test comes FIRST, because a pass is a pass whether
+    or not anything has settled it — asking "is it pending?" before "is it a
+    pass?" turns today's declined day into a bet awaiting a result."""
+    horse = (row.get("horse") or "").strip().upper()
+    w = row.get("won")
+    if w == PASS or horse in ("", "NO BET"):
         return "PASS"
-    if row.get("won") is None:
+    if w == VOID:
+        return "VOID"
+    if w is None:
         return "PENDING"
-    return "WON" if row["won"] else "LOST"
+    return "WON" if w == WON else "LOST"
 
 
 def rows(db: Path = DB) -> list[dict]:
@@ -131,6 +151,8 @@ def _pl(settled: list[dict], won_key: str, sp_key: str) -> float:
 
 
 def summarise(all_rows: list[dict]) -> dict:
+    """Only WON and LOST are bets. A pass risked nothing and a void could not
+    be settled; counting either as a result flatters or damns the record."""
     bets = [r for r in all_rows if r["status"] in ("WON", "LOST", "PENDING")]
     settled = [r for r in all_rows if r["status"] in ("WON", "LOST")]
     wins = [r for r in settled if r["won"] == 1]
@@ -141,6 +163,7 @@ def summarise(all_rows: list[dict]) -> dict:
     return {
         "days": len(all_rows),
         "passes": sum(1 for r in all_rows if r["status"] == "PASS"),
+        "voids": sum(1 for r in all_rows if r["status"] == "VOID"),
         "bets": len(bets),
         "pending": sum(1 for r in all_rows if r["status"] == "PENDING"),
         "settled": len(settled),
@@ -184,7 +207,7 @@ def render(all_rows: list[dict], s: dict) -> str:
           f"P/L {s['fav_pl']:+.2f} pts · ROI {s['fav_roi']:+.1f}%",
           "",
           f"({s['days']} days banked · {s['bets']} bets · {s['passes']} passes · "
-          f"{s['pending']} pending)",
+          f"{s.get('voids', 0)} voids · {s['pending']} pending)",
           "",
           "| date | eng | course | horse | price | SP | result | fav | fav SP | fav |",
           "|---|---|---|---|---|---|---|---|---|---|"]

@@ -119,3 +119,33 @@ def test_the_csv_round_trips_and_carries_the_engine_split(tmp_path):
     body = md_p.read_text()
     assert "Proposal" in body and "strike" in body
     assert "Never edit this file" in body
+
+
+def test_a_named_pass_is_not_a_win(tmp_path):
+    """2026-09-23, the first night the record could be read. nap.db encodes
+    `won` as 1 won / 0 lost / -1 named pass / -2 void. The first version of
+    _status did `"WON" if row["won"] else "LOST"` — and -1 and -2 are TRUTHY,
+    so all thirteen passes and all three voids were reported as WINS, turning
+    a 29.0% strike rate into 43.6%. The instrument built to make the record
+    honest was the thing lying about it."""
+    db = _db(tmp_path, [
+        ("2026-09-01", "r1", "Ayr", "Winner", "h1", 3.0, 9, 1, 1, 3.0),
+        ("2026-09-02", "r2", "Ayr", "Loser", "h2", 3.0, 9, 1, 0, 3.0),
+        ("2026-09-03", "", "", "NO BET", "", None, 0, 0, -1, None),
+        ("2026-09-04", "r4", "Ayr", "Voided", "h4", 3.0, 9, 1, -2, None),
+    ])
+    rows = R.rows(db)
+    assert [r["status"] for r in rows] == ["WON", "LOST", "PASS", "VOID"]
+    s = R.summarise(rows)
+    assert s["settled"] == 2 and s["wins"] == 1, "a pass or void is not a bet"
+    assert s["strike"] == 50.0, "the pass must not dilute or inflate the strike"
+    assert s["passes"] == 1 and s["voids"] == 1
+    assert round(s["pl"], 2) == 1.00, "a pass risks nothing and returns nothing"
+
+
+def test_the_engine_writes_NO_BET_not_a_blank_horse(tmp_path):
+    """Belt and braces: a pass is caught by its won code OR by the horse text
+    the engine actually writes, because the first version relied on a blank
+    horse field that never occurs in practice."""
+    db = _db(tmp_path, [("2026-09-03", "r1", "Ayr", "NO BET", "", None, 0, 0, 1, None)])
+    assert R.rows(db)[0]["status"] == "PASS"
