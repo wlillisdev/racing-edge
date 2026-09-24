@@ -149,3 +149,29 @@ def test_the_engine_writes_NO_BET_not_a_blank_horse(tmp_path):
     horse field that never occurs in practice."""
     db = _db(tmp_path, [("2026-09-03", "r1", "Ayr", "NO BET", "", None, 0, 0, 1, None)])
     assert R.rows(db)[0]["status"] == "PASS"
+
+
+def test_a_void_carries_its_reason_into_the_record(tmp_path):
+    """naplog refuses a void without a reason ("voids with a mandatory
+    reason", his word) and then the export dropped it, so a void reached the
+    repo as a silent hole in the strike rate. Two landed in five days and
+    neither could be explained without opening nap.db on the box."""
+    p = tmp_path / "nap.db"
+    c = sqlite3.connect(p)
+    c.execute("CREATE TABLE nap (date TEXT PRIMARY KEY, race_id TEXT, course TEXT, "
+              "horse TEXT, horse_id TEXT, price REAL, score INTEGER, "
+              "confident INTEGER, won INTEGER, sp_dec REAL, void_reason TEXT)")
+    c.execute("INSERT INTO nap VALUES ('2026-09-23','r1','Perth','Tamarind Bay',"
+              "'h1',4.4,8,1,-2,NULL,'non-runner, withdrawn at the start')")
+    c.commit(); c.close()
+    row = R.rows(p)[0]
+    assert row["status"] == "VOID"
+    assert row["void_reason"] == "non-runner, withdrawn at the start"
+    assert "void_reason" in R.FIELDS, "the reason must survive the CSV"
+
+
+def test_an_old_ledger_without_the_column_still_exports(tmp_path):
+    """Graceful: a nap.db predating void_reason exports a blank, never a
+    crash — the record must be readable from whatever the box holds."""
+    db = _db(tmp_path, [("2026-09-01", "r1", "Ayr", "H", "h1", 3.0, 9, 1, 1, 3.0)])
+    assert R.rows(db)[0]["void_reason"] == ""

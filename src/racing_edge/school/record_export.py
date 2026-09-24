@@ -55,7 +55,7 @@ MD_OUT = Path("docs/THE_RECORD.md")
 V2_FROM = "2026-09-03"
 
 FIELDS = ["date", "engine", "course", "race_id", "horse", "banked_price",
-          "sp_dec", "won", "confident", "status",
+          "sp_dec", "won", "confident", "status", "void_reason",
           "fav_horse", "fav_sp", "fav_won"]
 
 
@@ -112,7 +112,9 @@ def rows(db: Path = DB) -> list[dict]:
         if _table_exists(conn, "favline"):
             favs = {r["date"]: dict(r)
                     for r in conn.execute("SELECT * FROM favline")}
-        has_conf = "confident" in _cols(conn, "nap")
+        napcols = _cols(conn, "nap")
+        has_conf = "confident" in napcols
+        has_void = "void_reason" in napcols
     finally:
         conn.close()
 
@@ -130,6 +132,13 @@ def rows(db: Path = DB) -> list[dict]:
             "won": "" if n.get("won") is None else int(n["won"]),
             "confident": int(n.get("confident") or 0) if has_conf else "",
             "status": _status(n),
+            # THE VOID REASON REACHES THE RECORD (2026-09-24). naplog refuses a
+            # void without a reason -- "voids with a mandatory reason", his
+            # word -- and then the export dropped it, so a void arrived here as
+            # a silent hole in the strike rate. Two landed in five days (Drymee
+            # 19 Sep, Tamarind Bay 23 Sep) and neither could be explained from
+            # the repo.
+            "void_reason": (n.get("void_reason") or "") if has_void else "",
             "fav_horse": f.get("horse") or "",
             "fav_sp": f.get("sp_dec"),
             "fav_won": "" if f.get("won") is None else int(f["won"]),
