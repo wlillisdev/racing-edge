@@ -79,3 +79,4 @@ date,engine,course,race_id,horse,banked_price,sp_dec,won,confident,status,void_r
 2026-09-22,v2,Beverley,rac_32298352905,Supreme Clarets,4.9,4.0,0,0,LOST,,Misunderstood,2.88,0
 2026-09-23,v2,Perth,rac_32298469125,Tamarind Bay,4.4,,-2,0,VOID,Tamarind Bay absent from the result's runners — non-runner/withdrawn,Tamarind Bay,,-2
 2026-09-24,v2,Perth,rac_32298624085,Sir Carnegie,4.4,3.5,0,0,LOST,,Sir Carnegie,3.5,0
+2026-09-25,v2,Haydock,rac_32298703502,Glory of The Seas,4.4,4.5,0,0,LOST,,Asia Force,3.25,0
