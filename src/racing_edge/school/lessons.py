@@ -48,6 +48,18 @@ REGISTER = Path("data/lessons.csv")
 # every open lesson should have been put to him at least once.
 STALE_DAYS = 7
 
+# A TESTING LESSON WITH NO REPORTED OUTCOME IS ALSO ROT (his fault (c), named
+# in the 2026-09-20 audit). TESTING was deliberately kept out of NEEDS_ACTION
+# so that doing the right thing would not show red forever — but with no
+# deadline attached it became a parking space: four lessons sat at TESTING
+# from 2026-07-27 to 2026-09-25, two months, and two of them had actually
+# been tested on 20 September without anyone writing the answer back.
+#
+# So TESTING is red only when its test has NOT REPORTED in this long. A
+# lesson with an outcome written is never red, however old — the test spoke,
+# and what happens next is his ruling, not a nag.
+TESTING_DAYS = 28
+
 STATUSES = ("SURFACED", "DOORBELL", "TESTING", "CARVED", "KILLED")
 OPEN = ("SURFACED", "DOORBELL", "TESTING")      # not yet resolved
 # RED is for lessons where NOTHING IS HAPPENING. A lesson under TESTING has a
@@ -112,12 +124,28 @@ def days_open(row: dict, today: date | None = None) -> int:
         return 0
 
 
+def unreported(rows: list[dict], today: date | None = None,
+               testing_days: int = TESTING_DAYS) -> list[dict]:
+    """TESTING lessons whose named test has not reported an outcome in time.
+
+    An outcome of any kind clears it — a test that reported FAILED has done
+    its job every bit as much as one that reported PASSED."""
+    return sorted([r for r in rows
+                   if r.get("status") == "TESTING"
+                   and not (r.get("outcome") or "").strip()
+                   and days_open(r, today) >= testing_days],
+                  key=lambda r: days_open(r, today), reverse=True)
+
+
 def stale(rows: list[dict], today: date | None = None,
           stale_days: int = STALE_DAYS) -> list[dict]:
     """Open lessons that have sat longer than the bar — the red line. Sorted
-    oldest first, because the oldest is the one that has been ignored most."""
+    oldest first, because the oldest is the one that has been ignored most.
+
+    Includes TESTING lessons whose test never reported (fault (c))."""
     out = [r for r in rows if r.get("status") in NEEDS_ACTION
            and days_open(r, today) >= stale_days]
+    out += [r for r in unreported(rows, today) if r not in out]
     return sorted(out, key=lambda r: days_open(r, today), reverse=True)
 
 
@@ -134,9 +162,12 @@ def health_line(rows: list[dict], today: date | None = None) -> tuple[bool, str]
         return True, (f"lessons: {len(rows)} known ({tail}); nothing waiting past "
                       f"{STALE_DAYS} days")
     oldest = st[0]
+    silent = unreported(rows, today)
+    tail = (f" ({len(silent)} of them TESTING with no outcome reported)"
+            if silent else "")
     return False, (
-        f"LESSONS NOT ACTED ON — {len(st)} of {len(waiting)} waiting lesson(s) "
-        f"past {STALE_DAYS} days; oldest {days_open(oldest, today)}d: "
+        f"LESSONS NOT ACTED ON — {len(st)} lesson(s) past their bar{tail}; "
+        f"oldest {days_open(oldest, today)}d: "
         f"{oldest['id']} — {oldest['lesson'][:90]}. The record learned it and "
         f"nothing is happening: test it, rule on it, or kill it.")
 

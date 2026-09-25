@@ -34,12 +34,25 @@ def test_an_open_lesson_past_the_bar_turns_the_page_red():
 
 def test_red_means_nothing_is_happening_not_merely_unresolved():
     """CARVED and KILLED are closed. TESTING is unresolved but ACTED ON — it
-    carries a named test and bar, and making it red forever would punish the
-    one behaviour we want (his word, 2026-09-07: "why not test them"). Only
-    SURFACED and DOORBELL go red."""
-    for status in ("CARVED", "KILLED", "TESTING"):
+    carries a named test and bar, and making it red merely for being open
+    would punish the one behaviour we want (his word, 2026-09-07: "why not
+    test them").
+
+    REFINED 2026-09-25 by fault (c) of the audit. That reasoning was right
+    about WHY but too generous: with no deadline at all, TESTING became a
+    parking space and four lessons sat in it for two months, two of them
+    already answered by a test nobody wrote back. A TESTING lesson is now red
+    ONLY when its test has not reported; an outcome of any kind, FAILED
+    included, clears it."""
+    for status in ("CARVED", "KILLED"):
         ok, _ = L.health_line([_row("a", status, "2026-01-01")], TODAY)
         assert ok, f"{status} should not be red"
+    answered = dict(_row("a", "TESTING", "2026-01-01"),
+                    outcome="FAILED — reversed out of sample")
+    ok, _ = L.health_line([answered], TODAY)
+    assert ok, "a TESTING lesson whose test REPORTED is not rot"
+    ok, _ = L.health_line([_row("a", "TESTING", "2026-01-01")], TODAY)
+    assert not ok, "a TESTING lesson whose test never reported IS rot"
     for status in L.NEEDS_ACTION:
         ok, _ = L.health_line([_row("a", status, "2026-01-01")], TODAY)
         assert not ok, f"{status} should be red"
@@ -48,13 +61,17 @@ def test_red_means_nothing_is_happening_not_merely_unresolved():
 
 
 def test_the_oldest_open_lesson_is_the_one_named():
+    """A TESTING lesson that has REPORTED is acted on and stays out of the
+    red list, however old (refined 2026-09-25, fault (c): it is the silence
+    that is rot, not the age)."""
     rows = [_row("recent", "SURFACED", "2026-08-25", "the recent one"),
             _row("ancient", "DOORBELL", "2026-07-01", "the ignored one"),
-            _row("under-test", "TESTING", "2026-07-01", "the one being tested")]
+            dict(_row("under-test", "TESTING", "2026-07-01", "the tested one"),
+                 outcome="PASSED on both halves")]
     st = L.stale(rows, TODAY)
     assert [r["id"] for r in st] == ["ancient", "recent"]   # the tested one is acted on
     _, line = L.health_line(rows, TODAY)
-    assert "the ignored one" in line and "2 of 2" in line
+    assert "the ignored one" in line
 
 
 def test_note_counts_a_repeat_and_never_changes_a_status():
@@ -91,3 +108,25 @@ def test_the_real_register_is_present_and_honest():
     for r in rows:
         assert r["status"] in L.STATUSES, f"{r['id']} has status {r['status']!r}"
         assert r["lesson"].strip(), f"{r['id']} has no lesson written"
+
+
+def test_a_TESTING_lesson_whose_test_never_reports_goes_red():
+    """Fault (c) from the 2026-09-20 audit. TESTING was kept out of
+    NEEDS_ACTION so that doing the right thing would not show red forever —
+    but with no deadline it became a parking space: four lessons sat at
+    TESTING from 27 July to 25 September, and two had actually been tested on
+    20 September with nobody writing the answer back."""
+    silent = _row("a", "TESTING", "2026-07-27")        # 42 days, no outcome
+    ok, line = L.health_line([silent], TODAY)
+    assert not ok, "a test that never reports is rot"
+    assert "no outcome reported" in line
+
+    reported = dict(silent, outcome="FAILED — reversed out of sample")
+    ok, _ = L.health_line([reported], TODAY)
+    assert ok, "an outcome of ANY kind clears it — FAILED is a result too"
+
+    fresh = _row("b", "TESTING", "2026-09-01")         # 6 days, still in time
+    ok, _ = L.health_line([fresh], TODAY)
+    assert ok, "a test inside its window must not be nagged"
+
+    assert L.TESTING_DAYS == 28
