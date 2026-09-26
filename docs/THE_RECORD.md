@@ -4,11 +4,11 @@ Derived from `data/nap.db` by `PYTHONPATH=src python -m racing_edge.school.recor
 
 Level stakes, one point a bet, settled at SP. A pass is shown as a position, not a missing day. The favourite line is the benchmark the ledger already keeps on the same races — it is the thing to beat, never the picker.
 
-**64 settled** · 18 wins · strike **28.1%** · P/L **+2.63 pts** · ROI **+4.1%**
+**65 settled** · 18 wins · strike **27.7%** · P/L **+1.63 pts** · ROI **+2.5%**
 
-**The favourite on the same races:** 31 settled · 12 wins · strike 38.7% · P/L -1.19 pts · ROI -3.8%
+**The favourite on the same races:** 32 settled · 13 wins · strike 40.6% · P/L -0.36 pts · ROI -1.1%
 
-(81 days banked · 64 bets · 13 passes · 4 voids · 0 pending)
+(82 days banked · 65 bets · 13 passes · 4 voids · 0 pending)
 
 | date | eng | course | horse | price | SP | result | fav | fav SP | fav |
 |---|---|---|---|---|---|---|---|---|---|
@@ -93,3 +93,4 @@ Level stakes, one point a bet, settled at SP. A pass is shown as a position, not
 | 2026-09-23 | v2 | Perth | Tamarind Bay | 4.40 | - | VOID | Tamarind Bay | - | - |
 | 2026-09-24 | v2 | Perth | Sir Carnegie | 4.40 | 3.50 | LOST | Sir Carnegie | 3.50 | lost |
 | 2026-09-25 | v2 | Haydock | Glory of The Seas | 4.40 | 4.50 | LOST | Asia Force | 3.25 | lost |
+| 2026-09-26 | v2 | Newmarket | Libertango | 6.60 | 7.50 | LOST | Sun Goddess | 1.83 | WON |
