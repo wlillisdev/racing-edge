@@ -65,11 +65,18 @@ FILTER_FROM = "2026-09-27"  # THE FILTER IS THE NAP (the master, 2026-09-27: "6 
                             # favourite filter's top pick is banked; the engine is off
 
 
+MODEL_FROM = "2026-09-28"   # THE MODEL PICKS (the master, 2026-09-27: "why dont you just
+                            # do it") — his filter plus the archive's facts, learned
+
+
 def version(day) -> str:
-    """'filter' from FILTER_FROM, 'v2' from V2_FROM, 'v1' before — ONE SITE
+    """'model' from MODEL_FROM, 'filter' from FILTER_FROM, 'v2' from V2_FROM,
+    'v1' before — ONE SITE
     (the master, 2026-09-02: "differentiate this version from the older
     version")."""
     d = day.isoformat() if hasattr(day, "isoformat") else str(day)
+    if d >= MODEL_FROM:
+        return "model"
     if d >= FILTER_FROM:
         return "filter"
     return "v2" if d >= V2_FROM else "v1"

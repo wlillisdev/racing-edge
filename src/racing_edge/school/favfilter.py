@@ -403,6 +403,7 @@ def daily_list(day: str = "today", floor: int = FLOOR, client=None) -> list[dict
     from racing_edge.data.client import get_client
     client = client or get_client()
     cards = (client.racecards(day) or {}).get("racecards") or []
+    daily_list.last_cards = cards        # the model scores the same card (one call)
     out = []
     for c in cards:
         if str(c.get("race_status") or "").lower() == "result":
@@ -554,7 +555,8 @@ def _save_record(rows: list[dict], path: Path) -> None:
             w.writerow({k: r.get(k, "") for k in RECORD_FIELDS})
 
 
-def record_picks(rows: list[dict], day: str, path: Path = FILTER_RECORD) -> int:
+def record_picks(rows: list[dict], day: str, path: Path = FILTER_RECORD,
+                 model: list[dict] | None = None) -> int:
     """Bank today's filter picks and chase line BEFORE the off. A day already
     banked is never rewritten — a re-run cannot re-pick. Returns rows added."""
     held = _load_record(path)
@@ -568,6 +570,9 @@ def record_picks(rows: list[dict], day: str, path: Path = FILTER_RECORD) -> int:
     for c in chase_line(rows):
         add.append(dict(c, date=day, line="chase", cleared="", confidence="",
                         result="", sp=""))
+    for m in (model or [])[:2]:
+        add.append(dict(m, date=day, line="model", cleared="1",
+                        confidence=f"{m['confidence']:.1f}", result="", sp=""))
     if add:
         _save_record(held + add, path)
     return len(add)
@@ -605,7 +610,8 @@ def render_record(path: Path = FILTER_RECORD) -> str:
     """Strike rate first (his ruling); P/L printed, never the verdict."""
     held = _load_record(path)
     L = ["THE FILTER'S RECORD — banked 07:30, settled at SP"]
-    for line, label in (("filter", "filter (2+ a day)"), ("chase", "chase line")):
+    for line, label in (("model", "model (top 2)"), ("filter", "filter (2+ a day)"),
+                        ("chase", "chase line")):
         s = [r for r in held if r["line"] == line and r["result"] in ("WON", "LOST")]
         w = [r for r in s if r["result"] == "WON"]
         pl = sum((_f(r["sp"]) or 1.0) - 1.0 for r in w) - (len(s) - len(w))
@@ -625,27 +631,29 @@ def render_record(path: Path = FILTER_RECORD) -> str:
 # settled the same way at 22:00. The engine is switched off, not deleted:
 # NAP_SOURCE=engine in trial.sh restores it.
 
-def bank_nap(rows: list[dict], day: str, log) -> str:
-    """Bank the filter's top pick as the day's nap, or a named pass when no
-    favourite is eligible. A day already banked is refused at the write point
-    and said, never raised. Returns one line for the mail."""
+def bank_nap(rows: list[dict], day: str, log, picks: list[dict] | None = None,
+             source: str = "filter") -> str:
+    """Bank the top pick as the day's nap — the filter's, or the model's when
+    `picks` come from it — or a named pass when no favourite is eligible. A
+    day already banked is refused at the write point and said, never raised.
+    Returns one line for the mail."""
     from datetime import date as _date
     d = _date.fromisoformat(day)
-    picks = todays_picks(rows)
+    picks = todays_picks(rows) if picks is None else picks
     try:
         if not picks:
             log.record_pass(day=d, reason="filter: no eligible favourite "
                                           "(every one odds-on, ruled out or unread)")
             return "NAP: NO BET — no eligible favourite today"
         p = picks[0]
-        case = (f"FILTER NAP ({'NAMED' if p['cleared'] else 'top-up'}, score "
+        case = (f"{source.upper()} NAP ({'NAMED' if p['cleared'] else 'top-up'}, score "
                 f"{p['score']:+d}, confidence {p['confidence']:.0f}% n="
                 f"{p['confidence_n']}): " + "; ".join(p["reasons"]))
         log.record(day=d, race_id=str(p["race_id"]), course=p["course"] or "",
                    horse=p["horse"] or "", horse_id=p.get("horse_id") or "",
                    price=p["price"], score=int(p["score"]),
                    confident=bool(p["cleared"]), case=case,
-                   deep_conf=f"{p['confidence']:.0f}%", aligned="filter")
+                   deep_conf=f"{p['confidence']:.0f}%", aligned=source)
         # the favourite line: on a filter nap the pick IS the favourite
         log.record_favline(day=d, race_id=str(p["race_id"]), course=p["course"] or "",
                            horse=p["horse"] or "", horse_id=p.get("horse_id") or "",
@@ -654,6 +662,39 @@ def bank_nap(rows: list[dict], day: str, log) -> str:
                 f"({p['confidence']:.0f}% confidence, score {p['score']:+d})")
     except ValueError as exc:            # already banked: the pre-off record stands
         return f"NAP not re-banked: {exc}"
+
+
+def model_picks(cards: list[dict], day: str) -> list[dict]:
+    """THE MODEL'S LIST (his word, 2026-09-27: "why dont you just do it"):
+    every eligible favourite on the card with the model's probability, best
+    first, shaped like the filter's picks so the same bank takes them.
+    Raises when the model file is missing — the caller falls back loudly."""
+    from racing_edge.school import archive, favmodel
+    model = favmodel.load_model()
+    if model is None:
+        raise FileNotFoundError(f"{favmodel.MODEL} missing")
+    out = []
+    for m in favmodel.score_cards(cards, day, model, archive.load()):
+        fi = favmodel.FEATURES.index("filter_score")
+        fs = m["x"][fi]
+        out.append(dict(m, score=0 if fs != fs else int(fs), cleared=True,
+                        confidence=100.0 * m["prob"], confidence_n=model.get("n", 0),
+                        reasons=[f"model {100 * m['prob']:.0f}% — pushed most by "
+                                 + ", ".join(m["why"])]))
+    return out
+
+
+def render_model(picks: list[dict], note: str = "") -> str:
+    L = ["THE MODEL — his filter plus everything the archive knows, learned",
+         "  (walk-forward Apr-Sep on unseen months: nap 49.2% v the filter's 44.7%)"]
+    if note:
+        L.append(f"  ⚠ {note}")
+    for m in picks[:5]:
+        L.append(f"  {m['confidence']:4.0f}%  {m['course']} {m['off']}  {m['horse']} "
+                 f"@ {m['price']:.2f}   [{', '.join(m['why'])}]")
+    if not picks and not note:
+        L.append("  (no eligible favourite on the card)")
+    return "\n".join(L) + "\n"
 
 
 def main(argv=None) -> int:
@@ -679,24 +720,41 @@ def main(argv=None) -> int:
     rows = daily_list(a.day, a.floor)
     body = render_list(rows, a.floor)
     head = ""
+    mpicks = None
     if a.bank:
+        import os
         from racing_edge.cli._common import open_nap_log
         from racing_edge.domain.units import uk_today
         day = rows[0]["date"] if rows else uk_today().isoformat()
+        note = ""
+        # THE MODEL PICKS (his word, 2026-09-27). NAP_PICKER=filter restores
+        # the filter's own pick; a model failure falls back to it, LOUDLY.
+        if os.environ.get("NAP_PICKER", "model").strip().lower() != "filter":
+            try:
+                mpicks = model_picks(getattr(daily_list, "last_cards", []) or [], day)
+            except Exception as exc:
+                note = (f"MODEL FAILED ({exc.__class__.__name__}: {str(exc)[:80]}) "
+                        "— the filter's pick is banked instead")
         log = open_nap_log()
         try:
-            head = bank_nap(rows, day, log)
+            if mpicks is not None:
+                head = bank_nap(rows, day, log, picks=mpicks, source="model")
+            else:
+                head = bank_nap(rows, day, log)
         finally:
             log.close()
-        body = head + "\n\n" + body
+        body = (head + "\n\n" + (render_model(mpicks or [], note)
+                                   if (mpicks is not None or note) else "")
+                + "\n" + body)
     print(body)
     if rows:
-        n = record_picks(rows, rows[0]["date"])
+        n = record_picks(rows, rows[0]["date"], model=mpicks)
         print(f"filter record: {n} row(s) banked for {rows[0]['date']}")
     if a.email:
         from racing_edge.report.mail import configured, send
         if configured():
-            ok = send(f"[filter] {head or 'The favourite filter'}", body,
+            tag = "[model]" if mpicks is not None else "[filter]"
+            ok = send(f"{tag} {head or 'The favourite filter'}", body,
                       title="The favourite filter", subtitle="racing-edge form trial")
             print(f"  email: {ok or 'FAILED'}")
         else:

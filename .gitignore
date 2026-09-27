@@ -114,3 +114,7 @@ data/school/why/
 # at which point the box commits them and this exclusion is revisited.
 data/record.csv
 docs/THE_RECORD.md
+
+# the box's nightly archive top-ups (his word, 2026-09-27): box-local, never
+# tracked, so the box's pull can never collide with them
+data/archive/live/

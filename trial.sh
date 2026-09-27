@@ -170,6 +170,13 @@ case "${1:-nap}" in
            # `settle)` case: the box's 22:00 task is `night`, which runs its own
            # inline settle and never touches that case, so wiring the export
            # there alone would have meant it never ran on the box at all.
+           # THE FULL-FIELD ARCHIVE (his word, 2026-09-27): today's results with
+           # draw, weight, mark, age and going, so the model knows every horse's
+           # past tomorrow exactly as it learned it. A missed night heals itself.
+           if ! "${SDK_OFF[@]}" "$PY" -m racing_edge.school.archive --update; then
+             echo "WARNING: archive update FAILED — the model reads a day-old past"
+             PYTHONPATH=src _crash_mail "night:archive" 1
+           fi
            # THE FILTER'S RECORD (his word, 2026-09-27): the 07:30 run banks the
            # filter's picks and the chase line; settle them here, before export.
            if ! "${SDK_OFF[@]}" "$PY" -m racing_edge.school.favfilter --settle "$(date +%F)"; then
