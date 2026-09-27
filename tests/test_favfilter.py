@@ -141,6 +141,29 @@ def test_an_odds_on_favourite_is_ruled_out_before_its_dots_are_counted():
     assert not evens.ruled_out, "evens is not odds-on"
 
 
+def test_the_live_07_30_list_rules_out_odds_on_too():
+    """27 Sep: his "no odds on" ruling reached the grader but not the list the
+    box mails at 07:30 — daily_list never passed the price, so the bar could
+    not fire and odds-on favourites were named on four days of five. The rule
+    must hold where the pick is made, not only where it is graded."""
+    class Client:
+        def racecards(self, day):
+            return {"racecards": [
+                {"race_id": "r1", "course": "Newmarket", "off_time": "2:00",
+                 "date": "2026-09-26", "race_status": "declared", "race_class": "Class 4",
+                 "runners": [{"horse_id": f"h{i}", "horse": f"H{i}",
+                              "odds": [{"decimal": str(1.5 + i)}]} for i in range(5)]}]}
+
+        def horse_results(self, hid, limit=6):
+            return [{"date": "2026-09-01", "position": "1", "ovr_btn": "0",
+                     "comment": "kept on well", "class": "Class 4"}]
+
+    rows = F.daily_list("today", client=Client())
+    assert rows[0]["price"] == 1.5 and rows[0]["ruled_out"], "odds-on reached the list"
+    assert "odds-on" in rows[0]["reasons"][0]
+    assert F.todays_picks(rows) == [], "an odds-on favourite must never be named"
+
+
 def test_price_is_optional_so_the_corpus_grader_still_works():
     """Called without a price the bar cannot fire — the grader passes None
     deliberately when measuring the no-bar baseline."""

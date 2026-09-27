@@ -424,8 +424,11 @@ def daily_list(day: str = "today", floor: int = FLOOR, client=None) -> list[dict
         except Exception:
             hist = []                    # a dead door is unread, not bad
         last = last_run_from_history(hist, str(c.get("date") or day))
+        # price= carries his odds-on bar into the LIVE list. It was missing
+        # from 20 to 27 Sep: the grader ruled odds-on out, the 07:30 mail did
+        # not, and it named odds-on favourites on four days of five.
         sc = score_favourite(last, rclass=_rclass(c.get("race_class")),
-                             field_size=len(priced), floor=floor)
+                             field_size=len(priced), floor=floor, price=price)
         row = {"course": c.get("course"), "off": c.get("off_time"),
                "race_id": c.get("race_id"), "horse": fav.get("horse"),
                "price": price, "field": len(priced),
