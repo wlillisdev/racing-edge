@@ -57,14 +57,19 @@ def test_a_horse_with_no_previous_run_returns_none_not_a_guess():
     assert F.score_favourite(None, rclass=4, field_size=8) is None
 
 
-def test_the_floor_is_the_one_he_was_shown():
-    """-1 was chosen on the tuning half alone and must not drift: the band
-    below it is the only consistently bad group the dots find."""
-    assert F.FLOOR == -1
-    at = F.score_favourite(F.LastRun(position="4", beaten=7.0, comment="",
+def test_the_floor_is_the_one_he_set():
+    """His word, 2026-09-27: "yes raise it to +2". At -1 the filter ruled out
+    2 favourites of 18 on its first day and 12 of the 16 kept lost; +2 keeps
+    about a quarter of the card, winning 34-35% in both archive periods."""
+    assert F.FLOOR == 2
+    at = F.score_favourite(F.LastRun(position="1", beaten=0.5, comment="",
                                      days_since=10, rclass=4),
                            rclass=4, field_size=9)
-    assert at.score == -1 and not at.ruled_out      # AT the floor is kept
+    assert at.score == 2 and not at.ruled_out       # AT the floor is kept
+    below = F.score_favourite(F.LastRun(position="2", beaten=0.5, comment="",
+                                        days_since=10, rclass=4),
+                              rclass=4, field_size=9)
+    assert below.score == 1 and below.ruled_out     # +1 is ruled out now
 
 
 def test_the_last_run_is_the_most_recent_one_BEFORE_today():
