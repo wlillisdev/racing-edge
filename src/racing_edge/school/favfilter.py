@@ -573,6 +573,16 @@ def record_picks(rows: list[dict], day: str, path: Path = FILTER_RECORD,
     for m in (model or [])[:2]:
         add.append(dict(m, date=day, line="v3", cleared="1",
                         confidence=f"{m['confidence']:.1f}", result="", sp=""))
+    # EVERY FAVOURITE'S 07:30 PRICE (his word, 2026-09-27: "yes add it"). The
+    # study of his first filter day found his market law 4d in the results —
+    # the favourites crunched towards odds-on lost, the drifters won — and it
+    # could not be tested because only the picks kept a morning price. Every
+    # favourite on the card, ruled out or not, is banked here and settled at
+    # SP, so price-at-07:30 against SP is on record for every one.
+    for r in rows:
+        add.append(dict(r, date=day, line="fav", cleared="",
+                        score="" if r.get("score") is None else r["score"],
+                        confidence="", result="", sp=""))
     if add:
         _save_record(held + add, path)
     return len(add)
@@ -618,6 +628,20 @@ def render_record(path: Path = FILTER_RECORD) -> str:
         pct = 100.0 * len(w) / len(s) if s else 0.0
         L.append(f"  {label:18} {len(s):3d} settled · {len(w):3d} won · "
                  f"strike {pct:5.1f}% · P/L {pl:+.2f}")
+    # THE MARKET MOVE, 07:30 price to SP, on every favourite — in the drift
+    # guard's own bands (his, 2026-07-26: "graded bands, not one cliff")
+    favs = [r for r in held if r["line"] == "fav" and r["result"] in ("WON", "LOST")
+            and _f(r["price"]) and _f(r["sp"])]
+    if favs:
+        L.append("  every favourite, by its move from 07:30 to the off:")
+        for label, test in (("backed 10%+", lambda m: m <= 0.9),
+                            ("steady", lambda m: 0.9 < m < 1.1),
+                            ("drifting 10-20%", lambda m: 1.1 <= m < 1.2),
+                            ("drifted 20%+", lambda m: m >= 1.2)):
+            g = [r for r in favs if test(_f(r["sp"]) / _f(r["price"]))]
+            w = sum(r["result"] == "WON" for r in g)
+            L.append(f"    {label:16} {len(g):3d} · {w:3d} won · "
+                     f"strike {100.0 * w / len(g) if g else 0.0:5.1f}%")
     return "\n".join(L) + "\n"
 
 
