@@ -1,7 +1,50 @@
 # HANDOFF — the apprenticeship's living memory
 
-Last updated: **2026-09-20** (the full audit, and his ruling on it) (update this file whenever
-state changes — it is how every new chat remembers everything).
+Last updated: **2026-09-27** (his filter is the nap; the rulings of 27 Sep) (update this file
+whenever state changes — it is how every new chat remembers everything).
+
+## 2026-09-27 — HIS FILTER PICKS THE NAP. READ THIS FIRST.
+
+**The daily pick (box, 07:30, `favfilter --day today --bank --email`):** his
+favourite filter banks its top pick as the nap in nap.db (record label
+`filter` from 27 Sep). The old engine's paid deep read is OFF
+(`NAP_SOURCE=engine` restores it). No model call at 07:30.
+
+**His rulings, 27 Sep, all in code with tests and receipts:**
+- "no odds on" reaches the live list (it had only reached the grader — my bug).
+- FLOOR raised **-1 -> +2** ("yes raise it to +2"): -1 ruled out almost nothing.
+- **Novice and maiden races avoided** ("novice n maiden avoid from now on") —
+  picks, chase line and v3. His words only: bumpers / NH flat / beginners'
+  chases NOT caught (asked, unanswered).
+- The evens bar stays ("ok leave the bar at evens"); 4/5 shots were tested
+  and lose at SP.
+
+**Shadows — recorded every morning in `data/filter_record.csv`, settled at
+22:00, pushed with the record; none of them picks:**
+- `v3` — the favourite model (`school/favmodel.py`, `data/model/favmodel.json`),
+  his filter + 35 archive facts. Walk-forward nap 49.2% v the filter's 44.7%,
+  but it went 0/2 on its first card by putting price above his dots (fixed:
+  it now sorts only favourites his filter keeps). Takes the nap only via
+  `NAP_PICKER=v3`, and only after beating the filter live over 50 days.
+- `races` / `races_all` — the favourite races: under 3.0, <=9 runners, no
+  hurdles, no Class 5-6 (42-46% on the archive in both periods). Shadow on
+  his word ("yes shadow it"); its first two days went 2/4 v the filter's 3/4.
+- `chase` — the chase line, as before.
+- `fav` — EVERY favourite's 07:30 price and SP, to test his market law 4d
+  (crunched favourites / drifters) in ~3 weeks.
+
+**The data now:** `data/archive/results_2026.csv.gz` — 9,600 races, 1 Jan -
+26 Sep, with draw, weight, OR, age, going, trainer, jockey. The box tops it up
+nightly (`school/archive.py`, box-local `data/archive/live/`). Rule tests:
+`school/rulebook_test.py`, `docs/RULEBOOK_TEST.md`.
+
+**The lesson of the day (his, and it stands):** a challenger earns the pick
+live — never on a backtest alone. I promoted v3 to the nap on its backtest
+and his filter beat it on the first card (Curracloe and Rhodes Runner won).
+
+**Owed:** the box's 07:30 price snapshots for 2-26 Sep
+(`data/market_snapshots/*-0730.json`) — he was given the one-line push
+command; with them the market-move test can run now, not in three weeks.
 
 ## 2026-09-20 — HIS RULING: THE BOX PICKS, THE APPRENTICE STUDIES
 
