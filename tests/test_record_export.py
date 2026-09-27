@@ -175,3 +175,35 @@ def test_an_old_ledger_without_the_column_still_exports(tmp_path):
     crash — the record must be readable from whatever the box holds."""
     db = _db(tmp_path, [("2026-09-01", "r1", "Ayr", "H", "h1", 3.0, 9, 1, 1, 3.0)])
     assert R.rows(db)[0]["void_reason"] == ""
+
+
+def test_the_label_is_who_banked_it_not_the_date(tmp_path):
+    """27 Sep: the filter was meant to pick, but the 07:30 run used the old
+    code and the ENGINE banked Al Wathba. A date label put that engine loss
+    on the filter's record. The row's own source decides."""
+    p = tmp_path / "nap.db"
+    c = sqlite3.connect(p)
+    c.execute("CREATE TABLE nap (date TEXT PRIMARY KEY, race_id TEXT, course TEXT, "
+              "horse TEXT, horse_id TEXT, price REAL, score INTEGER, "
+              "confident INTEGER, won INTEGER, sp_dec REAL, aligned TEXT)")
+    c.execute("INSERT INTO nap VALUES ('2026-09-27','r1','Epsom','Al Wathba','h1',4.1,7,0,0,4.5,"
+              "'form | manner | yard')")
+    c.execute("INSERT INTO nap VALUES ('2026-09-28','r2','Ayr','Good','h2',3.0,4,1,1,3.2,'filter')")
+    c.execute("INSERT INTO nap VALUES ('2026-09-29','r3','Ayr','Shadow','h3',2.6,2,1,0,2.6,'v3')")
+    c.commit(); c.close()
+    assert [r["engine"] for r in R.rows(p)] == ["v2", "filter", "v3"]
+
+
+def test_health_splits_by_who_banked_it_too(tmp_path):
+    from racing_edge.study.naplog import NapLog
+    from datetime import date
+    log = NapLog(tmp_path / "nap.db")
+    log.record(day=date(2026, 9, 27), race_id="r1", course="Epsom", horse="Al Wathba",
+               horse_id="h1", price=4.1, score=7, confident=False, aligned="form | yard")
+    log.settle(date(2026, 9, 27), won=False, sp_dec=4.5)
+    log.record(day=date(2026, 9, 28), race_id="r2", course="Ayr", horse="Good",
+               horse_id="h2", price=3.0, score=4, confident=True, aligned="filter")
+    log.settle(date(2026, 9, 28), won=True, sp_dec=3.2)
+    byv = log.record_by_version()
+    assert byv["v2"] == (0, 1, -1.0) and byv["filter"] == (1, 1, 2.2)
+    log.close()

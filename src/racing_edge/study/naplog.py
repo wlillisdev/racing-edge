@@ -311,9 +311,13 @@ class NapLog:
         differentiate this version from the older version, I think this is a
         better beast"). The line is one date, defined once: V2_FROM."""
         out: dict[str, list] = {}
-        for won, sp, day in self._conn.execute(
-                "SELECT won, sp_dec, date FROM nap WHERE won IN (0, 1)").fetchall():
-            v = out.setdefault(version(day), [0, 0, 0.0])
+        # WHO BANKED IT, not the date (27 Sep: the engine banked the filter's
+        # first morning on old code; a date label called its loss "filter")
+        for won, sp, day, src in self._conn.execute(
+                "SELECT won, sp_dec, date, aligned FROM nap WHERE won IN (0, 1)").fetchall():
+            src = (src or "").strip()
+            ver = src if src in ("filter", "v3") else ("v2" if day >= V2_FROM else "v1")
+            v = out.setdefault(ver, [0, 0, 0.0])
             v[1] += 1
             if won == 1:
                 v[0] += 1
