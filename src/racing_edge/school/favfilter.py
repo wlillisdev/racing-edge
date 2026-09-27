@@ -674,9 +674,16 @@ def model_picks(cards: list[dict], day: str) -> list[dict]:
     if model is None:
         raise FileNotFoundError(f"{favmodel.MODEL} missing")
     out = []
+    fi = favmodel.FEATURES.index("filter_score")
     for m in favmodel.score_cards(cards, day, model, archive.load()):
-        fi = favmodel.FEATURES.index("filter_score")
         fs = m["x"][fi]
+        # HIS FILTER RULES OUT FIRST, v3 ONLY SORTS WHAT IS LEFT (27 Sep,
+        # after v3's first card: it put Kingdom Of Camelot top at 2.10 while
+        # his dots scored it -2 — the shortest price overruled his rules —
+        # and it finished 4th). Walk-forward Apr-Sep with this rule: nap
+        # 88/179 (49.2%), unchanged; top-2 42.2%. It costs the nap nothing.
+        if fs != fs or fs < FLOOR:
+            continue
         out.append(dict(m, score=0 if fs != fs else int(fs), cleared=True,
                         confidence=100.0 * m["prob"], confidence_n=model.get("n", 0),
                         reasons=[f"model {100 * m['prob']:.0f}% — pushed most by "
@@ -686,7 +693,8 @@ def model_picks(cards: list[dict], day: str) -> list[dict]:
 
 def render_model(picks: list[dict], note: str = "") -> str:
     L = ["V3 SHADOW (not the nap) — his filter plus everything the archive knows, learned",
-         "  (walk-forward Apr-Sep on unseen months: nap 49.2% v the filter's 44.7%)"]
+         "  (sorts only the favourites his filter keeps; walk-forward Apr-Sep on",
+         "   unseen months: nap 49.2% v the filter's 44.7%)"]
     if note:
         L.append(f"  ⚠ {note}")
     for m in picks[:5]:

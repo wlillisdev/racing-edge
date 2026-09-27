@@ -194,3 +194,23 @@ def test_the_record_keeps_the_filter_label_and_the_night_keeps_the_archive():
     night = sh[sh.index("\n  night)"):]
     code = "\n".join(l for l in night.splitlines() if not l.strip().startswith("#"))
     assert "racing_edge.school.archive --update" in code
+
+
+def test_v3_never_picks_a_favourite_his_filter_ruled_out(monkeypatch):
+    """27 Sep, v3's first card: Kingdom Of Camelot scored -2 on his dots and
+    v3 still put it top on price (4th at 1.83). His filter rules out first;
+    v3 only sorts the favourites that are left."""
+    fi = M.FEATURES.index("filter_score")
+
+    def scored(cards, day, model, races, com=None):
+        base = {"course": "Curragh", "off": "2:00", "horse_id": "h", "why": []}
+        x_bad, x_good, x_unread = [0.0] * 35, [0.0] * 35, [0.0] * 35
+        x_bad[fi], x_good[fi], x_unread[fi] = -2.0, 2.0, float("nan")
+        return [dict(base, race_id="r1", horse="Kingdom Of Camelot", price=2.1, prob=0.43, x=x_bad),
+                dict(base, race_id="r2", horse="Rose Moon", price=2.63, prob=0.41, x=x_good),
+                dict(base, race_id="r3", horse="Unread", price=2.2, prob=0.42, x=x_unread)]
+    monkeypatch.setattr(M, "score_cards", scored)
+    monkeypatch.setattr(M, "load_model", lambda: {"n": 1})
+    monkeypatch.setattr(A, "load", lambda: [])
+    picks = F.model_picks([], "2026-09-27")
+    assert [p["horse"] for p in picks] == ["Rose Moon"], "v3 overruled his filter"
