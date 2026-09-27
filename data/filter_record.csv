@@ -1,0 +1,3 @@
+date,line,race_id,course,off,horse,horse_id,price,score,cleared,confidence,result,sp
+2026-09-27,filter,rac_32298870084,Ffos Las,2:59,Campeona,hrs_59059322,3.0,2,0,33.2,LOST,3.00
+2026-09-27,filter,rac_32298866210,Ffos Las,1:49,Rhodes Runner,hrs_64072365,3.25,1,0,33.0,WON,3.25
