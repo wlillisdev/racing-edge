@@ -373,7 +373,7 @@ def main() -> int:
         lines.append(f"  the new beast (v2, from {_V2}) v the old: "
                      f"{_vline('v2')} | {_vline('v1')}")
         # THE FILTER IS THE NAP from 2026-09-27 (his word, 2026-09-27)
-        lines.append(f"  the filter nap: {_vline('filter')}")
+        lines.append(f"  the filter nap: {_vline('filter')} | v3 (the model): {_vline('v3')}")
     # THE FAV LINE beside the value line (the master, 2026-08-16: 'lets do
     # favourite and value bet') — both bets, one glance, every day.
     fw, fn, fpnl = _fav

@@ -54,6 +54,7 @@ MD_OUT = Path("docs/THE_RECORD.md")
 # Kept as a literal so the export can run against a copied db with no import.
 V2_FROM = "2026-09-03"
 FILTER_FROM = "2026-09-27"    # mirrored from study.naplog.FILTER_FROM
+MODEL_FROM = "2026-09-28"     # mirrored from study.naplog.MODEL_FROM
 
 FIELDS = ["date", "engine", "course", "race_id", "horse", "banked_price",
           "sp_dec", "won", "confident", "status", "void_reason",
@@ -124,7 +125,8 @@ def rows(db: Path = DB) -> list[dict]:
         f = favs.get(n["date"], {})
         out.append({
             "date": n["date"],
-            "engine": ("filter" if n["date"] >= FILTER_FROM
+            "engine": ("v3" if n["date"] >= MODEL_FROM
+                       else "filter" if n["date"] >= FILTER_FROM
                        else "v2" if n["date"] >= V2_FROM else "v1"),
             "course": n.get("course") or "",
             "race_id": n.get("race_id") or "",
