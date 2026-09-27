@@ -71,6 +71,28 @@ FLOOR = 2
 AVOID_WORDS = ("novice", "maiden")
 
 
+# THE FAVOURITE RACES — a SHADOW (his word, 2026-09-27: "yes shadow it").
+# Where favourites win, on the full archive (6,444 favourites at evens+), in
+# both periods: priced under 3.0, nine runners or fewer, not a hurdle, not
+# Class 5-6 — 42.2% (318/754) and 45.7% (85/186), +£168 and +£166 to £10 level
+# stakes at SP. Over its first two live-checked days its top two by his dots
+# went 2 from 4 against the filter's 3 from 4, so it is RECORDED beside the
+# filter and v3, never picks, and takes over only by beating the filter live.
+RACES_MAX_PRICE = 3.0
+RACES_MAX_FIELD = 9
+
+
+def favourite_races(rows: list[dict]) -> list[dict]:
+    """Every favourite inside the favourite races, best by his dots first."""
+    inside = [r for r in rows
+              if ODDS_ON <= r["price"] < RACES_MAX_PRICE
+              and r.get("field", 99) <= RACES_MAX_FIELD
+              and "hurdle" not in (r.get("type") or "").lower()
+              and r.get("rclass") not in (5, 6)
+              and not avoided_race(r.get("race_name"))]
+    return sorted(inside, key=lambda r: (r["score"] is None, -(r["score"] or 0), r["price"]))
+
+
 def avoided_race(name) -> bool:
     n = str(name or "").lower()
     return any(w in n for w in AVOID_WORDS)
@@ -448,6 +470,7 @@ def daily_list(day: str = "today", floor: int = FLOOR, client=None) -> list[dict
         row = {"course": c.get("course"), "off": c.get("off_time"),
                "race_id": c.get("race_id"), "horse": fav.get("horse"),
                "race_name": c.get("race_name") or "",
+               "rclass": _rclass(c.get("race_class")),
                "horse_id": hid, "date": str(c.get("date") or day)[:10],
                "price": price, "field": len(priced),
                "type": c.get("type") or ""}
@@ -541,6 +564,17 @@ def render_list(rows: list[dict], floor: int = FLOOR) -> str:
     for r in ch:
         L.append(f"     {r['course']} {r['off']}  {r['horse']} @ {r['price']:.2f}"
                  f"  ({r['field']} runners)")
+    fr = favourite_races(rows)
+    L += ["", "-" * 66,
+          f"THE FAVOURITE RACES — SHADOW, not the nap ({len(fr)} today)",
+          "  under 3.0, 9 or fewer runners, no hurdles, no Class 5-6, no novice/",
+          "  maiden: 42-46% on the archive in both periods. Top two by his dots:", ""]
+    if not fr:
+        L.append("  (no favourite race today)")
+    for i, r in enumerate(fr):
+        sc = "  ?" if r["score"] is None else f"{r['score']:+3d}"
+        L.append(f"  {'TOP ' if i < 2 else '    '}{sc}  {r['course']} {r['off']}  {r['horse']} "
+                 f"@ {r['price']:.2f}  ({r['field']} runners)")
     L += ["", "The top pick is the day's NAP in nap.db. Every pick is RECORDED at 07:30",
           "in data/filter_record.csv and SETTLED at 22:00. The record settles it."]
     return "\n".join(L) + "\n"
@@ -591,6 +625,15 @@ def record_picks(rows: list[dict], day: str, path: Path = FILTER_RECORD,
     for c in chase_line(rows):
         add.append(dict(c, date=day, line="chase", cleared="", confidence="",
                         result="", sp=""))
+    fr = favourite_races(rows)
+    for i, r in enumerate(fr):
+        add.append(dict(r, date=day, line="races_all", cleared="", confidence="",
+                        score="" if r.get("score") is None else r["score"],
+                        result="", sp=""))
+        if i < 2:
+            add.append(dict(r, date=day, line="races", cleared="", confidence="",
+                            score="" if r.get("score") is None else r["score"],
+                            result="", sp=""))
     for m in (model or [])[:2]:
         add.append(dict(m, date=day, line="v3", cleared="1",
                         confidence=f"{m['confidence']:.1f}", result="", sp=""))
@@ -641,7 +684,8 @@ def render_record(path: Path = FILTER_RECORD) -> str:
     """Strike rate first (his ruling); P/L printed, never the verdict."""
     held = _load_record(path)
     L = ["THE FILTER'S RECORD — banked 07:30, settled at SP"]
-    for line, label in (("v3", "v3 model (top 2)"), ("filter", "filter (2+ a day)"),
+    for line, label in (("filter", "filter (2+ a day)"), ("races", "fav races (top 2)"),
+                        ("races_all", "fav races (all)"), ("v3", "v3 model (top 2)"),
                         ("chase", "chase line")):
         s = [r for r in held if r["line"] == line and r["result"] in ("WON", "LOST")]
         w = [r for r in s if r["result"] == "WON"]
