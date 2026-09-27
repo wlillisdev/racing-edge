@@ -368,3 +368,36 @@ def test_every_favourite_keeps_its_0730_price_and_settles_at_sp(tmp_path):
     assert "backed 10%+" in out and "drifted 20%+" in out
     assert "backed 10%+        1 ·   0 won" in out         # 2.10 -> 1.83, beaten
     assert "drifted 20%+       1 ·   1 won" in out         # 3.00 -> 3.60, won
+
+
+def test_novice_and_maiden_races_are_avoided():
+    """His word, 2026-09-27: "novice n maiden avoid from now on", after the
+    Haydock nap — a +4 built on one run in a race of one- and two-run babies,
+    beaten by an improver. The favourite is still listed and recorded (so the
+    record shows what is being avoided) but it can never be picked, never
+    ride the chase line, and never be sorted by v3."""
+    class Client:
+        def racecards(self, day):
+            def card(rid, name, typ="Flat"):
+                return {"race_id": rid, "course": "Haydock", "off_time": "2:00",
+                        "date": "2026-09-28", "race_status": "declared",
+                        "race_class": "Class 3", "race_name": name, "type": typ,
+                        "runners": [{"horse_id": f"{rid}h{i}", "horse": f"{rid}H{i}",
+                                     "odds": [{"decimal": str(2.5 + i)}]} for i in range(5)]}
+            return {"racecards": [card("n1", "EBF Novice Stakes (GBB Race)"),
+                                  card("m1", "Maiden Hurdle", "Hurdle"),
+                                  card("c1", "Novices' Chase", "Chase"),
+                                  card("h1", "Class 3 Handicap")]}
+
+        def horse_results(self, hid, limit=6):
+            return [{"date": "2026-09-01", "position": "1", "ovr_btn": "0",
+                     "comment": "kept on well", "class": "Class 4"}]
+
+    rows = F.daily_list("today", client=Client())
+    by = {r["race_id"]: r for r in rows}
+    for rid in ("n1", "m1", "c1"):
+        assert by[rid]["ruled_out"] and "novice/maiden" in by[rid]["reasons"][0]
+    assert not by["h1"]["ruled_out"]
+    assert [p["race_id"] for p in F.todays_picks(rows)] == ["h1"]
+    assert F.chase_line(rows) == [], "a novices' chase rode the chase line"
+    assert F.avoided_race("Beginners' Chase") is False      # his words only: novice, maiden

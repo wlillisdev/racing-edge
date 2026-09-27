@@ -214,3 +214,20 @@ def test_v3_never_picks_a_favourite_his_filter_ruled_out(monkeypatch):
     monkeypatch.setattr(A, "load", lambda: [])
     picks = F.model_picks([], "2026-09-27")
     assert [p["horse"] for p in picks] == ["Rose Moon"], "v3 overruled his filter"
+
+
+def test_v3_never_sorts_a_novice_or_maiden_race(monkeypatch):
+    fi = M.FEATURES.index("filter_score")
+
+    def scored(cards, day, model, races, com=None):
+        x = [0.0] * 35
+        x[fi] = 3.0
+        base = {"course": "Haydock", "off": "2:00", "horse_id": "h", "why": [], "x": x}
+        return [dict(base, race_id="n1", horse="Baby", price=3.0, prob=0.5),
+                dict(base, race_id="h1", horse="Handicapper", price=3.2, prob=0.4)]
+    monkeypatch.setattr(M, "score_cards", scored)
+    monkeypatch.setattr(M, "load_model", lambda: {"n": 1})
+    monkeypatch.setattr(A, "load", lambda: [])
+    cards = [{"race_id": "n1", "race_name": "EBF Novice Stakes"},
+             {"race_id": "h1", "race_name": "Class 3 Handicap"}]
+    assert [p["horse"] for p in F.model_picks(cards, "2026-09-28")] == ["Handicapper"]
