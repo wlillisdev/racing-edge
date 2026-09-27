@@ -90,10 +90,10 @@ def test_the_model_banks_the_nap_and_says_so(tmp_path):
     picks = [{"race_id": "r9", "course": "Kelso", "off": "3:10", "horse": "Top",
               "horse_id": "h9", "price": 3.2, "score": 2, "cleared": True,
               "confidence": 51.0, "confidence_n": 6444, "reasons": ["model 51%"]}]
-    line = F.bank_nap([], "2026-09-28", log, picks=picks, source="model")
+    line = F.bank_nap([], "2026-09-28", log, picks=picks, source="v3")
     row = log.existing(date(2026, 9, 28))
     assert line.startswith("NAP: Top") and row["horse"] == "Top"
-    assert row["aligned"] == "model" and row["case_text"].startswith("MODEL NAP")
+    assert row["aligned"] == "v3" and row["case_text"].startswith("V3 NAP")
     log.close()
 
 
@@ -144,7 +144,7 @@ def test_the_record_labels_the_model_era_and_the_night_keeps_the_archive():
     from racing_edge.study.naplog import version, MODEL_FROM
     from racing_edge.school import record_export as R
     assert MODEL_FROM == R.MODEL_FROM == "2026-09-28"
-    assert (version("2026-09-27"), version("2026-09-28")) == ("filter", "model")
+    assert (version("2026-09-27"), version("2026-09-28")) == ("filter", "v3")
     sh = Path("trial.sh").read_text()
     night = sh[sh.index("\n  night)"):]
     code = "\n".join(l for l in night.splitlines() if not l.strip().startswith("#"))

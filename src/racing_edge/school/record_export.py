@@ -125,7 +125,7 @@ def rows(db: Path = DB) -> list[dict]:
         f = favs.get(n["date"], {})
         out.append({
             "date": n["date"],
-            "engine": ("model" if n["date"] >= MODEL_FROM
+            "engine": ("v3" if n["date"] >= MODEL_FROM
                        else "filter" if n["date"] >= FILTER_FROM
                        else "v2" if n["date"] >= V2_FROM else "v1"),
             "course": n.get("course") or "",

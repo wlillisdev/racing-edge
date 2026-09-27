@@ -571,7 +571,7 @@ def record_picks(rows: list[dict], day: str, path: Path = FILTER_RECORD,
         add.append(dict(c, date=day, line="chase", cleared="", confidence="",
                         result="", sp=""))
     for m in (model or [])[:2]:
-        add.append(dict(m, date=day, line="model", cleared="1",
+        add.append(dict(m, date=day, line="v3", cleared="1",
                         confidence=f"{m['confidence']:.1f}", result="", sp=""))
     if add:
         _save_record(held + add, path)
@@ -610,7 +610,7 @@ def render_record(path: Path = FILTER_RECORD) -> str:
     """Strike rate first (his ruling); P/L printed, never the verdict."""
     held = _load_record(path)
     L = ["THE FILTER'S RECORD — banked 07:30, settled at SP"]
-    for line, label in (("model", "model (top 2)"), ("filter", "filter (2+ a day)"),
+    for line, label in (("v3", "v3 model (top 2)"), ("filter", "filter (2+ a day)"),
                         ("chase", "chase line")):
         s = [r for r in held if r["line"] == line and r["result"] in ("WON", "LOST")]
         w = [r for r in s if r["result"] == "WON"]
@@ -685,7 +685,7 @@ def model_picks(cards: list[dict], day: str) -> list[dict]:
 
 
 def render_model(picks: list[dict], note: str = "") -> str:
-    L = ["THE MODEL — his filter plus everything the archive knows, learned",
+    L = ["V3, THE MODEL — his filter plus everything the archive knows, learned",
          "  (walk-forward Apr-Sep on unseen months: nap 49.2% v the filter's 44.7%)"]
     if note:
         L.append(f"  ⚠ {note}")
@@ -738,7 +738,7 @@ def main(argv=None) -> int:
         log = open_nap_log()
         try:
             if mpicks is not None:
-                head = bank_nap(rows, day, log, picks=mpicks, source="model")
+                head = bank_nap(rows, day, log, picks=mpicks, source="v3")
             else:
                 head = bank_nap(rows, day, log)
         finally:
@@ -753,7 +753,7 @@ def main(argv=None) -> int:
     if a.email:
         from racing_edge.report.mail import configured, send
         if configured():
-            tag = "[model]" if mpicks is not None else "[filter]"
+            tag = "[v3]" if mpicks is not None else "[filter]"
             ok = send(f"{tag} {head or 'The favourite filter'}", body,
                       title="The favourite filter", subtitle="racing-edge form trial")
             print(f"  email: {ok or 'FAILED'}")
