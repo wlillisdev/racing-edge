@@ -248,3 +248,46 @@ def test_confidence_is_a_base_rate_from_the_record_not_an_opinion():
     assert F.confidence(None) == F.BASE_RATE
     # the named band must actually beat backing any eligible favourite
     assert F.CONFIDENCE[4][0] > F.BASE_RATE[0] > F.CONFIDENCE[-2][0]
+
+
+def _card_rows():
+    """Two scored favourites and one chase favourite, as daily_list shapes them."""
+    base = {"off": "2:00", "field": 6, "reasons": [], "ruled_out": False,
+            "date": "2026-09-27"}
+    return [dict(base, race_id="r1", course="Ayr", horse="Good", horse_id="h1",
+                 price=3.0, score=4, type="Flat"),
+            dict(base, race_id="r2", course="Ayr", horse="Okay", horse_id="h2",
+                 price=2.5, score=2, type="Hurdle"),
+            dict(base, race_id="r3", course="Kelso", horse="Chaser", horse_id="h3",
+                 price=2.2, score=1, type="Chase")]
+
+
+def test_the_filter_banks_its_picks_before_the_off_and_never_re_picks(tmp_path):
+    """27 Sep: the filter and the chase line printed at 07:30 and nothing kept
+    them, while the mail said GRADED NIGHTLY. A line never recorded can never
+    be judged. Law 1: bank pre-off, never re-pick intraday."""
+    p = tmp_path / "filter_record.csv"
+    assert F.record_picks(_card_rows(), "2026-09-27", p) == 3      # 2 picks + 1 chase
+    rows = F._load_record(p)
+    assert [(r["line"], r["horse"]) for r in rows] == [
+        ("filter", "Good"), ("filter", "Okay"), ("chase", "Chaser")]
+    assert rows[0]["cleared"] == "1" and rows[1]["cleared"] == "0"
+    assert F.record_picks(_card_rows()[:1], "2026-09-27", p) == 0, "a re-run re-picked"
+    assert len(F._load_record(p)) == 3
+
+
+def test_the_night_settles_the_filter_at_sp(tmp_path):
+    """Won is first; beaten or fell is LOST; missing from the runners is a
+    non-runner VOID; a race the results do not hold stays open."""
+    p = tmp_path / "filter_record.csv"
+    F.record_picks(_card_rows(), "2026-09-27", p)
+    results = {"results": [
+        {"race_id": "r1", "runners": [{"horse_id": "h1", "position": "1", "sp_dec": "3.25"}]},
+        {"race_id": "r2", "runners": [{"horse_id": "h9", "position": "1", "sp_dec": "5.0"}]},
+    ]}
+    assert F.settle_record("2026-09-27", results, p) == 2
+    got = {r["horse"]: (r["result"], r["sp"]) for r in F._load_record(p)}
+    assert got == {"Good": ("WON", "3.25"), "Okay": ("VOID", ""), "Chaser": ("", "")}
+    assert F.settle_record("2026-09-27", results, p) == 0, "settle must be write-once"
+    out = F.render_record(p)
+    assert "1 settled ·   1 won · strike 100.0% · P/L +2.25" in out

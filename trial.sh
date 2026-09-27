@@ -166,6 +166,12 @@ case "${1:-nap}" in
            # `settle)` case: the box's 22:00 task is `night`, which runs its own
            # inline settle and never touches that case, so wiring the export
            # there alone would have meant it never ran on the box at all.
+           # THE FILTER'S RECORD (his word, 2026-09-27): the 07:30 run banks the
+           # filter's picks and the chase line; settle them here, before export.
+           if ! "${SDK_OFF[@]}" "$PY" -m racing_edge.school.favfilter --settle "$(date +%F)"; then
+             echo "WARNING: filter settle FAILED — its rows stay open for tomorrow"
+             PYTHONPATH=src _crash_mail "night:filter_settle" 1
+           fi
            if ! "${SDK_OFF[@]}" "$PY" -m racing_edge.school.record_export; then
              echo "WARNING: record export FAILED — the repo copy of the record is stale"
              PYTHONPATH=src _crash_mail "night:record_export" 1
@@ -184,6 +190,10 @@ case "${1:-nap}" in
            _rec_push() {
              git add data/record.csv docs/THE_RECORD.md 2>/dev/null || {
                echo "RECORD: git add failed"; return 1; }
+             if [ -f data/filter_record.csv ]; then
+               git add data/filter_record.csv || {
+                 echo "RECORD: git add failed (filter record)"; return 1; }
+             fi
              if git diff --cached --quiet; then
                # not an error, but NOT silent: an unchanged record after a
                # settle means nap.db gave the export nothing, which is itself
