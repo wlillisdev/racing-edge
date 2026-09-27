@@ -671,7 +671,7 @@ def test_the_box_pushes_whatever_it_rewrites() -> None:
     if not tracked:
         pytest.skip("no git here")
     sh = Path("trial.sh").read_text()
-    for f in ("data/record.csv", "docs/THE_RECORD.md"):
+    for f in ("data/record.csv", "docs/THE_RECORD.md", "data/filter_record.csv"):
         if f in tracked:
             assert f in sh, (
                 f"{f} is tracked and the box rewrites it, but trial.sh never "

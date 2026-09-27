@@ -424,10 +424,14 @@ def daily_list(day: str = "today", floor: int = FLOOR, client=None) -> list[dict
         except Exception:
             hist = []                    # a dead door is unread, not bad
         last = last_run_from_history(hist, str(c.get("date") or day))
+        # price= carries his odds-on bar into the LIVE list. It was missing
+        # from 20 to 27 Sep: the grader ruled odds-on out, the 07:30 mail did
+        # not, and it named odds-on favourites on four days of five.
         sc = score_favourite(last, rclass=_rclass(c.get("race_class")),
-                             field_size=len(priced), floor=floor)
+                             field_size=len(priced), floor=floor, price=price)
         row = {"course": c.get("course"), "off": c.get("off_time"),
                "race_id": c.get("race_id"), "horse": fav.get("horse"),
+               "horse_id": hid, "date": str(c.get("date") or day)[:10],
                "price": price, "field": len(priced),
                "type": c.get("type") or ""}
         if sc is None:
@@ -515,8 +519,99 @@ def render_list(rows: list[dict], floor: int = FLOOR) -> str:
     for r in ch:
         L.append(f"     {r['course']} {r['off']}  {r['horse']} @ {r['price']:.2f}"
                  f"  ({r['field']} runners)")
-    L += ["", "GRADED NIGHTLY against the engine's pick and against backing every",
-          "favourite. Paper only. The record settles it."]
+    L += ["", "RECORDED at 07:30 in data/filter_record.csv and SETTLED at 22:00,",
+          "beside the engine's pick. Paper only. The record settles it."]
+    return "\n".join(L) + "\n"
+
+
+# --------------------------------------------------------------------------- #
+# THE FILTER'S OWN RECORD (his word, 2026-09-27: "fix it now")
+# --------------------------------------------------------------------------- #
+# From 20 to 26 Sep the filter and the chase line printed in the 07:30 mail
+# and nothing kept them, while the mail claimed "GRADED NIGHTLY". A line that
+# is never recorded can never be judged. Now the 07:30 run writes every pick
+# here before the off, and the 22:00 run settles it at SP. Write-once per day
+# (law 1: never re-pick intraday); the box pushes the file with the record.
+
+FILTER_RECORD = Path("data/filter_record.csv")
+RECORD_FIELDS = ["date", "line", "race_id", "course", "off", "horse", "horse_id",
+                 "price", "score", "cleared", "confidence", "result", "sp"]
+
+
+def _load_record(path: Path) -> list[dict]:
+    if not Path(path).exists():
+        return []
+    with open(path, newline="", encoding="utf-8") as fh:
+        return list(csv.DictReader(fh))
+
+
+def _save_record(rows: list[dict], path: Path) -> None:
+    Path(path).parent.mkdir(parents=True, exist_ok=True)
+    with open(path, "w", newline="", encoding="utf-8") as fh:
+        w = csv.DictWriter(fh, fieldnames=RECORD_FIELDS)
+        w.writeheader()
+        for r in rows:
+            w.writerow({k: r.get(k, "") for k in RECORD_FIELDS})
+
+
+def record_picks(rows: list[dict], day: str, path: Path = FILTER_RECORD) -> int:
+    """Bank today's filter picks and chase line BEFORE the off. A day already
+    banked is never rewritten — a re-run cannot re-pick. Returns rows added."""
+    held = _load_record(path)
+    if any(r["date"] == day for r in held):
+        return 0
+    add = []
+    for p in todays_picks(rows):
+        add.append(dict(p, date=day, line="filter",
+                        cleared="1" if p["cleared"] else "0",
+                        confidence=f"{p['confidence']:.1f}", result="", sp=""))
+    for c in chase_line(rows):
+        add.append(dict(c, date=day, line="chase", cleared="", confidence="",
+                        result="", sp=""))
+    if add:
+        _save_record(held + add, path)
+    return len(add)
+
+
+def settle_record(day: str, results: dict, path: Path = FILTER_RECORD) -> int:
+    """Settle one day's open rows at SP from the results door. Won = 1st;
+    beaten, fell or pulled up = LOST; not among the runners = VOID
+    (non-runner). A race missing from the results stays open, never guessed.
+    Returns rows settled."""
+    held = _load_record(path)
+    races = {str(r.get("race_id")): r.get("runners") or []
+             for r in (results or {}).get("results") or []}
+    n = 0
+    for r in held:
+        if r["date"] != day or r["result"] or r["race_id"] not in races:
+            continue
+        hit = [x for x in races[r["race_id"]]
+               if (r["horse_id"] and str(x.get("horse_id")) == r["horse_id"])
+               or str(x.get("horse") or "").strip().lower()
+               == r["horse"].strip().lower()]
+        if not hit:
+            r["result"] = "VOID"
+        else:
+            pos = str(hit[0].get("position") or "").strip()
+            r["result"] = "WON" if pos == "1" else "LOST"
+            r["sp"] = str(hit[0].get("sp_dec") or "")
+        n += 1
+    if n:
+        _save_record(held, path)
+    return n
+
+
+def render_record(path: Path = FILTER_RECORD) -> str:
+    """Strike rate first (his ruling); P/L printed, never the verdict."""
+    held = _load_record(path)
+    L = ["THE FILTER'S RECORD — banked 07:30, settled at SP"]
+    for line, label in (("filter", "filter (2+ a day)"), ("chase", "chase line")):
+        s = [r for r in held if r["line"] == line and r["result"] in ("WON", "LOST")]
+        w = [r for r in s if r["result"] == "WON"]
+        pl = sum((_f(r["sp"]) or 1.0) - 1.0 for r in w) - (len(s) - len(w))
+        pct = 100.0 * len(w) / len(s) if s else 0.0
+        L.append(f"  {label:18} {len(s):3d} settled · {len(w):3d} won · "
+                 f"strike {pct:5.1f}% · P/L {pl:+.2f}")
     return "\n".join(L) + "\n"
 
 
@@ -526,11 +621,22 @@ def main(argv=None) -> int:
     ap.add_argument("--day", default="today")
     ap.add_argument("--raw", default="data/school/raw")
     ap.add_argument("--floor", type=int, default=FLOOR)
+    ap.add_argument("--settle", metavar="DAY", help="settle a banked day at SP")
     a = ap.parse_args(argv)
     if a.grade:
         print(render_grade(grade(Path(a.raw), a.floor), a.floor))
         return 0
-    print(render_list(daily_list(a.day, a.floor), a.floor))
+    if a.settle:
+        from racing_edge.data.client import get_client
+        n = settle_record(a.settle, get_client().results_by_date(a.settle))
+        print(f"filter record: {n} row(s) settled for {a.settle}")
+        print(render_record())
+        return 0
+    rows = daily_list(a.day, a.floor)
+    print(render_list(rows, a.floor))
+    if rows:
+        n = record_picks(rows, rows[0]["date"])
+        print(f"filter record: {n} row(s) banked for {rows[0]['date']}")
     return 0
 
 

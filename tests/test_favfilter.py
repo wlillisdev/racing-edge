@@ -141,6 +141,29 @@ def test_an_odds_on_favourite_is_ruled_out_before_its_dots_are_counted():
     assert not evens.ruled_out, "evens is not odds-on"
 
 
+def test_the_live_07_30_list_rules_out_odds_on_too():
+    """27 Sep: his "no odds on" ruling reached the grader but not the list the
+    box mails at 07:30 — daily_list never passed the price, so the bar could
+    not fire and odds-on favourites were named on four days of five. The rule
+    must hold where the pick is made, not only where it is graded."""
+    class Client:
+        def racecards(self, day):
+            return {"racecards": [
+                {"race_id": "r1", "course": "Newmarket", "off_time": "2:00",
+                 "date": "2026-09-26", "race_status": "declared", "race_class": "Class 4",
+                 "runners": [{"horse_id": f"h{i}", "horse": f"H{i}",
+                              "odds": [{"decimal": str(1.5 + i)}]} for i in range(5)]}]}
+
+        def horse_results(self, hid, limit=6):
+            return [{"date": "2026-09-01", "position": "1", "ovr_btn": "0",
+                     "comment": "kept on well", "class": "Class 4"}]
+
+    rows = F.daily_list("today", client=Client())
+    assert rows[0]["price"] == 1.5 and rows[0]["ruled_out"], "odds-on reached the list"
+    assert "odds-on" in rows[0]["reasons"][0]
+    assert F.todays_picks(rows) == [], "an odds-on favourite must never be named"
+
+
 def test_price_is_optional_so_the_corpus_grader_still_works():
     """Called without a price the bar cannot fire — the grader passes None
     deliberately when measuring the no-bar baseline."""
@@ -225,3 +248,46 @@ def test_confidence_is_a_base_rate_from_the_record_not_an_opinion():
     assert F.confidence(None) == F.BASE_RATE
     # the named band must actually beat backing any eligible favourite
     assert F.CONFIDENCE[4][0] > F.BASE_RATE[0] > F.CONFIDENCE[-2][0]
+
+
+def _card_rows():
+    """Two scored favourites and one chase favourite, as daily_list shapes them."""
+    base = {"off": "2:00", "field": 6, "reasons": [], "ruled_out": False,
+            "date": "2026-09-27"}
+    return [dict(base, race_id="r1", course="Ayr", horse="Good", horse_id="h1",
+                 price=3.0, score=4, type="Flat"),
+            dict(base, race_id="r2", course="Ayr", horse="Okay", horse_id="h2",
+                 price=2.5, score=2, type="Hurdle"),
+            dict(base, race_id="r3", course="Kelso", horse="Chaser", horse_id="h3",
+                 price=2.2, score=1, type="Chase")]
+
+
+def test_the_filter_banks_its_picks_before_the_off_and_never_re_picks(tmp_path):
+    """27 Sep: the filter and the chase line printed at 07:30 and nothing kept
+    them, while the mail said GRADED NIGHTLY. A line never recorded can never
+    be judged. Law 1: bank pre-off, never re-pick intraday."""
+    p = tmp_path / "filter_record.csv"
+    assert F.record_picks(_card_rows(), "2026-09-27", p) == 3      # 2 picks + 1 chase
+    rows = F._load_record(p)
+    assert [(r["line"], r["horse"]) for r in rows] == [
+        ("filter", "Good"), ("filter", "Okay"), ("chase", "Chaser")]
+    assert rows[0]["cleared"] == "1" and rows[1]["cleared"] == "0"
+    assert F.record_picks(_card_rows()[:1], "2026-09-27", p) == 0, "a re-run re-picked"
+    assert len(F._load_record(p)) == 3
+
+
+def test_the_night_settles_the_filter_at_sp(tmp_path):
+    """Won is first; beaten or fell is LOST; missing from the runners is a
+    non-runner VOID; a race the results do not hold stays open."""
+    p = tmp_path / "filter_record.csv"
+    F.record_picks(_card_rows(), "2026-09-27", p)
+    results = {"results": [
+        {"race_id": "r1", "runners": [{"horse_id": "h1", "position": "1", "sp_dec": "3.25"}]},
+        {"race_id": "r2", "runners": [{"horse_id": "h9", "position": "1", "sp_dec": "5.0"}]},
+    ]}
+    assert F.settle_record("2026-09-27", results, p) == 2
+    got = {r["horse"]: (r["result"], r["sp"]) for r in F._load_record(p)}
+    assert got == {"Good": ("WON", "3.25"), "Okay": ("VOID", ""), "Chaser": ("", "")}
+    assert F.settle_record("2026-09-27", results, p) == 0, "settle must be write-once"
+    out = F.render_record(p)
+    assert "1 settled ·   1 won · strike 100.0% · P/L +2.25" in out
