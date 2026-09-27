@@ -54,11 +54,14 @@ import sys
 from dataclasses import dataclass, field as dfield
 from pathlib import Path
 
-# His floor, chosen on the tuning half alone and then left alone. A favourite
-# scoring below this is RULED OUT — the band beneath it ran -29.6% on the tune
-# half and -15.6% on races it had never seen, the one consistently bad group
-# the dots find.
-FLOOR = -1
+# HIS FLOOR. A favourite scoring below this is RULED OUT.
+# Was -1 (20 Sep, chosen on the tuning half). RAISED TO +2 on his word,
+# 2026-09-27 ("yes raise it to +2"), after the first filter day: -1 ruled out
+# 2 favourites of 18 and 12 of the 16 kept lost. On the full archive (6,444
+# favourites, evens+) -1 kept 25-28 a day winning 31.7% / 31.2% — no better
+# than every favourite — while +2 keeps 7-9 a day winning 33.7% / 34.9% in
+# both periods, and 98% of days still have the two picks he asked for.
+FLOOR = 2
 
 # THE SELECTION BAR — his correction, 2026-09-20: "we wont be backing every
 # favourite". Ruling out the bad ones is only half the method; the other half

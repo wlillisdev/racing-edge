@@ -344,7 +344,8 @@ def train(path: Path = MODEL, races: list[dict] | None = None) -> str:
 
     def fkey(r):
         v = r["x"][fi]
-        return -99 if (v != v or v < -1) else v
+        from racing_edge.school.favfilter import FLOOR
+        return -99 if (v != v or v < FLOOR) else v
     ft, fn = _topk(walk, fkey)
     mt, mn = _topk(walk, lambda r: r["p"])
     model = _fit([r["x"] for r in rows], [r["won"] for r in rows])
