@@ -519,8 +519,8 @@ def render_list(rows: list[dict], floor: int = FLOOR) -> str:
     for r in ch:
         L.append(f"     {r['course']} {r['off']}  {r['horse']} @ {r['price']:.2f}"
                  f"  ({r['field']} runners)")
-    L += ["", "RECORDED at 07:30 in data/filter_record.csv and SETTLED at 22:00,",
-          "beside the engine's pick. Paper only. The record settles it."]
+    L += ["", "The top pick is the day's NAP in nap.db. Every pick is RECORDED at 07:30",
+          "in data/filter_record.csv and SETTLED at 22:00. The record settles it."]
     return "\n".join(L) + "\n"
 
 
@@ -615,6 +615,47 @@ def render_record(path: Path = FILTER_RECORD) -> str:
     return "\n".join(L) + "\n"
 
 
+# --------------------------------------------------------------------------- #
+# THE FILTER IS THE NAP (his word, 2026-09-27)
+# --------------------------------------------------------------------------- #
+# "6 from 11 is solid n can improve but u just gave me shitty engine picks."
+# The engine's deep read went 0 from 5 that week and 3 from 18 since its
+# rebuild; the filter went 6 from 11 on the same days. From 2026-09-27 the
+# filter's best pick is the day's banked nap in nap.db — the same record,
+# settled the same way at 22:00. The engine is switched off, not deleted:
+# NAP_SOURCE=engine in trial.sh restores it.
+
+def bank_nap(rows: list[dict], day: str, log) -> str:
+    """Bank the filter's top pick as the day's nap, or a named pass when no
+    favourite is eligible. A day already banked is refused at the write point
+    and said, never raised. Returns one line for the mail."""
+    from datetime import date as _date
+    d = _date.fromisoformat(day)
+    picks = todays_picks(rows)
+    try:
+        if not picks:
+            log.record_pass(day=d, reason="filter: no eligible favourite "
+                                          "(every one odds-on, ruled out or unread)")
+            return "NAP: NO BET — no eligible favourite today"
+        p = picks[0]
+        case = (f"FILTER NAP ({'NAMED' if p['cleared'] else 'top-up'}, score "
+                f"{p['score']:+d}, confidence {p['confidence']:.0f}% n="
+                f"{p['confidence_n']}): " + "; ".join(p["reasons"]))
+        log.record(day=d, race_id=str(p["race_id"]), course=p["course"] or "",
+                   horse=p["horse"] or "", horse_id=p.get("horse_id") or "",
+                   price=p["price"], score=int(p["score"]),
+                   confident=bool(p["cleared"]), case=case,
+                   deep_conf=f"{p['confidence']:.0f}%", aligned="filter")
+        # the favourite line: on a filter nap the pick IS the favourite
+        log.record_favline(day=d, race_id=str(p["race_id"]), course=p["course"] or "",
+                           horse=p["horse"] or "", horse_id=p.get("horse_id") or "",
+                           price=p["price"])
+        return (f"NAP: {p['horse']} — {p['course']} {p['off']} @ {p['price']:.2f} "
+                f"({p['confidence']:.0f}% confidence, score {p['score']:+d})")
+    except ValueError as exc:            # already banked: the pre-off record stands
+        return f"NAP not re-banked: {exc}"
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description="THE FAVOURITE FILTER (taught 2026-09-20)")
     ap.add_argument("--grade", action="store_true", help="grade it on the corpus")
@@ -622,6 +663,9 @@ def main(argv=None) -> int:
     ap.add_argument("--raw", default="data/school/raw")
     ap.add_argument("--floor", type=int, default=FLOOR)
     ap.add_argument("--settle", metavar="DAY", help="settle a banked day at SP")
+    ap.add_argument("--bank", action="store_true",
+                    help="bank the top pick as the day's nap in nap.db (his word, 2026-09-27)")
+    ap.add_argument("--email", action="store_true", help="email the list")
     a = ap.parse_args(argv)
     if a.grade:
         print(render_grade(grade(Path(a.raw), a.floor), a.floor))
@@ -633,10 +677,30 @@ def main(argv=None) -> int:
         print(render_record())
         return 0
     rows = daily_list(a.day, a.floor)
-    print(render_list(rows, a.floor))
+    body = render_list(rows, a.floor)
+    head = ""
+    if a.bank:
+        from racing_edge.cli._common import open_nap_log
+        from racing_edge.domain.units import uk_today
+        day = rows[0]["date"] if rows else uk_today().isoformat()
+        log = open_nap_log()
+        try:
+            head = bank_nap(rows, day, log)
+        finally:
+            log.close()
+        body = head + "\n\n" + body
+    print(body)
     if rows:
         n = record_picks(rows, rows[0]["date"])
         print(f"filter record: {n} row(s) banked for {rows[0]['date']}")
+    if a.email:
+        from racing_edge.report.mail import configured, send
+        if configured():
+            ok = send(f"[filter] {head or 'The favourite filter'}", body,
+                      title="The favourite filter", subtitle="racing-edge form trial")
+            print(f"  email: {ok or 'FAILED'}")
+        else:
+            print("  (--email set, but the SMTP env is missing — not sent)")
     return 0
 
 
