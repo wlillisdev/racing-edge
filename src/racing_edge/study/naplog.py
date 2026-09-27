@@ -60,10 +60,18 @@ V2_FROM = "2026-09-03"      # THE NEW BEAST: the first morning under the rebuilt
                             # best horse, the board, the delta line — 2026-09-02's rebuild)
 
 
+FILTER_FROM = "2026-09-27"  # THE FILTER IS THE NAP (the master, 2026-09-27: "6 from 11
+                            # is solid ... u just gave me shitty engine picks") — the
+                            # favourite filter's top pick is banked; the engine is off
+
+
 def version(day) -> str:
-    """'v2' from V2_FROM, 'v1' before — ONE SITE (the master, 2026-09-02:
-    "differentiate this version from the older version")."""
+    """'filter' from FILTER_FROM, 'v2' from V2_FROM, 'v1' before — ONE SITE
+    (the master, 2026-09-02: "differentiate this version from the older
+    version")."""
     d = day.isoformat() if hasattr(day, "isoformat") else str(day)
+    if d >= FILTER_FROM:
+        return "filter"
     return "v2" if d >= V2_FROM else "v1"
 
 

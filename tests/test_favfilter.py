@@ -291,3 +291,52 @@ def test_the_night_settles_the_filter_at_sp(tmp_path):
     assert F.settle_record("2026-09-27", results, p) == 0, "settle must be write-once"
     out = F.render_record(p)
     assert "1 settled ·   1 won · strike 100.0% · P/L +2.25" in out
+
+
+def test_the_filter_banks_the_nap_in_the_real_record(tmp_path):
+    """His word, 2026-09-27: "6 from 11 is solid ... u just gave me shitty
+    engine picks". The filter's best pick is the day's nap in nap.db, the same
+    ledger the engine banked to, settled the same way. A re-run never re-picks."""
+    from racing_edge.study.naplog import NapLog
+    log = NapLog(tmp_path / "nap.db")
+    line = F.bank_nap(_card_rows(), "2026-09-27", log)
+    row = log.existing(__import__("datetime").date(2026, 9, 27))
+    assert row["horse"] == "Good" and row["race_id"] == "r1" and row["price"] == 3.0
+    assert row["won"] is None and row["confident"] == 1
+    assert "FILTER NAP" in row["case_text"], "health reds a nap with no case"
+    assert line.startswith("NAP: Good")
+    again = F.bank_nap(list(reversed(_card_rows())), "2026-09-27", log)
+    assert "not re-banked" in again
+    assert log.existing(__import__("datetime").date(2026, 9, 27))["horse"] == "Good"
+    log.close()
+
+
+def test_a_day_with_no_eligible_favourite_is_a_named_pass(tmp_path):
+    from racing_edge.study.naplog import NapLog
+    log = NapLog(tmp_path / "nap.db")
+    out = [dict(r, ruled_out=True) for r in _card_rows()]
+    assert "NO BET" in F.bank_nap(out, "2026-09-27", log)
+    row = log.existing(__import__("datetime").date(2026, 9, 27))
+    assert row["won"] == -1 and "no eligible favourite" in row["case_text"]
+    log.close()
+
+
+def test_the_record_labels_the_filter_era():
+    from racing_edge.study.naplog import version, FILTER_FROM
+    from racing_edge.school import record_export as R
+    assert FILTER_FROM == R.FILTER_FROM == "2026-09-27"
+    assert (version("2026-09-26"), version("2026-09-27")) == ("v2", "filter")
+    assert version("2026-09-02") == "v1"
+
+
+def test_the_07_30_task_runs_the_filter_not_the_paid_engine():
+    """The nap task banks the filter's pick by default; the engine's deep read
+    runs only under NAP_SOURCE=engine. CODE lines only, never the comments."""
+    from pathlib import Path
+    sh = Path("trial.sh").read_text()
+    nap = sh[sh.index("\n  nap)"):sh.index("\n  dissect)")]
+    code = "\n".join(l for l in nap.splitlines() if not l.strip().startswith("#"))
+    assert "favfilter --day today --bank --email" in code
+    assert '"${NAP_SOURCE:-filter}" = "engine"' in code
+    engine_at = code.index("racing_edge.cli.nap")
+    assert code.index("NAP_SOURCE") < engine_at, "the engine must sit behind the switch"
