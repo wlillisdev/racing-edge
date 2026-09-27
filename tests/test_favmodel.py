@@ -97,9 +97,9 @@ def test_the_model_banks_the_nap_and_says_so(tmp_path):
     log.close()
 
 
-def test_a_failed_model_falls_back_to_his_filter_loudly(tmp_path, monkeypatch, capsys):
-    """If the model cannot score, the day still gets his filter's pick — and
-    the mail says in words that the model failed."""
+def test_a_failed_v3_never_costs_the_day_and_says_so(tmp_path, monkeypatch, capsys):
+    """If v3 cannot score, the day still gets his filter's pick — and the
+    mail says in words that the shadow failed."""
     from racing_edge.study.naplog import NapLog
     import racing_edge.cli._common as C
     monkeypatch.chdir(tmp_path)
@@ -114,7 +114,7 @@ def test_a_failed_model_falls_back_to_his_filter_loudly(tmp_path, monkeypatch, c
     monkeypatch.setattr(F, "model_picks", boom)
     assert F.main(["--day", "today", "--bank"]) == 0
     out = capsys.readouterr().out
-    assert "MODEL FAILED" in out and "NAP: Good" in out
+    assert "v3 FAILED" in out and "NAP: Good" in out
     row = NapLog(tmp_path / "nap.db").existing(date(2026, 9, 28))
     assert row["horse"] == "Good" and row["aligned"] == "filter"
 
@@ -140,11 +140,56 @@ def test_the_archive_tops_itself_up_and_never_reads_a_race_twice(tmp_path):
     assert len(races) == 2 and all(len(r["runners"]) == 1 for r in races)
 
 
-def test_the_record_labels_the_model_era_and_the_night_keeps_the_archive():
-    from racing_edge.study.naplog import version, MODEL_FROM
-    from racing_edge.school import record_export as R
-    assert MODEL_FROM == R.MODEL_FROM == "2026-09-28"
-    assert (version("2026-09-27"), version("2026-09-28")) == ("filter", "v3")
+def test_his_filter_picks_the_nap_and_v3_rides_beside_it(tmp_path, monkeypatch, capsys):
+    """His word, 2026-09-27 evening: "use the system that actually picks
+    winners". The filter's first day went 2 from 2; v3's would-be picks 0
+    from 2. So the FILTER banks the nap by default, and v3 is scored and
+    recorded beside it every morning — it takes the nap only on
+    NAP_PICKER=v3, which it has to earn live."""
+    from racing_edge.study.naplog import NapLog
+    import racing_edge.cli._common as C
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.delenv("NAP_PICKER", raising=False)
+    rows = [{"race_id": "r1", "course": "Ayr", "off": "2:00", "horse": "Good",
+             "horse_id": "h1", "price": 3.0, "score": 4, "type": "Flat",
+             "field": 6, "reasons": [], "ruled_out": False, "date": "2026-09-28"}]
+    v3 = [{"race_id": "r9", "course": "Kelso", "off": "3:10", "horse": "Other",
+           "horse_id": "h9", "price": 2.6, "score": 1, "cleared": True, "prob": 0.44,
+           "confidence": 44.0, "confidence_n": 6444, "why": ["price +"],
+           "reasons": ["model 44%"]}]
+    monkeypatch.setattr(F, "daily_list", lambda day, floor: rows)
+    monkeypatch.setattr(F, "model_picks", lambda cards, day: v3)
+    monkeypatch.setattr(C, "open_nap_log", lambda: NapLog(tmp_path / "nap.db"))
+    assert F.main(["--day", "today", "--bank"]) == 0
+    out = capsys.readouterr().out
+    row = NapLog(tmp_path / "nap.db").existing(date(2026, 9, 28))
+    assert row["horse"] == "Good" and row["aligned"] == "filter", "v3 took the nap"
+    assert "V3 SHADOW" in out and "Other" in out
+    rec = {r["line"]: r["horse"] for r in F._load_record(tmp_path / "data/filter_record.csv")}
+    assert rec.get("v3") == "Other", "v3's pick must be recorded to be judged"
+
+
+def test_v3_picks_only_when_told_to(tmp_path, monkeypatch):
+    from racing_edge.study.naplog import NapLog
+    import racing_edge.cli._common as C
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("NAP_PICKER", "v3")
+    rows = [{"race_id": "r1", "course": "Ayr", "off": "2:00", "horse": "Good",
+             "horse_id": "h1", "price": 3.0, "score": 4, "type": "Flat",
+             "field": 6, "reasons": [], "ruled_out": False, "date": "2026-09-28"}]
+    v3 = [{"race_id": "r9", "course": "Kelso", "off": "3:10", "horse": "Other",
+           "horse_id": "h9", "price": 2.6, "score": 1, "cleared": True, "prob": 0.44,
+           "confidence": 44.0, "confidence_n": 6444, "why": [], "reasons": ["model 44%"]}]
+    monkeypatch.setattr(F, "daily_list", lambda day, floor: rows)
+    monkeypatch.setattr(F, "model_picks", lambda cards, day: v3)
+    monkeypatch.setattr(C, "open_nap_log", lambda: NapLog(tmp_path / "nap.db"))
+    F.main(["--day", "today", "--bank"])
+    assert NapLog(tmp_path / "nap.db").existing(date(2026, 9, 28))["horse"] == "Other"
+
+
+def test_the_record_keeps_the_filter_label_and_the_night_keeps_the_archive():
+    from racing_edge.study.naplog import version
+    assert (version("2026-09-27"), version("2026-09-28")) == ("filter", "filter")
     sh = Path("trial.sh").read_text()
     night = sh[sh.index("\n  night)"):]
     code = "\n".join(l for l in night.splitlines() if not l.strip().startswith("#"))

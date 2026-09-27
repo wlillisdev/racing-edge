@@ -685,7 +685,7 @@ def model_picks(cards: list[dict], day: str) -> list[dict]:
 
 
 def render_model(picks: list[dict], note: str = "") -> str:
-    L = ["V3, THE MODEL — his filter plus everything the archive knows, learned",
+    L = ["V3 SHADOW (not the nap) — his filter plus everything the archive knows, learned",
          "  (walk-forward Apr-Sep on unseen months: nap 49.2% v the filter's 44.7%)"]
     if note:
         L.append(f"  ⚠ {note}")
@@ -720,24 +720,27 @@ def main(argv=None) -> int:
     rows = daily_list(a.day, a.floor)
     body = render_list(rows, a.floor)
     head = ""
-    mpicks = None
+    mpicks, v3_picks = None, False
     if a.bank:
         import os
         from racing_edge.cli._common import open_nap_log
         from racing_edge.domain.units import uk_today
         day = rows[0]["date"] if rows else uk_today().isoformat()
         note = ""
-        # THE MODEL PICKS (his word, 2026-09-27). NAP_PICKER=filter restores
-        # the filter's own pick; a model failure falls back to it, LOUDLY.
-        if os.environ.get("NAP_PICKER", "model").strip().lower() != "filter":
-            try:
-                mpicks = model_picks(getattr(daily_list, "last_cards", []) or [], day)
-            except Exception as exc:
-                note = (f"MODEL FAILED ({exc.__class__.__name__}: {str(exc)[:80]}) "
-                        "— the filter's pick is banked instead")
+        # HIS FILTER PICKS THE NAP (his word, 2026-09-27 evening, after its
+        # first day went 2 from 2 and v3's would-be picks 0 from 2: "use the
+        # system that actually picks winners"). v3 is scored every morning as
+        # a SHADOW — mailed and recorded beside the filter — and takes the
+        # nap only on NAP_PICKER=v3, which it has to earn by beating the
+        # filter live over 50 settled days.
+        try:
+            mpicks = model_picks(getattr(daily_list, "last_cards", []) or [], day)
+        except Exception as exc:
+            note = f"v3 FAILED ({exc.__class__.__name__}: {str(exc)[:80]}) — shadow not recorded"
+        v3_picks = os.environ.get("NAP_PICKER", "filter").strip().lower() in ("v3", "model")
         log = open_nap_log()
         try:
-            if mpicks is not None:
+            if v3_picks and mpicks is not None:
                 head = bank_nap(rows, day, log, picks=mpicks, source="v3")
             else:
                 head = bank_nap(rows, day, log)
@@ -753,7 +756,7 @@ def main(argv=None) -> int:
     if a.email:
         from racing_edge.report.mail import configured, send
         if configured():
-            tag = "[v3]" if mpicks is not None else "[filter]"
+            tag = "[v3]" if (mpicks is not None and v3_picks) else "[filter]"
             ok = send(f"{tag} {head or 'The favourite filter'}", body,
                       title="The favourite filter", subtitle="racing-edge form trial")
             print(f"  email: {ok or 'FAILED'}")
