@@ -734,3 +734,18 @@ def test_a_failed_record_push_is_never_silent() -> None:
                      if not ln.strip().startswith("#"))
     assert "harmless" not in code, \
         "a non-push described as harmless is what cost a day of blindness"
+
+
+def test_the_box_runs_the_script_it_just_pulled() -> None:
+    """27 Sep: bash kept executing the trial.sh it had opened BEFORE the
+    pull while Python imported the new code, so the filter was meant to bank
+    the nap and the OLD script ran the engine instead. After a pull that
+    brings new code, the script must restart itself once on the new copy."""
+    sh = Path("trial.sh").read_text()
+    code = "\n".join(l for l in sh.splitlines() if not l.strip().startswith("#"))
+    assert '_before="$(git rev-parse HEAD' in code
+    assert 'TRIAL_REEXEC=1 exec bash "$0" "$@"' in code
+    assert 'if [ -n "${TRIAL_REEXEC:-}" ]; then' in code, "the restart is not guarded"
+    pull_at = code.index("git pull origin")
+    assert code.index("TRIAL_REEXEC=1 exec bash") > pull_at, "restart must follow the pull"
+    assert code.index('case "${1:-nap}" in') > code.index("TRIAL_REEXEC=1 exec bash")

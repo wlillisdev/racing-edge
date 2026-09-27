@@ -99,6 +99,20 @@ def _status(row: dict) -> str:
     return "WON" if w == WON else "LOST"
 
 
+def _engine(n: dict) -> str:
+    """Which system banked the row — read from the row, never from the date.
+
+    27 Sep: the first morning the filter was meant to pick, the 07:30 run
+    used the code from before the change and the ENGINE banked Al Wathba
+    (4.10, not the favourite; Rose Moon was). Labelled by date, that engine
+    loss went into the filter's record. favfilter writes its source into
+    `aligned` ("filter" / "v3"); the engine writes its lens list there."""
+    src = (n.get("aligned") or "").strip()
+    if src in ("filter", "v3"):
+        return src
+    return "v2" if n["date"] >= V2_FROM else "v1"
+
+
 def rows(db: Path = DB) -> list[dict]:
     """Every banked day, oldest first, with the favourite line beside it."""
     if not Path(db).exists():
@@ -124,8 +138,7 @@ def rows(db: Path = DB) -> list[dict]:
         f = favs.get(n["date"], {})
         out.append({
             "date": n["date"],
-            "engine": ("filter" if n["date"] >= FILTER_FROM
-                       else "v2" if n["date"] >= V2_FROM else "v1"),
+            "engine": _engine(n),
             "course": n.get("course") or "",
             "race_id": n.get("race_id") or "",
             "horse": n.get("horse") or "",

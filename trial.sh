@@ -47,6 +47,7 @@ if configured():
 PYEOF
 }
 trap 'st=$?; { echo "=== $(date -u "+%F %T") UTC :: trial.sh '"${1:-nap}"' EXIT $st" >> "$LOGF"; } || true; if [ "$st" != "0" ]; then PYTHONPATH=src _crash_mail "'"${1:-nap}"'" "$st"; fi' EXIT
+exec 3>&1 4>&2                      # the real stdout/stderr, kept for a re-exec
 exec > >(tee -a "$LOGF") 2>&1
 
 export PYTHONPATH=src
@@ -65,14 +66,31 @@ BRANCH="${TRIAL_BRANCH:-main}"
 # the school ladder's champion: THE NAP COLUMN (the master, 2026-09-02: "best
 # horse wins; we read the form; we pick winners — that is what we measure")
 export SCHOOL_CHAMPION="${SCHOOL_CHAMPION:-nap}"
+if [ -n "${TRIAL_REEXEC:-}" ]; then
+  echo ">> restarted on the code just pulled ($(git rev-parse --short HEAD 2>/dev/null))"
+else
 echo ">> updating to the latest trial branch ($BRANCH)..."
 # BEST-EFFORT update (2026-07-21): under set -e a git/network hiccup at 08:30 killed
 # the entire run before it banked anything. Stale code running beats no run.
+_before="$(git rev-parse HEAD 2>/dev/null || echo none)"
 if ! ( git fetch origin --quiet \
        && ( git checkout "$BRANCH" --quiet 2>/dev/null \
             || git checkout -b "$BRANCH" "origin/$BRANCH" ) \
        && git pull origin "$BRANCH" --quiet ); then
   echo ">> WARNING: git update failed — running with the code already on disk"
+fi
+# RUN THE SCRIPT YOU JUST PULLED (2026-09-27). bash keeps executing the copy
+# of this file it opened before the pull, while Python imports the new code
+# from disk — so a change to this file took effect one run LATE. On 27 Sep
+# that meant the filter was meant to bank the nap, the old script ran the
+# ENGINE instead (Al Wathba, lost), and the filter only recorded its list.
+# When the pull brings new code, restart once on it. Guarded: never twice.
+if [ "$(git rev-parse HEAD 2>/dev/null || echo none)" != "$_before" ]; then
+  echo ">> new code pulled — restarting on it"
+  trap - EXIT
+  exec 1>&3 2>&4
+  TRIAL_REEXEC=1 exec bash "$0" "$@"
+fi
 fi
 echo
 
