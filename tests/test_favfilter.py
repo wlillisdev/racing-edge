@@ -272,14 +272,15 @@ def test_the_filter_banks_its_picks_before_the_off_and_never_re_picks(tmp_path):
     them, while the mail said GRADED NIGHTLY. A line never recorded can never
     be judged. Law 1: bank pre-off, never re-pick intraday."""
     p = tmp_path / "filter_record.csv"
-    # 2 picks + 1 chase + every favourite's 07:30 price (3)
-    assert F.record_picks(_card_rows(), "2026-09-27", p) == 6
-    rows = [r for r in F._load_record(p) if r["line"] != "fav"]
+    # 2 picks + 1 chase + every favourite's 07:30 price (3) + the Chaser as a
+    # favourite race (races_all + races)
+    assert F.record_picks(_card_rows(), "2026-09-27", p) == 8
+    rows = [r for r in F._load_record(p) if r["line"] not in ("fav", "races", "races_all")]
     assert [(r["line"], r["horse"]) for r in rows] == [
         ("filter", "Good"), ("filter", "Okay"), ("chase", "Chaser")]
     assert rows[0]["cleared"] == "1" and rows[1]["cleared"] == "0"
     assert F.record_picks(_card_rows()[:1], "2026-09-27", p) == 0, "a re-run re-picked"
-    assert len(F._load_record(p)) == 6
+    assert len(F._load_record(p)) == 8
 
 
 def test_the_night_settles_the_filter_at_sp(tmp_path):
@@ -401,3 +402,30 @@ def test_novice_and_maiden_races_are_avoided():
     assert [p["race_id"] for p in F.todays_picks(rows)] == ["h1"]
     assert F.chase_line(rows) == [], "a novices' chase rode the chase line"
     assert F.avoided_race("Beginners' Chase") is False      # his words only: novice, maiden
+
+
+def test_the_favourite_races_are_a_recorded_shadow(tmp_path):
+    """His word, 2026-09-27: "yes shadow it". Favourites under 3.0, in nine
+    runners or fewer, not hurdles, not Class 5-6, not novice/maiden: recorded
+    every morning with their top two by his dots, settled beside the filter,
+    and never the nap."""
+    base = {"off": "2:00", "reasons": [], "ruled_out": False, "date": "2026-09-28",
+            "race_name": "Handicap", "type": "Flat", "rclass": 4, "field": 7}
+    rows = [dict(base, race_id="a", course="Ayr", horse="In", horse_id="a1", price=2.5, score=2),
+            dict(base, race_id="b", course="Ayr", horse="Also", horse_id="b1", price=2.2, score=3),
+            dict(base, race_id="c", course="Ayr", horse="Third", horse_id="c1", price=2.8, score=1),
+            dict(base, race_id="d", course="Ayr", horse="Price", horse_id="d1", price=3.0, score=4),
+            dict(base, race_id="e", course="Ayr", horse="Big", horse_id="e1", price=2.4, score=4, field=10),
+            dict(base, race_id="f", course="Ayr", horse="Hurdler", horse_id="f1", price=2.4, score=4, type="Hurdle"),
+            dict(base, race_id="g", course="Ayr", horse="Low", horse_id="g1", price=2.4, score=4, rclass=6),
+            dict(base, race_id="h", course="Ayr", horse="Baby", horse_id="h1", price=2.4, score=4,
+                 race_name="Maiden Stakes"),
+            dict(base, race_id="i", course="Curragh", horse="Irish", horse_id="i1", price=2.6, score=0, rclass=None)]
+    fr = F.favourite_races(rows)
+    assert [r["horse"] for r in fr] == ["Also", "In", "Third", "Irish"]
+    p = tmp_path / "filter_record.csv"
+    F.record_picks(rows, "2026-09-28", p)
+    rec = F._load_record(p)
+    assert [r["horse"] for r in rec if r["line"] == "races"] == ["Also", "In"]
+    assert len([r for r in rec if r["line"] == "races_all"]) == 4
+    assert "fav races (top 2)" in F.render_record(p)
