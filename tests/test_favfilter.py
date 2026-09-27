@@ -267,13 +267,14 @@ def test_the_filter_banks_its_picks_before_the_off_and_never_re_picks(tmp_path):
     them, while the mail said GRADED NIGHTLY. A line never recorded can never
     be judged. Law 1: bank pre-off, never re-pick intraday."""
     p = tmp_path / "filter_record.csv"
-    assert F.record_picks(_card_rows(), "2026-09-27", p) == 3      # 2 picks + 1 chase
-    rows = F._load_record(p)
+    # 2 picks + 1 chase + every favourite's 07:30 price (3)
+    assert F.record_picks(_card_rows(), "2026-09-27", p) == 6
+    rows = [r for r in F._load_record(p) if r["line"] != "fav"]
     assert [(r["line"], r["horse"]) for r in rows] == [
         ("filter", "Good"), ("filter", "Okay"), ("chase", "Chaser")]
     assert rows[0]["cleared"] == "1" and rows[1]["cleared"] == "0"
     assert F.record_picks(_card_rows()[:1], "2026-09-27", p) == 0, "a re-run re-picked"
-    assert len(F._load_record(p)) == 3
+    assert len(F._load_record(p)) == 6
 
 
 def test_the_night_settles_the_filter_at_sp(tmp_path):
@@ -285,8 +286,8 @@ def test_the_night_settles_the_filter_at_sp(tmp_path):
         {"race_id": "r1", "runners": [{"horse_id": "h1", "position": "1", "sp_dec": "3.25"}]},
         {"race_id": "r2", "runners": [{"horse_id": "h9", "position": "1", "sp_dec": "5.0"}]},
     ]}
-    assert F.settle_record("2026-09-27", results, p) == 2
-    got = {r["horse"]: (r["result"], r["sp"]) for r in F._load_record(p)}
+    assert F.settle_record("2026-09-27", results, p) == 4        # 2 picks + their 2 fav rows
+    got = {r["horse"]: (r["result"], r["sp"]) for r in F._load_record(p) if r["line"] != "fav"}
     assert got == {"Good": ("WON", "3.25"), "Okay": ("VOID", ""), "Chaser": ("", "")}
     assert F.settle_record("2026-09-27", results, p) == 0, "settle must be write-once"
     out = F.render_record(p)
@@ -340,3 +341,25 @@ def test_the_07_30_task_runs_the_filter_not_the_paid_engine():
     assert '"${NAP_SOURCE:-filter}" = "engine"' in code
     engine_at = code.index("racing_edge.cli.nap")
     assert code.index("NAP_SOURCE") < engine_at, "the engine must sit behind the switch"
+
+
+def test_every_favourite_keeps_its_0730_price_and_settles_at_sp(tmp_path):
+    """His word, 2026-09-27: "yes add it". The study of the first filter day
+    saw his market law 4d in the results but could not test it: only the
+    picks kept a morning price. Every favourite on the card, ruled out or
+    not, is now banked with its 07:30 price and settled at SP."""
+    p = tmp_path / "filter_record.csv"
+    rows = _card_rows() + [dict(_card_rows()[0], race_id="r4", horse="Crunched",
+                                horse_id="h4", price=2.1, score=-2, ruled_out=True)]
+    F.record_picks(rows, "2026-09-27", p)
+    favs = [r for r in F._load_record(p) if r["line"] == "fav"]
+    assert [r["horse"] for r in favs] == ["Good", "Okay", "Chaser", "Crunched"]
+    assert favs[3]["price"] == "2.1" and favs[3]["score"] == "-2"
+    results = {"results": [
+        {"race_id": "r1", "runners": [{"horse_id": "h1", "position": "1", "sp_dec": "3.6"}]},
+        {"race_id": "r4", "runners": [{"horse_id": "h4", "position": "4", "sp_dec": "1.83"}]}]}
+    F.settle_record("2026-09-27", results, p)
+    out = F.render_record(p)
+    assert "backed 10%+" in out and "drifted 20%+" in out
+    assert "backed 10%+        1 ·   0 won" in out         # 2.10 -> 1.83, beaten
+    assert "drifted 20%+       1 ·   1 won" in out         # 3.00 -> 3.60, won
