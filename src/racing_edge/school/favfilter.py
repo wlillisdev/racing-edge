@@ -63,6 +63,18 @@ from pathlib import Path
 # both periods, and 98% of days still have the two picks he asked for.
 FLOOR = 2
 
+# NOVICE AND MAIDEN RACES ARE AVOIDED (his word, 2026-09-27: "novice n maiden
+# avoid from now on"), after Saturday's Haydock nap: a +4 built on ONE run in
+# a two-year-old race of one- and two-run babies, beaten by an improver who
+# made all on heavy ground. Every rival in such a race can improve past the
+# form — his #13, the novice in disguise. Matched on the race's own name.
+AVOID_WORDS = ("novice", "maiden")
+
+
+def avoided_race(name) -> bool:
+    n = str(name or "").lower()
+    return any(w in n for w in AVOID_WORDS)
+
 # THE SELECTION BAR — his correction, 2026-09-20: "we wont be backing every
 # favourite". Ruling out the bad ones is only half the method; the other half
 # is DIALLING IN. A favourite is only NAMED when enough of his dots fire at
@@ -435,6 +447,7 @@ def daily_list(day: str = "today", floor: int = FLOOR, client=None) -> list[dict
                              field_size=len(priced), floor=floor, price=price)
         row = {"course": c.get("course"), "off": c.get("off_time"),
                "race_id": c.get("race_id"), "horse": fav.get("horse"),
+               "race_name": c.get("race_name") or "",
                "horse_id": hid, "date": str(c.get("date") or day)[:10],
                "price": price, "field": len(priced),
                "type": c.get("type") or ""}
@@ -445,6 +458,10 @@ def daily_list(day: str = "today", floor: int = FLOOR, client=None) -> list[dict
             sc.horse = str(fav.get("horse") or "")
             row.update(score=sc.score, ruled_out=sc.ruled_out,
                        verdict=sc.verdict, reasons=sc.reasons)
+        if avoided_race(row["race_name"]):
+            row.update(ruled_out=True, verdict="RULED OUT (novice/maiden)",
+                       reasons=[f"RULED OUT: novice/maiden race — {row['race_name']} "
+                                "(his word, 2026-09-27)"] + list(row["reasons"]))
         out.append(row)
     out.sort(key=lambda r: (r["score"] is None, -(r["score"] or 0), r["price"]))
     return out
@@ -458,7 +475,8 @@ def chase_line(rows: list[dict]) -> list[dict]:
     odds-on bar. Nothing here can be tuned, which is the point."""
     return [r for r in rows
             if (r.get("type") or "").upper().startswith("C")
-            and r["price"] >= CHASE_LINE_MIN_PRICE]
+            and r["price"] >= CHASE_LINE_MIN_PRICE
+            and not avoided_race(r.get("race_name"))]
 
 
 def todays_picks(rows: list[dict], minimum: int = MIN_NAMED) -> list[dict]:
@@ -702,7 +720,10 @@ def model_picks(cards: list[dict], day: str) -> list[dict]:
         raise FileNotFoundError(f"{favmodel.MODEL} missing")
     out = []
     fi = favmodel.FEATURES.index("filter_score")
+    avoided = {str(c.get("race_id")) for c in cards if avoided_race(c.get("race_name"))}
     for m in favmodel.score_cards(cards, day, model, archive.load()):
+        if m["race_id"] in avoided:
+            continue                     # novice/maiden: his word, 2026-09-27
         fs = m["x"][fi]
         # HIS FILTER RULES OUT FIRST, v3 ONLY SORTS WHAT IS LEFT (27 Sep,
         # after v3's first card: it put Kingdom Of Camelot top at 2.10 while
