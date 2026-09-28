@@ -97,6 +97,26 @@ def favourite_races(rows: list[dict]) -> list[dict]:
     return sorted(inside, key=lambda r: (r["score"] is None, -(r["score"] or 0), r["price"]))
 
 
+# THE BAD RACES ARE OUT (his word, 2026-09-28: "u av done the study get rid
+# of bad races"). The three kinds of race where favourites won LESS in both
+# archive periods: hurdles (28.8% / 26.2%), fields of 14+ (25.9% / 24.8%) and
+# a favourite priced 4.00+ at 07:30 (22.9% / 20.4%), against 31.7% / 30.7%
+# for all. With them out the kept list went 33.7 -> 35.3% and 34.9 -> 35.6%.
+BAD_FIELD = 14
+BAD_PRICE = 4.0
+
+
+def bad_race(r: dict) -> str:
+    """The reason a favourite's race is a bad one, or '' when it is not."""
+    if "hurdle" in (r.get("type") or "").lower():
+        return "a hurdle"
+    if (r.get("field") or 0) >= BAD_FIELD:
+        return f"{r.get('field')} runners"
+    if (r.get("price") or 0) >= BAD_PRICE:
+        return f"favourite at {r['price']:.2f}"
+    return ""
+
+
 def avoided_race(name) -> bool:
     n = str(name or "").lower()
     return any(w in n for w in AVOID_WORDS)
@@ -485,6 +505,11 @@ def daily_list(day: str = "today", floor: int = FLOOR, client=None) -> list[dict
             sc.horse = str(fav.get("horse") or "")
             row.update(score=sc.score, ruled_out=sc.ruled_out,
                        verdict=sc.verdict, reasons=sc.reasons)
+        why_bad = bad_race(row)
+        if why_bad:
+            row.update(ruled_out=True, verdict="RULED OUT (bad race)",
+                       reasons=[f"RULED OUT: bad race — {why_bad} (his word, 2026-09-28)"]
+                       + list(row["reasons"]))
         if avoided_race(row["race_name"]) or avoided_race(row["type"]):
             row.update(ruled_out=True, verdict="RULED OUT (novice/maiden)",
                        reasons=[f"RULED OUT: novice/maiden race — {row['race_name']} "
@@ -770,7 +795,11 @@ def model_picks(cards: list[dict], day: str) -> list[dict]:
     fi = favmodel.FEATURES.index("filter_score")
     avoided = {str(c.get("race_id")) for c in cards
                if avoided_race(c.get("race_name")) or avoided_race(c.get("type"))}
+    types = {str(c.get("race_id")): c.get("type") or "" for c in cards}
     for m in favmodel.score_cards(cards, day, model, archive.load()):
+        if bad_race({"type": types.get(m["race_id"], ""), "price": m["price"],
+                     "field": m["x"][favmodel.FEATURES.index("field")]}):
+            continue                     # a bad race: his word, 2026-09-28
         if m["race_id"] in avoided:
             continue                     # novice/maiden: his word, 2026-09-27
         fs = m["x"][fi]
