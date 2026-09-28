@@ -81,4 +81,5 @@ date,engine,course,race_id,horse,banked_price,sp_dec,won,confident,status,void_r
 2026-09-24,v2,Perth,rac_32298624085,Sir Carnegie,4.4,3.5,0,0,LOST,,Sir Carnegie,3.5,0
 2026-09-25,v2,Haydock,rac_32298703502,Glory of The Seas,4.4,4.5,0,0,LOST,,Asia Force,3.25,0
 2026-09-26,v2,Newmarket,rac_32298635707,Libertango,6.6,7.5,0,0,LOST,,Sun Goddess,1.83,1
-2026-09-27,filter,Epsom,rac_32298881706,Al Wathba,4.1,4.5,0,0,LOST,,Rose Moon,1.83,0
+2026-09-27,v2,Epsom,rac_32298881706,Al Wathba,4.1,4.5,0,0,LOST,,Rose Moon,1.83,0
+2026-09-28,filter,Hamilton,rac_32299040540,Roach Power,2.75,3.0,0,0,LOST,,Roach Power,3.0,0

@@ -1,3 +1,52 @@
 date,line,race_id,course,off,horse,horse_id,price,score,cleared,confidence,result,sp
 2026-09-27,filter,rac_32298870084,Ffos Las,2:59,Campeona,hrs_59059322,3.0,2,0,33.2,LOST,3.00
 2026-09-27,filter,rac_32298866210,Ffos Las,1:49,Rhodes Runner,hrs_64072365,3.25,1,0,33.0,WON,3.25
+2026-09-28,filter,rac_32299040540,Hamilton,4:38,Roach Power,hrs_25470186,2.75,2,0,33.2,LOST,3.00
+2026-09-28,filter,rac_32298997926,Brighton,3:50,Gallant Lion,hrs_31631334,3.75,2,0,33.2,LOST,4.50
+2026-09-28,chase,rac_32299127705,Roscommon,5:05,Jolie Jewel,hrs_38217620,3.5,0,,,LOST,3.50
+2026-09-28,races_all,rac_32299102524,Down Royal,1:24,Santo Parvenue,hrs_63323337,2.38,1,,,LOST,1.80
+2026-09-28,races,rac_32299102524,Down Royal,1:24,Santo Parvenue,hrs_63323337,2.38,1,,,LOST,1.80
+2026-09-28,races_all,rac_32299038603,Hamilton,4:04,City Captain,hrs_42554330,2.2,-1,,,WON,2.10
+2026-09-28,races,rac_32299038603,Hamilton,4:04,City Captain,hrs_42554330,2.2,-1,,,WON,2.10
+2026-09-28,v3,rac_32299023107,Wolverhampton (AW),7:00,Zafaan,hrs_32290895,2.5,3,1,52.3,WON,2.10
+2026-09-28,v3,rac_32299102524,Down Royal,1:24,Santo Parvenue,hrs_63323337,2.38,4,1,42.7,LOST,1.80
+2026-09-28,fav,rac_32299040540,Hamilton,4:38,Roach Power,hrs_25470186,2.75,2,,,LOST,3.00
+2026-09-28,fav,rac_32298997926,Brighton,3:50,Gallant Lion,hrs_31631334,3.75,2,,,LOST,4.50
+2026-09-28,fav,rac_32299042477,Hamilton,5:13,Off Spin,hrs_44199232,4.0,2,,,WON,6.00
+2026-09-28,fav,rac_32299507357,Wolverhampton (AW),5:30,Speed Nation,hrs_66494099,2.38,1,,,LOST,2.25
+2026-09-28,fav,rac_32299102524,Down Royal,1:24,Santo Parvenue,hrs_63323337,2.38,1,,,LOST,1.80
+2026-09-28,fav,rac_32299023107,Wolverhampton (AW),7:00,Zafaan,hrs_32290895,2.5,1,,,WON,2.10
+2026-09-28,fav,rac_32299009548,Newton Abbot,3:35,Berry Edge,hrs_22626219,2.63,1,,,VOID,
+2026-09-28,fav,rac_32299013422,Newton Abbot,4:43,Pooroldmackley,hrs_39414711,3.25,1,,,LOST,2.62
+2026-09-28,fav,rac_32299125768,Roscommon,4:30,Daddy Long Legs,hrs_30454669,1.25,0,,,VOID,
+2026-09-28,fav,rac_32299003737,Newton Abbot,2:25,Matiwo,hrs_57622187,1.29,0,,,LOST,1.29
+2026-09-28,fav,rac_32299017296,Wolverhampton (AW),4:55,Wootz,hrs_17389812489,2.2,0,,,WON,2.75
+2026-09-28,fav,rac_32299011485,Newton Abbot,4:10,Kilnew Supreme,hrs_51558087,2.63,0,,,LOST,2.62
+2026-09-28,fav,rac_32299019233,Wolverhampton (AW),6:00,Ridger,hrs_65549820,2.75,0,,,WON,1.73
+2026-09-28,fav,rac_32298995989,Brighton,3:15,Newfangled,hrs_35864437,3.0,0,,,LOST,2.50
+2026-09-28,fav,rac_32299106398,Down Royal,2:34,Star Glory,hrs_63323351,3.0,0,,,VOID,
+2026-09-28,fav,rac_32299001800,Brighton,5:00,My Mate Mackley,hrs_58843904,3.25,0,,,WON,2.88
+2026-09-28,fav,rac_32299025044,Wolverhampton (AW),7:30,Yes Waliim,hrs_54842725,3.5,0,,,LOST,3.00
+2026-09-28,fav,rac_32299127705,Roscommon,5:05,Jolie Jewel,hrs_38217620,3.5,0,,,LOST,3.50
+2026-09-28,fav,rac_32299015359,Wolverhampton (AW),4:22,Baloo's Blues,hrs_45662176,3.75,0,,,VOID,
+2026-09-28,fav,rac_32298990178,Brighton,1:30,Danger Alert,hrs_30357551,4.0,0,,,LOST,4.50
+2026-09-28,fav,rac_32299026981,Wolverhampton (AW),8:00,Bona Fortuna,hrs_37381638,4.0,0,,,WON,2.38
+2026-09-28,fav,rac_32299104461,Down Royal,1:59,Nellcote,hrs_64590806,4.0,0,,,WON,4.50
+2026-09-28,fav,rac_32299036666,Hamilton,3:29,Hot Cash,hrs_42780710,10.0,0,,,LOST,13.00
+2026-09-28,fav,rac_32299119957,Roscommon,2:45,Kimi De Mai,hrs_46514657,2.1,-1,,,LOST,3.00
+2026-09-28,fav,rac_32299038603,Hamilton,4:04,City Captain,hrs_42554330,2.2,-1,,,WON,2.10
+2026-09-28,fav,rac_32299108335,Down Royal,3:09,Daring Heart,hrs_56127582,2.38,-1,,,WON,1.50
+2026-09-28,fav,rac_32299116083,Roscommon,1:35,Telegram Sam,hrs_62136123,2.5,-1,,,WON,1.62
+2026-09-28,fav,rac_32298999863,Brighton,4:27,Royal County Glory,hrs_55484499,3.0,-1,,,LOST,4.33
+2026-09-28,fav,rac_32299021170,Wolverhampton (AW),6:30,Bungle Bay,hrs_25040610,3.5,-1,,,LOST,4.33
+2026-09-28,fav,rac_32299112209,Down Royal,4:50,Flagstone Lady,hrs_63357273,3.5,-1,,,LOST,4.00
+2026-09-28,fav,rac_32299118020,Roscommon,2:10,Colin's Friend,hrs_51091075,3.5,-1,,,VOID,
+2026-09-28,fav,rac_32299114146,Down Royal,5:25,Rakki,hrs_37407412,3.75,-1,,,LOST,4.50
+2026-09-28,fav,rac_32299565467,Down Royal,4:19,No More Hiding,hrs_59025288,4.0,-1,,,WON,3.75
+2026-09-28,fav,rac_32298994052,Brighton,2:40,Magical Life,hrs_63323673,5.5,-1,,,LOST,5.50
+2026-09-28,fav,rac_32299110272,Down Royal,3:44,Zheleznaya Dama,hrs_53602269,6.0,-1,,,LOST,11.00
+2026-09-28,fav,rac_32299028918,Wolverhampton (AW),8:30,The Anthony Gover,hrs_62615126,2.38,-2,,,LOST,2.38
+2026-09-28,fav,rac_32299123831,Roscommon,3:55,Watching The Clock,hrs_52741983,5.0,-2,,,LOST,7.00
+2026-09-28,fav,rac_32299121894,Roscommon,3:20,Duce Bigalow,hrs_38002447,5.5,-2,,,LOST,3.00
+2026-09-28,fav,rac_32298992115,Brighton,2:05,Galileo Star,hrs_17392936274,1.91,,,,WON,1.57
+2026-09-28,fav,rac_32299129642,Roscommon,5:40,Dr Bones,hrs_17392982166,3.0,,,,LOST,4.33
