@@ -68,7 +68,10 @@ FLOOR = 2
 # a two-year-old race of one- and two-run babies, beaten by an improver who
 # made all on heavy ground. Every rival in such a race can improve past the
 # form — his #13, the novice in disguise. Matched on the race's own name.
-AVOID_WORDS = ("novice", "maiden")
+AVOID_WORDS = ("novice", "maiden",
+               # BUMPERS TOO (his word, 2026-09-28: "bumpers out too") — the
+               # NH flat race for unraced and lightly-raced jumpers, same species
+               "bumper", "nh flat", "n.h. flat", "national hunt flat", "inh flat")
 
 
 # THE FAVOURITE RACES — a SHADOW (his word, 2026-09-27: "yes shadow it").
@@ -89,8 +92,29 @@ def favourite_races(rows: list[dict]) -> list[dict]:
               and r.get("field", 99) <= RACES_MAX_FIELD
               and "hurdle" not in (r.get("type") or "").lower()
               and r.get("rclass") not in (5, 6)
-              and not avoided_race(r.get("race_name"))]
+              and not avoided_race(r.get("race_name"))
+              and not avoided_race(r.get("type"))]
     return sorted(inside, key=lambda r: (r["score"] is None, -(r["score"] or 0), r["price"]))
+
+
+# THE BAD RACES ARE OUT (his word, 2026-09-28: "u av done the study get rid
+# of bad races"). The three kinds of race where favourites won LESS in both
+# archive periods: hurdles (28.8% / 26.2%), fields of 14+ (25.9% / 24.8%) and
+# a favourite priced 4.00+ at 07:30 (22.9% / 20.4%), against 31.7% / 30.7%
+# for all. With them out the kept list went 33.7 -> 35.3% and 34.9 -> 35.6%.
+BAD_FIELD = 14
+BAD_PRICE = 4.0
+
+
+def bad_race(r: dict) -> str:
+    """The reason a favourite's race is a bad one, or '' when it is not."""
+    if "hurdle" in (r.get("type") or "").lower():
+        return "a hurdle"
+    if (r.get("field") or 0) >= BAD_FIELD:
+        return f"{r.get('field')} runners"
+    if (r.get("price") or 0) >= BAD_PRICE:
+        return f"favourite at {r['price']:.2f}"
+    return ""
 
 
 def avoided_race(name) -> bool:
@@ -481,7 +505,12 @@ def daily_list(day: str = "today", floor: int = FLOOR, client=None) -> list[dict
             sc.horse = str(fav.get("horse") or "")
             row.update(score=sc.score, ruled_out=sc.ruled_out,
                        verdict=sc.verdict, reasons=sc.reasons)
-        if avoided_race(row["race_name"]):
+        why_bad = bad_race(row)
+        if why_bad:
+            row.update(ruled_out=True, verdict="RULED OUT (bad race)",
+                       reasons=[f"RULED OUT: bad race — {why_bad} (his word, 2026-09-28)"]
+                       + list(row["reasons"]))
+        if avoided_race(row["race_name"]) or avoided_race(row["type"]):
             row.update(ruled_out=True, verdict="RULED OUT (novice/maiden)",
                        reasons=[f"RULED OUT: novice/maiden race — {row['race_name']} "
                                 "(his word, 2026-09-27)"] + list(row["reasons"]))
@@ -764,8 +793,13 @@ def model_picks(cards: list[dict], day: str) -> list[dict]:
         raise FileNotFoundError(f"{favmodel.MODEL} missing")
     out = []
     fi = favmodel.FEATURES.index("filter_score")
-    avoided = {str(c.get("race_id")) for c in cards if avoided_race(c.get("race_name"))}
+    avoided = {str(c.get("race_id")) for c in cards
+               if avoided_race(c.get("race_name")) or avoided_race(c.get("type"))}
+    types = {str(c.get("race_id")): c.get("type") or "" for c in cards}
     for m in favmodel.score_cards(cards, day, model, archive.load()):
+        if bad_race({"type": types.get(m["race_id"], ""), "price": m["price"],
+                     "field": m["x"][favmodel.FEATURES.index("field")]}):
+            continue                     # a bad race: his word, 2026-09-28
         if m["race_id"] in avoided:
             continue                     # novice/maiden: his word, 2026-09-27
         fs = m["x"][fi]

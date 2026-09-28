@@ -429,3 +429,45 @@ def test_the_favourite_races_are_a_recorded_shadow(tmp_path):
     assert [r["horse"] for r in rec if r["line"] == "races"] == ["Also", "In"]
     assert len([r for r in rec if r["line"] == "races_all"]) == 4
     assert "fav races (top 2)" in F.render_record(p)
+
+
+def test_bumpers_are_avoided_too():
+    """His word, 2026-09-28: "bumpers out too". Caught by the race name
+    (bumper / NH flat / INH flat) or by the card's race type."""
+    for name in ("Mares' Standard Open National Hunt Flat Race", "INH Flat Race",
+                 "Junior Bumper", "Open NH Flat Race"):
+        assert F.avoided_race(name), name
+    assert F.avoided_race("NH Flat")                      # the card's type field
+    assert not F.avoided_race("Beginners' Chase"), "not his word: beginners' chases stay"
+    assert not F.avoided_race("Class 3 Handicap Hurdle")
+    base = {"off": "2:00", "reasons": [], "ruled_out": False, "date": "2026-09-29",
+            "race_name": "Open Race", "rclass": 4, "field": 7, "score": 3,
+            "course": "Ayr", "horse_id": "b1", "horse": "Bumper Fav", "price": 2.4}
+    assert F.favourite_races([dict(base, race_id="b", type="NH Flat")]) == []
+
+
+def test_the_bad_races_are_out():
+    """His word, 2026-09-28: "get rid of bad races". Hurdles, fields of 14+
+    and favourites at 4.00+ won less in both archive periods; their
+    favourites are listed and recorded, never picked."""
+    class Client:
+        def racecards(self, day):
+            def card(rid, typ="Flat", n=6, first=2.5):
+                return {"race_id": rid, "course": "Ayr", "off_time": "2:00",
+                        "date": "2026-09-29", "race_status": "declared",
+                        "race_class": "Class 4", "race_name": "Handicap", "type": typ,
+                        "runners": [{"horse_id": f"{rid}{i}", "horse": f"{rid}{i}",
+                                     "odds": [{"decimal": str(first + i)}]} for i in range(n)]}
+            return {"racecards": [card("hurdle", "Hurdle"), card("big", n=14),
+                                  card("long", first=4.0), card("good")]}
+
+        def horse_results(self, hid, limit=6):
+            return [{"date": "2026-09-20", "position": "1", "ovr_btn": "0",
+                     "comment": "kept on well", "class": "Class 5"}]
+
+    rows = {r["race_id"]: r for r in F.daily_list("today", client=Client())}
+    assert "a hurdle" in rows["hurdle"]["reasons"][0] and rows["hurdle"]["ruled_out"]
+    assert "14 runners" in rows["big"]["reasons"][0] and rows["big"]["ruled_out"]
+    assert "4.00" in rows["long"]["reasons"][0] and rows["long"]["ruled_out"]
+    assert not rows["good"]["ruled_out"]
+    assert [p["race_id"] for p in F.todays_picks(list(rows.values()))] == ["good"]
