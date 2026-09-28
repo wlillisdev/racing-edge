@@ -429,3 +429,18 @@ def test_the_favourite_races_are_a_recorded_shadow(tmp_path):
     assert [r["horse"] for r in rec if r["line"] == "races"] == ["Also", "In"]
     assert len([r for r in rec if r["line"] == "races_all"]) == 4
     assert "fav races (top 2)" in F.render_record(p)
+
+
+def test_bumpers_are_avoided_too():
+    """His word, 2026-09-28: "bumpers out too". Caught by the race name
+    (bumper / NH flat / INH flat) or by the card's race type."""
+    for name in ("Mares' Standard Open National Hunt Flat Race", "INH Flat Race",
+                 "Junior Bumper", "Open NH Flat Race"):
+        assert F.avoided_race(name), name
+    assert F.avoided_race("NH Flat")                      # the card's type field
+    assert not F.avoided_race("Beginners' Chase"), "not his word: beginners' chases stay"
+    assert not F.avoided_race("Class 3 Handicap Hurdle")
+    base = {"off": "2:00", "reasons": [], "ruled_out": False, "date": "2026-09-29",
+            "race_name": "Open Race", "rclass": 4, "field": 7, "score": 3,
+            "course": "Ayr", "horse_id": "b1", "horse": "Bumper Fav", "price": 2.4}
+    assert F.favourite_races([dict(base, race_id="b", type="NH Flat")]) == []

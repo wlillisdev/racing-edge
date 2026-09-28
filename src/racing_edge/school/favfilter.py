@@ -68,7 +68,10 @@ FLOOR = 2
 # a two-year-old race of one- and two-run babies, beaten by an improver who
 # made all on heavy ground. Every rival in such a race can improve past the
 # form — his #13, the novice in disguise. Matched on the race's own name.
-AVOID_WORDS = ("novice", "maiden")
+AVOID_WORDS = ("novice", "maiden",
+               # BUMPERS TOO (his word, 2026-09-28: "bumpers out too") — the
+               # NH flat race for unraced and lightly-raced jumpers, same species
+               "bumper", "nh flat", "n.h. flat", "national hunt flat", "inh flat")
 
 
 # THE FAVOURITE RACES — a SHADOW (his word, 2026-09-27: "yes shadow it").
@@ -89,7 +92,8 @@ def favourite_races(rows: list[dict]) -> list[dict]:
               and r.get("field", 99) <= RACES_MAX_FIELD
               and "hurdle" not in (r.get("type") or "").lower()
               and r.get("rclass") not in (5, 6)
-              and not avoided_race(r.get("race_name"))]
+              and not avoided_race(r.get("race_name"))
+              and not avoided_race(r.get("type"))]
     return sorted(inside, key=lambda r: (r["score"] is None, -(r["score"] or 0), r["price"]))
 
 
@@ -481,7 +485,7 @@ def daily_list(day: str = "today", floor: int = FLOOR, client=None) -> list[dict
             sc.horse = str(fav.get("horse") or "")
             row.update(score=sc.score, ruled_out=sc.ruled_out,
                        verdict=sc.verdict, reasons=sc.reasons)
-        if avoided_race(row["race_name"]):
+        if avoided_race(row["race_name"]) or avoided_race(row["type"]):
             row.update(ruled_out=True, verdict="RULED OUT (novice/maiden)",
                        reasons=[f"RULED OUT: novice/maiden race — {row['race_name']} "
                                 "(his word, 2026-09-27)"] + list(row["reasons"]))
@@ -764,7 +768,8 @@ def model_picks(cards: list[dict], day: str) -> list[dict]:
         raise FileNotFoundError(f"{favmodel.MODEL} missing")
     out = []
     fi = favmodel.FEATURES.index("filter_score")
-    avoided = {str(c.get("race_id")) for c in cards if avoided_race(c.get("race_name"))}
+    avoided = {str(c.get("race_id")) for c in cards
+               if avoided_race(c.get("race_name")) or avoided_race(c.get("type"))}
     for m in favmodel.score_cards(cards, day, model, archive.load()):
         if m["race_id"] in avoided:
             continue                     # novice/maiden: his word, 2026-09-27
