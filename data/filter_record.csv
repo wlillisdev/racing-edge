@@ -50,3 +50,46 @@ date,line,race_id,course,off,horse,horse_id,price,score,cleared,confidence,resul
 2026-09-28,fav,rac_32299121894,Roscommon,3:20,Duce Bigalow,hrs_38002447,5.5,-2,,,LOST,3.00
 2026-09-28,fav,rac_32298992115,Brighton,2:05,Galileo Star,hrs_17392936274,1.91,,,,WON,1.57
 2026-09-28,fav,rac_32299129642,Roscommon,5:40,Dr Bones,hrs_17392982166,3.0,,,,LOST,4.33
+2026-09-29,filter,rac_32299183878,Ayr,5:13,Time Turner,hrs_44166297,3.0,2,0,33.2,LOST,3.50
+2026-09-29,chase,rac_32299149012,Sedgefield,3:15,Thank You Blue,hrs_28532679,2.5,1,,,LOST,2.38
+2026-09-29,races_all,rac_32299292350,Cork,2:25,Pink Venom,hrs_65287166,2.38,1,,,WON,2.00
+2026-09-29,races,rac_32299292350,Cork,2:25,Pink Venom,hrs_65287166,2.38,1,,,WON,2.00
+2026-09-29,races_all,rac_32299149012,Sedgefield,3:15,Thank You Blue,hrs_28532679,2.5,1,,,LOST,2.38
+2026-09-29,races,rac_32299149012,Sedgefield,3:15,Thank You Blue,hrs_28532679,2.5,1,,,LOST,2.38
+2026-09-29,v3,rac_32299158697,Wolverhampton (AW),5:00,Arundel,hrs_46547102,2.2,3,1,43.2,LOST,2.20
+2026-09-29,v3,rac_32299292350,Cork,2:25,Pink Venom,hrs_65287166,2.38,4,1,42.8,WON,2.00
+2026-09-29,fav,rac_32299183878,Ayr,5:13,Time Turner,hrs_44166297,3.0,2,,,LOST,3.50
+2026-09-29,fav,rac_32299168382,Wolverhampton (AW),7:30,Notable Charm,hrs_52709706,2.0,1,,,LOST,2.10
+2026-09-29,fav,rac_32299158697,Wolverhampton (AW),5:00,Arundel,hrs_46547102,2.2,1,,,LOST,2.20
+2026-09-29,fav,rac_32299292350,Cork,2:25,Pink Venom,hrs_65287166,2.38,1,,,WON,2.00
+2026-09-29,fav,rac_32299149012,Sedgefield,3:15,Thank You Blue,hrs_28532679,2.5,1,,,LOST,2.38
+2026-09-29,fav,rac_32299176130,Ayr,3:08,Star Cast,hrs_43508395,3.5,1,,,LOST,4.00
+2026-09-29,fav,rac_32299181941,Ayr,4:40,Woven,hrs_14813176,4.5,1,,,LOST,6.50
+2026-09-29,fav,rac_32299143201,Bath,5:07,Legendsoftheland,hrs_40745929,4.5,1,,,LOST,4.33
+2026-09-29,fav,rac_32299180004,Ayr,4:08,Kelpie Grey,hrs_31287837,5.5,1,,,LOST,5.50
+2026-09-29,fav,rac_32299137390,Bath,3:32,Divide And Conquer,hrs_17391777501,1.4,0,,,WON,1.25
+2026-09-29,fav,rac_32299147075,Sedgefield,2:45,Steel Raven,hrs_54494545,1.57,0,,,WON,1.33
+2026-09-29,fav,rac_32299162571,Wolverhampton (AW),6:00,Distillation,hrs_58033661,1.8,0,,,LOST,2.50
+2026-09-29,fav,rac_32299172256,Ayr,2:08,Empirestateofmind,hrs_22413538,2.25,0,,,WON,2.20
+2026-09-29,fav,rac_32299164508,Wolverhampton (AW),6:30,Gilded Call,hrs_64555680,3.0,0,,,LOST,6.50
+2026-09-29,fav,rac_32299600333,Wolverhampton (AW),8:00,Equion,hrs_27054447,3.0,0,,,LOST,5.00
+2026-09-29,fav,rac_32299131579,Bath,2:02,Decalogue,hrs_57471148,3.25,0,,,LOST,6.00
+2026-09-29,fav,rac_32299170319,Wolverhampton (AW),8:30,African Spirit,hrs_37289504,3.25,0,,,WON,2.38
+2026-09-29,fav,rac_32299178067,Ayr,3:38,Misunderstood,hrs_43667435,4.0,0,,,LOST,4.00
+2026-09-29,fav,rac_32299294287,Cork,2:55,By The Lake,hrs_54149830,4.0,0,,,VOID,
+2026-09-29,fav,rac_32299302035,Cork,4:55,Daler,hrs_42296870,4.5,0,,,,
+2026-09-29,fav,rac_32299166445,Wolverhampton (AW),7:00,Methgal,hrs_39962125,2.0,-1,,,LOST,1.44
+2026-09-29,fav,rac_32299290413,Cork,1:55,Bold Commander,hrs_65005318,2.0,-1,,,LOST,3.75
+2026-09-29,fav,rac_32299150949,Sedgefield,3:45,Whitewinewednesday,hrs_37476481,2.2,-1,,,WON,1.53
+2026-09-29,fav,rac_32299135453,Bath,3:02,Buckland Belle,hrs_58993242,2.63,-1,,,LOST,3.00
+2026-09-29,fav,rac_32299141264,Bath,4:35,Hemustbeanangel,hrs_66198888,2.88,-1,,,LOST,3.50
+2026-09-29,fav,rac_32299298161,Cork,4:25,Golden Ring,hrs_65101421,3.0,-1,,,,
+2026-09-29,fav,rac_32299160634,Wolverhampton (AW),5:30,Arabian Summer,hrs_45855117,3.25,-1,,,VOID,
+2026-09-29,fav,rac_32299139327,Bath,4:02,South Shore,hrs_35321048,3.75,-1,,,LOST,4.50
+2026-09-29,fav,rac_32299156760,Wolverhampton (AW),4:30,Manton Road,hrs_42943936,3.75,-1,,,LOST,4.33
+2026-09-29,fav,rac_32299592585,Bath,5:37,Charlie Boyo,hrs_52451770,4.0,-1,,,LOST,3.75
+2026-09-29,fav,rac_32299300098,Cork,3:55,Summer Is Tomorrow,hrs_52054296,4.0,-1,,,,
+2026-09-29,fav,rac_32299133516,Bath,2:32,Cosmo Brown,hrs_63680512,4.33,-1,,,LOST,5.00
+2026-09-29,fav,rac_32299296224,Cork,3:25,Simmering Seas,hrs_52496199,5.0,-1,,,LOST,8.00
+2026-09-29,fav,rac_32299303972,Cork,5:25,Cause I Like You,hrs_58745134,5.0,-1,,,,
+2026-09-29,fav,rac_32299174193,Ayr,2:38,Naval Architect,hrs_17392894554,2.38,,,,LOST,2.20

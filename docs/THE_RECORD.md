@@ -4,11 +4,11 @@ Derived from `data/nap.db` by `PYTHONPATH=src python -m racing_edge.school.recor
 
 Level stakes, one point a bet, settled at SP. A pass is shown as a position, not a missing day. The favourite line is the benchmark the ledger already keeps on the same races — it is the thing to beat, never the picker.
 
-**67 settled** · 18 wins · strike **26.9%** · P/L **-0.37 pts** · ROI **-0.6%**
+**68 settled** · 18 wins · strike **26.5%** · P/L **-1.37 pts** · ROI **-2.0%**
 
-**The favourite on the same races:** 34 settled · 13 wins · strike 38.2% · P/L -2.36 pts · ROI -6.9%
+**The favourite on the same races:** 35 settled · 13 wins · strike 37.1% · P/L -3.36 pts · ROI -9.6%
 
-(84 days banked · 67 bets · 13 passes · 4 voids · 0 pending)
+(85 days banked · 68 bets · 13 passes · 4 voids · 0 pending)
 
 | date | eng | course | horse | price | SP | result | fav | fav SP | fav |
 |---|---|---|---|---|---|---|---|---|---|
@@ -96,3 +96,4 @@ Level stakes, one point a bet, settled at SP. A pass is shown as a position, not
 | 2026-09-26 | v2 | Newmarket | Libertango | 6.60 | 7.50 | LOST | Sun Goddess | 1.83 | WON |
 | 2026-09-27 | v2 | Epsom | Al Wathba | 4.10 | 4.50 | LOST | Rose Moon | 1.83 | lost |
 | 2026-09-28 | filter | Hamilton | Roach Power | 2.75 | 3.00 | LOST | Roach Power | 3.00 | lost |
+| 2026-09-29 | filter | Ayr | Time Turner | 3.00 | 3.50 | LOST | Time Turner | 3.50 | lost |

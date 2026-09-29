@@ -83,3 +83,4 @@ date,engine,course,race_id,horse,banked_price,sp_dec,won,confident,status,void_r
 2026-09-26,v2,Newmarket,rac_32298635707,Libertango,6.6,7.5,0,0,LOST,,Sun Goddess,1.83,1
 2026-09-27,v2,Epsom,rac_32298881706,Al Wathba,4.1,4.5,0,0,LOST,,Rose Moon,1.83,0
 2026-09-28,filter,Hamilton,rac_32299040540,Roach Power,2.75,3.0,0,0,LOST,,Roach Power,3.0,0
+2026-09-29,filter,Ayr,rac_32299183878,Time Turner,3.0,3.5,0,0,LOST,,Time Turner,3.5,0
