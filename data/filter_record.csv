@@ -93,3 +93,48 @@ date,line,race_id,course,off,horse,horse_id,price,score,cleared,confidence,resul
 2026-09-29,fav,rac_32299296224,Cork,3:25,Simmering Seas,hrs_52496199,5.0,-1,,,LOST,8.00
 2026-09-29,fav,rac_32299303972,Cork,5:25,Cause I Like You,hrs_58745134,5.0,-1,,,,
 2026-09-29,fav,rac_32299174193,Ayr,2:38,Naval Architect,hrs_17392894554,2.38,,,,LOST,2.20
+2026-09-30,filter,rac_32299257484,Musselburgh,4:33,Stay On Tab,hrs_63323477,2.25,2,0,33.2,VOID,
+2026-09-30,filter,rac_32299271043,Kempton (AW),7:30,Kind of Blue,hrs_40819555,2.38,2,0,33.2,WON,1.80
+2026-09-30,chase,rac_32299315594,Sligo,5:15,Soir De Garde,hrs_38105053,2.5,0,,,LOST,2.75
+2026-09-30,chase,rac_32299311720,Sligo,4:05,Down Around,hrs_29748600,3.25,0,,,LOST,4.33
+2026-09-30,chase,rac_32299313657,Sligo,4:40,Swing Time,hrs_45887807,4.0,-1,,,LOST,6.00
+2026-09-30,races_all,rac_32299271043,Kempton (AW),7:30,Kind of Blue,hrs_40819555,2.38,2,,,WON,1.80
+2026-09-30,races,rac_32299271043,Kempton (AW),7:30,Kind of Blue,hrs_40819555,2.38,2,,,WON,1.80
+2026-09-30,races_all,rac_32299232303,Catterick,5:25,Wardlaw,hrs_56873740,2.2,1,,,LOST,2.00
+2026-09-30,races,rac_32299232303,Catterick,5:25,Wardlaw,hrs_56873740,2.2,1,,,LOST,2.00
+2026-09-30,races_all,rac_32299315594,Sligo,5:15,Soir De Garde,hrs_38105053,2.5,0,,,LOST,2.75
+2026-09-30,v3,rac_32299257484,Musselburgh,4:33,Stay On Tab,hrs_63323477,2.25,5,1,42.0,VOID,
+2026-09-30,v3,rac_32299633262,Catterick,3:42,Golden Strike,hrs_37220127,2.25,2,1,40.1,LOST,2.62
+2026-09-30,fav,rac_32299257484,Musselburgh,4:33,Stay On Tab,hrs_63323477,2.25,2,,,VOID,
+2026-09-30,fav,rac_32299271043,Kempton (AW),7:30,Kind of Blue,hrs_40819555,2.38,2,,,WON,1.80
+2026-09-30,fav,rac_32299232303,Catterick,5:25,Wardlaw,hrs_56873740,2.2,1,,,LOST,2.00
+2026-09-30,fav,rac_32299633262,Catterick,3:42,Golden Strike,hrs_37220127,2.25,1,,,LOST,2.62
+2026-09-30,fav,rac_32299259421,Musselburgh,5:08,Riddikulus,hrs_58779056,2.75,1,,,LOST,4.33
+2026-09-30,fav,rac_32299249736,Musselburgh,2:13,Walsingham,hrs_30941141,3.0,1,,,WON,3.00
+2026-09-30,fav,rac_32299272980,Kempton (AW),8:00,Cape Fear,hrs_57718689,3.5,1,,,LOST,3.50
+2026-09-30,fav,rac_32299253610,Musselburgh,3:23,Brandenburg,hrs_63034069,4.0,1,,,LOST,5.00
+2026-09-30,fav,rac_32299282665,Bellewstown,3:50,Osterode,hrs_63875357,1.67,0,,,LOST,1.73
+2026-09-30,fav,rac_32299222618,Catterick,1:57,Duchess of Immatin,hrs_17391370731,1.8,0,,,LOST,1.67
+2026-09-30,fav,rac_32299261358,Kempton (AW),4:25,Real Bullet,hrs_65068934,1.8,0,,,LOST,1.67
+2026-09-30,fav,rac_32299305909,Sligo,2:20,Future Prospect,hrs_40095783,1.83,0,,,VOID,
+2026-09-30,fav,rac_32299276854,Bellewstown,2:05,Nautic Star,hrs_55700820,2.38,0,,,VOID,
+2026-09-30,fav,rac_32299315594,Sligo,5:15,Soir De Garde,hrs_38105053,2.5,0,,,LOST,2.75
+2026-09-30,fav,rac_32299288476,Bellewstown,5:35,Solness,hrs_29747795,2.75,0,,,WON,1.57
+2026-09-30,fav,rac_32299251673,Musselburgh,2:48,Kelpie Grey,hrs_31287837,2.88,0,,,LOST,2.38
+2026-09-30,fav,rac_32299224555,Catterick,2:32,Rupert The Brave,hrs_17389296204,3.0,0,,,VOID,
+2026-09-30,fav,rac_32299234240,Catterick,5:55,Albegone,hrs_24183901,3.0,0,,,LOST,3.12
+2026-09-30,fav,rac_32299309783,Sligo,3:30,Miners Bridge,hrs_28220507,3.25,0,,,WON,2.75
+2026-09-30,fav,rac_32299311720,Sligo,4:05,Down Around,hrs_29748600,3.25,0,,,LOST,4.33
+2026-09-30,fav,rac_32299635199,Catterick,4:15,Mo Anam Chara,hrs_56843850,3.5,0,,,LOST,3.25
+2026-09-30,fav,rac_32299226492,Catterick,3:07,Fairydale,hrs_54555354,3.75,0,,,WON,2.88
+2026-09-30,fav,rac_32299274917,Kempton (AW),8:30,Big Bard,hrs_25213517,3.75,0,,,LOST,3.00
+2026-09-30,fav,rac_32299230366,Catterick,4:50,Mister Sky Blue,hrs_43605611,4.0,0,,,LOST,4.33
+2026-09-30,fav,rac_32299255547,Musselburgh,3:58,Jer Batt,hrs_31550694,4.0,0,,,LOST,4.50
+2026-09-30,fav,rac_32299284602,Bellewstown,4:25,Nouvel Espoir,hrs_37014047,4.5,0,,,LOST,2.88
+2026-09-30,fav,rac_32299269106,Kempton (AW),7:00,Venetian Lion,hrs_56844109,2.2,-1,,,LOST,2.20
+2026-09-30,fav,rac_32299286539,Bellewstown,5:00,Scorcher's Son,hrs_17391049487,3.5,-1,,,LOST,3.25
+2026-09-30,fav,rac_32299267169,Kempton (AW),6:30,Karakula Dancer,hrs_49142709,3.75,-1,,,LOST,6.50
+2026-09-30,fav,rac_32299313657,Sligo,4:40,Swing Time,hrs_45887807,4.0,-1,,,LOST,6.00
+2026-09-30,fav,rac_32299278791,Bellewstown,2:40,Platino Bianco,hrs_35499513,5.5,-1,,,LOST,8.50
+2026-09-30,fav,rac_32299280728,Bellewstown,3:15,Moyassr,hrs_36738751,6.0,-1,,,LOST,12.00
+2026-09-30,fav,rac_32299265232,Kempton (AW),6:00,Votadini,hrs_17391378032,3.25,,,,WON,4.33
