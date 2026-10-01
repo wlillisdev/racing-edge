@@ -4,11 +4,11 @@ Derived from `data/nap.db` by `PYTHONPATH=src python -m racing_edge.school.recor
 
 Level stakes, one point a bet, settled at SP. A pass is shown as a position, not a missing day. The favourite line is the benchmark the ledger already keeps on the same races — it is the thing to beat, never the picker.
 
-**68 settled** · 18 wins · strike **26.5%** · P/L **-1.37 pts** · ROI **-2.0%**
+**69 settled** · 18 wins · strike **26.1%** · P/L **-2.37 pts** · ROI **-3.4%**
 
-**The favourite on the same races:** 35 settled · 13 wins · strike 37.1% · P/L -3.36 pts · ROI -9.6%
+**The favourite on the same races:** 36 settled · 13 wins · strike 36.1% · P/L -4.36 pts · ROI -12.1%
 
-(86 days banked · 68 bets · 13 passes · 5 voids · 0 pending)
+(87 days banked · 69 bets · 13 passes · 5 voids · 0 pending)
 
 | date | eng | course | horse | price | SP | result | fav | fav SP | fav |
 |---|---|---|---|---|---|---|---|---|---|
@@ -98,3 +98,4 @@ Level stakes, one point a bet, settled at SP. A pass is shown as a position, not
 | 2026-09-28 | filter | Hamilton | Roach Power | 2.75 | 3.00 | LOST | Roach Power | 3.00 | lost |
 | 2026-09-29 | filter | Ayr | Time Turner | 3.00 | 3.50 | LOST | Time Turner | 3.50 | lost |
 | 2026-09-30 | filter | Musselburgh | Stay On Tab | 2.25 | - | VOID | Stay On Tab | - | - |
+| 2026-10-01 | filter | Salisbury | Social Symbol | 2.25 | 2.38 | LOST | Social Symbol | 2.38 | lost |

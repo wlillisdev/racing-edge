@@ -138,3 +138,59 @@ date,line,race_id,course,off,horse,horse_id,price,score,cleared,confidence,resul
 2026-09-30,fav,rac_32299278791,Bellewstown,2:40,Platino Bianco,hrs_35499513,5.5,-1,,,LOST,8.50
 2026-09-30,fav,rac_32299280728,Bellewstown,3:15,Moyassr,hrs_36738751,6.0,-1,,,LOST,12.00
 2026-09-30,fav,rac_32299265232,Kempton (AW),6:00,Votadini,hrs_17391378032,3.25,,,,WON,4.33
+2026-10-01,filter,rac_32299416318,Salisbury,3:14,Social Symbol,hrs_65287306,2.25,2,0,33.2,LOST,2.38
+2026-10-01,filter,rac_32299387263,Newcastle (AW),6:00,Havana Lightning,hrs_63650482,3.5,2,0,33.2,LOST,4.33
+2026-10-01,chase,rac_32299426003,Southwell,2:50,Paper Mill,hrs_28622993,2.75,1,,,WON,2.50
+2026-10-01,chase,rac_32299424066,Southwell,2:15,Gone In Sixty,hrs_30245698,2.88,1,,,LOST,3.00
+2026-10-01,races_all,rac_32299416318,Salisbury,3:14,Social Symbol,hrs_65287306,2.25,2,,,LOST,2.38
+2026-10-01,races,rac_32299416318,Salisbury,3:14,Social Symbol,hrs_65287306,2.25,2,,,LOST,2.38
+2026-10-01,races_all,rac_32299426003,Southwell,2:50,Paper Mill,hrs_28622993,2.75,1,,,WON,2.50
+2026-10-01,races,rac_32299426003,Southwell,2:50,Paper Mill,hrs_28622993,2.75,1,,,WON,2.50
+2026-10-01,races_all,rac_32299329153,Bellewstown,2:45,Save The Sixes,hrs_66160731,2.88,1,,,LOST,2.38
+2026-10-01,races_all,rac_32299333027,Bellewstown,3:55,Count Bezukhov,hrs_64555064,2.88,1,,,VOID,
+2026-10-01,races_all,rac_32299331090,Bellewstown,3:20,Steel Magnolia,hrs_47555445,2.88,0,,,LOST,2.38
+2026-10-01,v3,rac_32299416318,Salisbury,3:14,Social Symbol,hrs_65287306,2.25,3,1,42.2,LOST,2.38
+2026-10-01,v3,rac_32299333027,Bellewstown,3:55,Count Bezukhov,hrs_64555064,2.88,4,1,41.4,VOID,
+2026-10-01,fav,rac_32299416318,Salisbury,3:14,Social Symbol,hrs_65287306,2.25,2,,,LOST,2.38
+2026-10-01,fav,rac_32299387263,Newcastle (AW),6:00,Havana Lightning,hrs_63650482,3.5,2,,,LOST,4.33
+2026-10-01,fav,rac_32299426003,Southwell,2:50,Paper Mill,hrs_28622993,2.75,1,,,WON,2.50
+2026-10-01,fav,rac_32299424066,Southwell,2:15,Gone In Sixty,hrs_30245698,2.88,1,,,LOST,3.00
+2026-10-01,fav,rac_32299329153,Bellewstown,2:45,Save The Sixes,hrs_66160731,2.88,1,,,LOST,2.38
+2026-10-01,fav,rac_32299333027,Bellewstown,3:55,Count Bezukhov,hrs_64555064,2.88,1,,,VOID,
+2026-10-01,fav,rac_32299396948,Newcastle (AW),8:30,Just Typical,hrs_40225906,3.5,1,,,LOST,3.25
+2026-10-01,fav,rac_32299422129,Salisbury,5:25,Dialstone,hrs_65974678,3.75,1,,,LOST,3.75
+2026-10-01,fav,rac_32299404696,Nottingham,3:08,Thi Qar,hrs_17390340247,1.3,0,,,WON,1.33
+2026-10-01,fav,rac_32299427940,Southwell,3:25,Moments Away,hrs_53148585,1.53,0,,,LOST,1.91
+2026-10-01,fav,rac_32299325279,Bellewstown,1:35,White Sand Beach,hrs_54842627,1.67,0,,,WON,1.83
+2026-10-01,fav,rac_32299323342,Bellewstown,1:00,Cromane,hrs_64846838,1.83,0,,,LOST,2.75
+2026-10-01,fav,rac_32299385326,Newcastle (AW),5:30,Saint of Seville,hrs_17392223905,1.91,0,,,WON,2.00
+2026-10-01,fav,rac_32299406633,Nottingham,3:43,Kaindy,hrs_57654331,1.91,0,,,WON,2.00
+2026-10-01,fav,rac_32299890883,Salisbury,4:55,Sintra,hrs_61307169,1.91,0,,,LOST,2.25
+2026-10-01,fav,rac_32299393074,Newcastle (AW),7:30,Espanita,hrs_57373988,2.5,0,,,LOST,2.88
+2026-10-01,fav,rac_32299429877,Southwell,4:00,Crafty Gael,hrs_32795385,2.5,0,,,WON,2.25
+2026-10-01,fav,rac_32299331090,Bellewstown,3:20,Steel Magnolia,hrs_47555445,2.88,0,,,LOST,2.38
+2026-10-01,fav,rac_32299346586,Clonmel,4:42,St Lawrence's Well,hrs_47345375,3.0,0,,,LOST,5.50
+2026-10-01,fav,rac_32299383389,Newcastle (AW),5:00,L'Eagle Aid,hrs_38306240,3.5,0,,,LOST,3.00
+2026-10-01,fav,rac_32299391137,Newcastle (AW),7:00,Vanilla Skies,hrs_66005044,3.75,0,,,LOST,4.00
+2026-10-01,fav,rac_32299395011,Newcastle (AW),8:00,Dc Cogent,hrs_46913300,3.75,0,,,LOST,2.88
+2026-10-01,fav,rac_32299389200,Newcastle (AW),6:30,Sailor's Return,hrs_61012322,4.0,0,,,LOST,4.50
+2026-10-01,fav,rac_32299400822,Nottingham,1:58,Pride of Toledo,hrs_66198895,4.0,0,,,LOST,4.33
+2026-10-01,fav,rac_32299402759,Nottingham,2:33,Urban Warrior,hrs_52205167,4.0,0,,,LOST,2.50
+2026-10-01,fav,rac_32299327216,Bellewstown,2:10,Nephin Mountain,hrs_53841067,4.0,0,,,LOST,4.50
+2026-10-01,fav,rac_32299410507,Nottingham,4:50,Spirit of Applause,hrs_31214421,5.0,0,,,LOST,5.00
+2026-10-01,fav,rac_32299412444,Salisbury,2:04,Meticulously,hrs_17391815049,2.25,-1,,,WON,2.62
+2026-10-01,fav,rac_32299338838,Clonmel,2:24,Rocky's Howya,hrs_23033724,2.38,-1,,,LOST,2.10
+2026-10-01,fav,rac_32299433751,Southwell,5:10,Crack Ops,hrs_55177724,2.5,-1,,,LOST,3.00
+2026-10-01,fav,rac_32299414381,Salisbury,2:39,Kamaal,hrs_64712928,3.5,-1,,,WON,3.75
+2026-10-01,fav,rac_32299342712,Clonmel,3:34,Sallap,hrs_45568397,3.5,-1,,,LOST,4.33
+2026-10-01,fav,rac_32299418255,Salisbury,3:49,Brosay,hrs_40225717,4.0,-1,,,LOST,6.00
+2026-10-01,fav,rac_32299892820,Bellewstown,4:30,Lily Parr,hrs_46265415,4.0,-1,,,LOST,4.00
+2026-10-01,fav,rac_32299336901,Clonmel,1:49,Dairy Force,hrs_38288453,4.0,-1,,,WON,3.75
+2026-10-01,fav,rac_32299340775,Clonmel,2:59,Vargas,hrs_17390100357,4.0,-1,,,LOST,5.50
+2026-10-01,fav,rac_32299431814,Southwell,4:35,King of The Road,hrs_37702259,4.5,-1,,,LOST,5.00
+2026-10-01,fav,rac_32299334964,Bellewstown,5:05,Autocrat,hrs_31069185,4.5,-1,,,WON,4.00
+2026-10-01,fav,rac_32299348523,Clonmel,5:17,Technology,hrs_28294490,6.0,-1,,,LOST,9.50
+2026-10-01,fav,rac_32299344649,Clonmel,4:09,Land Of Punt,hrs_50622390,4.0,-2,,,LOST,4.33
+2026-10-01,fav,rac_32299408570,Nottingham,4:18,Celestias Comet,hrs_45855299,7.0,-2,,,LOST,5.00
+2026-10-01,fav,rac_32299420192,Salisbury,4:24,Bnaider,hrs_55634243,2.5,-3,,,LOST,3.50
+2026-10-01,fav,rac_32299888946,Salisbury,1:30,Yamana,hrs_17391113110,2.38,,,,LOST,2.62
