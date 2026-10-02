@@ -194,3 +194,60 @@ date,line,race_id,course,off,horse,horse_id,price,score,cleared,confidence,resul
 2026-10-01,fav,rac_32299408570,Nottingham,4:18,Celestias Comet,hrs_45855299,7.0,-2,,,LOST,5.00
 2026-10-01,fav,rac_32299420192,Salisbury,4:24,Bnaider,hrs_55634243,2.5,-3,,,LOST,3.50
 2026-10-01,fav,rac_32299888946,Salisbury,1:30,Yamana,hrs_17391113110,2.38,,,,LOST,2.62
+2026-10-02,filter,rac_32299559656,Wolverhampton (AW),4:25,Elsass,hrs_44975539,3.0,2,0,33.2,LOST,2.75
+2026-10-02,chase,rac_32299530601,Hexham,4:33,Soldier In Mayo,hrs_45855355,2.0,1,,,LOST,2.20
+2026-10-02,chase,rac_32299532538,Hexham,5:08,Stay Hopeful,hrs_46483024,2.2,0,,,WON,1.91
+2026-10-02,races_all,rac_32299650695,Dundalk (AW),8:30,Aviatrice,hrs_40745887,2.63,1,,,LOST,1.91
+2026-10-02,races,rac_32299650695,Dundalk (AW),8:30,Aviatrice,hrs_40745887,2.63,1,,,LOST,1.91
+2026-10-02,races_all,rac_32299518979,Ascot,4:45,Cranachan,hrs_58843855,2.0,0,,,VOID,
+2026-10-02,races,rac_32299518979,Ascot,4:45,Cranachan,hrs_58843855,2.0,0,,,VOID,
+2026-10-02,races_all,rac_32299644884,Dundalk (AW),7:00,Littlepacer,hrs_65287152,2.63,0,,,LOST,4.50
+2026-10-02,v3,rac_32299530601,Hexham,4:33,Soldier In Mayo,hrs_45855355,2.0,2,1,48.2,LOST,2.20
+2026-10-02,v3,rac_32299650695,Dundalk (AW),8:30,Aviatrice,hrs_40745887,2.63,2,1,47.1,LOST,1.91
+2026-10-02,fav,rac_32299559656,Wolverhampton (AW),4:25,Elsass,hrs_44975539,3.0,2,,,LOST,2.75
+2026-10-02,fav,rac_32299530601,Hexham,4:33,Soldier In Mayo,hrs_45855355,2.0,1,,,LOST,2.20
+2026-10-02,fav,rac_32299538349,Newcastle (AW),5:45,Noozhaa,hrs_17391768114,2.25,1,,,WON,1.83
+2026-10-02,fav,rac_32299546097,Newcastle (AW),7:45,Izzari,hrs_42520926,2.25,1,,,LOST,2.10
+2026-10-02,fav,rac_32299522853,Hexham,2:13,Dante's Inferno,hrs_37505223,2.38,1,,,LOST,2.20
+2026-10-02,fav,rac_32299654569,Gowran Park,2:31,Royal Hollow,hrs_35596288,2.5,1,,,LOST,2.25
+2026-10-02,fav,rac_32299528664,Hexham,3:58,Frisky Whiskey,hrs_58469236,2.63,1,,,WON,3.00
+2026-10-02,fav,rac_32299650695,Dundalk (AW),8:30,Aviatrice,hrs_40745887,2.63,1,,,LOST,1.91
+2026-10-02,fav,rac_32299524790,Hexham,2:48,Mr McLoughlan,hrs_50433229,2.88,1,,,WON,2.62
+2026-10-02,fav,rac_32299548034,Newcastle (AW),8:15,Blazing Son,hrs_21648984,3.75,1,,,WON,4.50
+2026-10-02,fav,rac_32299947056,Wolverhampton (AW),5:55,Honour Your Dreams,hrs_29496453,6.0,1,,,LOST,5.00
+2026-10-02,fav,rac_32299553845,Wolverhampton (AW),2:41,Inkberrow,hrs_17392174884,1.33,0,,,WON,1.22
+2026-10-02,fav,rac_32300040032,Dundalk (AW),6:30,Golden Ring,hrs_65101421,1.57,0,,,WON,1.40
+2026-10-02,fav,rac_32299515105,Ascot,3:35,Infraad,hrs_57816164,1.67,0,,,WON,1.67
+2026-10-02,fav,rac_32299563530,Wolverhampton (AW),5:25,Enchanted Queen,hrs_55947682,1.67,0,,,WON,1.44
+2026-10-02,fav,rac_32299520916,Hexham,1:38,Ride Like A Girl,hrs_46547165,1.8,0,,,WON,1.67
+2026-10-02,fav,rac_32299518979,Ascot,4:45,Cranachan,hrs_58843855,2.0,0,,,VOID,
+2026-10-02,fav,rac_32299540286,Newcastle (AW),6:15,Asheyra,hrs_17389815618,2.0,0,,,LOST,2.10
+2026-10-02,fav,rac_32299532538,Hexham,5:08,Stay Hopeful,hrs_46483024,2.2,0,,,WON,1.91
+2026-10-02,fav,rac_32299549971,Wolverhampton (AW),1:31,Arlecchino's Rex,hrs_41565062,2.38,0,,,LOST,2.62
+2026-10-02,fav,rac_32299511231,Ascot,2:25,Pink Larkspur,hrs_17391989230,2.5,0,,,WON,2.75
+2026-10-02,fav,rac_32299644884,Dundalk (AW),7:00,Littlepacer,hrs_65287152,2.63,0,,,LOST,4.50
+2026-10-02,fav,rac_32299945119,Newcastle (AW),4:05,Koko Blue,hrs_44105376,3.0,0,,,WON,2.75
+2026-10-02,fav,rac_32299641010,Dundalk (AW),5:30,Sir Les Patterson,hrs_38018421,3.25,0,,,LOST,4.00
+2026-10-02,fav,rac_32299646821,Dundalk (AW),7:30,Salt Lake,hrs_63033992,3.5,0,,,LOST,2.50
+2026-10-02,fav,rac_32299536412,Newcastle (AW),5:15,Son of A Fish,hrs_65974566,3.75,0,,,LOST,5.50
+2026-10-02,fav,rac_32299551908,Wolverhampton (AW),2:06,Lowcountry,hrs_17391117282,3.75,0,,,LOST,4.33
+2026-10-02,fav,rac_32299557719,Wolverhampton (AW),3:51,Campenaerts,hrs_50434272,3.75,0,,,LOST,3.75
+2026-10-02,fav,rac_32299561593,Wolverhampton (AW),4:55,Star of Mali,hrs_54432532,3.75,0,,,WON,3.75
+2026-10-02,fav,rac_32299542223,Newcastle (AW),6:45,Finn Ironside,hrs_36738646,4.0,0,,,WON,3.75
+2026-10-02,fav,rac_32299555782,Wolverhampton (AW),3:16,Diamondinthedark,hrs_58316314,4.5,0,,,LOST,5.00
+2026-10-02,fav,rac_32299526727,Hexham,3:23,Ballynoe Boy,hrs_48052480,2.25,-1,,,WON,2.88
+2026-10-02,fav,rac_32299639073,Dundalk (AW),5:00,Caffu Zafeen,hrs_41876688,2.25,-1,,,WON,2.50
+2026-10-02,fav,rac_32299652632,Gowran Park,1:21,Michonne,hrs_45226447,2.25,-1,,,LOST,2.88
+2026-10-02,fav,rac_32299642947,Dundalk (AW),6:00,Big Negotiator,hrs_64780807,2.63,-1,,,LOST,2.50
+2026-10-02,fav,rac_32299648758,Dundalk (AW),8:00,Emiza,hrs_17389583029,2.63,-1,,,LOST,2.75
+2026-10-02,fav,rac_32299509294,Ascot,1:50,Tex,hrs_44785916,3.5,-1,,,LOST,4.00
+2026-10-02,fav,rac_32299664254,Gowran Park,5:20,Long'way,hrs_17390482095,3.5,-1,,,LOST,4.50
+2026-10-02,fav,rac_32299534475,Newcastle (AW),4:40,Haltonwood,hrs_61943378,4.0,-1,,,LOST,3.75
+2026-10-02,fav,rac_32299517042,Ascot,4:10,Far Above Dream,hrs_50590358,4.5,-1,,,LOST,4.33
+2026-10-02,fav,rac_32299662317,Gowran Park,4:50,Ocean Murphy,hrs_57654562,4.5,-1,,,LOST,4.00
+2026-10-02,fav,rac_32299544160,Newcastle (AW),7:15,Soul Warrior,hrs_54998027,5.0,-1,,,LOST,10.00
+2026-10-02,fav,rac_32299658443,Gowran Park,3:41,Getaway Charlie,hrs_24555454,5.0,-1,,,LOST,4.50
+2026-10-02,fav,rac_32300038095,Gowran Park,1:56,The Captain's Word,hrs_57878170,2.63,-2,,,WON,1.91
+2026-10-02,fav,rac_32299513168,Ascot,3:00,Cockade,hrs_59186225,3.25,-2,,,LOST,3.00
+2026-10-02,fav,rac_32299656506,Gowran Park,3:06,Mossy Way,hrs_47620874,3.5,-2,,,LOST,2.00
+2026-10-02,fav,rac_32299660380,Gowran Park,4:16,Comanche Moon,hrs_41090917,8.0,-2,,,VOID,

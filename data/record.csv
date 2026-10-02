@@ -86,3 +86,4 @@ date,engine,course,race_id,horse,banked_price,sp_dec,won,confident,status,void_r
 2026-09-29,filter,Ayr,rac_32299183878,Time Turner,3.0,3.5,0,0,LOST,,Time Turner,3.5,0
 2026-09-30,filter,Musselburgh,rac_32299257484,Stay On Tab,2.25,,-2,0,VOID,Stay On Tab absent from the result's runners — non-runner/withdrawn,Stay On Tab,,-2
 2026-10-01,filter,Salisbury,rac_32299416318,Social Symbol,2.25,2.38,0,0,LOST,,Social Symbol,2.38,0
+2026-10-02,filter,Wolverhampton (AW),rac_32299559656,Elsass,3.0,2.75,0,0,LOST,,Elsass,2.75,0
