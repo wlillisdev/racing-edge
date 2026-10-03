@@ -450,9 +450,18 @@ def _rclass(v) -> int | None:
     return int(d) if d else None
 
 
-def last_run_from_history(rows: list[dict], before: str) -> LastRun | None:
+def last_run_from_history(rows: list[dict], before: str,
+                          horse_id: str = "") -> LastRun | None:
     """The horse's most recent run STRICTLY BEFORE today, out of the history
-    door. Returns None when the door gave nothing — unread, never guessed."""
+    door. Returns None when the door gave nothing — unread, never guessed.
+
+    THE DOOR RETURNS RACES, NOT RUNS (found 2026-10-03 by the calibration
+    audit): each history row is the whole race, with this horse's own
+    position, beaten distance and comment nested in runners[] by horse_id.
+    Reading them from the top level found nothing, so won-last-time,
+    beaten-under-a-length, beaten-far and every comment dot never fired
+    live: across ~200 live favourites from 27 Sep the score never passed +2.
+    A flat row (no runners list) is still read as before."""
     runs = []
     for r in rows or []:
         d = str(r.get("date") or "")[:10]
@@ -462,10 +471,17 @@ def last_run_from_history(rows: list[dict], before: str) -> LastRun | None:
     if not runs:
         return None
     d, r = max(runs, key=lambda t: t[0])
-    return LastRun(position=str(r.get("position") or ""),
-                   beaten=_f(r.get("ovr_btn") if r.get("ovr_btn") not in (None, "")
-                             else r.get("btn")),
-                   comment=str(r.get("comment") or ""),
+    me = r
+    runners = r.get("runners")
+    if isinstance(runners, list):
+        me = next((x for x in runners if str(x.get("horse_id") or "") == horse_id), None) \
+            if horse_id else None
+        if me is None:
+            return None              # the race is there but not this horse: unread
+    return LastRun(position=str(me.get("position") or ""),
+                   beaten=_f(me.get("ovr_btn") if me.get("ovr_btn") not in (None, "")
+                             else me.get("btn")),
+                   comment=str(me.get("comment") or ""),
                    days_since=_days_between(before, d),
                    rclass=_rclass(r.get("class")))
 
@@ -498,7 +514,7 @@ def daily_list(day: str = "today", floor: int = FLOOR, client=None) -> list[dict
             hist = client.horse_results(hid, limit=6) if hid else []
         except Exception:
             hist = []                    # a dead door is unread, not bad
-        last = last_run_from_history(hist, str(c.get("date") or day))
+        last = last_run_from_history(hist, str(c.get("date") or day), hid)
         # price= carries his odds-on bar into the LIVE list. It was missing
         # from 20 to 27 Sep: the grader ruled odds-on out, the 07:30 mail did
         # not, and it named odds-on favourites on four days of five.
