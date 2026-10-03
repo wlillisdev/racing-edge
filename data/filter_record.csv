@@ -251,3 +251,59 @@ date,line,race_id,course,off,horse,horse_id,price,score,cleared,confidence,resul
 2026-10-02,fav,rac_32299513168,Ascot,3:00,Cockade,hrs_59186225,3.25,-2,,,LOST,3.00
 2026-10-02,fav,rac_32299656506,Gowran Park,3:06,Mossy Way,hrs_47620874,3.5,-2,,,LOST,2.00
 2026-10-02,fav,rac_32299660380,Gowran Park,4:16,Comanche Moon,hrs_41090917,8.0,-2,,,VOID,
+2026-10-03,filter,rac_32299699120,Southwell (AW),4:45,Captain Cairney,hrs_56127673,3.0,2,0,33.2,LOST,2.50
+2026-10-03,chase,rac_32299780474,Gowran Park,3:05,Blood Destiny,hrs_29690759,2.1,1,,,LOST,2.25
+2026-10-03,chase,rac_32299675876,Fontwell,2:02,Broadway Honey,hrs_50590253,2.38,1,,,WON,2.38
+2026-10-03,chase,rac_32299681687,Fontwell,3:45,Move With The Beat,hrs_34745928,3.5,0,,,LOST,3.50
+2026-10-03,chase,rac_32299788222,Gowran Park,5:25,Its Bilbo,hrs_40075924,3.5,-1,,,LOST,3.00
+2026-10-03,chase,rac_32299786285,Gowran Park,4:50,Arcadian Emperor,hrs_51123870,3.5,-2,,,LOST,1.67
+2026-10-03,races_all,rac_32299670065,Ascot,2:25,Tenability,hrs_52931130,2.0,1,,,LOST,2.20
+2026-10-03,races,rac_32299670065,Ascot,2:25,Tenability,hrs_52931130,2.0,1,,,LOST,2.20
+2026-10-03,races_all,rac_32299780474,Gowran Park,3:05,Blood Destiny,hrs_29690759,2.1,1,,,LOST,2.25
+2026-10-03,races,rac_32299780474,Gowran Park,3:05,Blood Destiny,hrs_29690759,2.1,1,,,LOST,2.25
+2026-10-03,races_all,rac_32299689435,Newmarket,12:25,Hoseki,hrs_58065595,2.75,0,,,WON,2.38
+2026-10-03,v3,rac_32299670065,Ascot,2:25,Tenability,hrs_52931130,2.0,3,1,40.6,LOST,2.20
+2026-10-03,v3,rac_32299712679,Southwell (AW),8:30,Shopaholic,hrs_57686902,2.38,2,1,38.6,LOST,2.62
+2026-10-03,fav,rac_32299685561,Fontwell,5:00,Glance of Glory,hrs_51988937,2.63,2,,,WON,3.75
+2026-10-03,fav,rac_32299699120,Southwell (AW),4:45,Captain Cairney,hrs_56127673,3.0,2,,,LOST,2.50
+2026-10-03,fav,rac_32299670065,Ascot,2:25,Tenability,hrs_52931130,2.0,1,,,LOST,2.20
+2026-10-03,fav,rac_32299780474,Gowran Park,3:05,Blood Destiny,hrs_29690759,2.1,1,,,LOST,2.25
+2026-10-03,fav,rac_32299437625,Redcar,1:42,Charted Course,hrs_64877323,2.2,1,,,WON,2.50
+2026-10-03,fav,rac_32299675876,Fontwell,2:02,Broadway Honey,hrs_50590253,2.38,1,,,WON,2.38
+2026-10-03,fav,rac_32299784348,Gowran Park,4:15,Fou De Toi,hrs_412711614,2.38,1,,,WON,2.10
+2026-10-03,fav,rac_32299697183,Newmarket,3:50,Starlight Lass,hrs_65519699,3.25,1,,,LOST,4.50
+2026-10-03,fav,rac_32299435688,Newmarket,1:35,Blue Bolt,hrs_51523920,1.3,0,,,WON,1.25
+2026-10-03,fav,rac_32299776600,Gowran Park,1:55,Witches Familiar,hrs_65069053,1.5,0,,,WON,1.40
+2026-10-03,fav,rac_11837371,Newmarket,1:00,Night In Vegas,hrs_62169471,1.67,0,,,WON,1.62
+2026-10-03,fav,rac_32299679750,Fontwell,3:10,Salkadan,hrs_56713258,1.83,0,,,LOST,1.73
+2026-10-03,fav,rac_32299693309,Newmarket,2:45,Kicking Bear,hrs_17390107658,1.83,0,,,WON,2.62
+2026-10-03,fav,rac_32299706868,Southwell (AW),7:00,Cloud Forest,hrs_64556240,2.1,0,,,WON,2.00
+2026-10-03,fav,rac_32299704931,Southwell (AW),6:30,Dontworryaboutme,hrs_62169401,2.38,0,,,WON,1.83
+2026-10-03,fav,rac_32299712679,Southwell (AW),8:30,Shopaholic,hrs_57686902,2.38,0,,,LOST,2.62
+2026-10-03,fav,rac_32299774663,Gowran Park,1:20,El Cairos,hrs_40880042,2.38,0,,,WON,2.38
+2026-10-03,fav,rac_32299689435,Newmarket,12:25,Hoseki,hrs_58065595,2.75,0,,,WON,2.38
+2026-10-03,fav,rac_32299782411,Gowran Park,3:40,Vicar Street,hrs_43637132,2.75,0,,,LOST,2.50
+2026-10-03,fav,rac_32300171748,Redcar,2:50,Lady Hornblower,hrs_55148583,3.25,0,,,WON,3.12
+2026-10-03,fav,rac_32299681687,Fontwell,3:45,Move With The Beat,hrs_34745928,3.5,0,,,LOST,3.50
+2026-10-03,fav,rac_32299687498,Fontwell,5:35,County Champs,hrs_39978197,3.75,0,,,LOST,4.00
+2026-10-03,fav,rac_32299691372,Newmarket,2:10,Evanesco,hrs_54337283,3.75,0,,,LOST,4.33
+2026-10-03,fav,rac_32299439562,Redcar,2:17,Bradbury,hrs_55851425,3.75,0,,,LOST,3.75
+2026-10-03,fav,rac_32299441499,Redcar,3:55,Sondad,hrs_37316748,4.0,0,,,WON,4.50
+2026-10-03,fav,rac_32299701057,Southwell (AW),5:20,Prince Kameo,hrs_64167964,4.0,0,,,LOST,5.00
+2026-10-03,fav,rac_32299710742,Southwell (AW),8:00,South Parade,hrs_35864444,5.5,0,,,LOST,5.00
+2026-10-03,fav,rac_32299666191,Ascot,1:15,So Regal,hrs_59025400,2.1,-1,,,WON,2.10
+2026-10-03,fav,rac_32299677813,Fontwell,2:37,Eben Zaabeel,hrs_37192295,2.38,-1,,,LOST,2.88
+2026-10-03,fav,rac_32299672002,Ascot,3:00,Division,hrs_55882386,2.5,-1,,,LOST,2.62
+2026-10-03,fav,rac_32299447310,Redcar,5:40,Mo of Cairo,hrs_53181548,2.63,-1,,,LOST,2.75
+2026-10-03,fav,rac_32299708805,Southwell (AW),7:30,New Image,hrs_30469866,2.63,-1,,,WON,2.62
+2026-10-03,fav,rac_32299668128,Ascot,1:50,Tuco Salamanca,hrs_43950984,3.25,-1,,,LOST,3.75
+2026-10-03,fav,rac_32299788222,Gowran Park,5:25,Its Bilbo,hrs_40075924,3.5,-1,,,LOST,3.00
+2026-10-03,fav,rac_32299683624,Fontwell,4:25,Birthday Angel,hrs_29226981,4.0,-1,,,WON,4.00
+2026-10-03,fav,rac_32299702994,Southwell (AW),5:55,Nostrum,hrs_31189599,4.0,-1,,,WON,4.00
+2026-10-03,fav,rac_32299445373,Redcar,5:10,Pace Attack,hrs_62908510,4.5,-1,,,LOST,7.00
+2026-10-03,fav,rac_32299449247,Ascot,3:35,Thunder Call,hrs_57406937,5.0,-1,,,LOST,7.00
+2026-10-03,fav,rac_32299673939,Ascot,4:10,Ancient State,hrs_48414100,5.0,-1,,,LOST,4.00
+2026-10-03,fav,rac_32299443436,Redcar,4:35,Welbury,hrs_53602003,5.5,-1,,,LOST,5.00
+2026-10-03,fav,rac_32299778537,Gowran Park,2:30,Cobra Queen,hrs_34361544,6.0,-1,,,LOST,6.00
+2026-10-03,fav,rac_32292164190,Redcar,3:20,Satellite of Love,hrs_63810894,2.63,-2,,,WON,2.00
+2026-10-03,fav,rac_32299786285,Gowran Park,4:50,Arcadian Emperor,hrs_51123870,3.5,-2,,,LOST,1.67
