@@ -231,3 +231,31 @@ def test_v3_never_sorts_a_novice_or_maiden_race(monkeypatch):
     cards = [{"race_id": "n1", "race_name": "EBF Novice Stakes"},
              {"race_id": "h1", "race_name": "Class 3 Handicap"}]
     assert [p["horse"] for p in F.model_picks(cards, "2026-09-28")] == ["Handicapper"]
+
+
+def test_the_filter_bank_writes_the_0730_board_snapshot(tmp_path, monkeypatch):
+    """3 Oct: the 07:30 snapshot was written only by the old engine's run, so
+    since the filter took over the 12:30 board read found no morning prices.
+    The filter's --bank run writes it now, in the format the 12:30 read uses."""
+    import json
+    from racing_edge.study.naplog import NapLog
+    import racing_edge.cli._common as C
+    import racing_edge.domain.units as U
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("NAP_PICKER", "filter")
+    card = {"race_id": "rac_9", "course": "Ayr", "off_time": "2:00", "date": "2026-10-04",
+            "race_status": "declared", "race_class": "Class 4", "race_name": "Handicap",
+            "type": "Flat", "region": "GB",
+            "runners": [{"horse_id": f"hrs_{i}", "horse": f"H{i}",
+                         "odds": [{"bookmaker": "A", "decimal": str(2.5 + i)}]} for i in range(4)]}
+
+    def fake_list(day, floor):
+        F.daily_list.last_cards = [card]
+        return []
+    monkeypatch.setattr(F, "daily_list", fake_list)
+    monkeypatch.setattr(F, "model_picks", lambda cards, day: [])
+    monkeypatch.setattr(C, "open_nap_log", lambda: NapLog(tmp_path / "nap.db"))
+    monkeypatch.setattr(U, "uk_today", lambda: date(2026, 10, 4))
+    F.main(["--day", "today", "--bank"])
+    snap = json.loads((tmp_path / "data/market_snapshots/2026-10-04-0730.json").read_text())
+    assert snap["rac_9"]["runners"]["hrs_0"] == ["H0", 2.5]

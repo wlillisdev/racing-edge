@@ -881,6 +881,20 @@ def main(argv=None) -> int:
         print(render_record())
         return 0
     rows = daily_list(a.day, a.floor)
+    if a.bank:
+        # THE 07:30 BOARD SNAPSHOT (fixed 2026-10-03). It was written only by
+        # the old engine's nap run, so since the filter took over on 27 Sep
+        # the 12:30 check found no morning prices and its board read stopped.
+        try:
+            from racing_edge.cli.nap import _board_snapshot, _cards_prices
+            from racing_edge.data.normalise import racecards_from_raw
+            from racing_edge.domain.units import uk_today
+            _board_snapshot(uk_today(), "0730", _cards_prices(racecards_from_raw(
+                {"racecards": getattr(daily_list, "last_cards", []) or []})))
+            print("  board snapshot 0730 written", flush=True)
+        except Exception as exc:
+            print(f"  ⚠ board snapshot 0730 NOT written: {exc.__class__.__name__}: "
+                  f"{str(exc)[:80]}", flush=True)
     body = render_list(rows, a.floor)
     head = ""
     mpicks, v3_picks = None, False
