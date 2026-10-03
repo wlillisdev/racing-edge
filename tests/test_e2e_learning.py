@@ -69,6 +69,11 @@ def test_three_day_learning_loop(tmp_path, monkeypatch):
 
     day1, day2, day3, day10 = (date(2026, 9, 1), date(2026, 9, 2),
                                date(2026, 9, 3), date(2026, 9, 10))
+    # THE TEST'S OWN CLOCK (2026-10-03): the tracked-clue store keeps clues
+    # for 28 days against the REAL date, so this fixed-date story began
+    # failing by itself on 29 Sep. The loop is told the day it is living.
+    import racing_edge.study.nuances as _nu
+    monkeypatch.setattr(_nu, "uk_today", lambda: day1)
 
     # ================================================================ DAY 1
     log.record(day=day1, race_id="rac_1", course="Ripon", horse="Nap",
