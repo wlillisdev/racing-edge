@@ -471,3 +471,33 @@ def test_the_bad_races_are_out():
     assert "4.00" in rows["long"]["reasons"][0] and rows["long"]["ruled_out"]
     assert not rows["good"]["ruled_out"]
     assert [p["race_id"] for p in F.todays_picks(list(rows.values()))] == ["good"]
+
+
+def test_the_price_is_the_market_not_the_first_bookmaker():
+    """3 Oct: the first bookmaker in the list quoted 'SP' for every runner,
+    so odds[0] priced nothing and no race qualified. The price is the median
+    of every bookmaker's numeric quote; 'SP' and blanks are skipped."""
+    assert F.market_price([{"bookmaker": "10 Bet", "decimal": "SP"},
+                           {"decimal": "3.0"}, {"decimal": "2.5"}, {"decimal": "2.75"}]) == 2.75
+    assert F.market_price([{"decimal": "SP"}, {"decimal": ""}]) is None
+    assert F.market_price([{"decimal": "4.0"}, {"decimal": "3.0"}]) == 3.5
+
+    class Client:
+        def racecards(self, day):
+            def odds(*prices):
+                return [{"bookmaker": "10 Bet", "decimal": "SP"}] + [{"decimal": p} for p in prices]
+            return {"racecards": [{"race_id": "r1", "course": "Ayr", "off_time": "2:00",
+                                   "date": "2026-10-03", "race_status": "declared",
+                                   "race_class": "Class 4", "race_name": "Handicap", "type": "Flat",
+                                   "runners": [
+                                       {"horse_id": "a", "horse": "Market Fav", "odds": odds("2.5", "2.6")},
+                                       {"horse_id": "b", "horse": "One Firm Short", "odds": odds("2.4", "3.4")},
+                                       {"horse_id": "c", "horse": "C", "odds": odds("6", "7")},
+                                       {"horse_id": "d", "horse": "D", "odds": odds("9", "10")}]}]}
+
+        def horse_results(self, hid, limit=6):
+            return []
+
+    rows = F.daily_list("today", client=Client())
+    assert len(rows) == 1, "the race must stay priced when the first bookmaker says SP"
+    assert rows[0]["horse"] == "Market Fav" and rows[0]["price"] == 2.55

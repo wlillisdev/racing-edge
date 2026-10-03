@@ -248,8 +248,8 @@ def race_from_card(c: dict) -> dict:
     SP stood in training (the one input that cannot be the same)."""
     runners = []
     for x in c.get("runners") or []:
-        odds = x.get("odds") or []
-        dec = _fl(odds[0].get("decimal")) if odds else None
+        from racing_edge.school.favfilter import market_price
+        dec = market_price(x.get("odds"))
         runners.append({"horse_id": str(x.get("horse_id") or ""),
                         "horse": x.get("horse") or "",
                         "sp_dec": dec or 0.0, "draw": x.get("draw") or "",

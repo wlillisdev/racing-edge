@@ -423,6 +423,20 @@ def _f(v):
         return None
 
 
+def market_price(odds) -> float | None:
+    """The market's price for a runner: the MEDIAN of every bookmaker's
+    numeric decimal, skipping 'SP' and blanks. Fixed 2026-10-03: the list
+    read odds[0] — the first bookmaker only — and on 3 Oct that bookmaker
+    quoted 'SP' for every runner, so no race had four priced runners and the
+    favourite was chosen from one firm's prices on every other day."""
+    vals = sorted(v for v in (_f((o or {}).get("decimal")) for o in (odds or []))
+                  if v and v > 1.0)
+    if not vals:
+        return None
+    m = len(vals) // 2
+    return vals[m] if len(vals) % 2 else (vals[m - 1] + vals[m]) / 2
+
+
 def _days_between(a: str, b: str) -> int | None:
     from datetime import date
     try:
@@ -472,8 +486,7 @@ def daily_list(day: str = "today", floor: int = FLOOR, client=None) -> list[dict
         runners = c.get("runners") or []
         priced = []
         for r in runners:
-            odds = r.get("odds") or []
-            dec = _f(odds[0].get("decimal")) if odds else None
+            dec = market_price(r.get("odds"))
             if dec and dec > 1.0:
                 priced.append((dec, r))
         if len(priced) < 4:
