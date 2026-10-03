@@ -471,3 +471,52 @@ def test_the_bad_races_are_out():
     assert "4.00" in rows["long"]["reasons"][0] and rows["long"]["ruled_out"]
     assert not rows["good"]["ruled_out"]
     assert [p["race_id"] for p in F.todays_picks(list(rows.values()))] == ["good"]
+
+
+def test_the_price_is_the_market_not_the_first_bookmaker():
+    """3 Oct: the first bookmaker in the list quoted 'SP' for every runner,
+    so odds[0] priced nothing and no race qualified. The price is the median
+    of every bookmaker's numeric quote; 'SP' and blanks are skipped."""
+    assert F.market_price([{"bookmaker": "10 Bet", "decimal": "SP"},
+                           {"decimal": "3.0"}, {"decimal": "2.5"}, {"decimal": "2.75"}]) == 2.75
+    assert F.market_price([{"decimal": "SP"}, {"decimal": ""}]) is None
+    assert F.market_price([{"decimal": "4.0"}, {"decimal": "3.0"}]) == 3.5
+
+    class Client:
+        def racecards(self, day):
+            def odds(*prices):
+                return [{"bookmaker": "10 Bet", "decimal": "SP"}] + [{"decimal": p} for p in prices]
+            return {"racecards": [{"race_id": "r1", "course": "Ayr", "off_time": "2:00",
+                                   "date": "2026-10-03", "race_status": "declared",
+                                   "race_class": "Class 4", "race_name": "Handicap", "type": "Flat",
+                                   "runners": [
+                                       {"horse_id": "a", "horse": "Market Fav", "odds": odds("2.5", "2.6")},
+                                       {"horse_id": "b", "horse": "One Firm Short", "odds": odds("2.4", "3.4")},
+                                       {"horse_id": "c", "horse": "C", "odds": odds("6", "7")},
+                                       {"horse_id": "d", "horse": "D", "odds": odds("9", "10")}]}]}
+
+        def horse_results(self, hid, limit=6):
+            return []
+
+    rows = F.daily_list("today", client=Client())
+    assert len(rows) == 1, "the race must stay priced when the first bookmaker says SP"
+    assert rows[0]["horse"] == "Market Fav" and rows[0]["price"] == 2.55
+
+
+def test_the_last_run_is_read_from_the_race_shaped_history_the_door_returns():
+    """3 Oct: the history door returns whole RACES with the horse's own run
+    nested in runners[]. Reading the top level found no position, no beaten
+    distance and no comment, so the form dots never fired live (scores never
+    passed +2 on ~200 favourites). The horse's own runner is read now."""
+    rows = [{"date": "2026-09-20", "class": "Class 4", "course": "Ayr", "runners": [
+                {"horse_id": "hrs_other", "position": "1", "ovr_btn": "0", "comment": "made all"},
+                {"horse_id": "hrs_me", "position": "2", "ovr_btn": "0.5",
+                 "comment": "kept on strongly, just held"}]},
+            {"date": "2026-08-01", "class": "Class 3", "runners": [
+                {"horse_id": "hrs_me", "position": "9", "ovr_btn": "20"}]}]
+    last = F.last_run_from_history(rows, "2026-10-03", "hrs_me")
+    assert (last.position, last.beaten, last.rclass) == ("2", 0.5, 4)
+    assert "kept on" in last.comment
+    s = F.score_favourite(last, rclass=5, field_size=6, price=2.5)
+    assert s.score >= 4, s.reasons          # beaten <1L, finished well, class drop, small field
+    assert F.last_run_from_history(rows, "2026-10-03", "hrs_nobody") is None
