@@ -4,11 +4,11 @@ Derived from `data/nap.db` by `PYTHONPATH=src python -m racing_edge.school.recor
 
 Level stakes, one point a bet, settled at SP. A pass is shown as a position, not a missing day. The favourite line is the benchmark the ledger already keeps on the same races — it is the thing to beat, never the picker.
 
-**71 settled** · 18 wins · strike **25.4%** · P/L **-4.37 pts** · ROI **-6.2%**
+**72 settled** · 19 wins · strike **26.4%** · P/L **-3.12 pts** · ROI **-4.3%**
 
-**The favourite on the same races:** 38 settled · 13 wins · strike 34.2% · P/L -6.36 pts · ROI -16.7%
+**The favourite on the same races:** 39 settled · 14 wins · strike 35.9% · P/L -5.11 pts · ROI -13.1%
 
-(89 days banked · 71 bets · 13 passes · 5 voids · 0 pending)
+(90 days banked · 72 bets · 13 passes · 5 voids · 0 pending)
 
 | date | eng | course | horse | price | SP | result | fav | fav SP | fav |
 |---|---|---|---|---|---|---|---|---|---|
@@ -101,3 +101,4 @@ Level stakes, one point a bet, settled at SP. A pass is shown as a position, not
 | 2026-10-01 | filter | Salisbury | Social Symbol | 2.25 | 2.38 | LOST | Social Symbol | 2.38 | lost |
 | 2026-10-02 | filter | Wolverhampton (AW) | Elsass | 3.00 | 2.75 | LOST | Elsass | 2.75 | lost |
 | 2026-10-03 | filter | Southwell (AW) | Captain Cairney | 3.00 | 2.50 | LOST | Captain Cairney | 2.50 | lost |
+| 2026-10-04 | filter | Kelso | Upfordebate | 2.50 | 2.25 | WON | Upfordebate | 2.25 | WON |

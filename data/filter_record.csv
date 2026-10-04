@@ -307,3 +307,42 @@ date,line,race_id,course,off,horse,horse_id,price,score,cleared,confidence,resul
 2026-10-03,fav,rac_32299778537,Gowran Park,2:30,Cobra Queen,hrs_34361544,6.0,-1,,,LOST,6.00
 2026-10-03,fav,rac_32292164190,Redcar,3:20,Satellite of Love,hrs_63810894,2.63,-2,,,WON,2.00
 2026-10-03,fav,rac_32299786285,Gowran Park,4:50,Arcadian Emperor,hrs_51123870,3.5,-2,,,LOST,1.67
+2026-10-04,filter,rac_32299735923,Kelso,4:05,Upfordebate,hrs_38257191,2.5,3,0,34.9,WON,2.25
+2026-10-04,filter,rac_32299733986,Kelso,3:30,Ice Jet,hrs_44540727,3.5,3,0,34.9,VOID,
+2026-10-04,chase,rac_32299735923,Kelso,4:05,Upfordebate,hrs_38257191,2.5,3,,,WON,2.25
+2026-10-04,chase,rac_32299733986,Kelso,3:30,Ice Jet,hrs_44540727,3.5,3,,,VOID,
+2026-10-04,chase,rac_32299813403,Killarney,3:55,Kilbrin Rocco,hrs_35025473,4.25,1,,,WON,3.50
+2026-10-04,chase,rac_32299726238,Uttoxeter,4:56,Jo Arengeot Bey Aa,hrs_34652324,2.75,0,,,LOST,3.25
+2026-10-04,chase,rac_32299724301,Uttoxeter,4:20,Ask A Sainte,hrs_50339835,4.0,0,,,LOST,3.25
+2026-10-04,chase,rac_32299817277,Killarney,5:05,Cullenwaine,hrs_30469481,5.9,-2,,,LOST,7.00
+2026-10-04,races_all,rac_32299735923,Kelso,4:05,Upfordebate,hrs_38257191,2.5,3,,,WON,2.25
+2026-10-04,races,rac_32299735923,Kelso,4:05,Upfordebate,hrs_38257191,2.5,3,,,WON,2.25
+2026-10-04,v3,rac_32299735923,Kelso,4:05,Upfordebate,hrs_38257191,2.5,3,1,45.7,WON,2.25
+2026-10-04,v3,rac_32299794033,Curragh,2:30,Loughrea,hrs_57255100,2.63,2,1,33.2,LOST,1.91
+2026-10-04,fav,rac_32299730112,Kelso,2:20,Ballynoe Boy,hrs_48052480,2.5,3,,,VOID,
+2026-10-04,fav,rac_32299735923,Kelso,4:05,Upfordebate,hrs_38257191,2.5,3,,,WON,2.25
+2026-10-04,fav,rac_32299733986,Kelso,3:30,Ice Jet,hrs_44540727,3.5,3,,,VOID,
+2026-10-04,fav,rac_32299794033,Curragh,2:30,Loughrea,hrs_57255100,2.63,2,,,LOST,1.91
+2026-10-04,fav,rac_32299809529,Killarney,2:45,Lips Freedom,hrs_32896388,3.0,2,,,LOST,2.38
+2026-10-04,fav,rac_32299790159,Curragh,1:20,Pirate Anne Bonny,hrs_17392266668,2.5,1,,,WON,1.29
+2026-10-04,fav,rac_32299811466,Killarney,3:20,James The Brave,hrs_40786508,3.25,1,,,WON,4.00
+2026-10-04,fav,rac_32299813403,Killarney,3:55,Kilbrin Rocco,hrs_35025473,4.25,1,,,WON,3.50
+2026-10-04,fav,rac_32299801781,Curragh,4:50,It's Good To Talk,hrs_61684532,1.05,0,,,VOID,
+2026-10-04,fav,rac_32299732049,Kelso,2:55,Tuppence,hrs_47531575,1.33,0,,,WON,1.62
+2026-10-04,fav,rac_32299792096,Curragh,1:55,Hmas Perth,hrs_65286963,1.53,0,,,WON,1.30
+2026-10-04,fav,rac_32299716553,Uttoxeter,2:01,Governors Rock,hrs_54304502,1.8,0,,,WON,1.73
+2026-10-04,fav,rac_32299815340,Killarney,4:30,Stede Bonnet,hrs_52742039,1.87,0,,,LOST,2.50
+2026-10-04,fav,rac_32300291842,Uttoxeter,2:36,Sytadel,hrs_17391197593,2.38,0,,,LOST,3.00
+2026-10-04,fav,rac_32299726238,Uttoxeter,4:56,Jo Arengeot Bey Aa,hrs_34652324,2.75,0,,,LOST,3.25
+2026-10-04,fav,rac_32299805655,Killarney,1:35,Astelia,hrs_27040426,3.5,0,,,WON,2.62
+2026-10-04,fav,rac_32299803718,Curragh,5:25,Highbury See See,hrs_41782678,3.75,0,,,LOST,3.50
+2026-10-04,fav,rac_32299724301,Uttoxeter,4:20,Ask A Sainte,hrs_50339835,4.0,0,,,LOST,3.25
+2026-10-04,fav,rac_32299799844,Curragh,3:40,Carla Ridge,hrs_44015671,4.0,0,,,WON,4.00
+2026-10-04,fav,rac_32299737860,Kelso,4:40,Helsgetaway,hrs_37889747,4.33,0,,,LOST,5.50
+2026-10-04,fav,rac_32299718490,Uttoxeter,3:15,Divilabother,hrs_37068073,4.4,0,,,WON,4.00
+2026-10-04,fav,rac_32299722364,Uttoxeter,3:45,Chico Magnifica,hrs_54398386,4.5,0,,,LOST,4.33
+2026-10-04,fav,rac_32299807592,Killarney,2:10,Colin's Friend,hrs_51091075,3.5,-1,,,LOST,2.62
+2026-10-04,fav,rac_32299795970,Curragh,3:05,Johnny Soda,hrs_56843843,5.5,-1,,,LOST,4.00
+2026-10-04,fav,rac_32299797907,Curragh,4:15,Cool Azul,hrs_53081224,7.0,-1,,,LOST,5.50
+2026-10-04,fav,rac_32299817277,Killarney,5:05,Cullenwaine,hrs_30469481,5.9,-2,,,LOST,7.00
+2026-10-04,fav,rac_32299714616,Uttoxeter,1:26,Gentle Ocean,hrs_17393045789,2.5,,,,WON,1.62
