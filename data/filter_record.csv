@@ -346,3 +346,65 @@ date,line,race_id,course,off,horse,horse_id,price,score,cleared,confidence,resul
 2026-10-04,fav,rac_32299797907,Curragh,4:15,Cool Azul,hrs_53081224,7.0,-1,,,LOST,5.50
 2026-10-04,fav,rac_32299817277,Killarney,5:05,Cullenwaine,hrs_30469481,5.9,-2,,,LOST,7.00
 2026-10-04,fav,rac_32299714616,Uttoxeter,1:26,Gentle Ocean,hrs_17393045789,2.5,,,,WON,1.62
+2026-10-05,filter,rac_32300361574,Wolverhampton (AW),4:26,Solar Swing,hrs_17390784565,2.0,3,0,34.9,WON,1.62
+2026-10-05,filter,rac_32299823088,Kempton (AW),5:45,Sea Brave,hrs_59710679,3.0,2,0,33.2,LOST,5.50
+2026-10-05,chase,rac_32299856017,Stratford,4:00,Expert Analysis,hrs_43796480,2.88,1,,,LOST,2.62
+2026-10-05,chase,rac_32299854080,Stratford,3:26,Premier Fantasy,hrs_34253618,3.75,0,,,LOST,4.00
+2026-10-05,races_all,rac_32300361574,Wolverhampton (AW),4:26,Solar Swing,hrs_17390784565,2.0,3,,,WON,1.62
+2026-10-05,races,rac_32300361574,Wolverhampton (AW),4:26,Solar Swing,hrs_17390784565,2.0,3,,,WON,1.62
+2026-10-05,v3,rac_32300361574,Wolverhampton (AW),4:26,Solar Swing,hrs_17390784565,2.0,3,1,44.9,WON,1.62
+2026-10-05,v3,rac_32299823088,Kempton (AW),5:45,Sea Brave,hrs_59710679,3.0,2,1,37.3,LOST,5.50
+2026-10-05,fav,rac_32300361574,Wolverhampton (AW),4:26,Solar Swing,hrs_17390784565,2.0,3,,,WON,1.62
+2026-10-05,fav,rac_32299877324,Yarmouth,1:50,Claudette,hrs_17391776458,2.0,3,,,WON,1.91
+2026-10-05,fav,rac_32299952867,Fairyhouse,1:55,Myluckymaker,hrs_59186323,2.1,2,,,WON,1.62
+2026-10-05,fav,rac_32299823088,Kempton (AW),5:45,Sea Brave,hrs_59710679,3.0,2,,,LOST,5.50
+2026-10-05,fav,rac_32299846332,Pontefract,5:33,Jojo Rabbit,hrs_20976032,3.25,2,,,LOST,3.75
+2026-10-05,fav,rac_32299819214,Kempton (AW),4:45,Bofa Beach,hrs_52267810,3.5,2,,,LOST,2.75
+2026-10-05,fav,rac_32299826962,Kempton (AW),6:45,French Affair,hrs_52054170,4.0,2,,,LOST,5.00
+2026-10-05,fav,rac_32299848269,Stratford,1:41,No More Bolero,hrs_36601649,2.1,1,,,WON,1.91
+2026-10-05,fav,rac_32299850206,Stratford,2:16,Square d'Alboni,hrs_43228850,2.1,1,,,LOST,2.50
+2026-10-05,fav,rac_32299861828,Wolverhampton (AW),5:30,Iron Dome,hrs_17389172087,2.1,1,,,WON,1.17
+2026-10-05,fav,rac_32299856017,Stratford,4:00,Expert Analysis,hrs_43796480,2.88,1,,,LOST,2.62
+2026-10-05,fav,rac_32300415810,Pontefract,4:56,Free World,hrs_46881380,3.0,1,,,LOST,2.75
+2026-10-05,fav,rac_32299832773,Kempton (AW),8:15,Currumbin,hrs_38999905,3.25,1,,,LOST,2.50
+2026-10-05,fav,rac_32299838584,Pontefract,2:40,Fiscal Policy,hrs_30822323,3.5,1,,,LOST,4.00
+2026-10-05,fav,rac_32299873450,Wolverhampton (AW),8:30,Powder Monkey,hrs_57160124,3.5,1,,,LOST,3.00
+2026-10-05,fav,rac_32299962552,Fairyhouse,4:50,Dinoland,hrs_29691186,3.5,1,,,LOST,4.50
+2026-10-05,fav,rac_32299956741,Fairyhouse,3:05,Sea Of Doubt,hrs_412673072,4.0,1,,,LOST,5.00
+2026-10-05,fav,rac_32299875387,Yarmouth,1:15,Eightthreeone,hrs_52451784,4.33,1,,,WON,4.00
+2026-10-05,fav,rac_32299836647,Pontefract,2:05,Rex Regum,hrs_62168911,4.35,1,,,WON,3.75
+2026-10-05,fav,rac_32299885072,Yarmouth,4:05,Lucky Hero,hrs_52054422,5.0,1,,,LOST,6.00
+2026-10-05,fav,rac_32299972237,Killarney,2:45,Big Bill,hrs_56406861,5.0,1,,,LOST,5.00
+2026-10-05,fav,rac_32299834710,Pontefract,1:30,Narrjoo,hrs_66234994,1.36,0,,,WON,1.25
+2026-10-05,fav,rac_32299821151,Kempton (AW),5:15,Noble Journey,hrs_57223061,1.57,0,,,WON,1.44
+2026-10-05,fav,rac_32299954804,Fairyhouse,2:30,State Pension,hrs_39996621,1.57,0,,,WON,1.36
+2026-10-05,fav,rac_32299830836,Kempton (AW),7:45,Ridger,hrs_65549820,1.63,0,,,WON,1.44
+2026-10-05,fav,rac_32299976111,Killarney,3:55,Together Now,hrs_55947696,1.65,0,,,LOST,1.29
+2026-10-05,fav,rac_32299879261,Yarmouth,2:25,Zhuri,hrs_17392193658,1.83,0,,,LOST,1.50
+2026-10-05,fav,rac_32299869576,Wolverhampton (AW),7:30,Hauteluce,hrs_59216234,2.1,0,,,WON,2.00
+2026-10-05,fav,rac_32299865702,Wolverhampton (AW),6:30,Apex Star,hrs_56811398,2.5,0,,,LOST,2.25
+2026-10-05,fav,rac_32299852143,Stratford,2:51,Stellarmasterpiece,hrs_40942083,2.75,0,,,LOST,3.50
+2026-10-05,fav,rac_32299881198,Yarmouth,3:00,Ground Force,hrs_17389672727,2.75,0,,,LOST,2.25
+2026-10-05,fav,rac_32299828899,Kempton (AW),7:15,Portman Blue,hrs_60852743,3.5,0,,,WON,2.75
+2026-10-05,fav,rac_32299970300,Killarney,2:10,Cladach,hrs_66494218,3.5,0,,,LOST,3.25
+2026-10-05,fav,rac_32299854080,Stratford,3:26,Premier Fantasy,hrs_34253618,3.75,0,,,LOST,4.00
+2026-10-05,fav,rac_32299979985,Killarney,5:05,Ballybawn Belter,hrs_29212855,3.75,0,,,WON,5.00
+2026-10-05,fav,rac_32300355763,Pontefract,4:21,Selection,hrs_41628930,4.5,0,,,WON,5.00
+2026-10-05,fav,rac_32299840521,Pontefract,3:15,Andesite,hrs_41304711,5.0,0,,,LOST,5.00
+2026-10-05,fav,rac_32299842458,Pontefract,3:50,Stormy Impact,hrs_43062950,5.0,0,,,LOST,4.50
+2026-10-05,fav,rac_32299968363,Killarney,1:35,Gliondar,hrs_65938922,2.0,-1,,,LOST,3.75
+2026-10-05,fav,rac_32299863765,Wolverhampton (AW),6:00,Lady Branksome,hrs_64847048,2.75,-1,,,LOST,2.38
+2026-10-05,fav,rac_32299958678,Fairyhouse,3:40,Born Believing,hrs_59429475,3.0,-1,,,LOST,4.33
+2026-10-05,fav,rac_32299859891,Wolverhampton (AW),5:00,Dreams Galore,hrs_65190622,3.5,-1,,,WON,3.75
+2026-10-05,fav,rac_32299825025,Kempton (AW),6:15,Sparksmith,hrs_59645467,3.75,-1,,,LOST,2.88
+2026-10-05,fav,rac_32299974174,Killarney,3:20,Action,hrs_54464004,3.75,-1,,,LOST,4.50
+2026-10-05,fav,rac_32299867639,Wolverhampton (AW),7:00,Faeberon,hrs_56437857,4.0,-1,,,LOST,3.75
+2026-10-05,fav,rac_32299887009,Yarmouth,4:40,Media Legend,hrs_57654310,4.33,-1,,,WON,4.00
+2026-10-05,fav,rac_32299978048,Killarney,4:30,Wie Wunderbar,hrs_17391312323,4.5,-1,,,LOST,4.50
+2026-10-05,fav,rac_32299966426,Killarney,1:00,Darivan,hrs_66198790,3.75,-2,,,LOST,4.00
+2026-10-05,fav,rac_32299960615,Fairyhouse,4:15,Airds Moss,hrs_52236387,4.0,-2,,,LOST,4.00
+2026-10-05,fav,rac_32299964489,Fairyhouse,5:25,Vision De Maine,hrs_34457150,4.55,-2,,,VOID,
+2026-10-05,fav,rac_32299871513,Wolverhampton (AW),8:00,Sun Lord,hrs_63586355,5.5,-2,,,LOST,13.00
+2026-10-05,fav,rac_32299883135,Yarmouth,3:35,Endless Quest,hrs_17392567052,1.91,,,,WON,1.44
+2026-10-05,fav,rac_32299857954,Stratford,4:35,Mon Missel,hrs_17393009284,2.5,,,,LOST,1.80
+2026-10-05,fav,rac_32300359637,Kempton (AW),4:10,Spartan,hrs_17393048918,3.25,,,,WON,5.50

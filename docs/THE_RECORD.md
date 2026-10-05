@@ -4,11 +4,11 @@ Derived from `data/nap.db` by `PYTHONPATH=src python -m racing_edge.school.recor
 
 Level stakes, one point a bet, settled at SP. A pass is shown as a position, not a missing day. The favourite line is the benchmark the ledger already keeps on the same races — it is the thing to beat, never the picker.
 
-**72 settled** · 19 wins · strike **26.4%** · P/L **-3.12 pts** · ROI **-4.3%**
+**73 settled** · 20 wins · strike **27.4%** · P/L **-2.50 pts** · ROI **-3.4%**
 
-**The favourite on the same races:** 39 settled · 14 wins · strike 35.9% · P/L -5.11 pts · ROI -13.1%
+**The favourite on the same races:** 40 settled · 15 wins · strike 37.5% · P/L -4.49 pts · ROI -11.2%
 
-(90 days banked · 72 bets · 13 passes · 5 voids · 0 pending)
+(91 days banked · 73 bets · 13 passes · 5 voids · 0 pending)
 
 | date | eng | course | horse | price | SP | result | fav | fav SP | fav |
 |---|---|---|---|---|---|---|---|---|---|
@@ -102,3 +102,4 @@ Level stakes, one point a bet, settled at SP. A pass is shown as a position, not
 | 2026-10-02 | filter | Wolverhampton (AW) | Elsass | 3.00 | 2.75 | LOST | Elsass | 2.75 | lost |
 | 2026-10-03 | filter | Southwell (AW) | Captain Cairney | 3.00 | 2.50 | LOST | Captain Cairney | 2.50 | lost |
 | 2026-10-04 | filter | Kelso | Upfordebate | 2.50 | 2.25 | WON | Upfordebate | 2.25 | WON |
+| 2026-10-05 | filter | Wolverhampton (AW) | Solar Swing | 2.00 | 1.62 | WON | Solar Swing | 1.62 | WON |

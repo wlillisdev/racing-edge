@@ -89,3 +89,4 @@ date,engine,course,race_id,horse,banked_price,sp_dec,won,confident,status,void_r
 2026-10-02,filter,Wolverhampton (AW),rac_32299559656,Elsass,3.0,2.75,0,0,LOST,,Elsass,2.75,0
 2026-10-03,filter,Southwell (AW),rac_32299699120,Captain Cairney,3.0,2.5,0,0,LOST,,Captain Cairney,2.5,0
 2026-10-04,filter,Kelso,rac_32299735923,Upfordebate,2.5,2.25,1,0,WON,,Upfordebate,2.25,1
+2026-10-05,filter,Wolverhampton (AW),rac_32300361574,Solar Swing,2.0,1.62,1,0,WON,,Solar Swing,1.62,1
