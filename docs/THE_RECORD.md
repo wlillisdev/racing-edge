@@ -4,11 +4,11 @@ Derived from `data/nap.db` by `PYTHONPATH=src python -m racing_edge.school.recor
 
 Level stakes, one point a bet, settled at SP. A pass is shown as a position, not a missing day. The favourite line is the benchmark the ledger already keeps on the same races — it is the thing to beat, never the picker.
 
-**73 settled** · 20 wins · strike **27.4%** · P/L **-2.50 pts** · ROI **-3.4%**
+**74 settled** · 20 wins · strike **27.0%** · P/L **-3.50 pts** · ROI **-4.7%**
 
-**The favourite on the same races:** 40 settled · 15 wins · strike 37.5% · P/L -4.49 pts · ROI -11.2%
+**The favourite on the same races:** 41 settled · 15 wins · strike 36.6% · P/L -5.49 pts · ROI -13.4%
 
-(91 days banked · 73 bets · 13 passes · 5 voids · 0 pending)
+(92 days banked · 74 bets · 13 passes · 5 voids · 0 pending)
 
 | date | eng | course | horse | price | SP | result | fav | fav SP | fav |
 |---|---|---|---|---|---|---|---|---|---|
@@ -103,3 +103,4 @@ Level stakes, one point a bet, settled at SP. A pass is shown as a position, not
 | 2026-10-03 | filter | Southwell (AW) | Captain Cairney | 3.00 | 2.50 | LOST | Captain Cairney | 2.50 | lost |
 | 2026-10-04 | filter | Kelso | Upfordebate | 2.50 | 2.25 | WON | Upfordebate | 2.25 | WON |
 | 2026-10-05 | filter | Wolverhampton (AW) | Solar Swing | 2.00 | 1.62 | WON | Solar Swing | 1.62 | WON |
+| 2026-10-06 | filter | Southwell (AW) | Affettuoso | 2.00 | 2.00 | LOST | Affettuoso | 2.00 | lost |

@@ -408,3 +408,52 @@ date,line,race_id,course,off,horse,horse_id,price,score,cleared,confidence,resul
 2026-10-05,fav,rac_32299883135,Yarmouth,3:35,Endless Quest,hrs_17392567052,1.91,,,,WON,1.44
 2026-10-05,fav,rac_32299857954,Stratford,4:35,Mon Missel,hrs_17393009284,2.5,,,,LOST,1.80
 2026-10-05,fav,rac_32300359637,Kempton (AW),4:10,Spartan,hrs_17393048918,3.25,,,,WON,5.50
+2026-10-06,filter,rac_32300032284,Southwell (AW),8:00,Affettuoso,hrs_58033535,2.0,5,1,46.6,LOST,2.00
+2026-10-06,filter,rac_32300018725,Leicester,5:01,Magic Music,hrs_54933655,2.75,3,0,34.9,WON,2.62
+2026-10-06,chase,rac_32300098142,Galway,4:40,Mount Shenshan,hrs_33274843,2.75,2,,,VOID,
+2026-10-06,chase,rac_32300003229,Huntingdon,4:16,Datsalrightcharlie,hrs_44975014,2.38,1,,,LOST,2.62
+2026-10-06,chase,rac_32300094268,Galway,3:30,Chart Topper,hrs_35175931,2.9299999999999997,-1,,,LOST,3.25
+2026-10-06,chase,rac_32300096205,Galway,4:05,Onefortheditch,hrs_30122974,2.88,-2,,,LOST,2.88
+2026-10-06,races_all,rac_32300032284,Southwell (AW),8:00,Affettuoso,hrs_58033535,2.0,5,,,LOST,2.00
+2026-10-06,races,rac_32300032284,Southwell (AW),8:00,Affettuoso,hrs_58033535,2.0,5,,,LOST,2.00
+2026-10-06,races_all,rac_32300016788,Leicester,4:26,Solarize,hrs_43287748,2.88,3,,,WON,3.75
+2026-10-06,races,rac_32300016788,Leicester,4:26,Solarize,hrs_43287748,2.88,3,,,WON,3.75
+2026-10-06,races_all,rac_32300003229,Huntingdon,4:16,Datsalrightcharlie,hrs_44975014,2.38,1,,,LOST,2.62
+2026-10-06,races_all,rac_32300094268,Galway,3:30,Chart Topper,hrs_35175931,2.9299999999999997,-1,,,LOST,3.25
+2026-10-06,v3,rac_32300032284,Southwell (AW),8:00,Affettuoso,hrs_58033535,2.0,5,1,43.6,LOST,2.00
+2026-10-06,v3,rac_32300098142,Galway,4:40,Mount Shenshan,hrs_33274843,2.75,2,1,41.4,VOID,
+2026-10-06,fav,rac_32300032284,Southwell (AW),8:00,Affettuoso,hrs_58033535,2.0,5,,,LOST,2.00
+2026-10-06,fav,rac_32300018725,Leicester,5:01,Magic Music,hrs_54933655,2.75,3,,,WON,2.62
+2026-10-06,fav,rac_32300016788,Leicester,4:26,Solarize,hrs_43287748,2.88,3,,,WON,3.75
+2026-10-06,fav,rac_32300024536,Southwell (AW),6:00,Encore,hrs_56591094,3.75,3,,,VOID,
+2026-10-06,fav,rac_32300034221,Southwell (AW),8:30,He's Our Cracker,hrs_56713265,3.75,3,,,LOST,3.25
+2026-10-06,fav,rac_32299991607,Brighton,4:33,My Mate Mackley,hrs_58843904,2.25,2,,,WON,2.88
+2026-10-06,fav,rac_32300090394,Galway,2:20,Inthenickoftime,hrs_38433269,2.5,2,,,WON,2.00
+2026-10-06,fav,rac_32300098142,Galway,4:40,Mount Shenshan,hrs_33274843,2.75,2,,,VOID,
+2026-10-06,fav,rac_32299995481,Huntingdon,1:56,Cinnodin,hrs_31698009,3.75,2,,,WON,3.50
+2026-10-06,fav,rac_32299981922,Brighton,1:38,Jenson Benson,hrs_23979746,4.0,2,,,LOST,6.00
+2026-10-06,fav,rac_32300007103,Leicester,1:31,Dashing Dick,hrs_22583491,4.0,2,,,LOST,4.00
+2026-10-06,fav,rac_32300003229,Huntingdon,4:16,Datsalrightcharlie,hrs_44975014,2.38,1,,,LOST,2.62
+2026-10-06,fav,rac_32300028410,Southwell (AW),7:00,Insuspense,hrs_45950660,3.0,1,,,LOST,3.75
+2026-10-06,fav,rac_32300010977,Leicester,2:41,Ma Fille de Reve,hrs_65322411,3.75,1,,,LOST,5.00
+2026-10-06,fav,rac_32299987733,Brighton,3:23,Basilette,hrs_33110511,4.33,1,,,WON,4.50
+2026-10-06,fav,rac_32300014851,Leicester,3:51,Ziggy's Triton,hrs_43062887,4.33,1,,,WON,3.50
+2026-10-06,fav,rac_32299985796,Brighton,2:48,Scarfo,hrs_36528093,5.0,1,,,LOST,4.00
+2026-10-06,fav,rac_32300088457,Galway,1:45,Young Rebel,hrs_51434404,1.53,0,,,LOST,1.53
+2026-10-06,fav,rac_32300009040,Leicester,2:06,Woodvale,hrs_17392200959,1.72,0,,,WON,1.80
+2026-10-06,fav,rac_32299997418,Huntingdon,2:31,Broadway Honey,hrs_50590253,1.73,0,,,WON,1.80
+2026-10-06,fav,rac_32300100079,Galway,5:15,Way With Words,hrs_61456150,1.83,0,,,LOST,1.91
+2026-10-06,fav,rac_32300020662,Southwell (AW),4:55,Zafaan,hrs_32290895,1.91,0,,,LOST,2.50
+2026-10-06,fav,rac_32300030347,Southwell (AW),7:30,Popular Dream,hrs_33205193,2.75,0,,,WON,2.38
+2026-10-06,fav,rac_32299983859,Brighton,2:13,Lord Percy,hrs_17392556622,3.0,0,,,LOST,4.50
+2026-10-06,fav,rac_32300092331,Galway,2:55,Isdistheone,hrs_56590975,3.5,0,,,LOST,3.25
+2026-10-06,fav,rac_32300012914,Leicester,3:16,Engedi,hrs_17392242679,3.75,0,,,LOST,3.50
+2026-10-06,fav,rac_32299993544,Brighton,5:08,Cayman Tai,hrs_39191495,4.0,0,,,WON,4.50
+2026-10-06,fav,rac_32300001292,Huntingdon,3:41,Inca,hrs_32582774,4.33,0,,,WON,4.50
+2026-10-06,fav,rac_32299999355,Huntingdon,3:06,Dancing Dame,hrs_36123108,2.0,-1,,,WON,1.80
+2026-10-06,fav,rac_32300094268,Galway,3:30,Chart Topper,hrs_35175931,2.9299999999999997,-1,,,LOST,3.25
+2026-10-06,fav,rac_32300022599,Southwell (AW),5:30,Jahami,hrs_17392372011,2.63,-2,,,LOST,3.25
+2026-10-06,fav,rac_32300096205,Galway,4:05,Onefortheditch,hrs_30122974,2.88,-2,,,LOST,2.88
+2026-10-06,fav,rac_32299989670,Brighton,3:58,Burford Beauty,hrs_54525485,3.25,-2,,,WON,2.62
+2026-10-06,fav,rac_32300026473,Southwell (AW),6:30,Engraved,hrs_17390585352,3.75,-2,,,WON,3.75
+2026-10-06,fav,rac_32300005166,Huntingdon,4:48,Flow River Flow,hrs_17393315926,2.75,,,,LOST,2.10
