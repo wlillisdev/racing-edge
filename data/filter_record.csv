@@ -457,3 +457,53 @@ date,line,race_id,course,off,horse,horse_id,price,score,cleared,confidence,resul
 2026-10-06,fav,rac_32299989670,Brighton,3:58,Burford Beauty,hrs_54525485,3.25,-2,,,WON,2.62
 2026-10-06,fav,rac_32300026473,Southwell (AW),6:30,Engraved,hrs_17390585352,3.75,-2,,,WON,3.75
 2026-10-06,fav,rac_32300005166,Huntingdon,4:48,Flow River Flow,hrs_17393315926,2.75,,,,LOST,2.10
+2026-10-07,filter,rac_32300165937,Navan,4:15,Divine Legend,hrs_57315951,3.5,3,0,34.9,LOST,3.00
+2026-10-07,filter,rac_32300142693,Worcester,1:05,King Roly,hrs_37860669,2.63,2,0,33.2,WON,2.38
+2026-10-07,chase,rac_32300142693,Worcester,1:05,King Roly,hrs_37860669,2.63,2,,,WON,2.38
+2026-10-07,chase,rac_32300134945,Sedgefield,2:50,Lady Kara,hrs_54712259,2.75,2,,,LOST,2.38
+2026-10-07,chase,rac_32300133008,Sedgefield,2:20,Flashy Boy,hrs_27889204,2.1,1,,,WON,2.25
+2026-10-07,races_all,rac_32300142693,Worcester,1:05,King Roly,hrs_37860669,2.63,2,,,WON,2.38
+2026-10-07,races,rac_32300142693,Worcester,1:05,King Roly,hrs_37860669,2.63,2,,,WON,2.38
+2026-10-07,races_all,rac_32300134945,Sedgefield,2:50,Lady Kara,hrs_54712259,2.75,2,,,LOST,2.38
+2026-10-07,races,rac_32300134945,Sedgefield,2:50,Lady Kara,hrs_54712259,2.75,2,,,LOST,2.38
+2026-10-07,races_all,rac_32300123323,Nottingham,2:59,Akaraka,hrs_65642472,2.88,2,,,LOST,2.10
+2026-10-07,v3,rac_32300142693,Worcester,1:05,King Roly,hrs_37860669,2.63,2,1,39.9,WON,2.38
+2026-10-07,v3,rac_32300160126,Navan,2:45,Docks,hrs_65745659,3.0,2,1,37.2,LOST,3.50
+2026-10-07,fav,rac_32300165937,Navan,4:15,Divine Legend,hrs_57315951,3.5,3,,,LOST,3.00
+2026-10-07,fav,rac_32300107827,Kempton (AW),6:30,Queen of Scotland,hrs_17391464601,2.1,2,,,WON,2.75
+2026-10-07,fav,rac_32300142693,Worcester,1:05,King Roly,hrs_37860669,2.63,2,,,WON,2.38
+2026-10-07,fav,rac_32300134945,Sedgefield,2:50,Lady Kara,hrs_54712259,2.75,2,,,LOST,2.38
+2026-10-07,fav,rac_32300138819,Sedgefield,3:50,Littletown Lad,hrs_41072759,2.75,2,,,LOST,2.62
+2026-10-07,fav,rac_32300123323,Nottingham,2:59,Akaraka,hrs_65642472,2.88,2,,,LOST,2.10
+2026-10-07,fav,rac_32300160126,Navan,2:45,Docks,hrs_65745659,3.0,2,,,LOST,3.50
+2026-10-07,fav,rac_32300115575,Kempton (AW),8:30,Snooker McCrew,hrs_38306226,4.3,2,,,WON,4.50
+2026-10-07,fav,rac_32300119449,Nottingham,1:59,Reem Rak,hrs_57941996,4.33,2,,,LOST,3.25
+2026-10-07,fav,rac_32300605636,Nottingham,3:29,Darkness,hrs_21678160,4.5,2,,,LOST,7.50
+2026-10-07,fav,rac_32300129134,Nottingham,5:05,King Cherry,hrs_63357406,4.5,2,,,LOST,6.00
+2026-10-07,fav,rac_32300133008,Sedgefield,2:20,Flashy Boy,hrs_27889204,2.1,1,,,WON,2.25
+2026-10-07,fav,rac_32300117512,Nottingham,1:29,Castlerock Girl,hrs_65642402,2.2,1,,,WON,3.00
+2026-10-07,fav,rac_32300121386,Nottingham,2:29,Gainful,hrs_17392467967,2.25,1,,,WON,1.83
+2026-10-07,fav,rac_32300136882,Sedgefield,3:20,William Yeats,hrs_52495289,2.38,1,,,LOST,2.20
+2026-10-07,fav,rac_32300127197,Nottingham,4:29,Plan C,hrs_54933725,4.0,1,,,LOST,6.00
+2026-10-07,fav,rac_32300164000,Navan,3:45,Jesus Green,hrs_66304791,1.4,0,,,WON,1.36
+2026-10-07,fav,rac_32300103953,Kempton (AW),5:30,Twelve Bars,hrs_17392814243,1.91,0,,,WON,1.80
+2026-10-07,fav,rac_32300111701,Kempton (AW),7:30,Kiniro,hrs_412693239,2.63,0,,,WON,2.20
+2026-10-07,fav,rac_32300102016,Kempton (AW),5:00,Caragio,hrs_32061239,3.0,0,,,WON,2.20
+2026-10-07,fav,rac_32300131071,Sedgefield,1:50,Military Cross,hrs_56278222,3.0,0,,,LOST,4.33
+2026-10-07,fav,rac_32300144630,Worcester,1:35,Kelijoe,hrs_49757225,3.5,0,,,LOST,3.25
+2026-10-07,fav,rac_32300125260,Nottingham,3:59,Get Outta Here,hrs_55915944,4.33,0,,,LOST,5.50
+2026-10-07,fav,rac_32300613384,Navan,4:48,Reponse Finale,hrs_45226454,5.0,0,,,LOST,5.00
+2026-10-07,fav,rac_32300154315,Worcester,4:35,Brookside La,hrs_46295837,2.38,-1,,,WON,3.75
+2026-10-07,fav,rac_32300158189,Navan,2:15,Almeiyda,hrs_57286754,2.38,-1,,,LOST,3.75
+2026-10-07,fav,rac_32300109764,Kempton (AW),7:00,Royal County Glory,hrs_55484499,2.75,-1,,,WON,1.83
+2026-10-07,fav,rac_32300156252,Navan,1:45,Better Yet,hrs_65973439,3.5,-1,,,LOST,4.00
+2026-10-07,fav,rac_32300113638,Kempton (AW),8:00,Desert Belle,hrs_62743569,3.75,-1,,,LOST,3.50
+2026-10-07,fav,rac_32300162063,Navan,3:15,Rosato,hrs_37110780,5.5,-1,,,WON,4.50
+2026-10-07,fav,rac_32300167874,Navan,5:18,Mr Perth,hrs_63069685,6.0,-1,,,LOST,5.50
+2026-10-07,fav,rac_32300150441,Worcester,3:35,Sheezer Dancer,hrs_51897559,2.0,-2,,,LOST,3.00
+2026-10-07,fav,rac_32300609510,Worcester,3:05,Lexington Wood,hrs_51766309,2.5,-2,,,LOST,1.83
+2026-10-07,fav,rac_32300146567,Worcester,2:05,Dundee Law,hrs_62170955,2.63,-2,,,WON,2.62
+2026-10-07,fav,rac_32300152378,Worcester,4:05,Jollie Dame,hrs_51273306,2.63,-2,,,WON,3.00
+2026-10-07,fav,rac_32300140756,Sedgefield,4:20,Moyanna,hrs_62326411,3.0,-2,,,LOST,2.00
+2026-10-07,fav,rac_32300105890,Kempton (AW),6:00,Usaylah,hrs_17393410839,2.6,,,,LOST,5.50
+2026-10-07,fav,rac_32300148504,Worcester,2:35,Sainte Colombe,hrs_17393416054,3.0,,,,LOST,4.50
