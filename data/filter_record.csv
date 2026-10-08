@@ -507,3 +507,61 @@ date,line,race_id,course,off,horse,horse_id,price,score,cleared,confidence,resul
 2026-10-07,fav,rac_32300140756,Sedgefield,4:20,Moyanna,hrs_62326411,3.0,-2,,,LOST,2.00
 2026-10-07,fav,rac_32300105890,Kempton (AW),6:00,Usaylah,hrs_17393410839,2.6,,,,LOST,5.50
 2026-10-07,fav,rac_32300148504,Worcester,2:35,Sainte Colombe,hrs_17393416054,3.0,,,,LOST,4.50
+2026-10-08,filter,rac_32300289905,Ayr,5:13,Aighear,hrs_29479184,2.0,3,0,34.9,WON,1.57
+2026-10-08,filter,rac_32300669557,Bath,5:55,Zizania Du Mazet,hrs_17389016680,2.1,3,0,34.9,LOST,2.25
+2026-10-08,chase,rac_32300194992,Tramore,4:30,Leave In Secret,hrs_34788789,3.75,1,,,LOST,4.33
+2026-10-08,chase,rac_32300256976,Market Rasen,3:41,Shabalko d'Herm,hrs_45855369,2.88,-1,,,LOST,2.10
+2026-10-08,chase,rac_32300196929,Tramore,5:05,Rattledelatch,hrs_58565437,2.0,-2,,,WON,2.00
+2026-10-08,races_all,rac_32300669557,Bath,5:55,Zizania Du Mazet,hrs_17389016680,2.1,3,,,LOST,2.25
+2026-10-08,races,rac_32300669557,Bath,5:55,Zizania Du Mazet,hrs_17389016680,2.1,3,,,LOST,2.25
+2026-10-08,races_all,rac_32300181433,Thurles,4:11,Cladach,hrs_66494218,2.56,2,,,LOST,3.00
+2026-10-08,races,rac_32300181433,Thurles,4:11,Cladach,hrs_66494218,2.56,2,,,LOST,3.00
+2026-10-08,races_all,rac_32300256976,Market Rasen,3:41,Shabalko d'Herm,hrs_45855369,2.88,-1,,,LOST,2.10
+2026-10-08,v3,rac_32300669557,Bath,5:55,Zizania Du Mazet,hrs_17389016680,2.1,3,1,45.0,LOST,2.25
+2026-10-08,v3,rac_32300262787,Southwell (AW),8:30,Nostrum,hrs_31189599,2.5,2,1,41.5,LOST,1.91
+2026-10-08,fav,rac_32300289905,Ayr,5:13,Aighear,hrs_29479184,2.0,3,,,WON,1.57
+2026-10-08,fav,rac_32300280220,Ayr,2:20,Caturra Rock,hrs_17391371774,2.1,3,,,LOST,3.00
+2026-10-08,fav,rac_32300669557,Bath,5:55,Zizania Du Mazet,hrs_17389016680,2.1,3,,,LOST,2.25
+2026-10-08,fav,rac_32300183370,Thurles,4:43,Teofil,hrs_43447796,2.56,3,,,LOST,2.62
+2026-10-08,fav,rac_32300264724,Southwell (AW),5:30,Summer In Paris,hrs_52054800,2.75,3,,,LOST,7.00
+2026-10-08,fav,rac_32300286031,Ayr,4:05,Empirestateofmind,hrs_22413538,2.86,3,,,LOST,2.38
+2026-10-08,fav,rac_32300258913,Market Rasen,4:16,Spot On Soph,hrs_22655857,3.75,3,,,LOST,2.75
+2026-10-08,fav,rac_32300276346,Southwell (AW),4:25,Roxa Love,hrs_65190615,3.75,3,,,LOST,6.00
+2026-10-08,fav,rac_32300262787,Southwell (AW),8:30,Nostrum,hrs_31189599,2.5,2,,,LOST,1.91
+2026-10-08,fav,rac_32300181433,Thurles,4:11,Cladach,hrs_66494218,2.56,2,,,LOST,3.00
+2026-10-08,fav,rac_32300251165,Market Rasen,1:56,Sun Art,hrs_46108146,3.0,2,,,LOST,2.25
+2026-10-08,fav,rac_32300667620,Bath,4:21,Albus Anne,hrs_25664877,3.5,2,,,WON,5.50
+2026-10-08,fav,rac_32300774155,Southwell (AW),7:00,Poets Praise,hrs_55764408,3.75,2,,,LOST,5.50
+2026-10-08,fav,rac_32300284094,Ayr,3:30,Eye of Dubai,hrs_33875520,4.0,2,,,LOST,4.33
+2026-10-08,fav,rac_32300274409,Southwell (AW),5:00,Edwardtheninth,hrs_42226261,4.5,2,,,LOST,6.50
+2026-10-08,fav,rac_32300245354,Bath,3:50,Aethelstan Gold,hrs_17391199679,2.25,1,,,WON,2.10
+2026-10-08,fav,rac_32300260850,Market Rasen,4:48,Ratemenow,hrs_50402429,2.375,1,,,LOST,1.91
+2026-10-08,fav,rac_32300191118,Tramore,3:20,Tutu Twist,hrs_52709188,2.38,1,,,LOST,2.10
+2026-10-08,fav,rac_32300268598,Southwell (AW),6:30,Revoked,hrs_7000002086,2.63,1,,,WON,3.25
+2026-10-08,fav,rac_32300189181,Tramore,2:45,Lanzhou,hrs_52055654,3.0,1,,,WON,3.25
+2026-10-08,fav,rac_32300249228,Bath,5:25,Courageous Sioux,hrs_50434699,3.25,1,,,VOID,
+2026-10-08,fav,rac_32300237606,Bath,1:30,Fram Castle,hrs_38089177,3.5,1,,,VOID,
+2026-10-08,fav,rac_32300177559,Thurles,3:01,Duchess Anne,hrs_54027134,3.75,1,,,LOST,7.00
+2026-10-08,fav,rac_32300194992,Tramore,4:30,Leave In Secret,hrs_34788789,3.75,1,,,LOST,4.33
+2026-10-08,fav,rac_32300175622,Thurles,2:26,Starflow,hrs_58534966,5.0,1,,,WON,6.00
+2026-10-08,fav,rac_32300270535,Southwell (AW),8:00,Dorigo,hrs_64812923,1.25,0,,,LOST,1.14
+2026-10-08,fav,rac_32300255039,Market Rasen,3:06,Whitewinewednesday,hrs_37476481,1.4,0,,,LOST,1.83
+2026-10-08,fav,rac_32300663746,Thurles,1:16,Silver Kiss,hrs_66494183,1.83,0,,,WON,2.00
+2026-10-08,fav,rac_32300173685,Thurles,1:51,King Christoph,hrs_17392603557,2.38,0,,,WON,2.38
+2026-10-08,fav,rac_32300282157,Ayr,2:55,Launch Time,hrs_45824457,3.5,0,,,WON,3.00
+2026-10-08,fav,rac_32300239543,Bath,2:05,Go Go Girl,hrs_17392055982,3.75,0,,,LOST,2.38
+2026-10-08,fav,rac_32300278283,Ayr,1:45,Motawaared,hrs_49359786,4.0,0,,,WON,2.75
+2026-10-08,fav,rac_32300185307,Thurles,5:20,Blissful Bonita,hrs_57504188,4.0,0,,,WON,3.50
+2026-10-08,fav,rac_32300287968,Ayr,4:38,Keats House,hrs_43508556,4.5,0,,,LOST,6.00
+2026-10-08,fav,rac_32300776092,Bath,4:55,Zambezi Magic,hrs_19912347,4.5,0,,,LOST,6.00
+2026-10-08,fav,rac_32300187244,Tramore,2:10,Llem's,hrs_58596685,2.1100000000000003,-1,,,LOST,1.80
+2026-10-08,fav,rac_32300243417,Bath,3:15,Brilliant Star,hrs_58779049,2.62,-1,,,WON,2.38
+2026-10-08,fav,rac_32300179496,Thurles,3:36,Glen Echo,hrs_64073191,2.81,-1,,,LOST,5.00
+2026-10-08,fav,rac_32300256976,Market Rasen,3:41,Shabalko d'Herm,hrs_45855369,2.88,-1,,,LOST,2.10
+2026-10-08,fav,rac_32300198866,Tramore,5:35,Colossal Impact,hrs_51185855,2.88,-1,,,LOST,4.50
+2026-10-08,fav,rac_32300193055,Tramore,3:55,Way Down South,hrs_37701594,3.19,-1,,,WON,3.25
+2026-10-08,fav,rac_32300272472,Southwell (AW),7:30,Spirit Lead Me,hrs_41814808,4.0,-1,,,WON,3.25
+2026-10-08,fav,rac_32300196929,Tramore,5:05,Rattledelatch,hrs_58565437,2.0,-2,,,WON,2.00
+2026-10-08,fav,rac_32300241480,Bath,2:40,Jojo Rabbit,hrs_20976032,4.2,-2,,,LOST,4.00
+2026-10-08,fav,rac_32300266661,Southwell (AW),6:00,Kaito,hrs_65101897,2.63,-3,,,LOST,2.20
+2026-10-08,fav,rac_32300253102,Market Rasen,2:31,Port Glen One,hrs_17393456731,1.67,,,,WON,1.73

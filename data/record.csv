@@ -92,3 +92,4 @@ date,engine,course,race_id,horse,banked_price,sp_dec,won,confident,status,void_r
 2026-10-05,filter,Wolverhampton (AW),rac_32300361574,Solar Swing,2.0,1.62,1,0,WON,,Solar Swing,1.62,1
 2026-10-06,filter,Southwell (AW),rac_32300032284,Affettuoso,2.0,2.0,0,1,LOST,,Affettuoso,2.0,0
 2026-10-07,filter,Navan,rac_32300165937,Divine Legend,3.5,3.0,0,0,LOST,,Divine Legend,3.0,0
+2026-10-08,filter,Ayr,rac_32300289905,Aighear,2.0,1.57,1,0,WON,,Aighear,1.57,1

@@ -4,11 +4,11 @@ Derived from `data/nap.db` by `PYTHONPATH=src python -m racing_edge.school.recor
 
 Level stakes, one point a bet, settled at SP. A pass is shown as a position, not a missing day. The favourite line is the benchmark the ledger already keeps on the same races — it is the thing to beat, never the picker.
 
-**75 settled** · 20 wins · strike **26.7%** · P/L **-4.50 pts** · ROI **-6.0%**
+**76 settled** · 21 wins · strike **27.6%** · P/L **-3.93 pts** · ROI **-5.2%**
 
-**The favourite on the same races:** 42 settled · 15 wins · strike 35.7% · P/L -6.49 pts · ROI -15.5%
+**The favourite on the same races:** 43 settled · 16 wins · strike 37.2% · P/L -5.92 pts · ROI -13.8%
 
-(93 days banked · 75 bets · 13 passes · 5 voids · 0 pending)
+(94 days banked · 76 bets · 13 passes · 5 voids · 0 pending)
 
 | date | eng | course | horse | price | SP | result | fav | fav SP | fav |
 |---|---|---|---|---|---|---|---|---|---|
@@ -105,3 +105,4 @@ Level stakes, one point a bet, settled at SP. A pass is shown as a position, not
 | 2026-10-05 | filter | Wolverhampton (AW) | Solar Swing | 2.00 | 1.62 | WON | Solar Swing | 1.62 | WON |
 | 2026-10-06 | filter | Southwell (AW) | Affettuoso | 2.00 | 2.00 | LOST | Affettuoso | 2.00 | lost |
 | 2026-10-07 | filter | Navan | Divine Legend | 3.50 | 3.00 | LOST | Divine Legend | 3.00 | lost |
+| 2026-10-08 | filter | Ayr | Aighear | 2.00 | 1.57 | WON | Aighear | 1.57 | WON |
