@@ -565,3 +565,62 @@ date,line,race_id,course,off,horse,horse_id,price,score,cleared,confidence,resul
 2026-10-08,fav,rac_32300241480,Bath,2:40,Jojo Rabbit,hrs_20976032,4.2,-2,,,LOST,4.00
 2026-10-08,fav,rac_32300266661,Southwell (AW),6:00,Kaito,hrs_65101897,2.63,-3,,,LOST,2.20
 2026-10-08,fav,rac_32300253102,Market Rasen,2:31,Port Glen One,hrs_17393456731,1.67,,,,WON,1.73
+2026-10-09,filter,rac_32300501038,Dundalk (AW),8:00,Camino Lad,hrs_64073177,2.25,2,0,33.2,LOST,2.75
+2026-10-09,filter,rac_32300373196,Kempton (AW),7:15,Gunfighter,hrs_36386903,3.0,2,0,33.2,LOST,1.83
+2026-10-09,chase,rac_32300516534,Downpatrick,5:37,Mini Getaway,hrs_34961787,3.75,2,,,LOST,4.33
+2026-10-09,chase,rac_32300514597,Downpatrick,5:05,Down Around,hrs_29748600,4.415,1,,,LOST,5.50
+2026-10-09,races_all,rac_32300501038,Dundalk (AW),8:00,Camino Lad,hrs_64073177,2.25,2,,,LOST,2.75
+2026-10-09,races,rac_32300501038,Dundalk (AW),8:00,Camino Lad,hrs_64073177,2.25,2,,,LOST,2.75
+2026-10-09,races_all,rac_32300502975,Dundalk (AW),8:30,Fixation,hrs_44295258,2.63,1,,,WON,2.38
+2026-10-09,races,rac_32300502975,Dundalk (AW),8:30,Fixation,hrs_44295258,2.63,1,,,WON,2.38
+2026-10-09,races_all,rac_32300396440,York,3:50,Instant Force,hrs_65190468,2.75,1,,,LOST,2.75
+2026-10-09,races_all,rac_32300820643,Newmarket,2:25,Flora of Bermuda,hrs_35445375,2.88,1,,,LOST,3.12
+2026-10-09,v3,rac_32300501038,Dundalk (AW),8:00,Camino Lad,hrs_64073177,2.25,2,1,39.1,LOST,2.75
+2026-10-09,v3,rac_32300373196,Kempton (AW),7:15,Gunfighter,hrs_36386903,3.0,2,1,29.3,LOST,1.83
+2026-10-09,fav,rac_32300398377,York,4:25,Toca Madera,hrs_35553406,3.75,3,,,WON,2.62
+2026-10-09,fav,rac_32300202740,Newmarket,3:30,Archers Bay,hrs_53390106,4.5,3,,,LOST,3.25
+2026-10-09,fav,rac_32300501038,Dundalk (AW),8:00,Camino Lad,hrs_64073177,2.25,2,,,LOST,2.75
+2026-10-09,fav,rac_32300373196,Kempton (AW),7:15,Gunfighter,hrs_36386903,3.0,2,,,LOST,1.83
+2026-10-09,fav,rac_32300508786,Downpatrick,3:23,Invincible Oscar,hrs_55484394,3.25,2,,,LOST,1.91
+2026-10-09,fav,rac_32300516534,Downpatrick,5:37,Mini Getaway,hrs_34961787,3.75,2,,,LOST,4.33
+2026-10-09,fav,rac_32300367385,Kempton (AW),5:45,News,hrs_17392620245,2.1,1,,,LOST,2.38
+2026-10-09,fav,rac_32300388692,York,1:30,Beagle Bay,hrs_51557660,2.5,1,,,LOST,2.75
+2026-10-09,fav,rac_32300502975,Dundalk (AW),8:30,Fixation,hrs_44295258,2.63,1,,,WON,2.38
+2026-10-09,fav,rac_32300396440,York,3:50,Instant Force,hrs_65190468,2.75,1,,,LOST,2.75
+2026-10-09,fav,rac_32300506849,Downpatrick,2:48,Facile Ocean,hrs_49757666,2.75,1,,,WON,3.00
+2026-10-09,fav,rac_32300491353,Dundalk (AW),4:50,Star Glory,hrs_63323351,2.75,1,,,VOID,
+2026-10-09,fav,rac_32300820643,Newmarket,2:25,Flora of Bermuda,hrs_35445375,2.88,1,,,LOST,3.12
+2026-10-09,fav,rac_32300390629,York,2:05,Regency Royal,hrs_63811097,3.5,1,,,LOST,3.75
+2026-10-09,fav,rac_32300384818,Newmarket,4:45,Silver Lake,hrs_58283064,4.33,1,,,LOST,4.50
+2026-10-09,fav,rac_32300514597,Downpatrick,5:05,Down Around,hrs_29748600,4.415,1,,,LOST,5.50
+2026-10-09,fav,rac_32300406125,Chepstow,3:12,Le Beau Madrik,hrs_52021438,5.0,1,,,LOST,4.33
+2026-10-09,fav,rac_32300386755,Newmarket,5:20,Lion of Mali,hrs_52055108,5.0,1,,,LOST,6.00
+2026-10-09,fav,rac_32300497164,Dundalk (AW),7:00,Naoi,hrs_51557793,5.0,1,,,LOST,15.00
+2026-10-09,fav,rac_32300400314,York,5:00,Magic Boy,hrs_44417597,7.5,1,,,LOST,12.00
+2026-10-09,fav,rac_32300369322,Kempton (AW),6:15,Assiri Heights,hrs_54337374,1.11,0,,,VOID,
+2026-10-09,fav,rac_32300394503,York,3:18,Sharadd,hrs_17389274301,1.3,0,,,WON,1.44
+2026-10-09,fav,rac_32300200803,Newmarket,2:57,Musical Times,hrs_65838178,1.5,0,,,WON,1.44
+2026-10-09,fav,rac_32300838076,Kempton (AW),4:05,Bidsta,hrs_17391337355,1.57,0,,,WON,1.30
+2026-10-09,fav,rac_32300504912,Downpatrick,2:13,Euro Agent,hrs_59186099,1.8,0,,,WON,1.57
+2026-10-09,fav,rac_32300822580,Chepstow,1:22,Cooltobecareless,hrs_50188859,1.91,0,,,WON,2.00
+2026-10-09,fav,rac_32300402251,Chepstow,1:57,Saint Jeannais,hrs_57942038,1.91,0,,,WON,1.83
+2026-10-09,fav,rac_32300510723,Downpatrick,3:58,Little Ginger,hrs_61684539,1.91,0,,,WON,1.57
+2026-10-09,fav,rac_32300408062,Chepstow,3:43,Cosmic Connection,hrs_50666847,2.25,0,,,LOST,2.88
+2026-10-09,fav,rac_32300382881,Newmarket,4:10,Forty Years On,hrs_50282113,2.75,0,,,VOID,
+2026-10-09,fav,rac_32300363511,Kempton (AW),4:38,Laylaty,hrs_65710883,3.25,0,,,LOST,5.00
+2026-10-09,fav,rac_32300499101,Dundalk (AW),7:30,Aiteall,hrs_66655393,3.25,0,,,LOST,5.00
+2026-10-09,fav,rac_32300375133,Kempton (AW),7:45,Star Time,hrs_42261212,3.5,0,,,WON,4.00
+2026-10-09,fav,rac_32300379007,Newmarket,1:15,Flann Sunna,hrs_65869678,3.5,0,,,LOST,3.25
+2026-10-09,fav,rac_32300377070,Kempton (AW),8:15,Bold Shout,hrs_49144060,3.75,0,,,LOST,3.50
+2026-10-09,fav,rac_32300413873,Chepstow,5:31,Sheezer Diva,hrs_57758442,4.5,0,,,LOST,4.33
+2026-10-09,fav,rac_32300380944,Newmarket,1:50,Chasing Daylight,hrs_17392187400,5.5,0,,,LOST,7.00
+2026-10-09,fav,rac_32300404188,Chepstow,2:32,Seven Kites,hrs_62393849,3.0,-1,,,LOST,3.00
+2026-10-09,fav,rac_32300392566,York,2:40,Tierra Del Toro,hrs_53743522,4.0,-1,,,LOST,3.75
+2026-10-09,fav,rac_32300365448,Kempton (AW),5:15,Positive Thoughts,hrs_56961681,4.5,-1,,,LOST,4.00
+2026-10-09,fav,rac_32300495227,Dundalk (AW),6:30,Mehman,hrs_24287914,5.0,-1,,,LOST,4.00
+2026-10-09,fav,rac_32300493290,Dundalk (AW),5:25,Mirren,hrs_7000000609,5.5,-1,,,LOST,5.00
+2026-10-09,fav,rac_32300371259,Kempton (AW),6:45,Havana Touch,hrs_35938462,2.5,-2,,,WON,2.50
+2026-10-09,fav,rac_32300409999,Chepstow,4:17,Unjeu Royal,hrs_49973994,4.0,-2,,,LOST,6.50
+2026-10-09,fav,rac_32300911682,Dundalk (AW),6:00,Nazario,hrs_53960046,4.0,-2,,,LOST,4.33
+2026-10-09,fav,rac_32300411936,Chepstow,4:55,Marlacoo,hrs_39996565,4.5,-2,,,LOST,3.50
+2026-10-09,fav,rac_32300512660,Downpatrick,4:30,Ersudaly,hrs_46233628,5.5,-3,,,LOST,13.00
