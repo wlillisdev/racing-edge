@@ -762,11 +762,59 @@ def settle_record(day: str, results: dict, path: Path = FILTER_RECORD) -> int:
     return n
 
 
+# THE 13:30 SHADOW (his word, 2026-10-10: "yes, shadow it"). Drifters lose:
+# on the box's record picks that drifted to the off won 1 of 27 across every
+# line, backed ones about 57%. At the 12:30 (UTC) guard, if the nap has
+# drifted 10%+ from its 07:30 price, this line re-picks the shortest eligible
+# favourite still to run that has NOT drifted 10%+; otherwise it keeps the
+# nap. RECORDED, never banked: the 07:30 nap stands and counts; this line
+# takes over only by beating it live over 50 days.
+# REVERT-IF it strikes below the 07:30 nap over 50 settled days, or his word.
+DRIFT_SWAP = 1.10
+
+
+def record_1230(rows_now: list[dict], day: str, nap_now: float | None,
+                open_races: set[str], path: Path = FILTER_RECORD) -> str:
+    """Write the day's one 13:30 shadow row; returns a line for the log."""
+    held = _load_record(path)
+    if any(r["date"] == day and r["line"] == "p1230" for r in held):
+        return "13:30 shadow: already recorded"
+    nap = next((r for r in held if r["date"] == day and r["line"] == "filter"), None)
+    if nap is None:
+        return "13:30 shadow: no 07:30 nap in the record"
+    morning = {r["race_id"]: r for r in held if r["date"] == day and r["line"] == "fav"}
+    keep = dict(nap)
+    why = "kept the nap"
+    banked = _f(nap["price"])
+    if nap_now and banked and nap_now >= banked * DRIFT_SWAP:
+        def steady(r):
+            m = morning.get(str(r["race_id"]))
+            return (m is not None and m["horse_id"] == str(r.get("horse_id") or "")
+                    and r["price"] < (_f(m["price"]) or 0) * DRIFT_SWAP)
+        alt = sorted((r for r in rows_now
+                      if not r["ruled_out"] and r["score"] is not None
+                      and str(r["race_id"]) != nap["race_id"]
+                      and str(r["race_id"]) in open_races and steady(r)),
+                     key=lambda r: (r["price"], str(r["race_id"])))
+        if alt:
+            a = alt[0]
+            keep = {k: a.get(k, "") for k in RECORD_FIELDS}
+            keep.update(score=a["score"], cleared="1" if a["price"] < NAP_MAX_PRICE else "0",
+                        confidence=f"{price_confidence(a['price'])[0]:.1f}")
+            why = f"nap drifted {banked} -> {nap_now}; swapped to {a['horse']}"
+        else:
+            why = f"nap drifted {banked} -> {nap_now}; no steady favourite left, kept it"
+    held.append(dict(keep, date=day, line="p1230", result="", sp=""))
+    _save_record(held, path)
+    return f"13:30 shadow: {why}"
+
+
 def render_record(path: Path = FILTER_RECORD) -> str:
     """Strike rate first (his ruling); P/L printed, never the verdict."""
     held = _load_record(path)
     L = ["THE FILTER'S RECORD — banked 07:30, settled at SP"]
-    for line, label in (("filter", "filter (2+ a day)"), ("races", "fav races (top 2)"),
+    for line, label in (("filter", "filter (2+ a day)"), ("p1230", "13:30 shadow nap"),
+                        ("races", "fav races (top 2)"),
                         ("races_all", "fav races (all)"), ("v3", "v3 model (top 2)"),
                         ("chase", "chase line")):
         s = [r for r in held if r["line"] == line and r["result"] in ("WON", "LOST")]

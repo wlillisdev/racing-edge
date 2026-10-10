@@ -381,6 +381,28 @@ def _median_now(raw, race_id, horse_id):
     return None
 
 
+def _shadow_1230(day, raw, nap_now) -> None:
+    """His word, 2026-10-10: the 13:30 shadow (favfilter.record_1230). The
+    eligible favourites are re-read from the same card the guard just fetched;
+    only races whose off is still ahead can be swapped to."""
+    from datetime import datetime, timezone
+    from racing_edge.school import favfilter as F
+    t = datetime.now(timezone.utc)
+    open_races = set()
+    for c in (raw or {}).get("racecards") or []:
+        try:
+            if datetime.fromisoformat(str(c.get("off_dt"))) > t:
+                open_races.add(str(c.get("race_id")))
+        except ValueError:
+            continue                     # no off time: never swapped to
+    client = get_client()
+    rows_now = F.daily_list("today", client=type("_Once", (), {
+        "racecards": lambda self, d="today": raw,
+        "horse_results": lambda self, hid, limit=6: client.horse_results(hid, limit=limit),
+    })())
+    print(f"  {F.record_1230(rows_now, day.isoformat(), nap_now, open_races)}", flush=True)
+
+
 def _guard() -> int:
     """The pre-off DRIFT GUARD (audit fix 4). The move called the winner four times in
     one day and the drift saved the Perfidia stake — yet the banked nap was never
@@ -405,6 +427,10 @@ def _guard() -> int:
         print("  No unsettled nap banked for today — nothing to guard.")
         return 0
     now = _median_now(raw, n["race_id"], n["horse_id"])
+    try:                                 # the 13:30 shadow: recorded, never banked
+        _shadow_1230(day, raw, now)
+    except Exception as _e:
+        print(f"  ⚠ 13:30 shadow failed: {_e.__class__.__name__}: {_e}", flush=True)
     banked = n["price"]
     if not (now and banked):
         print(f"  price OWED (banked {banked}, now {now}) — cannot judge the move.")

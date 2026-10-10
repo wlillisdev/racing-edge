@@ -542,3 +542,49 @@ def test_the_last_run_is_read_from_the_race_shaped_history_the_door_returns():
     s = F.score_favourite(last, rclass=5, field_size=6, price=2.5)
     assert s.score >= 4, s.reasons          # beaten <1L, finished well, class drop, small field
     assert F.last_run_from_history(rows, "2026-10-03", "hrs_nobody") is None
+
+
+def _morning(p, day="2026-10-11"):
+    """A 07:30 record: the nap N at 2.2 and the day's favourites."""
+    F._save_record([
+        dict(date=day, line="filter", race_id="n", course="Ayr", off="2:00",
+             horse="Nap", horse_id="hn", price="2.2", score="0", cleared="1",
+             confidence="46.8", result="", sp=""),
+        dict(date=day, line="fav", race_id="n", horse="Nap", horse_id="hn", price="2.2"),
+        dict(date=day, line="fav", race_id="a", horse="Steady", horse_id="ha", price="2.5"),
+        dict(date=day, line="fav", race_id="b", horse="Drifter", horse_id="hb", price="2.0"),
+        dict(date=day, line="fav", race_id="c", horse="Gone", horse_id="hc", price="2.1"),
+    ], p)
+
+
+def _now(**kw):
+    base = {"ruled_out": False, "score": 0, "course": "X", "off": "3:00", "field": 6}
+    return [dict(base, race_id="a", horse="Steady", horse_id="ha", price=2.6),
+            dict(base, race_id="b", horse="Drifter", horse_id="hb", price=2.4),   # +20%
+            dict(base, race_id="c", horse="Gone", horse_id="hc", price=2.0)]      # already off
+
+
+def test_the_1230_shadow_swaps_a_drifting_nap_to_the_shortest_steady_favourite(tmp_path):
+    """His word, 2026-10-10: "yes, shadow it". Picks that drifted to the off
+    won 1 of 27 on the box's record. A nap out 10%+ at 12:30 is swapped, in
+    the shadow only, to the shortest favourite still to run that has not
+    drifted; the 07:30 nap itself is never touched."""
+    p = tmp_path / "fr.csv"
+    _morning(p)
+    out = F.record_1230(_now(), "2026-10-11", nap_now=2.5, open_races={"a", "b", "n"}, path=p)
+    assert "swapped to Steady" in out
+    rec = F._load_record(p)
+    shadow = [r for r in rec if r["line"] == "p1230"]
+    assert [(r["horse"], r["race_id"]) for r in shadow] == [("Steady", "a")]
+    assert [r["horse"] for r in rec if r["line"] == "filter"] == ["Nap"]
+    assert "already" in F.record_1230(_now(), "2026-10-11", 2.5, {"a"}, path=p)
+
+
+def test_the_1230_shadow_keeps_a_steady_nap_and_a_drifter_with_no_way_out(tmp_path):
+    p = tmp_path / "fr.csv"
+    _morning(p)
+    assert "kept the nap" in F.record_1230(_now(), "2026-10-11", 2.3, {"a", "b"}, path=p)
+    q = tmp_path / "fr2.csv"
+    _morning(q)
+    assert "kept it" in F.record_1230(_now(), "2026-10-11", 2.5, {"b"}, path=q)
+    assert [r["horse"] for r in F._load_record(q) if r["line"] == "p1230"] == ["Nap"]
