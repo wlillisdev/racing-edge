@@ -193,6 +193,31 @@ BASE_RATE = (31.9, 3781)
 MIN_NAMED = 2            # his floor: at least two horses every day
 
 
+# THE NAP IS RANKED BY PRICE (his word, 2026-10-10: "yes, rank by price").
+# The box's own pick-time record, 405 favourites at evens+ from 28 Sep to
+# 9 Oct: the dots scored +2 or better won 24% against 33% below — WORSE at
+# the same price in every band — while the 07:30 price sorted them cleanly:
+# 2.0-2.5 won 47%, 2.5-3.0 38%, 3.0+ 22%. The archive, 3,901 favourites at
+# SP 2.0-3.0, agrees in both halves (41.5/42.4% v 35.0/33.3%, and 25% at 3-4).
+# So the two picks are the two shortest favourites under 3.0 that his rules
+# leave in; the dots are printed, never ranked. One bar with the favourite
+# races, so the two can never drift apart.
+# REVERT-IF the price-ranked picks strike below backing every favourite at
+# evens+ over 50 settled days, or his word.
+NAP_MAX_PRICE = RACES_MAX_PRICE
+
+# Confidence for a price-ranked pick: the same record's strike in its band.
+PRICE_CONFIDENCE = ((2.5, 46.8, 77), (3.0, 37.8, 82), (4.0, 21.6, 125))
+
+
+def price_confidence(price: float) -> tuple[float, int]:
+    """How often a 07:30 favourite at this price has won in the box's record."""
+    for top, pct, n in PRICE_CONFIDENCE:
+        if price < top:
+            return pct, n
+    return BASE_RATE
+
+
 def confidence(score: int | None) -> tuple[float, int]:
     """The base rate for this score, or the overall one when off the table."""
     if score is None:
@@ -532,8 +557,12 @@ def daily_list(day: str = "today", floor: int = FLOOR, client=None) -> list[dict
                        reasons=["no previous run the door could see"])
         else:
             sc.horse = str(fav.get("horse") or "")
-            row.update(score=sc.score, ruled_out=sc.ruled_out,
-                       verdict=sc.verdict, reasons=sc.reasons)
+            # the dots are printed, not a gate (his word, 2026-10-10): only
+            # his odds-on bar rules out here
+            odds_on = price < ODDS_ON
+            row.update(score=sc.score, ruled_out=odds_on,
+                       verdict="RULED OUT" if odds_on else "kept",
+                       reasons=sc.reasons)
         why_bad = bad_race(row)
         if why_bad:
             row.update(ruled_out=True, verdict="RULED OUT (bad race)",
@@ -544,7 +573,7 @@ def daily_list(day: str = "today", floor: int = FLOOR, client=None) -> list[dict
                        reasons=[f"RULED OUT: novice/maiden race — {row['race_name']} "
                                 "(his word, 2026-09-27)"] + list(row["reasons"]))
         out.append(row)
-    out.sort(key=lambda r: (r["score"] is None, -(r["score"] or 0), r["price"]))
+    out.sort(key=lambda r: (r["ruled_out"], r["price"]))
     return out
 
 
@@ -561,24 +590,18 @@ def chase_line(rows: list[dict]) -> list[dict]:
 
 
 def todays_picks(rows: list[dict], minimum: int = MIN_NAMED) -> list[dict]:
-    """HIS FLOOR: at least two horses, every day.
+    """HIS FLOOR: two horses, every day — the two SHORTEST favourites his
+    rules leave in (ranked by price, his word 2026-10-10).
 
-    Everything scoring SELECT_AT or better is named. If that is fewer than
-    two, the list is topped up with the best remaining eligible favourites —
-    because a day with nothing to say is not what he asked for. A topped-up
-    pick is flagged so it is never mistaken for one that cleared the bar, and
-    it carries its own (lower) base rate."""
+    Odds-on, bad races, novice/maiden/bumper and unread horses are out; the
+    dots no longer rule out or rank. Picks under NAP_MAX_PRICE are cleared;
+    if fewer than two are, the list is topped up with the shortest of the
+    rest, flagged so a top-up is never mistaken for one that cleared."""
     live = [r for r in rows if not r["ruled_out"] and r["score"] is not None]
-    live.sort(key=lambda r: (-r["score"], r["price"]))
-    picks = [dict(r, cleared=True) for r in live if r["score"] >= SELECT_AT]
-    for r in live:
-        if len(picks) >= minimum:
-            break
-        if any(p["race_id"] == r["race_id"] for p in picks):
-            continue
-        picks.append(dict(r, cleared=False))
+    live.sort(key=lambda r: (r["price"], str(r["race_id"])))
+    picks = [dict(r, cleared=r["price"] < NAP_MAX_PRICE) for r in live[:minimum]]
     for p in picks:
-        pct, n = confidence(p["score"])
+        pct, n = price_confidence(p["price"])
         p["confidence"], p["confidence_n"] = pct, n
     return picks
 
@@ -586,7 +609,8 @@ def todays_picks(rows: list[dict], minimum: int = MIN_NAMED) -> list[dict]:
 def render_list(rows: list[dict], floor: int = FLOOR) -> str:
     kept = [r for r in rows if not r["ruled_out"]]
     L = ["THE FAVOURITE FILTER — his method, 2026-09-20",
-         f"every favourite on the card, scored; anything below {floor} is ruled out",
+         "every favourite on the card, shortest first; the dots are printed, "
+         "not ranked (his word, 2026-10-10)",
          f"{len(rows)} favourites read · {len(kept)} kept · "
          f"{len(rows) - len(kept)} ruled out", ""]
     if not rows:
@@ -600,12 +624,12 @@ def render_list(rows: list[dict], floor: int = FLOOR) -> str:
     picks = todays_picks(rows)
     L = [L[0], L[1], L[2], "",
          "=" * 66,
-         f"TODAY'S {len(picks)} — best first, with the record's own confidence",
-         "  confidence = how often favourites scoring the same have WON before.",
+         f"TODAY'S {len(picks)} — shortest first, with the record's own confidence",
+         "  confidence = how often 07:30 favourites at this price have WON before.",
          "  It is a base rate with its sample beside it, not a tip on this horse.",
          ""] + L[3:]
     for p in picks:
-        mark = "NAMED " if p["cleared"] else "top-up"
+        mark = "under 2/1" if p["cleared"] else "top-up   "
         L.insert(7 + picks.index(p),
                  f"  {mark} {p['confidence']:.0f}% (n={p['confidence_n']})  "
                  f"{p['course']} {p['off']}  {p['horse']} @ {p['price']:.2f}"
@@ -793,7 +817,7 @@ def bank_nap(rows: list[dict], day: str, log, picks: list[dict] | None = None,
                                           "(every one odds-on, ruled out or unread)")
             return "NAP: NO BET — no eligible favourite today"
         p = picks[0]
-        case = (f"{source.upper()} NAP ({'NAMED' if p['cleared'] else 'top-up'}, score "
+        case = (f"{source.upper()} NAP ({'under 2/1' if p['cleared'] else 'top-up'}, score "
                 f"{p['score']:+d}, confidence {p['confidence']:.0f}% n="
                 f"{p['confidence_n']}): " + "; ".join(p["reasons"]))
         log.record(day=d, race_id=str(p["race_id"]), course=p["course"] or "",
