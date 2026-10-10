@@ -1,7 +1,33 @@
 # HANDOFF — the apprenticeship's living memory
 
-Last updated: **2026-09-27** (his filter is the nap; the rulings of 27 Sep) (update this file
+Last updated: **2026-10-10** (the picks rank by price; the 13:30 shadow) (update this file
 whenever state changes — it is how every new chat remembers everything).
+
+## 2026-10-10 — THE PICKS RANK BY PRICE. READ THIS FIRST.
+
+**Why.** The box's own pick-time record (`data/filter_record.csv`, line `fav`,
+405 favourites at evens+, 28 Sep-9 Oct): the dots don't predict. +2 or better
+won 24% against 33% below, worse at the same price in every band. The 07:30
+price sorts favourites: 2.0-2.5 won 47%, 2.5-3.0 38%, 3.0+ 22%. The archive
+agrees in both halves. All five naps priced 3.0+ lost. Drifters won 1 of 27.
+
+**His rulings, 10 Oct (all merged with tests and receipts):**
+- #137 (plumbing, audit bug 5): the 12:30 UTC guard prices the nap on the
+  median, the same measure it banked at. It used to read the best price.
+- #138 "yes, rank by price": the two picks are the two shortest eligible
+  favourites. Under 3.0 they're cleared; 3.0+ is only a flagged top-up. The
+  dots are printed but never rank or rule out. On the box's 12 days this gives
+  nap 5/11 and 11/23 across both picks, against the box's actual 3/11 and 6/19.
+- "keep the ban": novice, maiden and bumper races stay out. In those races
+  favourites won 40%, against 27% for the rest. Reported, not acted on.
+- #139 "yes, shadow it": line `p1230`. At 12:30 UTC, if the nap has drifted
+  10%+, the shadow records the shortest steady favourite still to run, or
+  else the nap. Never banked. It takes the nap only by beating it over 50 days.
+
+**Still owed:** the box snapshot push command (data/market_snapshots/ is still
+only .gitkeep on main). Bugs 4 (joint-favourite lookahead), 6 (stale 49.2%
+text), 7 (move table includes odds-on) and 8 (SP thresholds not labelled) are
+still open, one a day.
 
 ## 2026-09-27 — HIS FILTER PICKS THE NAP. READ THIS FIRST.
 
