@@ -314,6 +314,30 @@ def test_guard_writes_1230_snapshot_and_reads_the_board(project, monkeypatch, ca
     assert snap_1230.exists()
 
 
+def test_guard_compares_median_to_median_not_best_price(project, monkeypatch, capsys):
+    """Audit bug 5 (fixed 2026-10-10): the nap banks at the MEDIAN across books;
+    the guard read the BEST price. One generous bookmaker at 3.8 against a
+    banked 3.0 shouted STAND OFF on a horse whose market had not moved."""
+    today = date.today()
+    log = open_nap_log()
+    log.record(day=today, race_id="race-m", course="Bath", horse="Steady Horse",
+               horse_id="hm", price=3.0, score=2, confident=False)
+    log.close()
+    raw_cards = {"racecards": [{
+        "race_id": "race-m", "course": "Bath", "off_time": "15:00",
+        "date": today.isoformat(), "type": "Flat",
+        "runners": [{"horse_id": "hm", "horse": "Steady Horse",
+                     "odds": [{"decimal": "2.9"}, {"decimal": "3.0"},
+                              {"decimal": "3.1"}, {"decimal": "3.8"}]}],
+    }]}
+    monkeypatch.setattr(nap_cli, "get_client", lambda: FakeClient(cards={"today": raw_cards}))
+    monkeypatch.setattr(sys, "argv", ["nap", "--guard"])
+    assert nap_cli.main() == 0
+    out = capsys.readouterr().out
+    assert "STAND OFF" not in out
+    assert "steady (3.0 -> 3.05)" in out
+
+
 # --------------------------------------------------------------------------- #
 # 6. HEALTH — the 09:30 red/green report
 # --------------------------------------------------------------------------- #

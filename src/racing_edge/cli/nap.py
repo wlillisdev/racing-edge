@@ -361,6 +361,26 @@ def _board_read(day, cards) -> None:
                  title="The board", subtitle="racing-edge form trial")
 
 
+def _median_now(raw, race_id, horse_id):
+    """The nap's price NOW on the SAME measure it was banked at: the median
+    across bookmakers (favfilter.market_price). Fixed 2026-10-10 (audit bug 5):
+    the guard read odds.consensus, which is the BEST price across books, against
+    a banked median — max >= median always, so a horse that had not moved could
+    read as a 20% drift and mail STAND OFF.
+    REVERT-IF the banked price stops being the median."""
+    from racing_edge.school.favfilter import market_price
+    for c in (raw or {}).get("racecards") or []:
+        if c.get("race_id") != race_id:
+            continue
+        for r in c.get("runners") or []:
+            if str(r.get("horse_id")) == str(horse_id):
+                odds = [o if isinstance(o, dict) else {"decimal": o}
+                        for o in r.get("odds") or []]
+                p = market_price(odds)
+                return round(p, 2) if p else None
+    return None
+
+
 def _guard() -> int:
     """The pre-off DRIFT GUARD (audit fix 4). The move called the winner four times in
     one day and the drift saved the Perfidia stake — yet the banked nap was never
@@ -369,7 +389,8 @@ def _guard() -> int:
     the STAKE, not the record."""
     from racing_edge.data.normalise import racecards_from_raw
     day = resolve_date("today")
-    cards = racecards_from_raw(get_client().racecards("today"))
+    raw = get_client().racecards("today")
+    cards = racecards_from_raw(raw)
     # THE BOARD, SNAPSHOT TWO + THE READ (the master, 2026-09-02): the whole
     # card's prices now against 07:30 — steamers, drifters, the nap race's
     # board — emailed before racing so law 4g finally has data behind it.
@@ -383,10 +404,7 @@ def _guard() -> int:
     if not n:
         print("  No unsettled nap banked for today — nothing to guard.")
         return 0
-    race = next((r for r in cards if r.race_id == n["race_id"]), None)
-    runner = next((x for x in race.runners if x.horse_id == n["horse_id"]), None) \
-        if race else None
-    now = runner.odds.consensus if runner else None
+    now = _median_now(raw, n["race_id"], n["horse_id"])
     banked = n["price"]
     if not (now and banked):
         print(f"  price OWED (banked {banked}, now {now}) — cannot judge the move.")
