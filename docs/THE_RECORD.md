@@ -4,11 +4,11 @@ Derived from `data/nap.db` by `PYTHONPATH=src python -m racing_edge.school.recor
 
 Level stakes, one point a bet, settled at SP. A pass is shown as a position, not a missing day. The favourite line is the benchmark the ledger already keeps on the same races — it is the thing to beat, never the picker.
 
-**77 settled** · 21 wins · strike **27.3%** · P/L **-4.93 pts** · ROI **-6.4%**
+**78 settled** · 22 wins · strike **28.2%** · P/L **-3.55 pts** · ROI **-4.6%**
 
-**The favourite on the same races:** 44 settled · 16 wins · strike 36.4% · P/L -6.92 pts · ROI -15.7%
+**The favourite on the same races:** 45 settled · 17 wins · strike 37.8% · P/L -5.54 pts · ROI -12.3%
 
-(95 days banked · 77 bets · 13 passes · 5 voids · 0 pending)
+(96 days banked · 78 bets · 13 passes · 5 voids · 0 pending)
 
 | date | eng | course | horse | price | SP | result | fav | fav SP | fav |
 |---|---|---|---|---|---|---|---|---|---|
@@ -107,3 +107,4 @@ Level stakes, one point a bet, settled at SP. A pass is shown as a position, not
 | 2026-10-07 | filter | Navan | Divine Legend | 3.50 | 3.00 | LOST | Divine Legend | 3.00 | lost |
 | 2026-10-08 | filter | Ayr | Aighear | 2.00 | 1.57 | WON | Aighear | 1.57 | WON |
 | 2026-10-09 | filter | Dundalk (AW) | Camino Lad | 2.25 | 2.75 | LOST | Camino Lad | 2.75 | lost |
+| 2026-10-10 | filter | Newmarket | Rock Montreal | 2.10 | 2.38 | WON | Rock Montreal | 2.38 | WON |

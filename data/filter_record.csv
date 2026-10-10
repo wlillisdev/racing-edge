@@ -624,3 +624,70 @@ date,line,race_id,course,off,horse,horse_id,price,score,cleared,confidence,resul
 2026-10-09,fav,rac_32300911682,Dundalk (AW),6:00,Nazario,hrs_53960046,4.0,-2,,,LOST,4.33
 2026-10-09,fav,rac_32300411936,Chepstow,4:55,Marlacoo,hrs_39996565,4.5,-2,,,LOST,3.50
 2026-10-09,fav,rac_32300512660,Downpatrick,4:30,Ersudaly,hrs_46233628,5.5,-3,,,LOST,13.00
+2026-10-10,filter,rac_32300946548,Newmarket,2:25,Rock Montreal,hrs_17389879241,2.1,3,0,34.9,WON,2.38
+2026-10-10,filter,rac_32300537841,Newmarket,4:50,National Honour,hrs_17389669598,2.1,3,0,34.9,VOID,
+2026-10-10,chase,rac_32300677305,Fairyhouse,3:10,Jukebox Johnny,hrs_46913412,3.25,2,,,LOST,3.50
+2026-10-10,chase,rac_32300526219,Hexham,4:20,Athair Mor,hrs_34194293,3.0,0,,,LOST,3.75
+2026-10-10,chase,rac_32300675368,Fairyhouse,2:33,Straight John,hrs_51186009,2.62,-1,,,LOST,2.75
+2026-10-10,chase,rac_32300528156,Hexham,4:55,Sledgehammer,hrs_58565304,4.5,-2,,,WON,2.88
+2026-10-10,races_all,rac_32300946548,Newmarket,2:25,Rock Montreal,hrs_17389879241,2.1,3,,,WON,2.38
+2026-10-10,races,rac_32300946548,Newmarket,2:25,Rock Montreal,hrs_17389879241,2.1,3,,,WON,2.38
+2026-10-10,races_all,rac_32300537841,Newmarket,4:50,National Honour,hrs_17389669598,2.1,3,,,VOID,
+2026-10-10,races,rac_32300537841,Newmarket,4:50,National Honour,hrs_17389669598,2.1,3,,,VOID,
+2026-10-10,races_all,rac_32300533967,Newmarket,1:50,Drumbeat,hrs_66304770,2.0,2,,,WON,1.91
+2026-10-10,races_all,rac_32300690864,Naas,2:50,Pink Venom,hrs_65287166,2.37,2,,,WON,2.10
+2026-10-10,races_all,rac_32300532030,Newmarket,1:15,The Lost King,hrs_43860173,2.75,1,,,LOST,2.75
+2026-10-10,races_all,rac_32300675368,Fairyhouse,2:33,Straight John,hrs_51186009,2.62,-1,,,LOST,2.75
+2026-10-10,v3,rac_32300946548,Newmarket,2:25,Rock Montreal,hrs_17389879241,2.1,3,1,42.7,WON,2.38
+2026-10-10,v3,rac_32300537841,Newmarket,4:50,National Honour,hrs_17389669598,2.1,3,1,40.7,VOID,
+2026-10-10,fav,rac_32300946548,Newmarket,2:25,Rock Montreal,hrs_17389879241,2.1,3,,,WON,2.38
+2026-10-10,fav,rac_32300537841,Newmarket,4:50,National Honour,hrs_17389669598,2.1,3,,,VOID,
+2026-10-10,fav,rac_32300547526,Southwell (AW),7:00,Eightthreeone,hrs_52451784,3.75,3,,,LOST,3.75
+2026-10-10,fav,rac_32300545589,Southwell (AW),6:30,Go Lockers Go,hrs_54965582,4.0,3,,,WON,6.50
+2026-10-10,fav,rac_32300698612,Naas,5:15,Storm Ready,hrs_17391984015,4.33,3,,,WON,4.50
+2026-10-10,fav,rac_32300533967,Newmarket,1:50,Drumbeat,hrs_66304770,2.0,2,,,WON,1.91
+2026-10-10,fav,rac_32300690864,Naas,2:50,Pink Venom,hrs_65287166,2.37,2,,,WON,2.10
+2026-10-10,fav,rac_32300524282,Hexham,3:45,Passing Diamond,hrs_41190051,2.38,2,,,WON,2.88
+2026-10-10,fav,rac_32300541715,Southwell (AW),5:20,Ruby Sands,hrs_62169233,3.25,2,,,LOST,4.50
+2026-10-10,fav,rac_32300677305,Fairyhouse,3:10,Jukebox Johnny,hrs_46913412,3.25,2,,,LOST,3.50
+2026-10-10,fav,rac_32300559148,York,2:40,Weffaag,hrs_56559188,3.5,2,,,LOST,5.00
+2026-10-10,fav,rac_32300549463,Southwell (AW),7:30,Goyard,hrs_54178509,4.0,2,,,LOST,3.12
+2026-10-10,fav,rac_32300681179,Fairyhouse,4:25,Annie's Angel,hrs_45887506,4.0,2,,,LOST,3.75
+2026-10-10,fav,rac_32300948485,Chepstow,3:22,Onefournine,hrs_40493908,4.35,2,,,WON,3.00
+2026-10-10,fav,rac_32300522345,Hexham,3:05,Rebel Tribesman,hrs_52495856,2.38,1,,,LOST,2.25
+2026-10-10,fav,rac_32300532030,Newmarket,1:15,The Lost King,hrs_43860173,2.75,1,,,LOST,2.75
+2026-10-10,fav,rac_32300563022,York,3:57,Iron Stone Lad,hrs_17392484655,3.0,1,,,LOST,1.83
+2026-10-10,fav,rac_32300551400,Southwell (AW),8:00,Dust Cover,hrs_51557709,3.25,1,,,LOST,4.00
+2026-10-10,fav,rac_32300566896,York,5:07,Ashnak,hrs_45475682,4.5,1,,,LOST,5.50
+2026-10-10,fav,rac_32300694738,Naas,4:08,Keke,hrs_34456422,4.5,1,,,LOST,6.00
+2026-10-10,fav,rac_32300561085,York,3:17,Pellitory,hrs_41504169,5.0,1,,,LOST,3.25
+2026-10-10,fav,rac_32300673431,Fairyhouse,1:58,Glen Kiln,hrs_36273538,1.36,0,,,LOST,1.44
+2026-10-10,fav,rac_32300293779,Newmarket,3:00,Desert Castle,hrs_66305064,1.62,0,,,LOST,1.91
+2026-10-10,fav,rac_32300688927,Naas,2:15,Zelani,hrs_54242720,1.8,0,,,WON,1.30
+2026-10-10,fav,rac_32300530093,Hexham,5:30,I've Got A Friend,hrs_17391213238,1.83,0,,,WON,2.62
+2026-10-10,fav,rac_32300520408,Hexham,2:20,Dark Tide Rising,hrs_17390790823,1.91,0,,,LOST,2.10
+2026-10-10,fav,rac_32300686990,Naas,1:40,Iveagh House,hrs_65774310,1.91,0,,,LOST,1.83
+2026-10-10,fav,rac_32300572707,Chepstow,2:45,Stick To The Board,hrs_51831759,2.0,0,,,LOST,1.80
+2026-10-10,fav,rac_32300543652,Southwell (AW),5:55,Arabian Summer,hrs_45855117,2.5,0,,,LOST,2.25
+2026-10-10,fav,rac_32300685053,Fairyhouse,5:35,Gaelic Seer,hrs_17392132121,2.5,0,,,LOST,3.25
+2026-10-10,fav,rac_32300696675,Naas,4:40,Therewillbeglory,hrs_54998125,2.75,0,,,WON,1.83
+2026-10-10,fav,rac_32300526219,Hexham,4:20,Athair Mor,hrs_34194293,3.0,0,,,LOST,3.75
+2026-10-10,fav,rac_32300683116,Fairyhouse,5:00,Granlahan,hrs_60594744,3.25,0,,,WON,1.91
+2026-10-10,fav,rac_32300950422,Southwell (AW),4:10,Potters Prince,hrs_57941912,5.0,0,,,LOST,5.50
+2026-10-10,fav,rac_32300564959,York,4:32,All In You,hrs_39020905,5.5,0,,,LOST,6.00
+2026-10-10,fav,rac_32300675368,Fairyhouse,2:33,Straight John,hrs_51186009,2.62,-1,,,LOST,2.75
+2026-10-10,fav,rac_32300692801,Naas,3:28,Two Stars,hrs_34948690,3.5,-1,,,LOST,4.00
+2026-10-10,fav,rac_32300553337,Southwell (AW),8:30,Domination,hrs_52329263,3.75,-1,,,WON,3.50
+2026-10-10,fav,rac_32300570770,Chepstow,2:10,Made U Blush,hrs_45007396,4.0,-1,,,LOST,8.00
+2026-10-10,fav,rac_32300555274,York,1:30,Divine Whisper,hrs_64847062,5.5,-1,,,LOST,7.00
+2026-10-10,fav,rac_32300528156,Hexham,4:55,Sledgehammer,hrs_58565304,4.5,-2,,,WON,2.88
+2026-10-10,fav,rac_32300557211,York,2:05,Shadow Road,hrs_66130610,6.5,-2,,,LOST,17.00
+2026-10-10,fav,rac_32300539778,Southwell (AW),4:45,Calm The Jets,hrs_48818994,4.33,-3,,,LOST,2.25
+2026-10-10,fav,rac_32300297653,Chepstow,4:02,Masked Man,hrs_52267257,4.5,-3,,,LOST,4.33
+2026-10-10,fav,rac_32300295716,Newmarket,3:40,Dawn Rising,hrs_16762270,6.0,-3,,,LOST,7.00
+2026-10-10,fav,rac_32300574644,Chepstow,4:35,Magical King,hrs_34457500,7.0,-3,,,LOST,7.00
+2026-10-10,fav,rac_32300535904,Newmarket,4:15,Desert Romance,hrs_17392888296,2.2,,,,LOST,3.75
+2026-10-10,fav,rac_32300576581,Chepstow,5:10,Northern Singer,hrs_17393582934,2.75,,,,WON,2.75
+2026-10-10,fav,rac_32300568833,Chepstow,1:35,Sacre Chef,hrs_17393580848,2.88,,,,LOST,3.25
+2026-10-10,fav,rac_32300679242,Fairyhouse,3:50,Marie D'angos,hrs_17393627783,3.0,,,,LOST,8.00
+2026-10-10,p1230,rac_32300946548,Newmarket,2:25,Rock Montreal,hrs_17389879241,2.1,3,0,34.9,WON,2.38
