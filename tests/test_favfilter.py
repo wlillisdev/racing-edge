@@ -260,11 +260,11 @@ def _card_rows():
     base = {"off": "2:00", "field": 6, "reasons": [], "ruled_out": False,
             "date": "2026-09-27"}
     return [dict(base, race_id="r1", course="Ayr", horse="Good", horse_id="h1",
-                 price=3.0, score=4, type="Flat"),
+                 price=2.2, score=4, type="Flat"),
             dict(base, race_id="r2", course="Ayr", horse="Okay", horse_id="h2",
                  price=2.5, score=2, type="Hurdle"),
             dict(base, race_id="r3", course="Kelso", horse="Chaser", horse_id="h3",
-                 price=2.2, score=1, type="Chase")]
+                 price=3.0, score=1, type="Chase")]
 
 
 def test_the_filter_banks_its_picks_before_the_off_and_never_re_picks(tmp_path):
@@ -272,13 +272,13 @@ def test_the_filter_banks_its_picks_before_the_off_and_never_re_picks(tmp_path):
     them, while the mail said GRADED NIGHTLY. A line never recorded can never
     be judged. Law 1: bank pre-off, never re-pick intraday."""
     p = tmp_path / "filter_record.csv"
-    # 2 picks + 1 chase + every favourite's 07:30 price (3) + the Chaser as a
+    # 2 picks + 1 chase + every favourite's 07:30 price (3) + Good as a
     # favourite race (races_all + races)
     assert F.record_picks(_card_rows(), "2026-09-27", p) == 8
     rows = [r for r in F._load_record(p) if r["line"] not in ("fav", "races", "races_all")]
     assert [(r["line"], r["horse"]) for r in rows] == [
         ("filter", "Good"), ("filter", "Okay"), ("chase", "Chaser")]
-    assert rows[0]["cleared"] == "1" and rows[1]["cleared"] == "0"
+    assert rows[0]["cleared"] == "1" and rows[1]["cleared"] == "1"   # both under 3.0
     assert F.record_picks(_card_rows()[:1], "2026-09-27", p) == 0, "a re-run re-picked"
     assert len(F._load_record(p)) == 8
 
@@ -292,7 +292,7 @@ def test_the_night_settles_the_filter_at_sp(tmp_path):
         {"race_id": "r1", "runners": [{"horse_id": "h1", "position": "1", "sp_dec": "3.25"}]},
         {"race_id": "r2", "runners": [{"horse_id": "h9", "position": "1", "sp_dec": "5.0"}]},
     ]}
-    assert F.settle_record("2026-09-27", results, p) == 4        # 2 picks + their 2 fav rows
+    assert F.settle_record("2026-09-27", results, p) == 6   # 2 picks, 2 fav rows, Good's 2 race rows
     got = {r["horse"]: (r["result"], r["sp"]) for r in F._load_record(p) if r["line"] != "fav"}
     assert got == {"Good": ("WON", "3.25"), "Okay": ("VOID", ""), "Chaser": ("", "")}
     assert F.settle_record("2026-09-27", results, p) == 0, "settle must be write-once"
@@ -308,7 +308,7 @@ def test_the_filter_banks_the_nap_in_the_real_record(tmp_path):
     log = NapLog(tmp_path / "nap.db")
     line = F.bank_nap(_card_rows(), "2026-09-27", log)
     row = log.existing(__import__("datetime").date(2026, 9, 27))
-    assert row["horse"] == "Good" and row["race_id"] == "r1" and row["price"] == 3.0
+    assert row["horse"] == "Good" and row["race_id"] == "r1" and row["price"] == 2.2
     assert row["won"] is None and row["confident"] == 1
     assert "FILTER NAP" in row["case_text"], "health reds a nap with no case"
     assert line.startswith("NAP: Good")
@@ -316,6 +316,28 @@ def test_the_filter_banks_the_nap_in_the_real_record(tmp_path):
     assert "not re-banked" in again
     assert log.existing(__import__("datetime").date(2026, 9, 27))["horse"] == "Good"
     log.close()
+
+
+def test_the_picks_are_the_two_shortest_not_the_best_dots():
+    """His word, 2026-10-10: "yes, rank by price". Divine Legend (7 Oct) was
+    napped at 3.5 on her dots over King Roly at 2.63, who won; on the box's
+    record dots +2 won 24% against 33% below. The shortest leads; a 3.0+
+    favourite is only ever a flagged top-up."""
+    base = {"off": "2:00", "field": 6, "reasons": [], "ruled_out": False,
+            "date": "2026-10-07", "type": "Flat"}
+    rows = [dict(base, race_id="a", horse="Dots", horse_id="h1", course="Navan",
+                 price=3.5, score=3),
+            dict(base, race_id="b", horse="Short", horse_id="h2", course="Worcester",
+                 price=2.63, score=-1),
+            dict(base, race_id="c", horse="Shorter", horse_id="h3", course="Ayr",
+                 price=2.1, score=0)]
+    picks = F.todays_picks(rows)
+    assert [p["horse"] for p in picks] == ["Shorter", "Short"]
+    assert all(p["cleared"] for p in picks)
+    assert picks[0]["confidence"] == 46.8
+    only_long = F.todays_picks([rows[0], dict(rows[0], race_id="d", price=3.2)])
+    assert [p["price"] for p in only_long] == [3.2, 3.5]
+    assert not any(p["cleared"] for p in only_long)
 
 
 def test_a_day_with_no_eligible_favourite_is_a_named_pass(tmp_path):
