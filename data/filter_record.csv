@@ -691,3 +691,39 @@ date,line,race_id,course,off,horse,horse_id,price,score,cleared,confidence,resul
 2026-10-10,fav,rac_32300568833,Chepstow,1:35,Sacre Chef,hrs_17393580848,2.88,,,,LOST,3.25
 2026-10-10,fav,rac_32300679242,Fairyhouse,3:50,Marie D'angos,hrs_17393627783,3.0,,,,LOST,8.00
 2026-10-10,p1230,rac_32300946548,Newmarket,2:25,Rock Montreal,hrs_17389879241,2.1,3,0,34.9,WON,2.38
+2026-10-11,filter,rac_32300582392,Goodwood,2:57,Zarak Crown,hrs_17391735781,3.0,3,0,21.6,LOST,2.75
+2026-10-11,filter,rac_32300590140,Goodwood,5:17,Prosperity,hrs_7000002296,3.75,2,0,21.6,LOST,5.00
+2026-10-11,chase,rac_32300712171,Cork,4:32,Jasko des Dames,hrs_37806538,4.5,0,,,LOST,4.00
+2026-10-11,v3,rac_32300582392,Goodwood,2:57,Zarak Crown,hrs_17391735781,3.0,3,1,33.7,LOST,2.75
+2026-10-11,v3,rac_32300590140,Goodwood,5:17,Prosperity,hrs_7000002296,3.75,2,1,26.2,LOST,5.00
+2026-10-11,fav,rac_32300582392,Goodwood,2:57,Zarak Crown,hrs_17391735781,3.0,3,,,LOST,2.75
+2026-10-11,fav,rac_32300590140,Goodwood,5:17,Prosperity,hrs_7000002296,3.75,2,,,LOST,5.00
+2026-10-11,fav,rac_32300779966,Naas,1:56,Bengal Tiger,hrs_65774303,1.33,0,,,WON,1.22
+2026-10-11,fav,rac_32300586266,Goodwood,4:07,Royal Acclamation,hrs_17390302699,1.73,0,,,WON,1.73
+2026-10-11,fav,rac_32300592077,Chepstow,1:27,Princess Day,hrs_50667078,1.91,0,,,LOST,1.67
+2026-10-11,fav,rac_32300700549,Cork,1:02,World Of The Way,hrs_17393624654,1.91,,,,LOST,1.44
+2026-10-11,fav,rac_32300714108,Cork,5:07,Passenger,hrs_31287725,2.1,-1,,,LOST,1.44
+2026-10-11,fav,rac_32300708297,Cork,3:22,Minella Emperor,hrs_41190226,2.25,0,,,WON,3.25
+2026-10-11,fav,rac_32300580455,Goodwood,2:22,Brynmair Gold,hrs_17393015542,2.38,1,,,WON,1.83
+2026-10-11,fav,rac_32300603699,Chepstow,4:57,Old Coast Road,hrs_17393574590,2.5,,,,LOST,2.25
+2026-10-11,fav,rac_32300710234,Cork,3:57,Moylussa,hrs_39826934,2.5,-1,,,LOST,1.83
+2026-10-11,fav,rac_32300595951,Chepstow,2:37,Mwabani,hrs_58412088,2.63,0,,,WON,3.00
+2026-10-11,fav,rac_32300702486,Cork,1:37,Atomic City,hrs_58347576,2.75,-1,,,WON,1.80
+2026-10-11,fav,rac_32300706360,Cork,2:47,Martymill,hrs_59186106,2.75,-2,,,WON,1.83
+2026-10-11,fav,rac_32300781903,Naas,3:05,Faiyum,hrs_51091159,2.75,-2,,,LOST,3.25
+2026-10-11,fav,rac_32300783840,Naas,3:40,Beset,hrs_37821693,2.75,1,,,LOST,2.10
+2026-10-11,fav,rac_32300778029,Naas,1:20,Film Set,hrs_65101400,3.0,-2,,,LOST,4.00
+2026-10-11,fav,rac_32300597888,Chepstow,3:12,Harbour Light,hrs_50590421,3.25,0,,,WON,3.00
+2026-10-11,fav,rac_32300599825,Chepstow,3:47,Leader Crik,hrs_52709265,3.5,-1,,,LOST,4.50
+2026-10-11,fav,rac_32300594014,Chepstow,2:02,Ugo Bingo,hrs_38884356,3.75,-1,,,WON,2.50
+2026-10-11,fav,rac_32300601762,Chepstow,4:22,Norn Iron,hrs_32936519,3.75,1,,,VOID,
+2026-10-11,fav,rac_32300704423,Cork,2:12,Boola Times,hrs_43164611,3.75,1,,,LOST,4.33
+2026-10-11,fav,rac_32300785777,Naas,4:50,Guy's Girl,hrs_52526236,4.0,2,,,LOST,4.50
+2026-10-11,fav,rac_32300578518,Goodwood,1:47,Carthusian,hrs_52526187,4.33,0,,,LOST,4.33
+2026-10-11,fav,rac_32300588203,Goodwood,4:42,Wechaad,hrs_52995250,4.5,-1,,,LOST,6.50
+2026-10-11,fav,rac_32300712171,Cork,4:32,Jasko des Dames,hrs_37806538,4.5,0,,,LOST,4.00
+2026-10-11,fav,rac_32300417747,Naas,2:30,Whosinterviewinwho,hrs_66272192,4.5,0,,,LOST,6.00
+2026-10-11,fav,rac_32300584329,Goodwood,3:32,Bone Marra,hrs_52452008,5.0,1,,,LOST,7.00
+2026-10-11,fav,rac_32300787714,Naas,5:25,Vanir,hrs_64102451,5.5,1,,,WON,5.00
+2026-10-11,fav,rac_32300419684,Naas,4:15,Putapoundinthejar,hrs_40225297,6.0,1,,,LOST,10.00
+2026-10-11,p1230,rac_32300582392,Goodwood,2:57,Zarak Crown,hrs_17391735781,3.0,3,0,21.6,LOST,2.75

@@ -95,3 +95,4 @@ date,engine,course,race_id,horse,banked_price,sp_dec,won,confident,status,void_r
 2026-10-08,filter,Ayr,rac_32300289905,Aighear,2.0,1.57,1,0,WON,,Aighear,1.57,1
 2026-10-09,filter,Dundalk (AW),rac_32300501038,Camino Lad,2.25,2.75,0,0,LOST,,Camino Lad,2.75,0
 2026-10-10,filter,Newmarket,rac_32300946548,Rock Montreal,2.1,2.38,1,0,WON,,Rock Montreal,2.38,1
+2026-10-11,filter,Goodwood,rac_32300582392,Zarak Crown,3.0,2.75,0,0,LOST,,Zarak Crown,2.75,0
