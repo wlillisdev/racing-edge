@@ -727,3 +727,69 @@ date,line,race_id,course,off,horse,horse_id,price,score,cleared,confidence,resul
 2026-10-11,fav,rac_32300787714,Naas,5:25,Vanir,hrs_64102451,5.5,1,,,WON,5.00
 2026-10-11,fav,rac_32300419684,Naas,4:15,Putapoundinthejar,hrs_40225297,6.0,1,,,LOST,10.00
 2026-10-11,p1230,rac_32300582392,Goodwood,2:57,Zarak Crown,hrs_17391735781,3.0,3,0,21.6,LOST,2.75
+2026-10-12,filter,rac_32300824517,Worcester,1:37,Onehundredneighty,hrs_41814171,2.0,2,1,46.8,LOST,1.80
+2026-10-12,filter,rac_32300760596,Musselburgh,1:47,Motawaared,hrs_49359786,2.1,3,1,46.8,LOST,2.25
+2026-10-12,chase,rac_32300824517,Worcester,1:37,Onehundredneighty,hrs_41814171,2.0,2,,,LOST,1.80
+2026-10-12,chase,rac_32300832265,Worcester,3:37,Mighty Fleur,hrs_40959219,2.25,3,,,WON,2.50
+2026-10-12,chase,rac_32300834202,Worcester,4:07,Kykorock,hrs_39940964,2.5,3,,,WON,4.00
+2026-10-12,chase,rac_32300828391,Worcester,2:37,Away For The Night,hrs_47684994,2.75,-1,,,WON,2.88
+2026-10-12,chase,rac_32300826454,Worcester,2:07,Sonyourastar,hrs_51124269,2.88,1,,,LOST,2.50
+2026-10-12,chase,rac_32300836139,Worcester,4:37,Big Cadillac,hrs_39699289,3.5,-1,,,WON,3.25
+2026-10-12,races_all,rac_32300735415,Newcastle (AW),6:00,Starburster,hrs_60821936,2.63,4,,,LOST,4.00
+2026-10-12,races,rac_32300735415,Newcastle (AW),6:00,Starburster,hrs_60821936,2.63,4,,,LOST,4.00
+2026-10-12,races_all,rac_32300832265,Worcester,3:37,Mighty Fleur,hrs_40959219,2.25,3,,,WON,2.50
+2026-10-12,races,rac_32300832265,Worcester,3:37,Mighty Fleur,hrs_40959219,2.25,3,,,WON,2.50
+2026-10-12,races_all,rac_32300834202,Worcester,4:07,Kykorock,hrs_39940964,2.5,3,,,WON,4.00
+2026-10-12,races_all,rac_32300849698,Roscommon,4:00,Minella Rockett,hrs_54304362,2.94,3,,,LOST,3.25
+2026-10-12,races_all,rac_32300768344,Musselburgh,3:47,Dandy Magic,hrs_42521689,2.5,2,,,LOST,2.88
+2026-10-12,races_all,rac_32300764470,Musselburgh,2:47,Possessive,hrs_64937957,2.5,-2,,,LOST,5.50
+2026-10-12,v3,rac_32300834202,Worcester,4:07,Kykorock,hrs_39940964,2.5,3,1,50.3,WON,4.00
+2026-10-12,v3,rac_32300754785,Yarmouth,3:54,Zoustar Dreams,hrs_57941933,2.63,3,1,39.8,LOST,3.12
+2026-10-12,fav,rac_32300824517,Worcester,1:37,Onehundredneighty,hrs_41814171,2.0,2,,,LOST,1.80
+2026-10-12,fav,rac_32300760596,Musselburgh,1:47,Motawaared,hrs_49359786,2.1,3,,,LOST,2.25
+2026-10-12,fav,rac_32300832265,Worcester,3:37,Mighty Fleur,hrs_40959219,2.25,3,,,WON,2.50
+2026-10-12,fav,rac_32300727667,Kempton (AW),7:45,Niffler,hrs_62779360,2.5,0,,,WON,1.91
+2026-10-12,fav,rac_32300764470,Musselburgh,2:47,Possessive,hrs_64937957,2.5,-2,,,LOST,5.50
+2026-10-12,fav,rac_32300768344,Musselburgh,3:47,Dandy Magic,hrs_42521689,2.5,2,,,LOST,2.88
+2026-10-12,fav,rac_32300834202,Worcester,4:07,Kykorock,hrs_39940964,2.5,3,,,WON,4.00
+2026-10-12,fav,rac_32300735415,Newcastle (AW),6:00,Starburster,hrs_60821936,2.63,4,,,LOST,4.00
+2026-10-12,fav,rac_32300754785,Yarmouth,3:54,Zoustar Dreams,hrs_57941933,2.63,3,,,LOST,3.12
+2026-10-12,fav,rac_32300770281,Musselburgh,4:17,Kelpie Grey,hrs_31287837,2.75,1,,,LOST,2.62
+2026-10-12,fav,rac_32300828391,Worcester,2:37,Away For The Night,hrs_47684994,2.75,-1,,,WON,2.88
+2026-10-12,fav,rac_32300725730,Kempton (AW),7:15,Floating Market,hrs_62235796,2.88,0,,,LOST,2.62
+2026-10-12,fav,rac_32300826454,Worcester,2:07,Sonyourastar,hrs_51124269,2.88,1,,,LOST,2.50
+2026-10-12,fav,rac_32300849698,Roscommon,4:00,Minella Rockett,hrs_54304362,2.94,3,,,LOST,3.25
+2026-10-12,fav,rac_32300750911,Yarmouth,2:54,Astracornus,hrs_58412207,3.25,-1,,,LOST,4.33
+2026-10-12,fav,rac_32300729604,Kempton (AW),8:15,Moostar,hrs_41305061,3.5,3,,,VOID,
+2026-10-12,fav,rac_32300836139,Worcester,4:37,Big Cadillac,hrs_39699289,3.5,-1,,,WON,3.25
+2026-10-12,fav,rac_32300752848,Yarmouth,3:24,Darkest Red,hrs_54059684,3.5,2,,,LOST,4.00
+2026-10-12,fav,rac_32300733478,Newcastle (AW),5:00,Maria da Silva,hrs_49141575,3.75,-1,,,LOST,3.50
+2026-10-12,fav,rac_32300721856,Kempton (AW),6:15,Rhythm of My Heart,hrs_17390456020,1.4,0,,,WON,1.18
+2026-10-12,fav,rac_32300762533,Musselburgh,2:17,Vegasmile,hrs_17391338398,1.4,0,,,WON,1.25
+2026-10-12,fav,rac_32300830328,Worcester,3:07,Potters Charm,hrs_34961836,1.4,0,,,WON,1.20
+2026-10-12,fav,rac_32301206106,Newcastle (AW),5:30,Great Balls O'Fire,hrs_60819157,1.62,0,,,LOST,2.20
+2026-10-12,fav,rac_32301200295,Kempton (AW),4:12,Showcasing Glory,hrs_17389288903,1.67,0,,,WON,3.25
+2026-10-12,fav,rac_32300731541,Newcastle (AW),4:28,Indhaar,hrs_63809403,1.8,0,,,LOST,2.38
+2026-10-12,fav,rac_32300719919,Kempton (AW),5:45,Wadooda,hrs_57590540,2.0,1,,,WON,1.62
+2026-10-12,fav,rac_32300716045,Kempton (AW),4:45,Tredegar Square,hrs_17390467493,2.25,1,,,LOST,2.38
+2026-10-12,fav,rac_32300847761,Roscommon,3:30,Big Cypress,hrs_56625023,2.38,1,,,LOST,1.91
+2026-10-12,fav,rac_32300841950,Roscommon,1:30,Karrygrant,hrs_57878093,2.75,-1,,,LOST,3.75
+2026-10-12,fav,rac_32300717982,Kempton (AW),5:15,Ravishing,hrs_55091841,2.88,1,,,LOST,2.25
+2026-10-12,fav,rac_32300747037,Yarmouth,1:54,Born This Way,hrs_7000002065,2.88,,,,WON,2.38
+2026-10-12,fav,rac_32300748974,Yarmouth,2:24,Deira Moon,hrs_65869720,2.88,1,,,LOST,3.00
+2026-10-12,fav,rac_32300723793,Kempton (AW),6:45,Organ,hrs_41305068,4.0,-3,,,WON,5.50
+2026-10-12,fav,rac_32300737352,Newcastle (AW),6:30,Kinnalargy,hrs_52772300,4.33,-1,,,LOST,4.00
+2026-10-12,fav,rac_32300758659,Yarmouth,4:55,Potters Prince,hrs_57941912,4.33,-2,,,WON,3.50
+2026-10-12,fav,rac_32300772218,Musselburgh,4:50,Ned Broy,hrs_58779063,4.5,2,,,LOST,4.33
+2026-10-12,fav,rac_32300739289,Newcastle (AW),7:00,Great,hrs_39961992,4.5,-1,,,LOST,4.33
+2026-10-12,fav,rac_32300741226,Newcastle (AW),7:30,Ice Show,hrs_63810131,4.5,1,,,LOST,4.50
+2026-10-12,fav,rac_32300743163,Newcastle (AW),8:00,Atmosphere,hrs_39962272,4.5,-2,,,LOST,4.00
+2026-10-12,fav,rac_32300756722,Yarmouth,4:24,Methgal,hrs_39962125,4.5,-2,,,LOST,6.00
+2026-10-12,fav,rac_32301209980,Roscommon,2:30,Goldrush Kid,hrs_35244314,4.5,-3,,,LOST,4.00
+2026-10-12,fav,rac_32300851635,Roscommon,4:30,Lauderdale King,hrs_52862607,4.5,1,,,LOST,3.25
+2026-10-12,fav,rac_32300745100,Newcastle (AW),8:30,Reenie's Dream,hrs_51766792,5.0,1,,,LOST,5.50
+2026-10-12,fav,rac_32300845824,Roscommon,3:00,Cosmic Funk,hrs_63875322,5.0,-1,,,LOST,6.00
+2026-10-12,fav,rac_32300853572,Roscommon,5:07,Royal Belief,hrs_52862628,5.0,-1,,,LOST,6.00
+2026-10-12,fav,rac_32300843887,Roscommon,2:00,La La Lucrative,hrs_37275329,5.5,0,,,LOST,5.00
+2026-10-12,fav,rac_32300766407,Musselburgh,3:17,Invincible Crown,hrs_41938680,6.5,0,,,LOST,11.00
+2026-10-12,p1230,rac_32300824517,Worcester,1:37,Onehundredneighty,hrs_41814171,2.0,2,1,46.8,LOST,1.80
