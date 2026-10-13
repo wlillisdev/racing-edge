@@ -4,11 +4,11 @@ Derived from `data/nap.db` by `PYTHONPATH=src python -m racing_edge.school.recor
 
 Level stakes, one point a bet, settled at SP. A pass is shown as a position, not a missing day. The favourite line is the benchmark the ledger already keeps on the same races — it is the thing to beat, never the picker.
 
-**80 settled** · 22 wins · strike **27.5%** · P/L **-5.55 pts** · ROI **-6.9%**
+**81 settled** · 23 wins · strike **28.4%** · P/L **-4.64 pts** · ROI **-5.7%**
 
-**The favourite on the same races:** 47 settled · 17 wins · strike 36.2% · P/L -7.54 pts · ROI -16.0%
+**The favourite on the same races:** 48 settled · 18 wins · strike 37.5% · P/L -6.63 pts · ROI -13.8%
 
-(98 days banked · 80 bets · 13 passes · 5 voids · 0 pending)
+(99 days banked · 81 bets · 13 passes · 5 voids · 0 pending)
 
 | date | eng | course | horse | price | SP | result | fav | fav SP | fav |
 |---|---|---|---|---|---|---|---|---|---|
@@ -110,3 +110,4 @@ Level stakes, one point a bet, settled at SP. A pass is shown as a position, not
 | 2026-10-10 | filter | Newmarket | Rock Montreal | 2.10 | 2.38 | WON | Rock Montreal | 2.38 | WON |
 | 2026-10-11 | filter | Goodwood | Zarak Crown | 3.00 | 2.75 | LOST | Zarak Crown | 2.75 | lost |
 | 2026-10-12 | filter | Worcester | Onehundredneighty | 2.00 | 1.80 | LOST | Onehundredneighty | 1.80 | lost |
+| 2026-10-13 | filter | Wolverhampton (AW) | Zachary Hickes | 2.00 | 1.91 | WON | Zachary Hickes | 1.91 | WON |

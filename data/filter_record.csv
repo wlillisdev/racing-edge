@@ -793,3 +793,50 @@ date,line,race_id,course,off,horse,horse_id,price,score,cleared,confidence,resul
 2026-10-12,fav,rac_32300843887,Roscommon,2:00,La La Lucrative,hrs_37275329,5.5,0,,,LOST,5.00
 2026-10-12,fav,rac_32300766407,Musselburgh,3:17,Invincible Crown,hrs_41938680,6.5,0,,,LOST,11.00
 2026-10-12,p1230,rac_32300824517,Worcester,1:37,Onehundredneighty,hrs_41814171,2.0,2,1,46.8,LOST,1.80
+2026-10-13,filter,rac_32300901997,Wolverhampton (AW),7:00,Zachary Hickes,hrs_47655377,2.0,1,1,46.8,WON,1.91
+2026-10-13,filter,rac_32300907808,Wolverhampton (AW),8:30,Midnight Media,hrs_55795019,2.2,2,1,46.8,WON,2.25
+2026-10-13,chase,rac_32300884564,Southwell,3:10,Dream Diamond,hrs_40920131,2.25,0,,,LOST,3.25
+2026-10-13,races_all,rac_32300901997,Wolverhampton (AW),7:00,Zachary Hickes,hrs_47655377,2.0,1,,,WON,1.91
+2026-10-13,races,rac_32300901997,Wolverhampton (AW),7:00,Zachary Hickes,hrs_47655377,2.0,1,,,WON,1.91
+2026-10-13,races_all,rac_32300884564,Southwell,3:10,Dream Diamond,hrs_40920131,2.25,0,,,LOST,3.25
+2026-10-13,races,rac_32300884564,Southwell,3:10,Dream Diamond,hrs_40920131,2.25,0,,,LOST,3.25
+2026-10-13,v3,rac_32300907808,Wolverhampton (AW),8:30,Midnight Media,hrs_55795019,2.2,2,1,38.1,WON,2.25
+2026-10-13,v3,rac_32300903934,Wolverhampton (AW),7:30,Koffee And Kale,hrs_52615220,3.25,2,1,34.9,VOID,
+2026-10-13,fav,rac_32300901997,Wolverhampton (AW),7:00,Zachary Hickes,hrs_47655377,2.0,1,,,WON,1.91
+2026-10-13,fav,rac_32300907808,Wolverhampton (AW),8:30,Midnight Media,hrs_55795019,2.2,2,,,WON,2.25
+2026-10-13,fav,rac_32300884564,Southwell,3:10,Dream Diamond,hrs_40920131,2.25,0,,,LOST,3.25
+2026-10-13,fav,rac_32301297145,Wolverhampton (AW),4:25,Midnight's Dream,hrs_36207563,2.75,1,,,WON,2.75
+2026-10-13,fav,rac_32300874879,Leicester,4:14,Oviedo,hrs_30804466,3.25,2,,,LOST,3.00
+2026-10-13,fav,rac_32300903934,Wolverhampton (AW),7:30,Koffee And Kale,hrs_52615220,3.25,2,,,VOID,
+2026-10-13,fav,rac_32300905871,Wolverhampton (AW),8:00,Coxy's Star,hrs_49141904,3.5,0,,,WON,3.00
+2026-10-13,fav,rac_32300886501,Southwell,3:45,Masterius,hrs_64523277,1.5,0,,,WON,1.53
+2026-10-13,fav,rac_32300888438,Southwell,4:20,L'Amandine,hrs_60343276,1.5,0,,,WON,1.25
+2026-10-13,fav,rac_32300855509,Hereford,1:45,Miss Denver,hrs_48818973,1.8,0,,,LOST,1.50
+2026-10-13,fav,rac_32300898123,Wolverhampton (AW),6:00,Bella Angelina,hrs_65642458,1.8,0,,,LOST,2.00
+2026-10-13,fav,rac_32300967855,Punchestown,1:35,Danny Power,hrs_17392533676,1.8,0,,,LOST,2.38
+2026-10-13,fav,rac_32300865194,Hereford,4:38,Lucy Glitters,hrs_65549981,1.83,0,,,LOST,2.50
+2026-10-13,fav,rac_32300896186,Wolverhampton (AW),5:30,Royal County Glory,hrs_55484499,1.91,0,,,WON,1.57
+2026-10-13,fav,rac_32300900060,Wolverhampton (AW),6:30,Al Widyan,hrs_17390342333,2.1,-1,,,LOST,2.00
+2026-10-13,fav,rac_32300890375,Southwell,4:52,Winston's Oath,hrs_59367259,2.25,2,,,LOST,1.67
+2026-10-13,fav,rac_32300857446,Hereford,2:20,Jackstell,hrs_34860063,2.38,3,,,LOST,3.50
+2026-10-13,fav,rac_32300869068,Leicester,2:29,Wedyan,hrs_17392758964,2.5,3,,,WON,3.50
+2026-10-13,fav,rac_32300871005,Leicester,3:04,Lady Phillips,hrs_17391779587,2.75,,,,LOST,3.50
+2026-10-13,fav,rac_32300971729,Punchestown,2:45,Buddy One,hrs_32668405,2.75,0,,,LOST,3.25
+2026-10-13,fav,rac_32300859383,Hereford,2:55,Carrhill,hrs_46013681,2.88,-1,,,LOST,3.00
+2026-10-13,fav,rac_32300882627,Southwell,2:35,Four Springs,hrs_52709139,2.88,1,,,WON,2.38
+2026-10-13,fav,rac_32301302956,Punchestown,4:30,Granlahan,hrs_60594744,2.88,2,,,VOID,
+2026-10-13,fav,rac_32300979477,Punchestown,5:40,Eastern Whisper,hrs_17393747728,2.88,,,,WON,3.50
+2026-10-13,fav,rac_32300975603,Punchestown,3:55,Pat O's Rock,hrs_17390411171,3.0,1,,,WON,2.75
+2026-10-13,fav,rac_32300867131,Leicester,1:54,Atlantic Grace,hrs_17393696621,3.5,,,,WON,3.00
+2026-10-13,fav,rac_32300861320,Hereford,3:30,Donnie Azoff,hrs_21826966,3.75,0,,,LOST,3.75
+2026-10-13,fav,rac_32300872942,Leicester,3:39,Irish Nectar,hrs_34470982,3.75,0,,,WON,5.50
+2026-10-13,fav,rac_32300876816,Leicester,4:47,English Time,hrs_58251515,4.0,-1,,,LOST,5.50
+2026-10-13,fav,rac_32300892312,Southwell,5:23,Luminaries,hrs_32046462,4.0,4,,,WON,4.00
+2026-10-13,fav,rac_32300863257,Hereford,4:05,Miracles Do Happen,hrs_51831864,4.33,3,,,LOST,4.50
+2026-10-13,fav,rac_32300894249,Wolverhampton (AW),5:00,Homme de Fer,hrs_36779932,4.5,-1,,,LOST,4.00
+2026-10-13,fav,rac_32300969792,Punchestown,2:10,Houndsworth,hrs_42163324,4.5,-1,,,LOST,7.50
+2026-10-13,fav,rac_32300973666,Punchestown,3:20,Live To Laugh,hrs_40786592,4.5,-2,,,WON,4.00
+2026-10-13,fav,rac_32300977540,Punchestown,5:07,No Big Deal,hrs_34002983,4.5,0,,,LOST,6.00
+2026-10-13,fav,rac_32301299082,Leicester,1:24,King of Persia,hrs_64780604,5.5,2,,,WON,7.00
+2026-10-13,fav,rac_32300878753,Leicester,5:17,Ataturk,hrs_53389994,5.5,-2,,,LOST,6.50
+2026-10-13,p1230,rac_32300901997,Wolverhampton (AW),7:00,Zachary Hickes,hrs_47655377,2.0,1,1,46.8,WON,1.91
