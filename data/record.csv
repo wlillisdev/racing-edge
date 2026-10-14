@@ -98,3 +98,4 @@ date,engine,course,race_id,horse,banked_price,sp_dec,won,confident,status,void_r
 2026-10-11,filter,Goodwood,rac_32300582392,Zarak Crown,3.0,2.75,0,0,LOST,,Zarak Crown,2.75,0
 2026-10-12,filter,Worcester,rac_32300824517,Onehundredneighty,2.0,1.8,0,1,LOST,,Onehundredneighty,1.8,0
 2026-10-13,filter,Wolverhampton (AW),rac_32300901997,Zachary Hickes,2.0,1.91,1,1,WON,,Zachary Hickes,1.91,1
+2026-10-14,filter,Ffos Las,rac_32301035650,Gingerbred,2.0,1.91,1,1,WON,,Gingerbred,1.91,1

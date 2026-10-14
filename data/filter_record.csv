@@ -840,3 +840,59 @@ date,line,race_id,course,off,horse,horse_id,price,score,cleared,confidence,resul
 2026-10-13,fav,rac_32301299082,Leicester,1:24,King of Persia,hrs_64780604,5.5,2,,,WON,7.00
 2026-10-13,fav,rac_32300878753,Leicester,5:17,Ataturk,hrs_53389994,5.5,-2,,,LOST,6.50
 2026-10-13,p1230,rac_32300901997,Wolverhampton (AW),7:00,Zachary Hickes,hrs_47655377,2.0,1,1,46.8,WON,1.91
+2026-10-14,filter,rac_32301035650,Ffos Las,5:13,Gingerbred,hrs_29212561,2.0,-1,1,46.8,WON,1.91
+2026-10-14,filter,rac_32301018217,Wetherby,3:45,Breizh River,hrs_33081678,2.5,1,1,37.8,LOST,3.00
+2026-10-14,chase,rac_32301035650,Ffos Las,5:13,Gingerbred,hrs_29212561,2.0,-1,,,WON,1.91
+2026-10-14,chase,rac_32301018217,Wetherby,3:45,Breizh River,hrs_33081678,2.5,1,,,LOST,3.00
+2026-10-14,chase,rac_32301031776,Ffos Las,4:05,Ben Solo,hrs_34166496,2.75,0,,,LOST,2.38
+2026-10-14,chase,rac_32301016280,Wetherby,3:10,Captain Cool,hrs_40225059,2.88,3,,,LOST,3.25
+2026-10-14,chase,rac_32301033713,Ffos Las,4:38,Il Est Francais,hrs_27821493,3.75,0,,,LOST,4.00
+2026-10-14,chase,rac_32300963981,Punchestown,5:07,Harbour Highway,hrs_35150388,3.75,-1,,,LOST,5.00
+2026-10-14,chase,rac_32301027902,Ffos Las,2:55,Guard Your Dreams,hrs_21378623,3.975,-1,,,LOST,4.33
+2026-10-14,races_all,rac_32301016280,Wetherby,3:10,Captain Cool,hrs_40225059,2.88,3,,,LOST,3.25
+2026-10-14,races,rac_32301016280,Wetherby,3:10,Captain Cool,hrs_40225059,2.88,3,,,LOST,3.25
+2026-10-14,races_all,rac_32301018217,Wetherby,3:45,Breizh River,hrs_33081678,2.5,1,,,LOST,3.00
+2026-10-14,races,rac_32301018217,Wetherby,3:45,Breizh River,hrs_33081678,2.5,1,,,LOST,3.00
+2026-10-14,races_all,rac_32301031776,Ffos Las,4:05,Ben Solo,hrs_34166496,2.75,0,,,LOST,2.38
+2026-10-14,races_all,rac_32301035650,Ffos Las,5:13,Gingerbred,hrs_29212561,2.0,-1,,,WON,1.91
+2026-10-14,v3,rac_32301016280,Wetherby,3:10,Captain Cool,hrs_40225059,2.88,3,1,40.5,LOST,3.25
+2026-10-14,v3,rac_32300985288,Kempton (AW),6:00,Mertoun,hrs_55177626,3.25,2,1,33.9,WON,3.25
+2026-10-14,fav,rac_32301035650,Ffos Las,5:13,Gingerbred,hrs_29212561,2.0,-1,,,WON,1.91
+2026-10-14,fav,rac_32301018217,Wetherby,3:45,Breizh River,hrs_33081678,2.5,1,,,LOST,3.00
+2026-10-14,fav,rac_32300983351,Kempton (AW),5:30,Gunfighter,hrs_36386903,2.74,2,,,WON,2.00
+2026-10-14,fav,rac_32301031776,Ffos Las,4:05,Ben Solo,hrs_34166496,2.75,0,,,LOST,2.38
+2026-10-14,fav,rac_32300991099,Kempton (AW),7:30,Fast Track Harry,hrs_44816485,2.75,0,,,WON,2.00
+2026-10-14,fav,rac_32301016280,Wetherby,3:10,Captain Cool,hrs_40225059,2.88,3,,,LOST,3.25
+2026-10-14,fav,rac_32300981414,Kempton (AW),5:00,Arctic Tsar,hrs_63810733,3.0,2,,,WON,3.00
+2026-10-14,fav,rac_32300985288,Kempton (AW),6:00,Mertoun,hrs_55177626,3.25,2,,,WON,3.25
+2026-10-14,fav,rac_32301004658,Nottingham,3:39,Believitanducan,hrs_37081359,3.25,0,,,LOST,3.50
+2026-10-14,fav,rac_32301440483,Nottingham,4:14,Mayaada,hrs_53476038,3.25,0,,,WON,2.00
+2026-10-14,fav,rac_32301006595,Nottingham,4:47,Lillie Margot,hrs_56494718,3.25,0,,,LOST,3.50
+2026-10-14,fav,rac_32301033713,Ffos Las,4:38,Il Est Francais,hrs_27821493,3.75,0,,,LOST,4.00
+2026-10-14,fav,rac_32300963981,Punchestown,5:07,Harbour Highway,hrs_35150388,3.75,-1,,,LOST,5.00
+2026-10-14,fav,rac_32301027902,Ffos Las,2:55,Guard Your Dreams,hrs_21378623,3.975,-1,,,LOST,4.33
+2026-10-14,fav,rac_32301012406,Wetherby,2:00,Magnetude,hrs_57103410,1.5,0,,,WON,1.40
+2026-10-14,fav,rac_32301029839,Ffos Las,3:30,Tutti Quanti,hrs_38884678,1.62,0,,,LOST,1.73
+2026-10-14,fav,rac_32300962044,Punchestown,4:30,Gorgeous Tom,hrs_28903840,1.67,0,,,WON,1.67
+2026-10-14,fav,rac_32301002721,Nottingham,3:04,Knights Charge,hrs_59186260,1.73,0,,,WON,1.83
+2026-10-14,fav,rac_32300956233,Punchestown,2:45,The Dotski,hrs_61012511,2.25,3,,,WON,2.00
+2026-10-14,fav,rac_32300960107,Punchestown,3:55,Bunting,hrs_35610190,2.295,2,,,LOST,1.62
+2026-10-14,fav,rac_32301337822,Kempton (AW),4:25,Hayate,hrs_17389673770,2.38,-1,,,WON,1.83
+2026-10-14,fav,rac_32301025965,Ffos Las,2:20,Sinnatra,hrs_47098443,2.5,0,,,WON,3.25
+2026-10-14,fav,rac_32301014343,Wetherby,2:35,Rebel Tribesman,hrs_52495856,2.63,3,,,WON,3.00
+2026-10-14,fav,rac_32301022091,Wetherby,4:52,Centurion's Sister,hrs_46892244,2.63,5,,,WON,2.62
+2026-10-14,fav,rac_32300954296,Punchestown,2:10,Fiveandahalf,hrs_63171353,2.75,0,,,WON,2.20
+2026-10-14,fav,rac_32300965918,Punchestown,5:40,Frisco Lad,hrs_66272444,2.75,1,,,LOST,3.25
+2026-10-14,fav,rac_32300996910,Nottingham,1:54,Lone Warrior,hrs_53476066,2.88,1,,,LOST,2.62
+2026-10-14,fav,rac_32301020154,Wetherby,4:20,Seeyainthesuninn,hrs_41442940,3.0,2,,,WON,3.25
+2026-10-14,fav,rac_32300952359,Punchestown,1:35,Lunar Stride,hrs_17393734169,3.0,,,,WON,3.50
+2026-10-14,fav,rac_32300987225,Kempton (AW),6:30,You're Sensational,hrs_17392192615,3.5,-1,,,LOST,4.00
+2026-10-14,fav,rac_32301000784,Nottingham,1:19,Enriched,hrs_17391012982,3.5,-1,,,WON,3.25
+2026-10-14,fav,rac_32300998847,Nottingham,2:29,Leading Role,hrs_17393752943,3.5,,,,WON,7.00
+2026-10-14,fav,rac_32301008532,Nottingham,5:22,Legendsoftheland,hrs_40745929,3.75,-1,,,LOST,3.75
+2026-10-14,fav,rac_32300958170,Punchestown,3:20,Wonderful Everyday,hrs_51434453,3.75,1,,,LOST,4.50
+2026-10-14,fav,rac_32301024028,Ffos Las,1:45,Wannabe,hrs_38667223,4.0,1,,,LOST,5.00
+2026-10-14,fav,rac_32300989162,Kempton (AW),7:00,Marengo Storm,hrs_49144102,4.33,-1,,,LOST,5.50
+2026-10-14,fav,rac_32300993036,Kempton (AW),8:00,Londoner,hrs_31300283,4.33,0,,,LOST,4.00
+2026-10-14,fav,rac_32300994973,Kempton (AW),8:30,Glenna,hrs_55764401,4.5,1,,,LOST,3.75
+2026-10-14,p1230,rac_32301035650,Ffos Las,5:13,Gingerbred,hrs_29212561,2.0,-1,1,46.8,WON,1.91
