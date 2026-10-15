@@ -896,3 +896,54 @@ date,line,race_id,course,off,horse,horse_id,price,score,cleared,confidence,resul
 2026-10-14,fav,rac_32300993036,Kempton (AW),8:00,Londoner,hrs_31300283,4.33,0,,,LOST,4.00
 2026-10-14,fav,rac_32300994973,Kempton (AW),8:30,Glenna,hrs_55764401,4.5,1,,,LOST,3.75
 2026-10-14,p1230,rac_32301035650,Ffos Las,5:13,Gingerbred,hrs_29212561,2.0,-1,1,46.8,WON,1.91
+2026-10-15,filter,rac_32301120878,Perth,4:15,Kado Sacree,hrs_48853994,2.86,2,1,37.8,LOST,2.62
+2026-10-15,filter,rac_32301080201,Brighton,5:25,Harry Mole,hrs_53181527,3.0,0,0,21.6,LOST,2.20
+2026-10-15,chase,rac_32301120878,Perth,4:15,Kado Sacree,hrs_48853994,2.86,2,,,LOST,2.62
+2026-10-15,chase,rac_32301089886,Fontwell,4:04,Roi du Risk,hrs_46265562,3.25,0,,,LOST,2.20
+2026-10-15,chase,rac_32301118941,Perth,3:40,Minella Marathon,hrs_51341388,3.5,-2,,,LOST,5.00
+2026-10-15,chase,rac_32301115067,Perth,2:30,I Wish You,hrs_37987908,3.75,2,,,LOST,3.25
+2026-10-15,races_all,rac_32301120878,Perth,4:15,Kado Sacree,hrs_48853994,2.86,2,,,LOST,2.62
+2026-10-15,races,rac_32301120878,Perth,4:15,Kado Sacree,hrs_48853994,2.86,2,,,LOST,2.62
+2026-10-15,v3,rac_32301101508,Southwell (AW),8:30,Norflondonforever,hrs_47685064,3.0,2,1,33.1,WON,2.00
+2026-10-15,v3,rac_32301072453,Brighton,3:15,Shifra,hrs_48082615,3.25,3,1,27.7,LOST,4.00
+2026-10-15,fav,rac_32301120878,Perth,4:15,Kado Sacree,hrs_48853994,2.86,2,,,LOST,2.62
+2026-10-15,fav,rac_32301080201,Brighton,5:25,Harry Mole,hrs_53181527,3.0,0,,,LOST,2.20
+2026-10-15,fav,rac_32301101508,Southwell (AW),8:30,Norflondonforever,hrs_47685064,3.0,2,,,WON,2.00
+2026-10-15,fav,rac_32301072453,Brighton,3:15,Shifra,hrs_48082615,3.25,3,,,LOST,4.00
+2026-10-15,fav,rac_32301089886,Fontwell,4:04,Roi du Risk,hrs_46265562,3.25,0,,,LOST,2.20
+2026-10-15,fav,rac_32301118941,Perth,3:40,Minella Marathon,hrs_51341388,3.5,-2,,,LOST,5.00
+2026-10-15,fav,rac_32301115067,Perth,2:30,I Wish You,hrs_37987908,3.75,2,,,LOST,3.25
+2026-10-15,fav,rac_32301105382,Southwell (AW),7:30,Yordan,hrs_17389759296,3.75,1,,,WON,2.75
+2026-10-15,fav,rac_32301111193,Perth,1:25,Kabral du Mathan,hrs_37974846,1.25,0,,,WON,1.22
+2026-10-15,fav,rac_32301087949,Fontwell,3:29,Emerald Quest,hrs_42680638,1.53,0,,,LOST,1.62
+2026-10-15,fav,rac_32301113130,Perth,1:55,Old Habits,hrs_52236506,1.8,0,,,LOST,2.38
+2026-10-15,fav,rac_32301097634,Southwell (AW),5:30,Grove Street,hrs_17389760339,1.8,0,,,WON,1.40
+2026-10-15,fav,rac_32301068579,Brighton,2:05,My Boo Boo,hrs_65225300,1.83,0,,,WON,1.50
+2026-10-15,fav,rac_32301494719,Perth,12:55,Eastern Fire,hrs_58412179,1.91,0,,,LOST,2.38
+2026-10-15,fav,rac_32301084075,Fontwell,2:19,Double Powerful,hrs_34361404,2.1,1,,,WON,1.73
+2026-10-15,fav,rac_32301109256,Southwell (AW),7:00,Lovely Dark Angel,hrs_17390019003,2.1,-1,,,WON,2.50
+2026-10-15,fav,rac_32301045335,Curragh,3:22,Almazann,hrs_58627198,2.1,-1,,,WON,2.38
+2026-10-15,fav,rac_32301086012,Fontwell,2:54,Nightflyer,hrs_60394999,2.25,5,,,LOST,2.50
+2026-10-15,fav,rac_32301093760,Fontwell,5:14,Ballymoreen,hrs_48259407,2.25,1,,,WON,1.80
+2026-10-15,fav,rac_32301099571,Southwell (AW),6:00,Midnight's Dream,hrs_36207563,2.25,2,,,WON,2.62
+2026-10-15,fav,rac_32301117004,Perth,3:05,Tap Tap Shamie,hrs_41052235,2.38,1,,,LOST,2.75
+2026-10-15,fav,rac_32301122815,Perth,4:50,Velvet Outlaw,hrs_17393787362,2.38,,,,LOST,2.00
+2026-10-15,fav,rac_32301041461,Curragh,2:12,Lunar Empress,hrs_65642374,2.5,0,,,LOST,2.00
+2026-10-15,fav,rac_32301082138,Fontwell,1:44,Crooked Path,hrs_50875335,2.75,1,,,WON,2.50
+2026-10-15,fav,rac_32301037587,Curragh,1:02,Champion Basma,hrs_17392282313,2.88,2,,,LOST,2.38
+2026-10-15,fav,rac_32301070516,Brighton,2:40,Jazzy Blue,hrs_64590764,4.0,-2,,,WON,4.00
+2026-10-15,fav,rac_32301103445,Southwell (AW),4:30,Oxford Circus,hrs_46078032,4.0,0,,,LOST,4.00
+2026-10-15,fav,rac_32301095697,Southwell (AW),5:00,Magic Trip,hrs_56591101,4.0,1,,,WON,4.33
+2026-10-15,fav,rac_32301610939,Southwell (AW),6:30,Based,hrs_56844060,4.0,-1,,,LOST,4.50
+2026-10-15,fav,rac_32301107319,Southwell (AW),8:00,Mrs Blue,hrs_17391386376,4.0,0,,,LOST,2.38
+2026-10-15,fav,rac_32301091823,Fontwell,4:39,Chief Sunday,hrs_40075693,4.33,-1,,,LOST,4.00
+2026-10-15,fav,rac_32301047272,Curragh,3:57,Priorstown,hrs_63104664,4.33,0,,,WON,3.50
+2026-10-15,fav,rac_32301074390,Brighton,3:50,Fizzy Bear,hrs_63171465,5.0,0,,,LOST,5.00
+2026-10-15,fav,rac_32301039524,Curragh,1:37,Moltophino,hrs_36894263,5.0,-1,,,LOST,5.50
+2026-10-15,fav,rac_32301078264,Brighton,4:55,Blue Collar Lad,hrs_24386243,5.4,1,,,LOST,4.00
+2026-10-15,fav,rac_32301492782,Brighton,1:32,Stock Market,hrs_52897138,5.5,2,,,LOST,4.00
+2026-10-15,fav,rac_32301043398,Curragh,2:47,Suir Monad,hrs_59461073,5.5,2,,,LOST,3.75
+2026-10-15,fav,rac_32301049209,Curragh,4:32,Steel Magnolia,hrs_47555445,5.5,0,,,LOST,9.50
+2026-10-15,fav,rac_32301076327,Brighton,4:25,Gone Rogue,hrs_35895860,6.0,-1,,,WON,6.00
+2026-10-15,fav,rac_32301051146,Curragh,5:07,La La Lucrative,hrs_37275329,6.0,-1,,,LOST,6.50
+2026-10-15,p1230,rac_32301120878,Perth,4:15,Kado Sacree,hrs_48853994,2.86,2,1,37.8,LOST,2.62
