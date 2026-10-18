@@ -405,16 +405,20 @@ def _nap_1230(day, raw, open_races) -> None:
         print("  13:30 nap: no 07:30 picks recorded today — nothing to name.")
         return
     prices = {r["race_id"]: _median_now(raw, r["race_id"], r["horse_id"]) for r in picks}
+    prices = {k: v for k, v in prices.items() if v}
+    kept, dropped = F.record_list_1230(day.isoformat(), prices, open_races)
+    drops = ("DROPPED (2/1+ and drifting): " + ", ".join(dropped)) if dropped \
+        else "No 2/1+ pick drifting — the 08:30 list stands."
+    print(f"  13:30 list: {len(kept)} kept · {drops}", flush=True)
     log = open_nap_log()
     try:
-        line = F.bank_nap_1230(day.isoformat(), {k: v for k, v in prices.items() if v},
-                               open_races, log)
+        line = F.bank_nap_1230(day.isoformat(), prices, open_races, log)
     finally:
         log.close()
     print(f"  {line}", flush=True)
     from racing_edge.report.mail import configured, send
     if configured() and not line.startswith("NAP not re-banked"):
-        ok = send(f"[13:30] {line}", line + "\n\nThe 07:30 list stands; this is the one "
+        ok = send(f"[13:30] {line}", line + "\n\n" + drops + "\n\nThe nap is the pick "
                   "the money has come for most since 08:30 (your time).",
                   title="The 13:30 nap", subtitle="racing-edge form trial")
         print(f"  email: {ok or 'FAILED'}")
