@@ -207,7 +207,7 @@ MIN_NAMED = 2            # his floor: at least two horses every day
 NAP_MAX_PRICE = RACES_MAX_PRICE
 
 # Confidence for a price-ranked pick: the same record's strike in its band.
-PRICE_CONFIDENCE = ((2.0, 46.2, 39), (2.5, 48.6, 111), (3.0, 37.8, 82), (4.0, 21.6, 125))
+PRICE_CONFIDENCE = ((2.0, 46.2, 39), (2.5, 48.6, 111), (3.0, 38.3, 133), (4.0, 21.6, 125))
 
 
 def price_confidence(price: float) -> tuple[float, int]:
@@ -598,8 +598,15 @@ def chase_line(rows: list[dict]) -> list[dict]:
 # (the nap), any race type, unread or not; none on a day with none. Odds-on
 # stays out (his bar). The race bans and the dots no longer touch the picks.
 # REVERT-IF the picks strike below every evens+ favourite over 50 settled
-# days, or his word.
-PICK_MAX_PRICE = 2.5
+# days, or his word. (Ceiling 2.5 that morning; raised below the same day.)
+
+# 6/4 TO 15/8 IN TOO (his word, 2026-10-18: "yes, all of them"), after
+# Saturday's card: 9 of the 26 winning favourites went off 6/4 to 15/8. On
+# the box's record 07:30 favourites at 2.5 to under 3.0 won 51 of 133 (38%),
+# so the whole list runs about 43% — more winners a day, his call.
+# REVERT-IF the 6/4-to-15/8 picks strike below every evens+ favourite over
+# 50 settled, or his word.
+PICK_MAX_PRICE = 3.0
 
 # 4/5 SHOTS IN (his word, 2026-10-18: "yes, 4/5 to 11/8"). On the box's record
 # 07:30 favourites at 4/5 to under evens won 18 of 39 (46%) — the same rate as
@@ -611,8 +618,9 @@ PICK_MIN_PRICE = 1.8
 
 
 def todays_picks(rows: list[dict]) -> list[dict]:
-    """Every 07:30 favourite priced from 4/5 up to under 6/4, shortest
-    first (his word, 2026-10-18). No race bans, no dots, no minimum."""
+    """Every 07:30 favourite priced from 4/5 up to under 2/1 (15/8 the
+    longest), shortest first (his word, 2026-10-18). No race bans, no dots,
+    no minimum."""
     live = [r for r in rows if PICK_MIN_PRICE <= r["price"] < PICK_MAX_PRICE]
     live.sort(key=lambda r: (r["price"], str(r["race_id"])))
     picks = [dict(r, cleared=True) for r in live]
@@ -645,7 +653,7 @@ def render_list(rows: list[dict], floor: int = FLOOR) -> str:
          "  It is a base rate with its sample beside it, not a tip on this horse.",
          ""] + L[3:]
     for p in picks:
-        mark = "4/5-11/8 "
+        mark = "4/5-15/8 "
         L.insert(7 + picks.index(p),
                  f"  {mark} {p['confidence']:.0f}% (n={p['confidence_n']})  "
                  f"{p['course']} {p['off']}  {p['horse']} @ {p['price']:.2f}"
@@ -878,11 +886,11 @@ def bank_nap(rows: list[dict], day: str, log, picks: list[dict] | None = None,
     try:
         if not picks:
             log.record_pass(day=d, reason="filter: no eligible favourite "
-                                          "(none at 4/5 to 11/8 at 07:30)")
-            return "NAP: NO BET — no favourite at 4/5 to 11/8 today"
+                                          "(none at 4/5 to 15/8 at 07:30)")
+            return "NAP: NO BET — no favourite at 4/5 to 15/8 today"
         p = picks[0]
         sc = int(p["score"] or 0)
-        case = (f"{source.upper()} NAP (4/5 to 11/8, score "
+        case = (f"{source.upper()} NAP (4/5 to 15/8, score "
                 f"{sc:+d}, confidence {p['confidence']:.0f}% n="
                 f"{p['confidence_n']}): " + "; ".join(p["reasons"]))
         log.record(day=d, race_id=str(p["race_id"]), course=p["course"] or "",
