@@ -1,7 +1,32 @@
 # HANDOFF — the apprenticeship's living memory
 
-Last updated: **2026-10-10** (the picks rank by price; the 13:30 shadow) (update this file
-whenever state changes — it is how every new chat remembers everything).
+Last updated: **2026-10-18** (the method is FROZEN for 50 settled days — see CLAUDE.md)
+(update this file whenever state changes — it is how every new chat remembers everything).
+
+## 2026-10-18 — THE METHOD IS FROZEN. READ THIS FIRST.
+
+His rulings on 18 Oct. All of them are merged with tests and receipts, and they go live from Monday 19 Oct:
+- #140 "drop all race bans": the race bans, the dots and two-a-day no longer touch the picks.
+- #141 "4/5 to 11/8", #142 "all of them" (6/4–15/8) and #143 "in unless drifting" (no ceiling): every 07:30 favourite from 4/5 up is a pick. Under 2/1 is a firm pick; 2/1 or bigger is a watch pick.
+- #143 "yes, from Monday":
+  - At 12:30 UTC, `record_list_1230` drops any 2/1+ pick still to run whose price has drifted 10%+ (line `list1230`).
+  - The nap is the pick whose price has shortened most since 07:30. It is banked at the 12:30 price and mailed.
+- The freeze ("yes, freeze it"): no change to the method for 50 settled days. Only broken plumbing gets fixed (CLAUDE.md, THE FREEZE).
+
+Evidence (box record, 28 Sep–15 Oct, 07:30 prices, settled at SP):
+
+| 07:30 price | Won | Strike |
+|---|---|---|
+| 4/5–evens | 18/39 | 46% |
+| Evens–11/8 | 54/111 | 49% |
+| 6/4–15/8 | 51/133 | 38% |
+| 2/1+, all | 86/365 | 24% |
+| 2/1+, drifted after 07:30 | 19/152 | 12% |
+
+In the 4/5–11/8 band: backed 63%, steady 50%, drifted 33%. The form score had no edge at any price.
+
+**RED LINE, open:** the box pushed nothing on Friday 16 Oct or Saturday 17 Oct; main's last record commit is 15 Oct. He has been asked to run
+`grep "trial.sh" data/task_runs.log | tail -8` on the box.
 
 ## 2026-10-10 — THE PICKS RANK BY PRICE. READ THIS FIRST.
 

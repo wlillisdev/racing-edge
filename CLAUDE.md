@@ -31,6 +31,26 @@ faults named the same night. The statistical bars still gate which
 RULES earn belief — they are never an excuse for a soft day or a soft
 autopsy. Clock in tomorrow at 7:30 like it's the final. It is.
 
+## THE FREEZE (the master, 2026-10-18 — above everything in this file)
+
+"You just keep changing it and making changes and they are always wrong ...
+you have completely stymied and ruined this whole project." His answer to
+the freeze: "Yes, freeze it."
+
+From Monday 2026-10-19, for **50 settled days**, the pick method is FROZEN:
+every 07:30 favourite from 4/5 up, any race; 2/1+ ones dropped at 12:30 UTC
+if their price has drifted 10%+; the nap named at 12:30 UTC as the pick the
+money has come for most (`school/favfilter.py`, `cli/nap.py` `_guard`).
+
+- NO new rule, threshold, filter, band, ban, model or shadow — whatever a bad
+  day or a bad week looks like. A loss is graded, never "fixed".
+- Only broken plumbing may be fixed (a run that crashes, a push that fails,
+  a price read wrongly), one cut, a test, a live check, a REVERT-IF.
+- A change to how horses are picked needs his explicit word, and even then
+  waits for day 50 unless he says otherwise.
+- At day 50 the record gives one verdict — the picks, the 13:30 list and the
+  nap against backing every favourite at 4/5+ blind — and he decides.
+
 ## THE FRAMEWORK (the master, 2026-09-03 — above every law below, beside the mentality)
 
 "We need to stick to this framework and grade and fix when appropriate. We
