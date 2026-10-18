@@ -231,11 +231,13 @@ def test_every_favourite_at_evens_to_6_4_is_a_pick():
             fav("sixfour", 2.5), fav("fourfive", 1.8), fav("long", 3.0, score=5),
             fav("fourseven", 1.57)]
     picks = F.todays_picks(rows)
-    # 4/5 in on his word, 2026-10-18 ("yes, 4/5 to 11/8"); 4/7 still out
-    assert [p["race_id"] for p in picks] == ["fourfive", "novice", "unread", "hurdle"]
+    # 4/5 in ("yes, 4/5 to 11/8") and 6/4 to 15/8 in ("yes, all of them"),
+    # both his word 2026-10-18; 4/7 and 2/1 still out
+    assert [p["race_id"] for p in picks] == ["fourfive", "novice", "unread", "hurdle", "sixfour"]
     assert all(p["cleared"] for p in picks)
     assert (picks[0]["confidence"], picks[1]["confidence"]) == (46.2, 48.6)
     assert F.todays_picks([fav("long", 3.0), fav("oddson", 1.5)]) == []
+    assert [p["race_id"] for p in F.todays_picks([fav("fifteen8", 2.88)])] == ["fifteen8"]
 
 
 def test_confidence_is_a_base_rate_from_the_record_not_an_opinion():
@@ -327,7 +329,7 @@ def test_the_dots_never_pick_a_long_favourite_over_a_short_one():
                  price=2.63, score=-1),
             dict(base, race_id="c", horse="Shorter", horse_id="h3", course="Ayr",
                  price=2.1, score=0)]
-    assert [p["horse"] for p in F.todays_picks(rows)] == ["Shorter"]
+    assert [p["horse"] for p in F.todays_picks(rows)] == ["Shorter", "Short"]
 
 
 def test_a_day_with_no_eligible_favourite_is_a_named_pass(tmp_path):
