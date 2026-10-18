@@ -104,7 +104,7 @@ def test_a_failed_v3_never_costs_the_day_and_says_so(tmp_path, monkeypatch, caps
     import racing_edge.cli._common as C
     monkeypatch.chdir(tmp_path)
     rows = [{"race_id": "r1", "course": "Ayr", "off": "2:00", "horse": "Good",
-             "horse_id": "h1", "price": 3.0, "score": 4, "type": "Flat",
+             "horse_id": "h1", "price": 2.2, "score": 4, "type": "Flat",
              "field": 6, "reasons": [], "ruled_out": False, "date": "2026-09-28"}]
     monkeypatch.setattr(F, "daily_list", lambda day, floor: rows)
     monkeypatch.setattr(C, "open_nap_log", lambda: NapLog(tmp_path / "nap.db"))
@@ -151,7 +151,7 @@ def test_his_filter_picks_the_nap_and_v3_rides_beside_it(tmp_path, monkeypatch, 
     monkeypatch.chdir(tmp_path)
     monkeypatch.delenv("NAP_PICKER", raising=False)
     rows = [{"race_id": "r1", "course": "Ayr", "off": "2:00", "horse": "Good",
-             "horse_id": "h1", "price": 3.0, "score": 4, "type": "Flat",
+             "horse_id": "h1", "price": 2.2, "score": 4, "type": "Flat",
              "field": 6, "reasons": [], "ruled_out": False, "date": "2026-09-28"}]
     v3 = [{"race_id": "r9", "course": "Kelso", "off": "3:10", "horse": "Other",
            "horse_id": "h9", "price": 2.6, "score": 1, "cleared": True, "prob": 0.44,
@@ -175,7 +175,7 @@ def test_v3_picks_only_when_told_to(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     monkeypatch.setenv("NAP_PICKER", "v3")
     rows = [{"race_id": "r1", "course": "Ayr", "off": "2:00", "horse": "Good",
-             "horse_id": "h1", "price": 3.0, "score": 4, "type": "Flat",
+             "horse_id": "h1", "price": 2.2, "score": 4, "type": "Flat",
              "field": 6, "reasons": [], "ruled_out": False, "date": "2026-09-28"}]
     v3 = [{"race_id": "r9", "course": "Kelso", "off": "3:10", "horse": "Other",
            "horse_id": "h9", "price": 2.6, "score": 1, "cleared": True, "prob": 0.44,

@@ -207,7 +207,7 @@ MIN_NAMED = 2            # his floor: at least two horses every day
 NAP_MAX_PRICE = RACES_MAX_PRICE
 
 # Confidence for a price-ranked pick: the same record's strike in its band.
-PRICE_CONFIDENCE = ((2.5, 46.8, 77), (3.0, 37.8, 82), (4.0, 21.6, 125))
+PRICE_CONFIDENCE = ((2.5, 48.6, 111), (3.0, 37.8, 82), (4.0, 21.6, 125))
 
 
 def price_confidence(price: float) -> tuple[float, int]:
@@ -589,17 +589,25 @@ def chase_line(rows: list[dict]) -> list[dict]:
             and not avoided_race(r.get("race_name"))]
 
 
-def todays_picks(rows: list[dict], minimum: int = MIN_NAMED) -> list[dict]:
-    """HIS FLOOR: two horses, every day — the two SHORTEST favourites his
-    rules leave in (ranked by price, his word 2026-10-10).
+# EVERY FAVOURITE AT EVENS TO UNDER 6/4 (his word, 2026-10-18: "yes, and drop
+# all race bans"). On the box's record the 07:30 favourites priced 2.0 up to
+# (not including) 2.5 won 54 of 111 (48.6%); exactly 6/4 won 13 of 33 (39%);
+# the two-a-day picks went 3 from 10 in the week to 15 Oct, below backing
+# every evens+ favourite blind (58/161, 36%) — the top-ups to fill two a day
+# lost all five. So: every favourite in the band is a pick, shortest first
+# (the nap), any race type, unread or not; none on a day with none. Odds-on
+# stays out (his bar). The race bans and the dots no longer touch the picks.
+# REVERT-IF the picks strike below every evens+ favourite over 50 settled
+# days, or his word.
+PICK_MAX_PRICE = 2.5
 
-    Odds-on, bad races, novice/maiden/bumper and unread horses are out; the
-    dots no longer rule out or rank. Picks under NAP_MAX_PRICE are cleared;
-    if fewer than two are, the list is topped up with the shortest of the
-    rest, flagged so a top-up is never mistaken for one that cleared."""
-    live = [r for r in rows if not r["ruled_out"] and r["score"] is not None]
+
+def todays_picks(rows: list[dict]) -> list[dict]:
+    """Every 07:30 favourite priced from evens up to under 6/4, shortest
+    first (his word, 2026-10-18). No race bans, no dots, no minimum."""
+    live = [r for r in rows if ODDS_ON <= r["price"] < PICK_MAX_PRICE]
     live.sort(key=lambda r: (r["price"], str(r["race_id"])))
-    picks = [dict(r, cleared=r["price"] < NAP_MAX_PRICE) for r in live[:minimum]]
+    picks = [dict(r, cleared=True) for r in live]
     for p in picks:
         pct, n = price_confidence(p["price"])
         p["confidence"], p["confidence_n"] = pct, n
@@ -629,11 +637,11 @@ def render_list(rows: list[dict], floor: int = FLOOR) -> str:
          "  It is a base rate with its sample beside it, not a tip on this horse.",
          ""] + L[3:]
     for p in picks:
-        mark = "under 2/1" if p["cleared"] else "top-up   "
+        mark = "evens-6/4"
         L.insert(7 + picks.index(p),
                  f"  {mark} {p['confidence']:.0f}% (n={p['confidence_n']})  "
                  f"{p['course']} {p['off']}  {p['horse']} @ {p['price']:.2f}"
-                 f"  [score {p['score']:+d}]")
+                 f"  [score {int(p['score'] or 0):+d}]")
     ch = chase_line(rows)
     L += ["", "-" * 66,
           f"THE CHASE LINE — every chase favourite at {CHASE_LINE_MIN_PRICE:.1f}+ "
@@ -813,7 +821,7 @@ def render_record(path: Path = FILTER_RECORD) -> str:
     """Strike rate first (his ruling); P/L printed, never the verdict."""
     held = _load_record(path)
     L = ["THE FILTER'S RECORD — banked 07:30, settled at SP"]
-    for line, label in (("filter", "filter (2+ a day)"), ("p1230", "13:30 shadow nap"),
+    for line, label in (("filter", "filter (picks)"), ("p1230", "13:30 shadow nap"),
                         ("races", "fav races (top 2)"),
                         ("races_all", "fav races (all)"), ("v3", "v3 model (top 2)"),
                         ("chase", "chase line")):
@@ -862,15 +870,16 @@ def bank_nap(rows: list[dict], day: str, log, picks: list[dict] | None = None,
     try:
         if not picks:
             log.record_pass(day=d, reason="filter: no eligible favourite "
-                                          "(every one odds-on, ruled out or unread)")
-            return "NAP: NO BET — no eligible favourite today"
+                                          "(none at evens to 6/4 at 07:30)")
+            return "NAP: NO BET — no favourite at evens to 6/4 today"
         p = picks[0]
-        case = (f"{source.upper()} NAP ({'under 2/1' if p['cleared'] else 'top-up'}, score "
-                f"{p['score']:+d}, confidence {p['confidence']:.0f}% n="
+        sc = int(p["score"] or 0)
+        case = (f"{source.upper()} NAP (evens to 6/4, score "
+                f"{sc:+d}, confidence {p['confidence']:.0f}% n="
                 f"{p['confidence_n']}): " + "; ".join(p["reasons"]))
         log.record(day=d, race_id=str(p["race_id"]), course=p["course"] or "",
                    horse=p["horse"] or "", horse_id=p.get("horse_id") or "",
-                   price=p["price"], score=int(p["score"]),
+                   price=p["price"], score=sc,
                    confident=bool(p["cleared"]), case=case,
                    deep_conf=f"{p['confidence']:.0f}%", aligned=source)
         # the favourite line: on a filter nap the pick IS the favourite
@@ -878,7 +887,7 @@ def bank_nap(rows: list[dict], day: str, log, picks: list[dict] | None = None,
                            horse=p["horse"] or "", horse_id=p.get("horse_id") or "",
                            price=p["price"])
         return (f"NAP: {p['horse']} — {p['course']} {p['off']} @ {p['price']:.2f} "
-                f"({p['confidence']:.0f}% confidence, score {p['score']:+d})")
+                f"({p['confidence']:.0f}% confidence, score {sc:+d})")
     except ValueError as exc:            # already banked: the pre-off record stands
         return f"NAP not re-banked: {exc}"
 

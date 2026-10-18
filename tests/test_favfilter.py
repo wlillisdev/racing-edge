@@ -216,28 +216,23 @@ def test_both_corpus_directories_are_read(tmp_path, monkeypatch):
     assert "holdout" in " ".join(F.COMMENT_DIRS)
 
 
-def test_at_least_two_horses_every_day():
-    """His instruction, 2026-09-21: "pick at least 2 horses". A day with one
-    qualifier still names two — the second is flagged as a top-up so it is
-    never mistaken for one that cleared the bar, and it carries its own lower
-    base rate."""
-    rows = [
-        {"course": "Ayr", "off": "2:00", "race_id": "r1", "horse": "Alpha",
-         "price": 2.5, "field": 6, "type": "Flat", "score": 4,
-         "ruled_out": False, "verdict": "NAMED", "reasons": []},
-        {"course": "Ayr", "off": "2:30", "race_id": "r2", "horse": "Beta",
-         "price": 3.0, "field": 8, "type": "Chase", "score": 1,
-         "ruled_out": False, "verdict": "kept", "reasons": []},
-        {"course": "Ayr", "off": "3:00", "race_id": "r3", "horse": "Rejected",
-         "price": 4.0, "field": 9, "type": "Flat", "score": -3,
-         "ruled_out": True, "verdict": "RULED OUT", "reasons": []},
-    ]
+def test_every_favourite_at_evens_to_6_4_is_a_pick():
+    """His word, 2026-10-18: "yes, and drop all race bans". Every 07:30
+    favourite from evens up to under 6/4 is a pick, shortest first, any race
+    type, read or unread; odds-on, 6/4 and bigger never. The two-a-day top-ups
+    went 0 from 5 in the week to 15 Oct, so there is no minimum."""
+    def fav(rid, price, **kw):
+        return dict({"course": "Ayr", "off": "2:00", "race_id": rid, "horse": rid,
+                     "price": price, "field": 6, "type": "Flat", "score": 0,
+                     "ruled_out": False, "reasons": []}, **kw)
+    rows = [fav("novice", 2.0, ruled_out=True, race_name="EBF Novice Stakes"),
+            fav("unread", 2.2, score=None, ruled_out=True),
+            fav("hurdle", 2.38, type="Hurdle", ruled_out=True),
+            fav("sixfour", 2.5), fav("oddson", 1.8), fav("long", 3.0, score=5)]
     picks = F.todays_picks(rows)
-    assert len(picks) >= F.MIN_NAMED == 2
-    assert picks[0]["horse"] == "Alpha" and picks[0]["cleared"] is True
-    assert picks[1]["cleared"] is False, "the filler must be flagged as a top-up"
-    assert all(p["horse"] != "Rejected" for p in picks), \
-        "a ruled-out horse is never named, not even to reach the minimum"
+    assert [p["race_id"] for p in picks] == ["novice", "unread", "hurdle"]
+    assert all(p["cleared"] for p in picks) and picks[0]["confidence"] == 48.6
+    assert F.todays_picks([fav("long", 3.0), fav("oddson", 1.5)]) == []
 
 
 def test_confidence_is_a_base_rate_from_the_record_not_an_opinion():
@@ -262,7 +257,7 @@ def _card_rows():
     return [dict(base, race_id="r1", course="Ayr", horse="Good", horse_id="h1",
                  price=2.2, score=4, type="Flat"),
             dict(base, race_id="r2", course="Ayr", horse="Okay", horse_id="h2",
-                 price=2.5, score=2, type="Hurdle"),
+                 price=2.38, score=2, type="Hurdle"),
             dict(base, race_id="r3", course="Kelso", horse="Chaser", horse_id="h3",
                  price=3.0, score=1, type="Chase")]
 
@@ -278,7 +273,7 @@ def test_the_filter_banks_its_picks_before_the_off_and_never_re_picks(tmp_path):
     rows = [r for r in F._load_record(p) if r["line"] not in ("fav", "races", "races_all")]
     assert [(r["line"], r["horse"]) for r in rows] == [
         ("filter", "Good"), ("filter", "Okay"), ("chase", "Chaser")]
-    assert rows[0]["cleared"] == "1" and rows[1]["cleared"] == "1"   # both under 3.0
+    assert rows[0]["cleared"] == "1" and rows[1]["cleared"] == "1"   # both evens to 6/4
     assert F.record_picks(_card_rows()[:1], "2026-09-27", p) == 0, "a re-run re-picked"
     assert len(F._load_record(p)) == 8
 
@@ -318,11 +313,9 @@ def test_the_filter_banks_the_nap_in_the_real_record(tmp_path):
     log.close()
 
 
-def test_the_picks_are_the_two_shortest_not_the_best_dots():
-    """His word, 2026-10-10: "yes, rank by price". Divine Legend (7 Oct) was
-    napped at 3.5 on her dots over King Roly at 2.63, who won; on the box's
-    record dots +2 won 24% against 33% below. The shortest leads; a 3.0+
-    favourite is only ever a flagged top-up."""
+def test_the_dots_never_pick_a_long_favourite_over_a_short_one():
+    """Divine Legend (7 Oct) was napped at 3.5 on her dots over King Roly at
+    2.63, who won. Price decides: 3.5 and 2.63 are not picks; 2.1 is."""
     base = {"off": "2:00", "field": 6, "reasons": [], "ruled_out": False,
             "date": "2026-10-07", "type": "Flat"}
     rows = [dict(base, race_id="a", horse="Dots", horse_id="h1", course="Navan",
@@ -331,19 +324,13 @@ def test_the_picks_are_the_two_shortest_not_the_best_dots():
                  price=2.63, score=-1),
             dict(base, race_id="c", horse="Shorter", horse_id="h3", course="Ayr",
                  price=2.1, score=0)]
-    picks = F.todays_picks(rows)
-    assert [p["horse"] for p in picks] == ["Shorter", "Short"]
-    assert all(p["cleared"] for p in picks)
-    assert picks[0]["confidence"] == 46.8
-    only_long = F.todays_picks([rows[0], dict(rows[0], race_id="d", price=3.2)])
-    assert [p["price"] for p in only_long] == [3.2, 3.5]
-    assert not any(p["cleared"] for p in only_long)
+    assert [p["horse"] for p in F.todays_picks(rows)] == ["Shorter"]
 
 
 def test_a_day_with_no_eligible_favourite_is_a_named_pass(tmp_path):
     from racing_edge.study.naplog import NapLog
     log = NapLog(tmp_path / "nap.db")
-    out = [dict(r, ruled_out=True) for r in _card_rows()]
+    out = [dict(r, price=3.0) for r in _card_rows()]
     assert "NO BET" in F.bank_nap(out, "2026-09-27", log)
     row = log.existing(__import__("datetime").date(2026, 9, 27))
     assert row["won"] == -1 and "no eligible favourite" in row["case_text"]
@@ -406,7 +393,7 @@ def test_novice_and_maiden_races_are_avoided():
                         "date": "2026-09-28", "race_status": "declared",
                         "race_class": "Class 3", "race_name": name, "type": typ,
                         "runners": [{"horse_id": f"{rid}h{i}", "horse": f"{rid}H{i}",
-                                     "odds": [{"decimal": str(2.5 + i)}]} for i in range(5)]}
+                                     "odds": [{"decimal": str(2.2 + i)}]} for i in range(5)]}
             return {"racecards": [card("n1", "EBF Novice Stakes (GBB Race)"),
                                   card("m1", "Maiden Hurdle", "Hurdle"),
                                   card("c1", "Novices' Chase", "Chase"),
@@ -421,7 +408,9 @@ def test_novice_and_maiden_races_are_avoided():
     for rid in ("n1", "m1", "c1"):
         assert by[rid]["ruled_out"] and "novice/maiden" in by[rid]["reasons"][0]
     assert not by["h1"]["ruled_out"]
-    assert [p["race_id"] for p in F.todays_picks(rows)] == ["h1"]
+    # the ban was lifted from the picks on his word, 2026-10-18 — still
+    # flagged on the list, still kept off the chase-line shadow
+    assert [p["race_id"] for p in F.todays_picks(rows)] == ["c1", "h1", "m1", "n1"]
     assert F.chase_line(rows) == [], "a novices' chase rode the chase line"
     assert F.avoided_race("Beginners' Chase") is False      # his words only: novice, maiden
 
@@ -480,8 +469,9 @@ def test_the_bad_races_are_out():
                         "race_class": "Class 4", "race_name": "Handicap", "type": typ,
                         "runners": [{"horse_id": f"{rid}{i}", "horse": f"{rid}{i}",
                                      "odds": [{"decimal": str(first + i)}]} for i in range(n)]}
-            return {"racecards": [card("hurdle", "Hurdle"), card("big", n=14),
-                                  card("long", first=4.0), card("good")]}
+            return {"racecards": [card("hurdle", "Hurdle", first=2.2),
+                                  card("big", n=14, first=2.2),
+                                  card("long", first=4.0), card("good", first=2.2)]}
 
         def horse_results(self, hid, limit=6):
             return [{"date": "2026-09-20", "position": "1", "ovr_btn": "0",
@@ -492,7 +482,9 @@ def test_the_bad_races_are_out():
     assert "14 runners" in rows["big"]["reasons"][0] and rows["big"]["ruled_out"]
     assert "4.00" in rows["long"]["reasons"][0] and rows["long"]["ruled_out"]
     assert not rows["good"]["ruled_out"]
-    assert [p["race_id"] for p in F.todays_picks(list(rows.values()))] == ["good"]
+    # still flagged on the list, no longer kept out of the picks (his word,
+    # 2026-10-18: "drop all race bans"); 4.00 is out on price alone
+    assert [p["race_id"] for p in F.todays_picks(list(rows.values()))] == ["big", "good", "hurdle"]
 
 
 def test_the_price_is_the_market_not_the_first_bookmaker():
