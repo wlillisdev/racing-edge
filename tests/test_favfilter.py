@@ -231,12 +231,15 @@ def test_every_favourite_at_evens_to_6_4_is_a_pick():
             fav("sixfour", 2.5), fav("fourfive", 1.8), fav("long", 3.0, score=5),
             fav("fourseven", 1.57)]
     picks = F.todays_picks(rows)
-    # 4/5 in ("yes, 4/5 to 11/8") and 6/4 to 15/8 in ("yes, all of them"),
-    # both his word 2026-10-18; 4/7 and 2/1 still out
-    assert [p["race_id"] for p in picks] == ["fourfive", "novice", "unread", "hurdle", "sixfour"]
-    assert all(p["cleared"] for p in picks)
+    # 4/5 in ("yes, 4/5 to 11/8"), 6/4 to 15/8 in ("yes, all of them"), and
+    # no ceiling ("in unless drifting") — all his word 2026-10-18; 4/7 out.
+    # 2/1+ is a WATCH pick (not cleared): the 13:30 check drops it if drifting
+    assert [p["race_id"] for p in picks] == ["fourfive", "novice", "unread", "hurdle",
+                                             "sixfour", "long"]
+    assert [p["cleared"] for p in picks] == [True] * 5 + [False]
     assert (picks[0]["confidence"], picks[1]["confidence"]) == (46.2, 48.6)
-    assert F.todays_picks([fav("long", 3.0), fav("oddson", 1.5)]) == []
+    assert [p["race_id"] for p in F.todays_picks([fav("long", 3.0), fav("oddson", 1.5)])] == ["long"]
+    assert F.todays_picks([fav("oddson", 1.5)]) == []
     assert [p["race_id"] for p in F.todays_picks([fav("fifteen8", 2.88)])] == ["fifteen8"]
 
 
@@ -274,13 +277,13 @@ def test_the_filter_banks_its_picks_before_the_off_and_never_re_picks(tmp_path):
     p = tmp_path / "filter_record.csv"
     # 2 picks + 1 chase + every favourite's 07:30 price (3) + Good as a
     # favourite race (races_all + races)
-    assert F.record_picks(_card_rows(), "2026-09-27", p) == 8
+    assert F.record_picks(_card_rows(), "2026-09-27", p) == 9     # + Chaser, a 2/1 watch pick
     rows = [r for r in F._load_record(p) if r["line"] not in ("fav", "races", "races_all")]
     assert [(r["line"], r["horse"]) for r in rows] == [
-        ("filter", "Good"), ("filter", "Okay"), ("chase", "Chaser")]
+        ("filter", "Good"), ("filter", "Okay"), ("filter", "Chaser"), ("chase", "Chaser")]
     assert rows[0]["cleared"] == "1" and rows[1]["cleared"] == "1"   # both evens to 6/4
     assert F.record_picks(_card_rows()[:1], "2026-09-27", p) == 0, "a re-run re-picked"
-    assert len(F._load_record(p)) == 8
+    assert len(F._load_record(p)) == 9
 
 
 def test_the_night_settles_the_filter_at_sp(tmp_path):
@@ -329,13 +332,15 @@ def test_the_dots_never_pick_a_long_favourite_over_a_short_one():
                  price=2.63, score=-1),
             dict(base, race_id="c", horse="Shorter", horse_id="h3", course="Ayr",
                  price=2.1, score=0)]
-    assert [p["horse"] for p in F.todays_picks(rows)] == ["Shorter", "Short"]
+    picks = F.todays_picks(rows)
+    assert [p["horse"] for p in picks] == ["Shorter", "Short", "Dots"]
+    assert [p["cleared"] for p in picks] == [True, True, False]   # 3.5 is watch only
 
 
 def test_a_day_with_no_eligible_favourite_is_a_named_pass(tmp_path):
     from racing_edge.study.naplog import NapLog
     log = NapLog(tmp_path / "nap.db")
-    out = [dict(r, price=3.0) for r in _card_rows()]
+    out = [dict(r, price=1.5) for r in _card_rows()]
     assert "NO BET" in F.bank_nap(out, "2026-09-27", log)
     row = log.existing(__import__("datetime").date(2026, 9, 27))
     assert row["won"] == -1 and "no eligible favourite" in row["case_text"]
@@ -488,8 +493,10 @@ def test_the_bad_races_are_out():
     assert "4.00" in rows["long"]["reasons"][0] and rows["long"]["ruled_out"]
     assert not rows["good"]["ruled_out"]
     # still flagged on the list, no longer kept out of the picks (his word,
-    # 2026-10-18: "drop all race bans"); 4.00 is out on price alone
-    assert [p["race_id"] for p in F.todays_picks(list(rows.values()))] == ["big", "good", "hurdle"]
+    # 2026-10-18: "drop all race bans"); 4.00 is in as a 13:30 watch pick
+    picks = F.todays_picks(list(rows.values()))
+    assert [p["race_id"] for p in picks] == ["big", "good", "hurdle", "long"]
+    assert not picks[-1]["cleared"]
 
 
 def test_the_price_is_the_market_not_the_first_bookmaker():
@@ -585,3 +592,68 @@ def test_the_1230_shadow_keeps_a_steady_nap_and_a_drifter_with_no_way_out(tmp_pa
     _morning(q)
     assert "kept it" in F.record_1230(_now(), "2026-10-11", 2.5, {"b"}, path=q)
     assert [r["horse"] for r in F._load_record(q) if r["line"] == "p1230"] == ["Nap"]
+
+
+def test_the_nap_is_the_pick_the_money_came_for_by_1230(tmp_path):
+    """His word, 2026-10-18: "yes, from Monday". The shortest of a shortlist
+    won no more often than the 3rd or 4th; backed favourites in the band won
+    63%, drifters 33%. So the nap is the 07:30 pick whose price shortened most
+    by 12:30 UTC, from races still to run, banked at the 12:30 price."""
+    from racing_edge.study.naplog import NapLog
+    day = "2026-10-19"
+    p = tmp_path / "fr.csv"
+    F._save_record([
+        dict(date=day, line="filter", race_id="short", course="Ayr", off="2:00",
+             horse="Shortest", horse_id="h1", price="1.9", score="0", cleared="1"),
+        dict(date=day, line="filter", race_id="steam", course="Ayr", off="3:00",
+             horse="Steamer", horse_id="h2", price="2.75", score="0", cleared="1"),
+        dict(date=day, line="filter", race_id="gone", course="Ayr", off="1:00",
+             horse="AlreadyOff", horse_id="h3", price="2.5", score="0", cleared="1"),
+    ], p)
+    now = {"short": 2.1, "steam": 2.2, "gone": 1.5}       # gone was backed most, but is off
+    pick = F.nap_1230(day, now, open_races={"short", "steam"}, path=p)
+    assert pick["horse"] == "Steamer" and pick["price"] == 2.2
+    log = NapLog(tmp_path / "nap.db")
+    line = F.bank_nap_1230(day, now, {"short", "steam"}, log, path=p)
+    row = log.existing(__import__("datetime").date(2026, 10, 19))
+    assert line.startswith("NAP: Steamer") and "backed from 2.75" in line
+    assert row["horse"] == "Steamer" and row["price"] == 2.2 and row["aligned"] == "filter"
+    assert "not re-banked" in F.bank_nap_1230(day, now, {"short"}, log, path=p)
+    log.close()
+
+
+def test_no_pick_still_to_run_at_1230_is_a_named_pass(tmp_path):
+    from racing_edge.study.naplog import NapLog
+    p = tmp_path / "fr.csv"
+    F._save_record([dict(date="2026-10-19", line="filter", race_id="gone", course="Ayr",
+                         off="1:00", horse="Off", horse_id="h", price="2.2")], p)
+    log = NapLog(tmp_path / "nap.db")
+    assert "NO BET" in F.bank_nap_1230("2026-10-19", {"gone": 2.0}, set(), log, path=p)
+    assert log.existing(__import__("datetime").date(2026, 10, 19))["won"] == -1
+    log.close()
+
+
+def test_a_drifting_2_1_plus_pick_is_dropped_at_1230_and_never_napped(tmp_path):
+    """His word, 2026-10-18: "in unless drifting". 2/1+ favourites drifted
+    won 19/152 (12%) on the box's record, backed or steady 67/213 (31%). At
+    13:30 a 2/1+ pick still to run that has drifted 10%+ leaves the list and
+    cannot be the nap; one that is backed stays and can be."""
+    day = "2026-10-19"
+    p = tmp_path / "fr.csv"
+    F._save_record([
+        dict(date=day, line="filter", race_id="firm", course="Ayr", off="2:00",
+             horse="Firm", horse_id="h1", price="2.0", cleared="1"),
+        dict(date=day, line="filter", race_id="drift", course="Ayr", off="3:00",
+             horse="LongDrifter", horse_id="h2", price="4.0", cleared="0"),
+        dict(date=day, line="filter", race_id="steam", course="Ayr", off="4:00",
+             horse="LongSteamer", horse_id="h3", price="5.0", cleared="0"),
+        dict(date=day, line="filter", race_id="ran", course="Ayr", off="1:00",
+             horse="AlreadyRan", horse_id="h4", price="4.0", cleared="0"),
+    ], p)
+    now = {"firm": 2.2, "drift": 4.5, "steam": 4.0, "ran": 6.0}
+    kept, dropped = F.record_list_1230(day, now, {"firm", "drift", "steam"}, path=p)
+    assert kept == ["Firm", "LongSteamer", "AlreadyRan"]      # a race already run stays
+    assert dropped == ["LongDrifter (4.00 -> 4.50)"]
+    assert F.record_list_1230(day, now, {"firm"}, path=p) == ([], []), "write-once"
+    assert F.nap_1230(day, now, {"firm", "drift", "steam"}, path=p)["horse"] == "LongSteamer"
+    assert F.nap_1230(day, {"drift": 5.0}, {"drift"}, path=p) is None

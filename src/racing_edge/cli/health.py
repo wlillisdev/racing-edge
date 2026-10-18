@@ -139,9 +139,18 @@ def main() -> int:
     # health runs at 09:00, the nap at 07:30 — so TODAY'S row must exist by now.
     # (2026-07-13: 'yesterday counts' showed ALL GREEN while a 422 was killing every
     # morning — the watchman waved through the exact failure he exists to catch.)
+    # since 2026-10-18 the nap is named at 13:30 (his word); by 09:30 the
+    # proof of life is the 07:30 list in the filter record
+    try:
+        from racing_edge.school import favfilter as _F
+        _listed = any(r["date"] == today.isoformat() and r["line"] in ("filter", "fav")
+                      for r in _F._load_record(_F.FILTER_RECORD))
+    except Exception:
+        _listed = False
     all_ok &= _check(
-        today.isoformat() in dates,
-        f"today's nap banked (latest {max(dates) if dates else 'never'})",
+        today.isoformat() in dates or _listed,
+        f"today's nap banked or 07:30 list recorded, nap at 13:30 "
+        f"(latest nap {max(dates) if dates else 'never'})",
         f"NO NAP banked TODAY (latest {max(dates) if dates else 'never'}) — the 07:30 "
         "task failed or crashed; open its log on the Tasks page",
         lines)

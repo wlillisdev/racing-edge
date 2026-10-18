@@ -606,7 +606,17 @@ def chase_line(rows: list[dict]) -> list[dict]:
 # so the whole list runs about 43% — more winners a day, his call.
 # REVERT-IF the 6/4-to-15/8 picks strike below every evens+ favourite over
 # 50 settled, or his word.
-PICK_MAX_PRICE = 3.0
+PICK_MAX_PRICE = 3.0     # the line between "firm" and "watch" picks since the ceiling went
+
+# NO CEILING (his word, 2026-10-18: "in unless drifting"): "stop ruling out
+# horses just based on their price ... if there's a favourite at a larger
+# price and he ticks all the boxes, back him". On the box's record 2/1+
+# favourites won 86/365 (24%) — backed after 07:30 31/92 (34%), steady 36/121
+# (30%), drifted 19/152 (12%). So every favourite from 4/5 up is on the 07:30
+# list; one at 2/1 or bigger (PICK_MAX_PRICE) is a WATCH pick, dropped at the
+# 12:30 UTC check if its price has drifted DRIFT_SWAP+ (record_list_1230).
+# REVERT-IF the 2/1+ picks that survive 13:30 strike below 25% over 50
+# settled, or his word.
 
 # 4/5 SHOTS IN (his word, 2026-10-18: "yes, 4/5 to 11/8"). On the box's record
 # 07:30 favourites at 4/5 to under evens won 18 of 39 (46%) — the same rate as
@@ -621,9 +631,10 @@ def todays_picks(rows: list[dict]) -> list[dict]:
     """Every 07:30 favourite priced from 4/5 up to under 2/1 (15/8 the
     longest), shortest first (his word, 2026-10-18). No race bans, no dots,
     no minimum."""
-    live = [r for r in rows if PICK_MIN_PRICE <= r["price"] < PICK_MAX_PRICE]
+    live = [r for r in rows if PICK_MIN_PRICE <= r["price"]]
     live.sort(key=lambda r: (r["price"], str(r["race_id"])))
-    picks = [dict(r, cleared=True) for r in live]
+    # cleared = a firm pick; a 2/1+ favourite is a watch pick (13:30 drift check)
+    picks = [dict(r, cleared=r["price"] < PICK_MAX_PRICE) for r in live]
     for p in picks:
         pct, n = price_confidence(p["price"])
         p["confidence"], p["confidence_n"] = pct, n
@@ -653,7 +664,7 @@ def render_list(rows: list[dict], floor: int = FLOOR) -> str:
          "  It is a base rate with its sample beside it, not a tip on this horse.",
          ""] + L[3:]
     for p in picks:
-        mark = "4/5-15/8 "
+        mark = "firm     " if p["cleared"] else "watch 13:30"
         L.insert(7 + picks.index(p),
                  f"  {mark} {p['confidence']:.0f}% (n={p['confidence_n']})  "
                  f"{p['course']} {p['off']}  {p['horse']} @ {p['price']:.2f}"
@@ -786,6 +797,90 @@ def settle_record(day: str, results: dict, path: Path = FILTER_RECORD) -> int:
     return n
 
 
+# THE NAP IS NAMED AT 13:30 (his word, 2026-10-18: "yes, from Monday"), not
+# the shortest at 07:30: the shortest of a shortlist won no more often than
+# the 3rd or 4th shortest, while the money after 07:30 sorts favourites —
+# in the 4/5-to-11/8 band backed won 29/46 (63%), steady 25/50 (50%),
+# drifted 18/54 (33%). So: of the 07:30 picks whose race is still to run,
+# the nap is the one whose median price has shortened most since 07:30
+# (ties: the shorter now). Banked pre-off at the 13:30 price.
+# REVERT-IF the 13:30 nap strikes below the 07:30 picks over 50 settled
+# days, or his word.
+def drifted_out(price_0730: float, now: float) -> bool:
+    """A 2/1+ watch pick whose price has drifted DRIFT_SWAP+ since 07:30."""
+    return price_0730 >= PICK_MAX_PRICE and now >= price_0730 * DRIFT_SWAP
+
+
+def record_list_1230(day: str, now_prices: dict[str, float], open_races: set[str],
+                     path: Path = FILTER_RECORD) -> tuple[list[str], list[str]]:
+    """THE 13:30 LIST (his word, 2026-10-18: "in unless drifting"): every
+    07:30 pick, less the 2/1+ watch picks whose race is still to run and
+    whose price has drifted DRIFT_SWAP+. Written once a day as line
+    'list1230', settled with the rest. Returns (kept, dropped) horse names."""
+    held = _load_record(path)
+    if any(r["date"] == day and r["line"] == "list1230" for r in held):
+        return [], []
+    kept, dropped = [], []
+    for r in [r for r in held if r["date"] == day and r["line"] == "filter"]:
+        then, now = _f(r["price"]), now_prices.get(r["race_id"])
+        if r["race_id"] in open_races and then and now and drifted_out(then, now):
+            dropped.append(f"{r['horse']} ({then:.2f} -> {now:.2f})")
+            continue
+        held.append(dict(r, line="list1230", result="", sp=""))
+        kept.append(r["horse"])
+    if kept or dropped:
+        _save_record(held, path)
+    return kept, dropped
+
+
+def nap_1230(day: str, now_prices: dict[str, float], open_races: set[str],
+             path: Path = FILTER_RECORD) -> dict | None:
+    """The 07:30 pick the money has come for most, from races still to run.
+    `now_prices` maps race_id -> the pick's median price now."""
+    best = None
+    for r in _load_record(path):
+        if r["date"] != day or r["line"] != "filter" or r["race_id"] not in open_races:
+            continue
+        then, now = _f(r["price"]), now_prices.get(r["race_id"])
+        if not (then and now):
+            continue                     # no price now: a non-runner or unread
+        if drifted_out(then, now):
+            continue                     # a watch pick the 13:30 check drops
+        key = (now / then, now, r["race_id"])
+        if best is None or key < best[0]:
+            best = (key, dict(r, price_0730=then, price=now))
+    return best[1] if best else None
+
+
+def bank_nap_1230(day: str, now_prices: dict[str, float], open_races: set[str],
+                  log, path: Path = FILTER_RECORD) -> str:
+    """Bank the 13:30 nap in nap.db, or a named pass. Returns one line."""
+    from datetime import date as _date
+    d = _date.fromisoformat(day)
+    p = nap_1230(day, now_prices, open_races, path)
+    try:
+        if p is None:
+            log.record_pass(day=d, reason="filter: no 07:30 pick still to run "
+                                          "and priced at 13:30")
+            return "NAP: NO BET — no pick still to run at 13:30"
+        move = p["price"] / p["price_0730"]
+        word = ("backed" if move <= 0.9 else "drifting" if move >= 1.1 else "steady")
+        pct, n = price_confidence(p["price"])
+        case = (f"FILTER NAP at 13:30 ({word} {p['price_0730']:.2f} -> {p['price']:.2f}; "
+                f"the money's pick of the 07:30 list, his word 2026-10-18)")
+        log.record(day=d, race_id=str(p["race_id"]), course=p["course"] or "",
+                   horse=p["horse"] or "", horse_id=p.get("horse_id") or "",
+                   price=p["price"], score=int(_f(p.get("score")) or 0),
+                   confident=True, case=case, deep_conf=f"{pct:.0f}%", aligned="filter")
+        log.record_favline(day=d, race_id=str(p["race_id"]), course=p["course"] or "",
+                           horse=p["horse"] or "", horse_id=p.get("horse_id") or "",
+                           price=p["price"])
+        return (f"NAP: {p['horse']} — {p['course']} {p['off']} @ {p['price']:.2f} "
+                f"({word} from {p['price_0730']:.2f} at 07:30)")
+    except ValueError as exc:            # already banked: the record stands
+        return f"NAP not re-banked: {exc}"
+
+
 # THE 13:30 SHADOW (his word, 2026-10-10: "yes, shadow it"). Drifters lose:
 # on the box's record picks that drifted to the off won 1 of 27 across every
 # line, backed ones about 57%. At the 12:30 (UTC) guard, if the nap has
@@ -794,7 +889,7 @@ def settle_record(day: str, results: dict, path: Path = FILTER_RECORD) -> int:
 # nap. RECORDED, never banked: the 07:30 nap stands and counts; this line
 # takes over only by beating it live over 50 days.
 # REVERT-IF it strikes below the 07:30 nap over 50 settled days, or his word.
-DRIFT_SWAP = 1.10
+DRIFT_SWAP = 1.10        # also the 13:30 drop line for 2/1+ watch picks
 
 
 def record_1230(rows_now: list[dict], day: str, nap_now: float | None,
@@ -837,7 +932,8 @@ def render_record(path: Path = FILTER_RECORD) -> str:
     """Strike rate first (his ruling); P/L printed, never the verdict."""
     held = _load_record(path)
     L = ["THE FILTER'S RECORD — banked 07:30, settled at SP"]
-    for line, label in (("filter", "filter (picks)"), ("p1230", "13:30 shadow nap"),
+    for line, label in (("filter", "07:30 list"), ("list1230", "13:30 list"),
+                        ("p1230", "13:30 shadow nap"),
                         ("races", "fav races (top 2)"),
                         ("races_all", "fav races (all)"), ("v3", "v3 model (top 2)"),
                         ("chase", "chase line")):
@@ -886,11 +982,11 @@ def bank_nap(rows: list[dict], day: str, log, picks: list[dict] | None = None,
     try:
         if not picks:
             log.record_pass(day=d, reason="filter: no eligible favourite "
-                                          "(none at 4/5 to 15/8 at 07:30)")
-            return "NAP: NO BET — no favourite at 4/5 to 15/8 today"
+                                          "(none at 4/5 or bigger at 07:30)")
+            return "NAP: NO BET — no favourite at 4/5 or bigger today"
         p = picks[0]
         sc = int(p["score"] or 0)
-        case = (f"{source.upper()} NAP (4/5 to 15/8, score "
+        case = (f"{source.upper()} NAP (4/5+, score "
                 f"{sc:+d}, confidence {p['confidence']:.0f}% n="
                 f"{p['confidence_n']}): " + "; ".join(p["reasons"]))
         log.record(day=d, race_id=str(p["race_id"]), course=p["course"] or "",
@@ -1012,14 +1108,20 @@ def main(argv=None) -> int:
         except Exception as exc:
             note = f"v3 FAILED ({exc.__class__.__name__}: {str(exc)[:80]}) — shadow not recorded"
         v3_picks = os.environ.get("NAP_PICKER", "filter").strip().lower() in ("v3", "model")
-        log = open_nap_log()
-        try:
-            if v3_picks and mpicks is not None:
+        if v3_picks and mpicks is not None:
+            log = open_nap_log()
+            try:
                 head = bank_nap(rows, day, log, picks=mpicks, source="v3")
-            else:
-                head = bank_nap(rows, day, log)
-        finally:
-            log.close()
+            finally:
+                log.close()
+        else:
+            # the nap is named at 13:30 from the money (his word, 2026-10-18);
+            # the 07:30 list is recorded below, the nap banks at the guard
+            n = len(todays_picks(rows))
+            head = (f"PICKS: {n} favourite(s) at 4/5 or bigger — 2/1+ ones are dropped "
+                    "at 13:30 if drifting; the NAP is named at 13:30, the one the money "
+                    "has come for most" if n else
+                    "PICKS: no favourite at 4/5 or bigger today — NO BET")
         body = (head + "\n\n" + (render_model(mpicks or [], note)
                                    if (mpicks is not None or note) else "")
                 + "\n" + body)

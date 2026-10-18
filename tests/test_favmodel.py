@@ -98,8 +98,9 @@ def test_the_model_banks_the_nap_and_says_so(tmp_path):
 
 
 def test_a_failed_v3_never_costs_the_day_and_says_so(tmp_path, monkeypatch, capsys):
-    """If v3 cannot score, the day still gets his filter's pick — and the
-    mail says in words that the shadow failed."""
+    """If v3 cannot score, the day still gets his filter's list — and the
+    mail says in words that the shadow failed. (Since 2026-10-18 the filter's
+    nap banks at 13:30, not here.)"""
     from racing_edge.study.naplog import NapLog
     import racing_edge.cli._common as C
     monkeypatch.chdir(tmp_path)
@@ -114,9 +115,10 @@ def test_a_failed_v3_never_costs_the_day_and_says_so(tmp_path, monkeypatch, caps
     monkeypatch.setattr(F, "model_picks", boom)
     assert F.main(["--day", "today", "--bank"]) == 0
     out = capsys.readouterr().out
-    assert "v3 FAILED" in out and "NAP: Good" in out
-    row = NapLog(tmp_path / "nap.db").existing(date(2026, 9, 28))
-    assert row["horse"] == "Good" and row["aligned"] == "filter"
+    assert "v3 FAILED" in out and "named at 13:30" in out
+    assert NapLog(tmp_path / "nap.db").existing(date(2026, 9, 28)) is None
+    rec = F._load_record(tmp_path / "data/filter_record.csv")
+    assert [r["horse"] for r in rec if r["line"] == "filter"] == ["Good"]
 
 
 def test_the_archive_tops_itself_up_and_never_reads_a_race_twice(tmp_path):
@@ -162,8 +164,8 @@ def test_his_filter_picks_the_nap_and_v3_rides_beside_it(tmp_path, monkeypatch, 
     monkeypatch.setattr(C, "open_nap_log", lambda: NapLog(tmp_path / "nap.db"))
     assert F.main(["--day", "today", "--bank"]) == 0
     out = capsys.readouterr().out
-    row = NapLog(tmp_path / "nap.db").existing(date(2026, 9, 28))
-    assert row["horse"] == "Good" and row["aligned"] == "filter", "v3 took the nap"
+    # since 2026-10-18 the filter's nap banks at 13:30; v3 must not bank here
+    assert NapLog(tmp_path / "nap.db").existing(date(2026, 9, 28)) is None, "v3 took the nap"
     assert "V3 SHADOW" in out and "Other" in out
     rec = {r["line"]: r["horse"] for r in F._load_record(tmp_path / "data/filter_record.csv")}
     assert rec.get("v3") == "Other", "v3's pick must be recorded to be judged"
