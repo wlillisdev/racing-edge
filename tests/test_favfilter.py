@@ -585,3 +585,42 @@ def test_the_1230_shadow_keeps_a_steady_nap_and_a_drifter_with_no_way_out(tmp_pa
     _morning(q)
     assert "kept it" in F.record_1230(_now(), "2026-10-11", 2.5, {"b"}, path=q)
     assert [r["horse"] for r in F._load_record(q) if r["line"] == "p1230"] == ["Nap"]
+
+
+def test_the_nap_is_the_pick_the_money_came_for_by_1230(tmp_path):
+    """His word, 2026-10-18: "yes, from Monday". The shortest of a shortlist
+    won no more often than the 3rd or 4th; backed favourites in the band won
+    63%, drifters 33%. So the nap is the 07:30 pick whose price shortened most
+    by 12:30 UTC, from races still to run, banked at the 12:30 price."""
+    from racing_edge.study.naplog import NapLog
+    day = "2026-10-19"
+    p = tmp_path / "fr.csv"
+    F._save_record([
+        dict(date=day, line="filter", race_id="short", course="Ayr", off="2:00",
+             horse="Shortest", horse_id="h1", price="1.9", score="0", cleared="1"),
+        dict(date=day, line="filter", race_id="steam", course="Ayr", off="3:00",
+             horse="Steamer", horse_id="h2", price="2.75", score="0", cleared="1"),
+        dict(date=day, line="filter", race_id="gone", course="Ayr", off="1:00",
+             horse="AlreadyOff", horse_id="h3", price="2.5", score="0", cleared="1"),
+    ], p)
+    now = {"short": 2.1, "steam": 2.2, "gone": 1.5}       # gone was backed most, but is off
+    pick = F.nap_1230(day, now, open_races={"short", "steam"}, path=p)
+    assert pick["horse"] == "Steamer" and pick["price"] == 2.2
+    log = NapLog(tmp_path / "nap.db")
+    line = F.bank_nap_1230(day, now, {"short", "steam"}, log, path=p)
+    row = log.existing(__import__("datetime").date(2026, 10, 19))
+    assert line.startswith("NAP: Steamer") and "backed from 2.75" in line
+    assert row["horse"] == "Steamer" and row["price"] == 2.2 and row["aligned"] == "filter"
+    assert "not re-banked" in F.bank_nap_1230(day, now, {"short"}, log, path=p)
+    log.close()
+
+
+def test_no_pick_still_to_run_at_1230_is_a_named_pass(tmp_path):
+    from racing_edge.study.naplog import NapLog
+    p = tmp_path / "fr.csv"
+    F._save_record([dict(date="2026-10-19", line="filter", race_id="gone", course="Ayr",
+                         off="1:00", horse="Off", horse_id="h", price="2.2")], p)
+    log = NapLog(tmp_path / "nap.db")
+    assert "NO BET" in F.bank_nap_1230("2026-10-19", {"gone": 2.0}, set(), log, path=p)
+    assert log.existing(__import__("datetime").date(2026, 10, 19))["won"] == -1
+    log.close()

@@ -338,6 +338,42 @@ def test_guard_compares_median_to_median_not_best_price(project, monkeypatch, ca
     assert "steady (3.0 -> 3.05)" in out
 
 
+def test_guard_names_the_nap_at_1230_from_the_money(project, monkeypatch, capsys):
+    """His word, 2026-10-18: the nap is named at 13:30 — the 07:30 pick whose
+    median price has shortened most, from races still to run."""
+    from datetime import datetime, timedelta as _td, timezone
+    from racing_edge.school import favfilter as F
+    today = date.today()
+    later = (datetime.now(timezone.utc) + _td(hours=3)).isoformat()
+    earlier = (datetime.now(timezone.utc) - _td(hours=1)).isoformat()
+    F._save_record([
+        dict(date=today.isoformat(), line="filter", race_id="ra", course="Ayr", off="3:00",
+             horse="Drifter", horse_id="ha", price="2.0", score="0", cleared="1"),
+        dict(date=today.isoformat(), line="filter", race_id="rb", course="Ayr", off="4:00",
+             horse="Steamer", horse_id="hb", price="2.75", score="0", cleared="1"),
+        dict(date=today.isoformat(), line="filter", race_id="rc", course="Ayr", off="1:00",
+             horse="Gone", horse_id="hc", price="2.5", score="0", cleared="1"),
+    ], F.FILTER_RECORD)
+
+    def card(rid, hid, horse, off_dt, decs):
+        return {"race_id": rid, "course": "Ayr", "off_time": "3:00", "off_dt": off_dt,
+                "date": today.isoformat(), "type": "Flat",
+                "runners": [{"horse_id": hid, "horse": horse,
+                             "odds": [{"decimal": str(d)} for d in decs]}]}
+    raw = {"racecards": [card("ra", "ha", "Drifter", later, [2.5, 2.5, 2.6]),
+                         card("rb", "hb", "Steamer", later, [2.2, 2.25, 2.2]),
+                         card("rc", "hc", "Gone", earlier, [1.5, 1.5, 1.5])]}
+    monkeypatch.setattr(nap_cli, "get_client", lambda: FakeClient(cards={"today": raw}))
+    monkeypatch.setattr(sys, "argv", ["nap", "--guard"])
+    assert nap_cli.main() == 0
+    out = capsys.readouterr().out
+    log = open_nap_log()
+    row = log.existing(today)
+    log.close()
+    assert "NAP: Steamer" in out
+    assert row["horse"] == "Steamer" and row["price"] == 2.2 and row["aligned"] == "filter"
+
+
 # --------------------------------------------------------------------------- #
 # 6. HEALTH — the 09:30 red/green report
 # --------------------------------------------------------------------------- #

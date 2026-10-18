@@ -381,20 +381,53 @@ def _median_now(raw, race_id, horse_id):
     return None
 
 
-def _shadow_1230(day, raw, nap_now) -> None:
-    """His word, 2026-10-10: the 13:30 shadow (favfilter.record_1230). The
-    eligible favourites are re-read from the same card the guard just fetched;
-    only races whose off is still ahead can be swapped to."""
+def _open_races(raw) -> set[str]:
+    """Races on the card whose off is still ahead of the clock."""
     from datetime import datetime, timezone
-    from racing_edge.school import favfilter as F
     t = datetime.now(timezone.utc)
-    open_races = set()
+    out = set()
     for c in (raw or {}).get("racecards") or []:
         try:
             if datetime.fromisoformat(str(c.get("off_dt"))) > t:
-                open_races.add(str(c.get("race_id")))
+                out.add(str(c.get("race_id")))
         except ValueError:
-            continue                     # no off time: never swapped to
+            continue                     # no off time: never picked late
+    return out
+
+
+def _nap_1230(day, raw, open_races) -> None:
+    """His word, 2026-10-18: the nap is named at 13:30 — the 07:30 pick the
+    money has come for most, from races still to run (favfilter.nap_1230)."""
+    from racing_edge.school import favfilter as F
+    picks = [r for r in F._load_record(F.FILTER_RECORD)
+             if r["date"] == day.isoformat() and r["line"] == "filter"]
+    if not picks:
+        print("  13:30 nap: no 07:30 picks recorded today — nothing to name.")
+        return
+    prices = {r["race_id"]: _median_now(raw, r["race_id"], r["horse_id"]) for r in picks}
+    log = open_nap_log()
+    try:
+        line = F.bank_nap_1230(day.isoformat(), {k: v for k, v in prices.items() if v},
+                               open_races, log)
+    finally:
+        log.close()
+    print(f"  {line}", flush=True)
+    from racing_edge.report.mail import configured, send
+    if configured() and not line.startswith("NAP not re-banked"):
+        ok = send(f"[13:30] {line}", line + "\n\nThe 07:30 list stands; this is the one "
+                  "the money has come for most since 08:30 (your time).",
+                  title="The 13:30 nap", subtitle="racing-edge form trial")
+        print(f"  email: {ok or 'FAILED'}")
+
+
+def _shadow_1230(day, raw, open_races) -> None:
+    """His word, 2026-10-10: the 13:30 shadow (favfilter.record_1230), on the
+    07:30 list's shortest pick. The eligible favourites are re-read from the
+    same card the guard just fetched; only races still to run are swapped to."""
+    from racing_edge.school import favfilter as F
+    first = next((r for r in F._load_record(F.FILTER_RECORD)
+                  if r["date"] == day.isoformat() and r["line"] == "filter"), None)
+    nap_now = _median_now(raw, first["race_id"], first["horse_id"]) if first else None
     client = get_client()
     rows_now = F.daily_list("today", client=type("_Once", (), {
         "racecards": lambda self, d="today": raw,
@@ -420,6 +453,15 @@ def _guard() -> int:
         _board_read(day, cards)
     except Exception as _e:
         print(f"  ⚠ board read failed: {_e.__class__.__name__}", flush=True)
+    open_races = _open_races(raw)
+    try:                                 # the nap is named now (his word, 2026-10-18)
+        _nap_1230(day, raw, open_races)
+    except Exception as _e:
+        print(f"  ⚠ 13:30 nap FAILED: {_e.__class__.__name__}: {_e}", flush=True)
+    try:                                 # the 13:30 shadow: recorded, never banked
+        _shadow_1230(day, raw, open_races)
+    except Exception as _e:
+        print(f"  ⚠ 13:30 shadow failed: {_e.__class__.__name__}: {_e}", flush=True)
     log = open_nap_log()
     n = next((x for x in log.pending() if x["date"] == day.isoformat()), None)
     log.close()
@@ -427,10 +469,6 @@ def _guard() -> int:
         print("  No unsettled nap banked for today — nothing to guard.")
         return 0
     now = _median_now(raw, n["race_id"], n["horse_id"])
-    try:                                 # the 13:30 shadow: recorded, never banked
-        _shadow_1230(day, raw, now)
-    except Exception as _e:
-        print(f"  ⚠ 13:30 shadow failed: {_e.__class__.__name__}: {_e}", flush=True)
     banked = n["price"]
     if not (now and banked):
         print(f"  price OWED (banked {banked}, now {now}) — cannot judge the move.")

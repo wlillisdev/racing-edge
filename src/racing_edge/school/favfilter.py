@@ -786,6 +786,61 @@ def settle_record(day: str, results: dict, path: Path = FILTER_RECORD) -> int:
     return n
 
 
+# THE NAP IS NAMED AT 13:30 (his word, 2026-10-18: "yes, from Monday"), not
+# the shortest at 07:30: the shortest of a shortlist won no more often than
+# the 3rd or 4th shortest, while the money after 07:30 sorts favourites —
+# in the 4/5-to-11/8 band backed won 29/46 (63%), steady 25/50 (50%),
+# drifted 18/54 (33%). So: of the 07:30 picks whose race is still to run,
+# the nap is the one whose median price has shortened most since 07:30
+# (ties: the shorter now). Banked pre-off at the 13:30 price.
+# REVERT-IF the 13:30 nap strikes below the 07:30 picks over 50 settled
+# days, or his word.
+def nap_1230(day: str, now_prices: dict[str, float], open_races: set[str],
+             path: Path = FILTER_RECORD) -> dict | None:
+    """The 07:30 pick the money has come for most, from races still to run.
+    `now_prices` maps race_id -> the pick's median price now."""
+    best = None
+    for r in _load_record(path):
+        if r["date"] != day or r["line"] != "filter" or r["race_id"] not in open_races:
+            continue
+        then, now = _f(r["price"]), now_prices.get(r["race_id"])
+        if not (then and now):
+            continue                     # no price now: a non-runner or unread
+        key = (now / then, now, r["race_id"])
+        if best is None or key < best[0]:
+            best = (key, dict(r, price_0730=then, price=now))
+    return best[1] if best else None
+
+
+def bank_nap_1230(day: str, now_prices: dict[str, float], open_races: set[str],
+                  log, path: Path = FILTER_RECORD) -> str:
+    """Bank the 13:30 nap in nap.db, or a named pass. Returns one line."""
+    from datetime import date as _date
+    d = _date.fromisoformat(day)
+    p = nap_1230(day, now_prices, open_races, path)
+    try:
+        if p is None:
+            log.record_pass(day=d, reason="filter: no 07:30 pick still to run "
+                                          "and priced at 13:30")
+            return "NAP: NO BET — no pick still to run at 13:30"
+        move = p["price"] / p["price_0730"]
+        word = ("backed" if move <= 0.9 else "drifting" if move >= 1.1 else "steady")
+        pct, n = price_confidence(p["price"])
+        case = (f"FILTER NAP at 13:30 ({word} {p['price_0730']:.2f} -> {p['price']:.2f}; "
+                f"the money's pick of the 07:30 list, his word 2026-10-18)")
+        log.record(day=d, race_id=str(p["race_id"]), course=p["course"] or "",
+                   horse=p["horse"] or "", horse_id=p.get("horse_id") or "",
+                   price=p["price"], score=int(_f(p.get("score")) or 0),
+                   confident=True, case=case, deep_conf=f"{pct:.0f}%", aligned="filter")
+        log.record_favline(day=d, race_id=str(p["race_id"]), course=p["course"] or "",
+                           horse=p["horse"] or "", horse_id=p.get("horse_id") or "",
+                           price=p["price"])
+        return (f"NAP: {p['horse']} — {p['course']} {p['off']} @ {p['price']:.2f} "
+                f"({word} from {p['price_0730']:.2f} at 07:30)")
+    except ValueError as exc:            # already banked: the record stands
+        return f"NAP not re-banked: {exc}"
+
+
 # THE 13:30 SHADOW (his word, 2026-10-10: "yes, shadow it"). Drifters lose:
 # on the box's record picks that drifted to the off won 1 of 27 across every
 # line, backed ones about 57%. At the 12:30 (UTC) guard, if the nap has
@@ -1012,14 +1067,19 @@ def main(argv=None) -> int:
         except Exception as exc:
             note = f"v3 FAILED ({exc.__class__.__name__}: {str(exc)[:80]}) — shadow not recorded"
         v3_picks = os.environ.get("NAP_PICKER", "filter").strip().lower() in ("v3", "model")
-        log = open_nap_log()
-        try:
-            if v3_picks and mpicks is not None:
+        if v3_picks and mpicks is not None:
+            log = open_nap_log()
+            try:
                 head = bank_nap(rows, day, log, picks=mpicks, source="v3")
-            else:
-                head = bank_nap(rows, day, log)
-        finally:
-            log.close()
+            finally:
+                log.close()
+        else:
+            # the nap is named at 13:30 from the money (his word, 2026-10-18);
+            # the 07:30 list is recorded below, the nap banks at the guard
+            n = len(todays_picks(rows))
+            head = (f"PICKS: {n} favourite(s) at 4/5 to 15/8 — the NAP is named at "
+                    "13:30, the one the money has come for most" if n else
+                    "PICKS: none at 4/5 to 15/8 today — NO BET")
         body = (head + "\n\n" + (render_model(mpicks or [], note)
                                    if (mpicks is not None or note) else "")
                 + "\n" + body)
