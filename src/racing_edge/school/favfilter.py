@@ -207,7 +207,7 @@ MIN_NAMED = 2            # his floor: at least two horses every day
 NAP_MAX_PRICE = RACES_MAX_PRICE
 
 # Confidence for a price-ranked pick: the same record's strike in its band.
-PRICE_CONFIDENCE = ((2.5, 48.6, 111), (3.0, 37.8, 82), (4.0, 21.6, 125))
+PRICE_CONFIDENCE = ((2.0, 46.2, 39), (2.5, 48.6, 111), (3.0, 37.8, 82), (4.0, 21.6, 125))
 
 
 def price_confidence(price: float) -> tuple[float, int]:
@@ -601,11 +601,19 @@ def chase_line(rows: list[dict]) -> list[dict]:
 # days, or his word.
 PICK_MAX_PRICE = 2.5
 
+# 4/5 SHOTS IN (his word, 2026-10-18: "yes, 4/5 to 11/8"). On the box's record
+# 07:30 favourites at 4/5 to under evens won 18 of 39 (46%) — the same rate as
+# the evens group, so more winners a day at no cost to the strike. His evens
+# bar moves to 4/5 for the picks only; shorter than 4/5 stays out.
+# REVERT-IF the 4/5-to-evens picks strike below the evens-to-11/8 picks over
+# 50 settled, or his word.
+PICK_MIN_PRICE = 1.8
+
 
 def todays_picks(rows: list[dict]) -> list[dict]:
-    """Every 07:30 favourite priced from evens up to under 6/4, shortest
+    """Every 07:30 favourite priced from 4/5 up to under 6/4, shortest
     first (his word, 2026-10-18). No race bans, no dots, no minimum."""
-    live = [r for r in rows if ODDS_ON <= r["price"] < PICK_MAX_PRICE]
+    live = [r for r in rows if PICK_MIN_PRICE <= r["price"] < PICK_MAX_PRICE]
     live.sort(key=lambda r: (r["price"], str(r["race_id"])))
     picks = [dict(r, cleared=True) for r in live]
     for p in picks:
@@ -637,7 +645,7 @@ def render_list(rows: list[dict], floor: int = FLOOR) -> str:
          "  It is a base rate with its sample beside it, not a tip on this horse.",
          ""] + L[3:]
     for p in picks:
-        mark = "evens-6/4"
+        mark = "4/5-11/8 "
         L.insert(7 + picks.index(p),
                  f"  {mark} {p['confidence']:.0f}% (n={p['confidence_n']})  "
                  f"{p['course']} {p['off']}  {p['horse']} @ {p['price']:.2f}"
@@ -870,11 +878,11 @@ def bank_nap(rows: list[dict], day: str, log, picks: list[dict] | None = None,
     try:
         if not picks:
             log.record_pass(day=d, reason="filter: no eligible favourite "
-                                          "(none at evens to 6/4 at 07:30)")
-            return "NAP: NO BET — no favourite at evens to 6/4 today"
+                                          "(none at 4/5 to 11/8 at 07:30)")
+            return "NAP: NO BET — no favourite at 4/5 to 11/8 today"
         p = picks[0]
         sc = int(p["score"] or 0)
-        case = (f"{source.upper()} NAP (evens to 6/4, score "
+        case = (f"{source.upper()} NAP (4/5 to 11/8, score "
                 f"{sc:+d}, confidence {p['confidence']:.0f}% n="
                 f"{p['confidence_n']}): " + "; ".join(p["reasons"]))
         log.record(day=d, race_id=str(p["race_id"]), course=p["course"] or "",
