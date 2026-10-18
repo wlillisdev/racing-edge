@@ -228,10 +228,13 @@ def test_every_favourite_at_evens_to_6_4_is_a_pick():
     rows = [fav("novice", 2.0, ruled_out=True, race_name="EBF Novice Stakes"),
             fav("unread", 2.2, score=None, ruled_out=True),
             fav("hurdle", 2.38, type="Hurdle", ruled_out=True),
-            fav("sixfour", 2.5), fav("oddson", 1.8), fav("long", 3.0, score=5)]
+            fav("sixfour", 2.5), fav("fourfive", 1.8), fav("long", 3.0, score=5),
+            fav("fourseven", 1.57)]
     picks = F.todays_picks(rows)
-    assert [p["race_id"] for p in picks] == ["novice", "unread", "hurdle"]
-    assert all(p["cleared"] for p in picks) and picks[0]["confidence"] == 48.6
+    # 4/5 in on his word, 2026-10-18 ("yes, 4/5 to 11/8"); 4/7 still out
+    assert [p["race_id"] for p in picks] == ["fourfive", "novice", "unread", "hurdle"]
+    assert all(p["cleared"] for p in picks)
+    assert (picks[0]["confidence"], picks[1]["confidence"]) == (46.2, 48.6)
     assert F.todays_picks([fav("long", 3.0), fav("oddson", 1.5)]) == []
 
 
