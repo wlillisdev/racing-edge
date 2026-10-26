@@ -1,0 +1,8 @@
+RACING_API_PASSWORD
+RACING_API_USERNAME
+---
+/racecards/free HTTP 401
+/racecards/basic HTTP 401
+/racecards/standard HTTP 401
+/results/today/free HTTP 401
+/results/today HTTP 401
