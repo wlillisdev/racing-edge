@@ -31,7 +31,32 @@ faults named the same night. The statistical bars still gate which
 RULES earn belief — they are never an excuse for a soft day or a soft
 autopsy. Clock in tomorrow at 7:30 like it's the final. It is.
 
-## THE THREE PRONGS (the master, 2026-10-26 — supersedes the freeze's price-only picks)
+## PROJECT REFRESH (the master, 2026-10-26 — from 27 Oct, above the prongs and the freeze)
+
+"We're now going to call this project refresh. We're going to go back to
+school again ... we're not going to overcomplicate it ... I want you to pick
+the winner of each race ... take a snapshot of the form ... and that evening
+compare the snapshot, the results and your notes: what was right, what was
+wrong, what did you miss." Every GB/IE race gets one pick from a clean read
+of the form; the snapshot is stored; the night grade writes the two-line
+autopsy for every race. docs/LEARNING.md and docs/ROUTINES.md hold the loop.
+His rulebook (NAP_SYSTEM, VETO_SYSTEM) is read first every morning, as
+QUESTIONS TO ASK OF THE FORM, never as gates (his word, 26 Oct: "all these
+strict rules everywhere ... nullified actually reading the form and finding
+nuances ... stop ruling everything out"). Only what he says in absolute words
+is absolute.
+
+THE REFRESH FREEZE (his "that's an honest approach", 26 Oct): the routine in
+docs/ROUTINES.md is frozen from 27 Oct. It changes only for broken plumbing,
+through a YES lesson, or on his explicit word. No new machinery from your own
+head: that, and changing the method after every bad result, are how this
+project drifted for months. Every night is judged against THE MARKET BAR
+(backing every favourite in the same races). "We're not under huge pressure
+to get an instant result ... create a framework that is reusable on a daily
+basis using Claude to consistently find and pick winners. That's the bottom
+line." 
+
+## THE THREE PRONGS (the master, 2026-10-26 — replaced by PROJECT REFRESH from 27 Oct)
 
 "Form back in picks now." For 2–3 weeks, three methods are paper-tested side
 by side, read by hand from the Racing API connector and banked before the
