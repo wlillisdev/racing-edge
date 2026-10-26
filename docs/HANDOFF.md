@@ -3,6 +3,37 @@
 Last updated: **2026-10-18** (the method is FROZEN for 50 settled days — see CLAUDE.md)
 (update this file whenever state changes — it is how every new chat remembers everything).
 
+## 2026-10-26 — THREE PRONGS, READ BY HAND. READ THIS FIRST.
+
+His word, 26 Oct: "form back in picks now", "go back to basics, read the
+form", and then "two forms of picking horses ... three methods side by side
+... paper test it over the next 2 to 3 weeks."
+
+The box (PythonAnywhere) has been silent since 15 Oct. Betfair is geo-blocked
+from the Claude cloud. The data comes from the Claude Racing API connector
+(OAuth, no credentials). The reads are banked by hand, before the off, in
+`data/reads/<day>.md`, and graded at night against the results.
+
+- **A. Banker favourite.** Favourites only. Every part of the five-part solid
+  test (2b-ii) passes, with no excuses made for him, and the field holds no
+  danger the weights favour. Otherwise NO BET. Scar, 26 Oct: Siwa Oasis was
+  called solid while failing "proven at mark"; Blue Prince was 6lb better off
+  for a 1.25L beating. A fair favourite is not a banker.
+- **B. Hidden gem.** Read the form in every race and pick the horse most
+  likely to win that isn't the favourite: 2nd or 3rd favourite, a reasonable
+  price, good form that stacks up. His words: "you actually reading the form
+  of the horses in all races, and picking what you feel is the best horse
+  that would win that's potentially a hidden gem."
+- **C. Apprentice's own method (his word: "you can do whatever you want").**
+  Form plus money: the form passes (has won, race-fit, within 3lb of a
+  winning mark, no unexplained bad run) and the horse shortens between the
+  morning and the afternoon. Price 6/4 to 8/1. Grounded in the box record:
+  4/5–11/8 favourites won 63% backed, 50% steady, 33% drifted.
+
+At most one pick a day per prong, none if nothing fits. Level £1 win stakes
+on paper, at SP. Strike rate and level-stakes P&L per prong judge. Day one
+is 26 Oct (A Siwa Oasis 3/1, B Blue Prince 10/1, C starts 27 Oct).
+
 ## 2026-10-18 — THE METHOD IS FROZEN. READ THIS FIRST.
 
 His rulings on 18 Oct. All of them are merged with tests and receipts, and they go live from Monday 19 Oct:

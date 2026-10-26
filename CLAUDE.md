@@ -31,6 +31,15 @@ faults named the same night. The statistical bars still gate which
 RULES earn belief — they are never an excuse for a soft day or a soft
 autopsy. Clock in tomorrow at 7:30 like it's the final. It is.
 
+## THE THREE PRONGS (the master, 2026-10-26 — supersedes the freeze's price-only picks)
+
+"Form back in picks now." For 2–3 weeks, three methods are paper-tested side
+by side, read by hand from the Racing API connector and banked before the
+off in `data/reads/<day>.md`: A banker favourite, B hidden gem, C the
+apprentice's own. See docs/HANDOFF.md, 2026-10-26. The freeze's discipline
+still holds: no new rule or threshold inside a prong without his word, a loss
+is graded, never "fixed" on the day.
+
 ## THE FREEZE (the master, 2026-10-18 — above everything in this file)
 
 "You just keep changing it and making changes and they are always wrong ...
