@@ -1,4 +1,16 @@
 {
+  "permissions": {
+    "allow": [
+      "mcp__The_Racing_API",
+      "Bash(python3 *)",
+      "Bash(python *)",
+      "Bash(PYTHONPATH=src python3 *)",
+      "Bash(PYTHONPATH=src python *)",
+      "Bash(git fetch *)",
+      "Bash(git show *)",
+      "Bash(git log *)"
+    ]
+  },
   "hooks": {
     "PostToolUse": [
       {
