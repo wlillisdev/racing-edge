@@ -16,7 +16,8 @@ from the Claude cloud. The data comes from the Claude Racing API connector
 
 - **A. Banker favourite.** Favourites only. Every part of the five-part solid
   test (2b-ii) passes, with no excuses made for him, and the field holds no
-  danger the weights favour. Otherwise NO BET. Scar, 26 Oct: Siwa Oasis was
+  danger the weights favour. If none passes all five, still pick the best
+  favourite and write down which parts he fails. Scar, 26 Oct: Siwa Oasis was
   called solid while failing "proven at mark"; Blue Prince was 6lb better off
   for a 1.25L beating. A fair favourite is not a banker.
 - **B. Hidden gem.** Read the form in every race and pick the horse most
@@ -32,7 +33,10 @@ from the Claude cloud. The data comes from the Claude Racing API connector
   morning read can bank it with no second run.) Grounded in the box record:
   4/5–11/8 favourites won 63% backed, 50% steady, 33% drifted.
 
-At most one pick a day per prong, none if nothing fits. Level £1 win stakes
+EXACTLY one pick a day per prong, every day: no NO BET, no "not picking
+because of X, Y, Z" (his word, 26 Oct: "you're going to pick a horse ...
+be accountable for why you picked that horse, and understand why that
+horse won or why that horse lost"). Level £1 win stakes
 on paper, at SP. Strike rate and level-stakes P&L per prong judge. Day one
 is 26 Oct (A Siwa Oasis 3/1, B Blue Prince 10/1, C starts 27 Oct).
 
