@@ -20,6 +20,8 @@
 set -u
 STEP="${1:-nap}"
 cd "$(dirname "$0")"
+# run by Task Scheduler (no terminal): keep everything in box.log to read later
+if [ ! -t 1 ]; then exec >> box.log 2>&1; echo; echo "=== $(date -u '+%F %T') UTC box.sh ${STEP}"; fi
 export PYTHONPATH=src DATA_SOURCE=betfair ANTHROPIC_API_KEY=
 # the interpreter: python3 on Linux, python or py on Windows (Git Bash)
 if [ -z "${PY:-}" ]; then

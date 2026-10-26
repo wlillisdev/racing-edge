@@ -118,3 +118,4 @@ docs/THE_RECORD.md
 # the box's nightly archive top-ups (his word, 2026-09-27): box-local, never
 # tracked, so the box's pull can never collide with them
 data/archive/live/
+box.log
