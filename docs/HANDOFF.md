@@ -33,6 +33,11 @@ from the Claude cloud. The data comes from the Claude Racing API connector
   morning read can bank it with no second run.) Grounded in the box record:
   4/5–11/8 favourites won 63% backed, 50% steady, 33% drifted.
 
+THE SPOTS (his word, 26 Oct: "pick 4 or 5 winners every day ... so many easy
+spots every day. It's just a matter of replicating it"): besides the three
+prongs, every race where the read finds one horse CLEAR of the rest is
+banked as a spot, with no quota and no cap, and graded the same night.
+
 EXACTLY one pick a day per prong, every day: no NO BET, no "not picking
 because of X, Y, Z" (his word, 26 Oct: "you're going to pick a horse ...
 be accountable for why you picked that horse, and understand why that
@@ -70,13 +75,38 @@ favourites, not every one. The fix: page with skip until the count equals
 of Y" at the top of each day's file. A read that has not covered every race
 says so in its first line.
 
+REPEATED-LESSON SCAR, 26 Oct ("I taught you this lesson many times before.
+Haven't I?"): YES. Big Money, 8/11 in a 3yo novice on the Southwell
+all-weather, was beaten by a debutant. He had taught the same lesson at
+least four times:
+- 5 Jul: "unexposed horses, poor classes and grade, anything could win:
+  learn to pick the correct TYPE of race" (#13 NOVICE IN DISGUISE);
+- 26 Jul: unexposed fields and the AW "remain hard because no case can argue
+  marks into existence";
+- 18 Aug: #14 THE ALL-WEATHER CAUTION;
+- 27 Sep: "novice n maiden avoid from now on", after the Haydock nap (Royal
+  Acclamation, 2nd to an improver).
+The cause: the three-prong checklist written on 26 Oct left out his
+race-selection laws, so the morning read never saw them. A rulebook that is
+not read is not a rulebook. The fix: the morning read reads NAP_SYSTEM and
+VETO_SYSTEM first, and marks every race READABLE or NOT before any horse is
+read. No banker, no spot and no odds-on pick comes from a NOT race.
+
 CLOCKWORK (his question, 26 Oct: "how are you going to make sure this one's
 like clockwork? ... I'm not going to be here prompting you"):
 - The scheduled tasks live on his account and fire into session
   session_01AFcG8Gzep3yhvaTtD1Rfdx: 09:41 UK morning read
   (trig_01G38hu2dqN2NB1vAoAidPe3), 11:41 UK backup read (runs only when the
-  day's file is missing), 21:30 UK night grade (trig_01GHqLGELcgadYxQqim9ZZL3).
-  Do not archive that session.
+  day's file is missing), 21:30 UK night grade (trig_01GHqLGELcgadYxQqim9ZZL3),
+  22:41 UK Sunday review (trig_01PYvmJuy6wQ5LEvvPnDM9GM). Each task's prompt
+  is a pointer to its section of docs/ROUTINES.md on main, the single source
+  of truth. Do not archive that session.
+- THE LEARNING LOOP (his word, 26 Oct: "saving this back into the project
+  itself, into learning files, so we draw upon it every day"):
+  docs/LEARNING.md. Every pick predicts HOW HE WINS; the night grade sets
+  that against the in-running comment; at most one lesson a night goes to
+  data/reads/LESSONS.md as a question; his YES puts it on the checklist; the
+  Sunday review folds `reads` into main.
 - `.github/workflows/watchdog.yml` runs on GitHub, outside the session, at
   11:15 and 23:45 UTC. It goes red, and GitHub emails him, when the day's
   file is missing, has no "Races read X of Y" first line, or was never
