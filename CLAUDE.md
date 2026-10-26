@@ -31,7 +31,18 @@ faults named the same night. The statistical bars still gate which
 RULES earn belief — they are never an excuse for a soft day or a soft
 autopsy. Clock in tomorrow at 7:30 like it's the final. It is.
 
-## THE THREE PRONGS (the master, 2026-10-26 — supersedes the freeze's price-only picks)
+## PROJECT REFRESH (the master, 2026-10-26 — from 27 Oct, above the prongs and the freeze)
+
+"We're now going to call this project refresh. We're going to go back to
+school again ... we're not going to overcomplicate it ... I want you to pick
+the winner of each race ... take a snapshot of the form ... and that evening
+compare the snapshot, the results and your notes: what was right, what was
+wrong, what did you miss." Every GB/IE race gets one pick from a clean read
+of the form; the snapshot is stored; the night grade writes the two-line
+autopsy for every race. docs/LEARNING.md and docs/ROUTINES.md hold the loop.
+His rulebook (NAP_SYSTEM, VETO_SYSTEM) is read first every morning.
+
+## THE THREE PRONGS (the master, 2026-10-26 — replaced by PROJECT REFRESH from 27 Oct)
 
 "Form back in picks now." For 2–3 weeks, three methods are paper-tested side
 by side, read by hand from the Racing API connector and banked before the
