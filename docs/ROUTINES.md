@@ -72,14 +72,16 @@ MORNING READ: William's three-prong paper test (docs/HANDOFF.md, 2026-10-26). Pa
    - A. Banker favourite: the favourite that best passes the five parts, with no excuse made for him and no rival the weights favour. If none passes all five, pick the best one anyway and write down which parts he fails.
    - B. Hidden gem: the best horse that isn't the favourite, at 4/1 or bigger, whose form stacks up to win.
    - C. Form plus money: the form passes (has won, race-fit, within 3lb of a winning mark, no unexplained bad run) and his best price now is shorter than the card's betting forecast; price 6/4 to 8/1. If none fits fully, pick the closest and write down which part is missing.
+5b. THE SPOTS (his word, 26 Oct: "you should be able to pick 4 or 5 winners every day ... There are so many easy spots every day. It's just a matter of replicating it"). After reading every race, list EVERY race where the read finds one horse CLEAR of the rest on the form (THE GAP = CLEAR), at any price, favourite or not. There is no quota and no cap: as many as the card honestly gives, which on most days should be several. Each spot gets one line: race, horse, price, the line in the form that makes him clear, HOW HE WINS. A prong pick can also be a spot.
 6. Bank only races whose off is at least 30 minutes after a fresh `date -u` taken at the moment you write. Write data/reads/<day>.md, and never edit an earlier day's file.
    - FIRST LINE: "Races read X of Y (courses: ...)", plus any fallback used. If X is less than Y, say why.
    - Each prong's pick: race, horse, price, banked UTC time, the why in three lines, the danger, and HOW HE WINS: one line on the race shape the form says he gets (where he sits, when he goes, which rival he beats and why).
      Also THE GAP: how clear he is over the next best on the form, as CLEAR, NARROW or COIN-FLIP, naming the next best. This is a measurement, not a filter: every prong still picks.
+   - THE SPOTS list.
    - The signposts page.
    - A table of every favourite: SOLID or NOT SOLID, with a one-line why.
 7. Commit ("reads: <day> morning") and run `git push origin reads`, retrying up to 4 times with backoff. A push that never lands means the day is not banked: say so loudly.
-8. Tell William in ONE short message: races read X of Y, then each prong's pick with price and off time.
+8. Tell William in ONE short message: races read X of Y, each prong's pick with price and off time, then THE SPOTS (horse, race, price), one per line.
 ```
 
 ## Backup morning read (only if missed)
@@ -102,11 +104,12 @@ NIGHT GRADE: William's three-prong paper test (docs/HANDOFF.md, 2026-10-26). The
    - each prong's pick: WON or LOST, with SP, the winner and the margin, and the pick's in-running comment;
    - THE MOVE: the pick's price at bank against its SP, with the Sporting Life betting.historical_odds path. Mark it BACKED (shorter at the off), STEADY, or DRIFTED;
    - STORY: set HOW HE WINS beside the in-running comment and grade it as one of: right horse right story (skill), right horse wrong story (lucky, called lucky), wrong horse right story (beaten by a better horse: say who), wrong horse wrong story (misread: name the line misread);
+   - THE SPOTS: each spot WON or LOST with SP and its in-running comment; for each lost spot, one line on why it was not clear after all;
    - each favourite verdict: right or wrong (a SOLID that lost; a NOT SOLID that won);
    - every losing pick: Rule One ("why was the winner the best horse"), then my error in ONE sentence;
    - a winning pick: which lines carried it, and a lucky win called lucky.
 4. Update data/reads/TALLY.md:
-   - per prong: picks, winners, strike rate, and £1 level-stakes profit or loss at SP;
+   - per prong, and for THE SPOTS as a fourth line: picks, winners, strike rate, and £1 level-stakes profit or loss at SP, plus winners per day for the spots;
    - the SOLID-favourite strike rate;
    - STORY accuracy: per prong, the count of each of the four story grades;
    - THE GAP and THE MOVE: picks, winners and £1 P&L for CLEAR, NARROW and COIN-FLIP, and for BACKED, STEADY and DRIFTED. These come from the GitHub reading list, 26 Oct: results improved on clear-gap races, and the market move before the off carries information. The record will say whether either holds here;
@@ -118,7 +121,7 @@ NIGHT GRADE: William's three-prong paper test (docs/HANDOFF.md, 2026-10-26). The
    - the lesson, phrased as a yes/no question to William.
    Before asking, check the ledger: never re-ask a NO, and never ask what a YES already covers. A pattern goes to him as a question. Never carve a rule.
 7. Commit ("reads: <day> graded") and run `git push origin reads`, retrying up to 4 times with backoff.
-8. Tell William in ONE short message: each prong's result and story grade, the running tally, how the signposts did today, how many notebook horses were added, and tonight's lesson question (answer yes or no).
+8. Tell William in ONE short message: each prong's result and story grade, the spots (X won of Y), the running tally, how the signposts did today, how many notebook horses were added, and tonight's lesson question (answer yes or no).
 ```
 
 ## Sunday review
