@@ -12,17 +12,37 @@
 #   bash box.sh guard   12:30 — 2/1+ drifters dropped, the nap named and banked
 #   bash box.sh night   22:00 — settle at Betfair SP, export the record
 #
-# Needs BETFAIR_USERNAME, BETFAIR_PASSWORD, BETFAIR_APP_KEY in the environment
-# and api.betfair.com + identitysso.betfair.com allowed on its network.
+# Needs BETFAIR_USERNAME, BETFAIR_PASSWORD, BETFAIR_APP_KEY (in the environment
+# or a .env file beside this script). Betfair blocks connections from outside
+# the UK and Ireland — Claude's cloud included (403, 26 Oct) — so it runs on
+# his own PC (his word, 2026-10-26: "My own PC, free"), from Windows Task
+# Scheduler through Git Bash. EMAIL_* in .env turns the mails on.
 set -u
 STEP="${1:-nap}"
 cd "$(dirname "$0")"
 export PYTHONPATH=src DATA_SOURCE=betfair ANTHROPIC_API_KEY=
+# the interpreter: python3 on Linux, python or py on Windows (Git Bash)
+if [ -z "${PY:-}" ]; then
+  for c in python3 python py; do
+    if "$c" -c 'import sys; sys.exit(0 if sys.version_info >= (3, 9) else 1)' 2>/dev/null; then
+      PY="$c"; break
+    fi
+  done
+fi
 PY="${PY:-python3}"
 STATE=box-state
 FILES="data/nap.db data/filter_record.csv data/record.csv docs/THE_RECORD.md data/market_snapshots"
 
 "$PY" -m pip install -q -r requirements.txt >/dev/null 2>&1 || true
+
+# on a home PC the logins live in .env beside this script (Betfair, and
+# EMAIL_* for the mails); a Claude environment passes them in directly
+if [ -f .env ]; then
+  eval "$("$PY" -c 'import shlex; from dotenv import dotenv_values
+for k, v in dotenv_values(".env").items():
+    if v: print("export " + k + "=" + shlex.quote(v))')"
+fi
+UKDAY="$("$PY" -c 'from datetime import datetime; from zoneinfo import ZoneInfo; print(datetime.now(ZoneInfo("Europe/London")).date())')"
 
 echo ">> restoring the day's files from $STATE"
 if git fetch -q origin "$STATE" 2>/dev/null; then
@@ -34,10 +54,10 @@ fi
 
 rc=0
 case "$STEP" in
-  nap)   "$PY" -m racing_edge.school.favfilter --day today --bank || rc=$? ;;
+  nap)   "$PY" -m racing_edge.school.favfilter --day today --bank --email || rc=$? ;;
   guard) "$PY" -m racing_edge.cli.nap --guard || rc=$? ;;
-  night) "$PY" -m racing_edge.cli.nap --settle today || rc=$?
-         "$PY" -m racing_edge.school.favfilter --settle "$(TZ=Europe/London date +%F)" || rc=$?
+  night) "$PY" -m racing_edge.cli.nap --settle today --email || rc=$?
+         "$PY" -m racing_edge.school.favfilter --settle "$UKDAY" || rc=$?
          "$PY" -m racing_edge.school.record_export || true ;;
   *)     echo "unknown step: $STEP"; exit 2 ;;
 esac
@@ -57,7 +77,7 @@ done
 git -C "$W" add -f -A
 if ! git -C "$W" diff --cached --quiet; then
   git -C "$W" -c user.name="racing-edge box" -c user.email="box@racing-edge" \
-    commit -q -m "box: $STEP $(TZ=Europe/London date '+%F %H:%M')"
+    commit -q -m "box: $STEP $UKDAY $(date -u '+%H:%M') UTC"
 fi
 pushed=1
 for i in 1 2 3 4; do
