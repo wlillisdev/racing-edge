@@ -75,8 +75,16 @@ like clockwork? ... I'm not going to be here prompting you"):
 - The scheduled tasks live on his account and fire into session
   session_01AFcG8Gzep3yhvaTtD1Rfdx: 09:41 UK morning read
   (trig_01G38hu2dqN2NB1vAoAidPe3), 11:41 UK backup read (runs only when the
-  day's file is missing), 21:30 UK night grade (trig_01GHqLGELcgadYxQqim9ZZL3).
-  Do not archive that session.
+  day's file is missing), 21:30 UK night grade (trig_01GHqLGELcgadYxQqim9ZZL3),
+  22:41 UK Sunday review (trig_01PYvmJuy6wQ5LEvvPnDM9GM). Each task's prompt
+  is a pointer to its section of docs/ROUTINES.md on main, the single source
+  of truth. Do not archive that session.
+- THE LEARNING LOOP (his word, 26 Oct: "saving this back into the project
+  itself, into learning files, so we draw upon it every day"):
+  docs/LEARNING.md. Every pick predicts HOW HE WINS; the night grade sets
+  that against the in-running comment; at most one lesson a night goes to
+  data/reads/LESSONS.md as a question; his YES puts it on the checklist; the
+  Sunday review folds `reads` into main.
 - `.github/workflows/watchdog.yml` runs on GitHub, outside the session, at
   11:15 and 23:45 UTC. It goes red, and GitHub emails him, when the day's
   file is missing, has no "Races read X of Y" first line, or was never
