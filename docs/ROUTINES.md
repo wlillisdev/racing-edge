@@ -34,10 +34,12 @@ MORNING READ: William's three-prong paper test (docs/HANDOFF.md, 2026-10-26). Pa
 
 1. Run `date -u`. Run `git fetch origin main reads`. If origin/reads exists, run `git checkout -B reads origin/reads` then `git merge --no-edit origin/main` (to pick up the latest docs); otherwise `git checkout -B reads origin/main`. If data/reads/<UK day>.md already exists there, stop: the day is banked.
    Then read, in this order (docs/LEARNING.md explains why):
-   - the 2026-10-26 section of docs/HANDOFF.md, including the missed-races SCAR;
+   - THE RULEBOOK: NAP_SYSTEM and VETO_SYSTEM in src/racing_edge/study/morningread.py, his laws in his words. Race selection comes before horse selection (his #3). In particular: 1b THE MASTER'S GLANCE (only races a 30-year handicapper would study), #13 NOVICE IN DISGUISE (a field of young, lightly raced horses is a novice race whatever its title), #14 THE ALL-WEATHER CAUTION, and his 27 Sep "novice n maiden avoid from now on";
+   - the 2026-10-26 section of docs/HANDOFF.md, including the missed-races SCAR and the REPEATED-LESSON SCAR;
    - data/reads/LESSONS.md: every YES lesson joins today's checklist;
    - the "my error" lines of the last 7 graded days in data/reads/;
    - data/reads/NOTEBOOK.md;
+   - data/reads/WHY.md, the last 14 days: why the winners won. These are the hindsight that has to become foresight;
    - the latest week in data/reads/WEEKLY.md.
 2. Data comes from two sources only:
    - The Racing API connector:
@@ -61,13 +63,14 @@ MORNING READ: William's three-prong paper test (docs/HANDOFF.md, 2026-10-26). Pa
    - Longest travellers: from trainer_location against the course, for shortlisted horses, with miles estimated;
    - Hot jockeys: the 14-day record for the jockeys of shortlisted horses.
    (First time gelded is not in the API: leave it out rather than guess.)
-4. Read EVERY GB/IE race, and every favourite, using ONLY the fixed checklist. Invent no rule or threshold (his warning: "you have too much information ... you end up making up rules yourself").
+4. RACE SELECTION FIRST: mark every race READABLE or NOT, by the rulebook's race laws (1b, #13, #14, the novice/maiden avoid, the 3yo all-weather lesson). No banker, no spot and no odds-on pick ever comes from a NOT race. Then read EVERY GB/IE race, and every favourite, using ONLY the fixed checklist. Invent no rule or threshold (his warning: "you have too much information ... you end up making up rules yourself").
    - His five-part solid test: short price; in form (consistently placing over five runs and improving, e.g. 5423); has actually won; race-fit (60 days or less unless a class horse from a big yard); proven at today's mark (has won off it or higher).
    - The comments, line by line: trouble, slow start, draw, pace, manner, genuine excuses.
    - Pound-a-length against rivals met before (1 length = 1lb).
    - Class up or down; ground, trip and course proven.
    - Signposts as facts: the signposts page, plus RPR, Topspeed, Timeform stars, a new yard, and a runner in the NOTEBOOK (quote its note).
    - Every YES lesson in LESSONS.md, quoted where it bites.
+4b. THE AUTOPSY BEFORE THE RACE (his crux, 26 Oct: "when you look at the race in hindsight, you know exactly why they lost and why the other horse won ... this is the crux of our problem"). In every READABLE race you might pick from, write one line for each serious contender (3 or 4 of them): "IF HE WINS, it will be because ...". Check each against the winning reasons in WHY.md. The pick is the horse whose winning story needs the fewest unknowns, not the one you liked first. A rival with a short, believable story is the danger, named.
 5. EXACTLY ONE pick per prong, every day. NO BET is not allowed. His word: "you're going to pick a horse ... be accountable for why you picked that horse."
    - A. Banker favourite: the favourite that best passes the five parts, with no excuse made for him and no rival the weights favour. If none passes all five, pick the best one anyway and write down which parts he fails.
    - B. Hidden gem: the best horse that isn't the favourite, at 4/1 or bigger, whose form stacks up to win.
@@ -76,6 +79,7 @@ MORNING READ: William's three-prong paper test (docs/HANDOFF.md, 2026-10-26). Pa
 6. Bank only races whose off is at least 30 minutes after a fresh `date -u` taken at the moment you write. Write data/reads/<day>.md, and never edit an earlier day's file.
    - FIRST LINE: "Races read X of Y (courses: ...)", plus any fallback used. If X is less than Y, say why.
    - Each prong's pick: race, horse, price, banked UTC time, the why in three lines, the danger, and HOW HE WINS: one line on the race shape the form says he gets (where he sits, when he goes, which rival he beats and why).
+     Then HOW HE LOSES (his point, 26 Oct, after Big Money: "even without my knowledge ... logically, you assessed why he would not have won"): before banking, argue the strongest honest case AGAINST the pick, as you would write it in tomorrow's autopsy if he lost. Name the unknowns: unraced or lightly raced rivals, the surface, a rise in the weights, the draw, the pace. If the case against is as strong as HOW HE WINS, he is not a spot or a banker; pick again.
      Also THE GAP: how clear he is over the next best on the form, as CLEAR, NARROW or COIN-FLIP, naming the next best. This is a measurement, not a filter: every prong still picks.
    - THE SPOTS list.
    - The signposts page.
@@ -114,6 +118,10 @@ NIGHT GRADE: William's three-prong paper test (docs/HANDOFF.md, 2026-10-26). The
    - STORY accuracy: per prong, the count of each of the four story grades;
    - THE GAP and THE MOVE: picks, winners and £1 P&L for CLEAR, NARROW and COIN-FLIP, and for BACKED, STEADY and DRIFTED. These come from the GitHub reading list, 26 Oct: results improved on clear-gap races, and the market move before the off carries information. The record will say whether either holds here;
    - a SIGNPOSTS table: for each list on the morning signposts page (hot trainers, C&D winners, first-time headgear, wind op, long travellers, hot jockeys, notebook horses), the running totals of runners, winners and £1 level-stakes profit or loss at SP. The record judges which nuggets matter.
+4b. THE WHY LEDGER and THE FORESIGHT CHECK.
+   - For every race we picked or spotted, and every READABLE race where the winner was not the favourite, write one line to data/reads/WHY.md: date, race, winner, SP, why he won, with the in-running comment quoted. Tag the reason with a short type (examples, not a closed list: improver from a top yard; unexposed newcomer; class dropper; well-handicapped off a lower mark; trouble last time; pace and draw; course specialist). That is at most about 10 races a night: the ones that teach most.
+   - For every graded race, record where the winner sat in the morning read: MY PICK, IN MY CONTENDERS (named, not picked), or NOT SEEN.
+   - Add running counts of the three to TALLY.md. A high count of IN MY CONTENDERS means I read the race but weighed it wrong. A high count of NOT SEEN means I did not read it at all. Say which it is.
 5. THE NOTEBOOK (his word, 26 Oct: "a hive of information on this website that you could mine every day ... to fill in some of the gaps"). Read every GB/IE ride_description from today's Sporting Life results with a python extract (horse, course, position, comment only). Add to data/reads/NOTEBOOK.md any horse whose comment shows a run better than its finishing position: trouble in running, slowly away, short of room, hampered, or finishing fast after an unsuitable pace. Write one line each: date, course, horse, position, the comment quoted. These are facts for tomorrow's read, not a rule.
 6. LESSONS: append at most ONE lesson to data/reads/LESSONS.md, as `## <day> — ASKED`, then:
    - the incident, quoted;
@@ -138,6 +146,7 @@ SUNDAY REVIEW: the weekly step of the learning loop (docs/LEARNING.md). There is
    - favourite verdicts: how many SOLID won; every NOT SOLID that won, with the line that was misjudged;
    - notebook: how many notebook horses ran, won, at what prices;
    - the misreads: the "my error" lines of the week, grouped where the same mistake repeats;
+   - WHY.md: the winning reasons that recurred this week, with counts, and the foresight check (MY PICK / IN MY CONTENDERS / NOT SEEN). A reason that keeps beating my picks becomes a question for him;
    - 2 or 3 questions for William, each answerable yes or no;
    - lessons still ASKED and awaiting his word.
 4. Commit ("reads: week ending <day>") and run `git push origin reads`, retrying up to 4 times with backoff.
