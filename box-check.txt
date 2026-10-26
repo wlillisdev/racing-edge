@@ -1,0 +1,40 @@
+BETFAIR_USERNAME
+BETFAIR_PASSWORD
+BETFAIR_APP_KEY
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.13/dist-packages/requests/models.py", line 971, in json
+    return complexjson.loads(self.text, **kwargs)
+           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.13/json/__init__.py", line 352, in loads
+    return _default_decoder.decode(s)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "/usr/lib/python3.13/json/decoder.py", line 345, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.13/json/decoder.py", line 363, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "<stdin>", line 4, in <module>
+  File "/home/user/racing-edge/src/racing_edge/data/betfair.py", line 192, in racecards
+    markets = self._call("listMarketCatalogue", {
+              ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+        "filter": {"eventTypeIds": [HORSE_RACING], "marketCountries": ["GB", "IE"],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<5 lines>...
+                             "MARKET_DESCRIPTION"],
+                             ^^^^^^^^^^^^^^^^^^^^^^
+        "sort": "FIRST_TO_START", "maxResults": "1000"}) or []
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/racing-edge/src/racing_edge/data/betfair.py", line 162, in _call
+    self._login()
+    ~~~~~~~~~~~^^
+  File "/home/user/racing-edge/src/racing_edge/data/betfair.py", line 154, in _login
+    doc = r.json() if r.content else {}
+          ~~~~~~^^
+  File "/usr/local/lib/python3.13/dist-packages/requests/models.py", line 975, in json
+    raise RequestsJSONDecodeError(e.msg, e.doc, e.pos)
+requests.exceptions.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
