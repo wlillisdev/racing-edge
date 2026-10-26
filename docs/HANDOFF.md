@@ -26,13 +26,26 @@ from the Claude cloud. The data comes from the Claude Racing API connector
   that would win that's potentially a hidden gem."
 - **C. Apprentice's own method (his word: "you can do whatever you want").**
   Form plus money: the form passes (has won, race-fit, within 3lb of a
-  winning mark, no unexplained bad run) and the horse shortens between the
-  morning and the afternoon. Price 6/4 to 8/1. Grounded in the box record:
+  winning mark, no unexplained bad run) and the money has come: at the
+  morning read his best price is shorter than the card's overnight betting
+  forecast. Price 6/4 to 8/1. (Changed before its first day, 26 Oct, so one
+  morning read can bank it with no second run.) Grounded in the box record:
   4/5–11/8 favourites won 63% backed, 50% steady, 33% drifted.
 
 At most one pick a day per prong, none if nothing fits. Level £1 win stakes
 on paper, at SP. Strike rate and level-stakes P&L per prong judge. Day one
 is 26 Oct (A Siwa Oasis 3/1, B Blue Prince 10/1, C starts 27 Oct).
+
+Running it (his "yes, proceed", 26 Oct): a scheduled task at 09:41 UK time
+starts a FRESH session (this long session suspends mid-turn for hours, the
+20 Sep finding) that reads the cards through the connector and banks the
+day's file on the git branch `reads`, skipping any race within 30 minutes
+of its off. The 21:30 task grades it there and keeps
+`data/reads/TALLY.md`. His warning, 26 Oct: "you have too much
+information ... you end up making up rules yourself." The morning read
+uses a fixed checklist (his five-part test, the comments line by line,
+pound-a-length, class, ground, trip, course, and the signposts as facts)
+and nothing else.
 
 ## 2026-10-18 — THE METHOD IS FROZEN. READ THIS FIRST.
 
