@@ -16,7 +16,7 @@ one-line pointer prompt, and updates the ids here and in docs/HANDOFF.md.
 |---|---|---|
 | Morning read | `CRON_TZ=Europe/London 41 9 * * *` | trig_01G38hu2dqN2NB1vAoAidPe3 |
 | Backup morning read (only if missed) | `CRON_TZ=Europe/London 41 11 * * *` | trig_01S7x42mvcn4cjTZrPyiZN5D |
-| Night grade | `CRON_TZ=Europe/London 30 21 * * *` | trig_01GHqLGELcgadYxQqim9ZZL3 |
+| Night grade | `CRON_TZ=Europe/London 31 22 * * *` (after the 22:05 Betfair results push) | trig_01GHqLGELcgadYxQqim9ZZL3 |
 | Sunday review | `CRON_TZ=Europe/London 41 22 * * 0` | trig_01PYvmJuy6wQ5LEvvPnDM9GM |
 
 THE REFRESH FREEZE (his "that's an honest approach", 26 Oct): from 27 Oct these instructions are frozen. They change only for broken plumbing (a run that fails, a source that dies), or through a YES lesson in data/reads/LESSONS.md, or on his explicit word. No new machinery, list, label or step from the apprentice's own head.
