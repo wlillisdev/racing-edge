@@ -19,6 +19,8 @@ one-line pointer prompt, and updates the ids here and in docs/HANDOFF.md.
 | Night grade | `CRON_TZ=Europe/London 30 21 * * *` | trig_01GHqLGELcgadYxQqim9ZZL3 |
 | Sunday review | `CRON_TZ=Europe/London 41 22 * * 0` | trig_01PYvmJuy6wQ5LEvvPnDM9GM |
 
+THE REFRESH FREEZE (his "that's an honest approach", 26 Oct): from 27 Oct these instructions are frozen. They change only for broken plumbing (a run that fails, a source that dies), or through a YES lesson in data/reads/LESSONS.md, or on his explicit word. No new machinery, list, label or step from the apprentice's own head.
+
 PROJECT REFRESH (his word, 26 Oct, from 27 Oct): pick the winner of every
 race from a clean read of the form, store a snapshot of the form, and each
 night compare the snapshot, the notes and the result. Why, and which files
@@ -53,9 +55,9 @@ MORNING READ: PROJECT REFRESH (docs/LEARNING.md). Pick the winner of every GB/IE
 5. Bank only races whose off is at least 30 minutes after a fresh `date -u` taken at the moment you write. A race too close to the off is listed as MISSED, with no pick.
 6. Write data/reads/<day>.md, and never edit an earlier day's file:
    - FIRST LINE: "Races read X of Y (courses: ...)", plus any fallback used. If X is less than Y, say why.
-   - Then a table: time, course, pick, price, READABLE or NOT.
+   - Then a table: time, course, pick, price, the favourite and his price (from the snapshot), READABLE or NOT.
    - Then each race's notes as in step 4.
-7. Commit ("reads: <day> morning", the notes and the snapshot together) and run `git push origin reads`, retrying up to 4 times with backoff. A push that never lands means the day is not banked: say so loudly.
+7. BANK AS YOU GO (this session has paused for hours before): commit the snapshot first, then write and commit the day file after EACH meeting is read, with the first line's running count kept true, and push each time (`git push origin reads`, retrying up to 4 times with backoff). A pause then costs only the races not yet read. A push that never lands means those races are not banked: say so loudly.
 8. Tell William in ONE short message: races read X of Y, then the picks, one per line (time, course, horse, price).
 ```
 
@@ -78,17 +80,18 @@ NIGHT GRADE: PROJECT REFRESH (docs/LEARNING.md). There is no deadline: if you re
 3. THE COMPARISON, for every race. Lay the morning snapshot, the morning notes and the result side by side. Append to today's file a "## Graded" section, never altering what was banked. For each race:
    - WON or LOST, with the pick's SP and position; the winner, SP and margin;
    - the pick's in-running comment, and the winner's;
-   - THE TWO-LINE AUTOPSY (his word: "with two lines you summed up the whole race"): line 1, why the winner won, with the fact in the morning snapshot that showed it; line 2, what I got right, wrong or missed in the morning notes;
+   - THE TWO-LINE AUTOPSY (his word: "with two lines you summed up the whole race"): line 1, why the winner won, citing the fact in the morning snapshot that showed it, or "NOT IN THE FORM" when nothing in the snapshot showed it (luck, a hidden improver, trouble in running); line 2, what I got right, wrong or missed in the morning notes. Never invent a pre-race fact the snapshot does not hold;
    - WHERE THE WINNER SAT in the morning notes: MY PICK, IN MY CONTENDERS, or NOT SEEN.
 4. data/reads/WHY.md: one line per race the pick lost, plus any race that teaches: date, race, winner, SP, why he won (in-running comment quoted), and a short reason type (examples, not a closed list: improver from a top yard; unexposed newcomer; class dropper; well-handicapped off a lower mark; trouble last time; pace and draw; course specialist).
 5. data/reads/TALLY.md, running totals:
    - races picked, winners, strike rate, and £1 level-stakes profit or loss at SP, for the day and in total;
+   - THE MARKET BAR: in the same races, backing every favourite: winners, strike rate, £1 P&L at SP. And my picks that were NOT the favourite: winners and £1 P&L. Reading adds something only when it beats the bar;
    - the same split by READABLE or NOT, and by race type (handicap, novice-maiden, conditions-pattern; flat, AW, hurdle, chase);
    - the foresight check: MY PICK / IN MY CONTENDERS / NOT SEEN. A high IN MY CONTENDERS count means I read the race but weighed it wrong; a high NOT SEEN count means I did not read it. Say which it is.
 6. data/reads/NOTEBOOK.md: any horse whose in-running comment shows a run better than its finishing position (trouble, slowly away, short of room, hampered, finishing fast off an unsuitable pace), one line each with the comment quoted. These are facts, not rules.
-7. LESSONS: append at most ONE lesson to data/reads/LESSONS.md, as `## <day> — ASKED`: the incident quoted, what I missed, and the lesson as a yes/no question to William. Never re-ask a NO; never ask what a YES already covers. Never carve a rule.
+7. LESSONS: append at most ONE lesson to data/reads/LESSONS.md, as `## <day> — ASKED`: the incidents quoted, what I missed, and the lesson as a yes/no question to William. A lesson is asked only when the same miss or winning reason appears at least twice in WHY.md, or when the miss broke one of his written laws: one race can be luck. Never re-ask a NO; never ask what a YES already covers. Never carve a rule.
 8. Commit ("reads: <day> graded") and run `git push origin reads`, retrying up to 4 times with backoff.
-9. Tell William in ONE short message: winners X from Y races, strike rate and £1 P&L today and in total, READABLE v NOT strike rates, the foresight split, and tonight's lesson question (answer yes or no).
+9. Tell William in ONE short message: winners X from Y races, strike rate and £1 P&L today and in total, AGAINST THE MARKET BAR (favourites in the same races), READABLE v NOT strike rates, the foresight split, and tonight's lesson question (answer yes or no).
 ```
 
 ## Sunday review
@@ -99,7 +102,7 @@ SUNDAY REVIEW: PROJECT REFRESH, the weekly step (docs/LEARNING.md). There is no 
 1. Run `date -u`. Run `git fetch origin main reads`, then `git checkout -B reads origin/reads` and `git merge --no-edit origin/main`. Read docs/LEARNING.md.
 2. Read this week's data/reads/<day>.md files (Monday to Sunday), TALLY.md, WHY.md, LESSONS.md and NOTEBOOK.md.
 3. Append `## Week ending <day>` to data/reads/WEEKLY.md:
-   - strike rate and £1 P&L for the week and in total, split by READABLE or NOT and by race type: where the reading works and where it does not;
+   - strike rate and £1 P&L for the week and in total, AGAINST THE MARKET BAR (every favourite in the same races), split by READABLE or NOT and by race type: where the reading works and where it does not;
    - the foresight check for the week, and what it says (weighing fault or reading fault);
    - the winning reasons from WHY.md that recurred, with counts, especially the ones that beat my picks;
    - the "what I missed" lines grouped where the same mistake repeats;

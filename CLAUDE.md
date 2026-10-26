@@ -42,6 +42,16 @@ of the form; the snapshot is stored; the night grade writes the two-line
 autopsy for every race. docs/LEARNING.md and docs/ROUTINES.md hold the loop.
 His rulebook (NAP_SYSTEM, VETO_SYSTEM) is read first every morning.
 
+THE REFRESH FREEZE (his "that's an honest approach", 26 Oct): the routine in
+docs/ROUTINES.md is frozen from 27 Oct. It changes only for broken plumbing,
+through a YES lesson, or on his explicit word. No new machinery from your own
+head: that, and changing the method after every bad result, are how this
+project drifted for months. Every night is judged against THE MARKET BAR
+(backing every favourite in the same races). "We're not under huge pressure
+to get an instant result ... create a framework that is reusable on a daily
+basis using Claude to consistently find and pick winners. That's the bottom
+line." 
+
 ## THE THREE PRONGS (the master, 2026-10-26 — replaced by PROJECT REFRESH from 27 Oct)
 
 "Form back in picks now." For 2–3 weeks, three methods are paper-tested side
