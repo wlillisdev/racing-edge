@@ -120,3 +120,20 @@ def test_the_data_door_switches_on_the_env(monkeypatch):
     get_config.cache_clear()
     assert isinstance(get_client(), RacingAPIClient)
     get_config.cache_clear()
+
+
+def test_a_login_answer_that_is_not_json_says_what_came_back(tmp_path):
+    """26 Oct, first live check: the login answered with something that was
+    not JSON and the client died on a decode error that hid it."""
+    c = B.BetfairClient("u", "p", "KEY", record=tmp_path / "fr.csv")
+
+    class Html:
+        status_code, content, text = 200, b"<html>", "<html>blocked</html>"
+        headers = {"Content-Type": "text/html"}
+
+        def json(self):
+            raise ValueError("no json")
+
+    c._session.post = lambda *a, **k: Html()
+    with pytest.raises(B.BetfairError, match="not JSON.*blocked"):
+        c._login()

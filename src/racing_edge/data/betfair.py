@@ -151,7 +151,12 @@ class BetfairClient:
                                headers={"X-Application": self._key,
                                         "Accept": "application/json"},
                                timeout=self._TIMEOUT)
-        doc = r.json() if r.content else {}
+        try:
+            doc = r.json() if r.content else {}
+        except ValueError:               # not JSON: say what came back, never the creds
+            raise BetfairError(f"Betfair login: HTTP {r.status_code} "
+                               f"({r.headers.get('Content-Type', '?')}), not JSON: "
+                               f"{r.text[:300]!r}") from None
         if r.status_code != 200 or doc.get("status") != "SUCCESS":
             raise BetfairError(f"Betfair login failed: HTTP {r.status_code} "
                                f"{doc.get('error') or doc.get('status') or ''}")
