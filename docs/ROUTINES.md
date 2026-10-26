@@ -45,6 +45,7 @@ MORNING READ: PROJECT REFRESH (docs/LEARNING.md). Pick the winner of every GB/IE
 3. THE SNAPSHOT (his word: "take a snapshot of the form of that race, store it"). Before reading, save the form exactly as it stands, so tonight compares against the same facts:
    - The Racing API connector, get_racecards_standard (gb,ire). It returns 20 races a page: page with skip until the count equals "total". If an answer is saved to a file, copy that file. Save the full cards as data/reads/snapshots/<day>/racing_api.json.
    - Sporting Life: www.sportinglife.com/racing/racecards lists the day; each race page is /racing/racecards/<day>/<course>/racecard/<id>/x. Fetch every GB/IE race page with curl, one every 2 seconds. From each page's __NEXT_DATA__ JSON keep the race object: per ride the commentary, betting.current_odds, timeform_stars, official_rating, draw, and horse.previous_results with each run's ride_description. Save as data/reads/snapshots/<day>/sportinglife.json.
+   - Betfair (his Oracle London server pushes horse prices every hour from 07:05 UK to racing-edge's `odds` branch): run `git fetch origin odds` and copy the newest data/odds/<day>-*-betfair-horses.json into the snapshot folder as betfair.json. It holds per race the exchange back, lay and last traded price of every runner and the market's total matched. If no file for today exists yet, say so in the first line and carry on without it.
    - Cross-check: every GB/IE course on Sporting Life is in the Racing API cards. If one source fails, use the other and say so in the first line. If both fail, write "Races read 0 of ? — DATA DOWN: <what failed>", push, and stop.
 4. FOR EVERY RACE, using the snapshot (and get_race_analysis with depth "full" or get_horse_racecard_results where the form needs more):
    - TYPE: handicap / novice-maiden / conditions / pattern; flat / AW / hurdle / chase; age band. READABLE or NOT, by the rulebook's race laws (1b, #13, #14, novice/maiden, the 3yo AW lesson). Every race still gets a pick; the label is what we learn from.
@@ -55,7 +56,7 @@ MORNING READ: PROJECT REFRESH (docs/LEARNING.md). Pick the winner of every GB/IE
 5. Bank only races whose off is at least 30 minutes after a fresh `date -u` taken at the moment you write. A race too close to the off is listed as MISSED, with no pick.
 6. Write data/reads/<day>.md, and never edit an earlier day's file:
    - FIRST LINE: "Races read X of Y (courses: ...)", plus any fallback used. If X is less than Y, say why.
-   - Then a table: time, course, pick, price, the favourite and his price (from the snapshot), READABLE or NOT.
+   - Then a table: time, course, pick, price (bookmaker, and Betfair back where the file has it), the favourite and his price (from the snapshot), READABLE or NOT.
    - Then each race's notes as in step 4.
 7. BANK AS YOU GO (this session has paused for hours before): commit the snapshot first, then write and commit the day file after EACH meeting is read, with the first line's running count kept true, and push each time (`git push origin reads`, retrying up to 4 times with backoff). A pause then costs only the races not yet read. A push that never lands means those races are not banked: say so loudly.
 8. Tell William in ONE short message: races read X of Y, then the picks, one per line (time, course, horse, price).
@@ -75,8 +76,9 @@ NIGHT GRADE: PROJECT REFRESH (docs/LEARNING.md). There is no deadline: if you re
 1. Run `date -u`. Run `git fetch origin main reads`, then `git checkout -B reads origin/reads` and `git merge --no-edit origin/main`. Today's notes are data/reads/<UK day>.md; the snapshot is data/reads/snapshots/<day>/. Read docs/LEARNING.md.
 2. RESULTS for every race:
    - Sporting Life: www.sportinglife.com/racing/results lists the day; each result page is /racing/results/<day>/<course>/<id>/x. Its __NEXT_DATA__ JSON gives per ride finish_position, ride_description (the in-running comment), the SP and betting.historical_odds;
-   - The Racing API connector (get_results_today, or get_result_by_id) as the cross-check.
-   Fetch with curl and parse with python. Save the results beside the snapshot as data/reads/snapshots/<day>/results.json.
+   - The Racing API connector (get_results_today, or get_result_by_id) as the cross-check;
+   - Betfair: `git fetch origin odds`, then for each race the last data/odds/<day>-*-betfair-horses.json taken before its off. That is the exchange's final price before the race (the close), and the move from the morning snapshot's betfair.json shows where the money went.
+   Fetch with curl and parse with python. Save the results beside the snapshot as data/reads/snapshots/<day>/results.json, with each pick's Betfair morning and closing price.
 3. THE COMPARISON, for every race. Lay the morning snapshot, the morning notes and the result side by side. Append to today's file a "## Graded" section, never altering what was banked. For each race:
    - WON or LOST, with the pick's SP and position; the winner, SP and margin;
    - the pick's in-running comment, and the winner's;
@@ -86,6 +88,7 @@ NIGHT GRADE: PROJECT REFRESH (docs/LEARNING.md). There is no deadline: if you re
 5. data/reads/TALLY.md, running totals:
    - races picked, winners, strike rate, and £1 level-stakes profit or loss at SP, for the day and in total;
    - THE MARKET BAR: in the same races, backing every favourite: winners, strike rate, £1 P&L at SP. And my picks that were NOT the favourite: winners and £1 P&L. Reading adds something only when it beats the bar;
+   - THE MONEY (Betfair, a measurement only): my picks that shortened from the morning file to the close against those that drifted, winners and £1 P&L for each. The record will say whether the money agrees with the form;
    - the same split by READABLE or NOT, and by race type (handicap, novice-maiden, conditions-pattern; flat, AW, hurdle, chase);
    - the foresight check: MY PICK / IN MY CONTENDERS / NOT SEEN. A high IN MY CONTENDERS count means I read the race but weighed it wrong; a high NOT SEEN count means I did not read it. Say which it is.
 6. data/reads/NOTEBOOK.md: any horse whose in-running comment shows a run better than its finishing position (trouble, slowly away, short of room, hampered, finishing fast off an unsuitable pace), one line each with the comment quoted. These are facts, not rules.
