@@ -70,6 +70,24 @@ favourites, not every one. The fix: page with skip until the count equals
 of Y" at the top of each day's file. A read that has not covered every race
 says so in its first line.
 
+CLOCKWORK (his question, 26 Oct: "how are you going to make sure this one's
+like clockwork? ... I'm not going to be here prompting you"):
+- The scheduled tasks live on his account and fire into session
+  session_01AFcG8Gzep3yhvaTtD1Rfdx: 09:41 UK morning read
+  (trig_01G38hu2dqN2NB1vAoAidPe3), 11:41 UK backup read (runs only when the
+  day's file is missing), 21:30 UK night grade (trig_01GHqLGELcgadYxQqim9ZZL3).
+  Do not archive that session.
+- `.github/workflows/watchdog.yml` runs on GitHub, outside the session, at
+  11:15 and 23:45 UTC. It goes red, and GitHub emails him, when the day's
+  file is missing, has no "Races read X of Y" first line, or was never
+  graded. A short read is a warning.
+- Restart recipe: if the tasks ever stop, open a session on this repo and
+  say "restart the daily tasks from docs/ROUTINES.md". That file holds the
+  exact prompts.
+- Data fallback: if the Racing API fails, read from Sporting Life alone and
+  say so in the first line. If both fail, the first line says DATA DOWN, the
+  file is still pushed, and the watchdog shows it.
+
 ## 2026-10-18 — THE METHOD IS FROZEN. READ THIS FIRST.
 
 His rulings on 18 Oct. All of them are merged with tests and receipts, and they go live from Monday 19 Oct:

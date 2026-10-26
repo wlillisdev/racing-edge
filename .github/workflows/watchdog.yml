@@ -1,0 +1,38 @@
+# THE WATCHDOG (the master, 2026-10-26: "I'm not going to be here prompting
+# you all day ... what processes can we put in place"). The daily read and
+# grade run as scheduled tasks inside one Claude session; a watchdog inside
+# the thing it watches is no watchdog (20 Sep). This runs on GitHub, outside
+# that session: if today's file is missing, or the night grade never landed,
+# the check goes red and GitHub emails the owner. A read that did not cover
+# every race shows as a warning.
+name: watchdog
+on:
+  schedule:
+    - cron: "15 11 * * *"   # after the 09:41 UK morning read
+    - cron: "45 23 * * *"   # after the 21:30 UK night grade
+  workflow_dispatch:
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: reads
+      - name: today's read and grade are on the reads branch
+        env:
+          NIGHT: ${{ github.event.schedule == '45 23 * * *' }}
+        run: |
+          # the UK racing day: 3 hours back keeps 23:45 UTC on the right day in BST
+          day=$(TZ=Europe/London date -d '-3 hours' +%F)
+          f="data/reads/$day.md"
+          [ -f "$f" ] || { echo "::error::no $f: the morning read did not run"; exit 1; }
+          first=$(head -1 "$f")
+          echo "$first"
+          if [[ "$first" =~ ^Races\ read\ ([0-9]+)\ of\ ([0-9]+) ]]; then
+            [ "${BASH_REMATCH[1]}" = "${BASH_REMATCH[2]}" ] || echo "::warning::read ${BASH_REMATCH[1]} of ${BASH_REMATCH[2]} races"
+          else
+            echo "::error::$f has no 'Races read X of Y' first line"; exit 1
+          fi
+          if [ "$NIGHT" = "true" ]; then
+            grep -q '^## Graded' "$f" || { echo "::error::$f was never graded: the night grade did not run"; exit 1; }
+          fi
