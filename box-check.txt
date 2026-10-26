@@ -1,0 +1,27 @@
+BETFAIR_USERNAME
+BETFAIR_PASSWORD
+BETFAIR_APP_KEY
+--- reachability (no credentials sent)
+identitysso login: 403
+api: 403
+--- the client
+Traceback (most recent call last):
+  File "<stdin>", line 4, in <module>
+  File "/home/user/racing-edge/src/racing_edge/data/betfair.py", line 197, in racecards
+    markets = self._call("listMarketCatalogue", {
+              ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+        "filter": {"eventTypeIds": [HORSE_RACING], "marketCountries": ["GB", "IE"],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<5 lines>...
+                             "MARKET_DESCRIPTION"],
+                             ^^^^^^^^^^^^^^^^^^^^^^
+        "sort": "FIRST_TO_START", "maxResults": "1000"}) or []
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/racing-edge/src/racing_edge/data/betfair.py", line 167, in _call
+    self._login()
+    ~~~~~~~~~~~^^
+  File "/home/user/racing-edge/src/racing_edge/data/betfair.py", line 157, in _login
+    raise BetfairError(f"Betfair login: HTTP {r.status_code} "
+                       f"({r.headers.get('Content-Type', '?')}), not JSON: "
+                       f"{r.text[:300]!r}") from None
+racing_edge.data.betfair.BetfairError: Betfair login: HTTP 403 (text/html; charset=UTF-8), not JSON: '<!DOCTYPE html>\n<html manifest="" lang="en-US">\n  <head>\n    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />\n    <title>Betfair</title>\n    <meta name="theme-color" content="#004833" />\n    <style>\n      * {\n        margin: 0;\n        padding: 0;\n      }\n      html,\n      body '
