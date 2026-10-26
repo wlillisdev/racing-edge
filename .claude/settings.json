@@ -2,6 +2,7 @@
   "permissions": {
     "allow": [
       "mcp__The_Racing_API",
+      "mcp__The_Racing_API__*",
       "Bash(python3 *)",
       "Bash(python *)",
       "Bash(PYTHONPATH=src python3 *)",
