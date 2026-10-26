@@ -40,7 +40,11 @@ compare the snapshot, the results and your notes: what was right, what was
 wrong, what did you miss." Every GB/IE race gets one pick from a clean read
 of the form; the snapshot is stored; the night grade writes the two-line
 autopsy for every race. docs/LEARNING.md and docs/ROUTINES.md hold the loop.
-His rulebook (NAP_SYSTEM, VETO_SYSTEM) is read first every morning.
+His rulebook (NAP_SYSTEM, VETO_SYSTEM) is read first every morning, as
+QUESTIONS TO ASK OF THE FORM, never as gates (his word, 26 Oct: "all these
+strict rules everywhere ... nullified actually reading the form and finding
+nuances ... stop ruling everything out"). Only what he says in absolute words
+is absolute.
 
 THE REFRESH FREEZE (his "that's an honest approach", 26 Oct): the routine in
 docs/ROUTINES.md is frozen from 27 Oct. It changes only for broken plumbing,
