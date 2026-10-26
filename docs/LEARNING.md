@@ -17,6 +17,7 @@ the scheduled tasks (docs/ROUTINES.md) run it every day.
 | `data/reads/<day>.md` | morning (banked), night (graded, appended) | the night grade; the last 7 days by every morning read | the picks, each with HOW HE WINS; the signposts page; the favourite verdicts; then the grade |
 | `data/reads/LESSONS.md` | night (one lesson at most, as a question); his answer is recorded when he gives it | every morning read | the lesson ledger: ASKED, then YES or NO in his words |
 | `data/reads/NOTEBOOK.md` | night | every morning read | horses that ran better than their finishing position, comment quoted |
+| `data/reads/WHY.md` | night (about 10 races) | every morning read (last 14 days) | why each winner won, with a reason type: the hindsight, kept so it becomes foresight |
 | `data/reads/TALLY.md` | night | Sunday review | per prong strike rate and £1 P&L; story accuracy; signposts table |
 | `data/reads/WEEKLY.md` | Sunday review | every morning read (latest week) | the week's numbers, what went wrong, 2–3 questions for him |
 
@@ -43,12 +44,29 @@ the scheduled tasks (docs/ROUTINES.md) run it every day.
 5. **The numbers decide at 2–3 weeks.** He keeps what wins and drops what
    does not.
 
+## The crux (his words, 26 Oct)
+
+"When you look at the race in hindsight, you know exactly why they lost and
+why the other horse won. And this, my friend, is the crux of our problem."
+After the race, the result shows where to look. Before it, the read looked
+for reasons to back a horse and never wrote the case against. The long-term
+fix runs the hindsight process BEFORE the race:
+- THE AUTOPSY BEFORE THE RACE: "if he wins, it will be because ..." for
+  each serious contender; the pick is the story with the fewest unknowns;
+  HOW HE LOSES is argued for the pick before it is banked;
+- THE WHY LEDGER: every night, why the winners won, tagged by reason, read
+  back every morning, so yesterday's hindsight is today's checklist;
+- THE FORESIGHT CHECK: where each winner sat in the morning read (MY PICK /
+  IN MY CONTENDERS / NOT SEEN). That splits a weighing fault from a reading
+  fault, and the numbers say which one to fix.
+
 ## What the morning read must draw on, every day
 
 - every YES lesson in LESSONS.md, applied, and named where it bites;
 - the "my error" lines of the last 7 graded days, so the same mistake is not
   made twice;
-- the NOTEBOOK, and the latest WEEKLY questions and answers.
+- the NOTEBOOK, the last 14 days of WHY.md, and the latest WEEKLY questions
+  and answers.
 
 ## How his answer is recorded
 
