@@ -51,6 +51,16 @@ uses a fixed checklist (his five-part test, the comments line by line,
 pound-a-length, class, ground, trip, course, and the signposts as facts)
 and nothing else.
 
+Sporting Life (www.sportinglife.com, allowed in the environment 26 Oct) is
+the second source. Its race pages carry the analyst comment, live price,
+Timeform stars and each past run's in-running comment (`ride_description`).
+Its result pages carry every ride's in-running comment and the price
+history. THE NOTEBOOK (his word: "a hive of information ... to fill in some
+of the gaps"): each night the grade adds to `data/reads/NOTEBOOK.md` every
+horse whose comment shows a run better than its finishing position, with
+the comment quoted, and the morning read flags any runner in it. These are
+facts for the read, never a rule.
+
 ## 2026-10-18 — THE METHOD IS FROZEN. READ THIS FIRST.
 
 His rulings on 18 Oct. All of them are merged with tests and receipts, and they go live from Monday 19 Oct:
