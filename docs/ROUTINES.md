@@ -75,6 +75,7 @@ MORNING READ: William's three-prong paper test (docs/HANDOFF.md, 2026-10-26). Pa
 6. Bank only races whose off is at least 30 minutes after a fresh `date -u` taken at the moment you write. Write data/reads/<day>.md, and never edit an earlier day's file.
    - FIRST LINE: "Races read X of Y (courses: ...)", plus any fallback used. If X is less than Y, say why.
    - Each prong's pick: race, horse, price, banked UTC time, the why in three lines, the danger, and HOW HE WINS: one line on the race shape the form says he gets (where he sits, when he goes, which rival he beats and why).
+     Also THE GAP: how clear he is over the next best on the form, as CLEAR, NARROW or COIN-FLIP, naming the next best. This is a measurement, not a filter: every prong still picks.
    - The signposts page.
    - A table of every favourite: SOLID or NOT SOLID, with a one-line why.
 7. Commit ("reads: <day> morning") and run `git push origin reads`, retrying up to 4 times with backoff. A push that never lands means the day is not banked: say so loudly.
@@ -99,6 +100,7 @@ NIGHT GRADE: William's three-prong paper test (docs/HANDOFF.md, 2026-10-26). The
    Fetch with curl and parse with python.
 3. Append a "## Graded" section to today's file, never altering what was banked:
    - each prong's pick: WON or LOST, with SP, the winner and the margin, and the pick's in-running comment;
+   - THE MOVE: the pick's price at bank against its SP, with the Sporting Life betting.historical_odds path. Mark it BACKED (shorter at the off), STEADY, or DRIFTED;
    - STORY: set HOW HE WINS beside the in-running comment and grade it as one of: right horse right story (skill), right horse wrong story (lucky, called lucky), wrong horse right story (beaten by a better horse: say who), wrong horse wrong story (misread: name the line misread);
    - each favourite verdict: right or wrong (a SOLID that lost; a NOT SOLID that won);
    - every losing pick: Rule One ("why was the winner the best horse"), then my error in ONE sentence;
@@ -107,6 +109,7 @@ NIGHT GRADE: William's three-prong paper test (docs/HANDOFF.md, 2026-10-26). The
    - per prong: picks, winners, strike rate, and £1 level-stakes profit or loss at SP;
    - the SOLID-favourite strike rate;
    - STORY accuracy: per prong, the count of each of the four story grades;
+   - THE GAP and THE MOVE: picks, winners and £1 P&L for CLEAR, NARROW and COIN-FLIP, and for BACKED, STEADY and DRIFTED. These come from the GitHub reading list, 26 Oct: results improved on clear-gap races, and the market move before the off carries information. The record will say whether either holds here;
    - a SIGNPOSTS table: for each list on the morning signposts page (hot trainers, C&D winners, first-time headgear, wind op, long travellers, hot jockeys, notebook horses), the running totals of runners, winners and £1 level-stakes profit or loss at SP. The record judges which nuggets matter.
 5. THE NOTEBOOK (his word, 26 Oct: "a hive of information on this website that you could mine every day ... to fill in some of the gaps"). Read every GB/IE ride_description from today's Sporting Life results with a python extract (horse, course, position, comment only). Add to data/reads/NOTEBOOK.md any horse whose comment shows a run better than its finishing position: trouble in running, slowly away, short of room, hampered, or finishing fast after an unsuitable pace. Write one line each: date, course, horse, position, the comment quoted. These are facts for tomorrow's read, not a rule.
 6. LESSONS: append at most ONE lesson to data/reads/LESSONS.md, as `## <day> — ASKED`, then:
