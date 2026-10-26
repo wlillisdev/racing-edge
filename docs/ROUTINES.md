@@ -77,6 +77,7 @@ MORNING READ: William's three-prong paper test (docs/HANDOFF.md, 2026-10-26). Pa
 6. Bank only races whose off is at least 30 minutes after a fresh `date -u` taken at the moment you write. Write data/reads/<day>.md, and never edit an earlier day's file.
    - FIRST LINE: "Races read X of Y (courses: ...)", plus any fallback used. If X is less than Y, say why.
    - Each prong's pick: race, horse, price, banked UTC time, the why in three lines, the danger, and HOW HE WINS: one line on the race shape the form says he gets (where he sits, when he goes, which rival he beats and why).
+     Then HOW HE LOSES (his point, 26 Oct, after Big Money: "even without my knowledge ... logically, you assessed why he would not have won"): before banking, argue the strongest honest case AGAINST the pick, as you would write it in tomorrow's autopsy if he lost. Name the unknowns: unraced or lightly raced rivals, the surface, a rise in the weights, the draw, the pace. If the case against is as strong as HOW HE WINS, he is not a spot or a banker; pick again.
      Also THE GAP: how clear he is over the next best on the form, as CLEAR, NARROW or COIN-FLIP, naming the next best. This is a measurement, not a filter: every prong still picks.
    - THE SPOTS list.
    - The signposts page.
