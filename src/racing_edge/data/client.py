@@ -285,5 +285,12 @@ class RacingAPIClient:
         return doc if isinstance(doc, list) else []
 
 
-def get_client() -> RacingAPIClient:
+def get_client():
+    """The data door. DATA_SOURCE=betfair uses the free Betfair Exchange
+    client (his word, 2026-10-26: "i want to get rid of api"); anything else
+    keeps The Racing API. Both return the same raw shapes."""
+    import os
+    if os.environ.get("DATA_SOURCE", "").strip().lower() == "betfair":
+        from racing_edge.data.betfair import BetfairClient
+        return BetfairClient()
     return RacingAPIClient()

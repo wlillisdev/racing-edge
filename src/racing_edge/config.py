@@ -58,10 +58,14 @@ def racing_creds() -> tuple[str, str]:
 def get_config() -> Config:
     """Build Config from the environment (.env at the repo root). Cached."""
     load_dotenv(_PROJECT_ROOT / ".env")
+    # on free Betfair data (DATA_SOURCE=betfair, 2026-10-26) the Racing API
+    # login is no longer required — the rest of the config still is
+    betfair = os.environ.get("DATA_SOURCE", "").strip().lower() == "betfair"
+    need = (lambda n: os.environ.get(n, "")) if betfair else _require
     return Config(
         api=APIConfig(
-            username=_require("RACING_API_USERNAME"),
-            password=_require("RACING_API_PASSWORD"),
+            username=need("RACING_API_USERNAME"),
+            password=need("RACING_API_PASSWORD"),
             base_url=os.environ.get("RACING_API_BASE", "https://api.theracingapi.com/v1"),
             regions=os.environ.get("REGIONS", "gb,ire"),
         ),
