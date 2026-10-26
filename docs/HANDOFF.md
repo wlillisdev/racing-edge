@@ -75,6 +75,23 @@ favourites, not every one. The fix: page with skip until the count equals
 of Y" at the top of each day's file. A read that has not covered every race
 says so in its first line.
 
+REPEATED-LESSON SCAR, 26 Oct ("I taught you this lesson many times before.
+Haven't I?"): YES. Big Money, 8/11 in a 3yo novice on the Southwell
+all-weather, was beaten by a debutant. He had taught the same lesson at
+least four times:
+- 5 Jul: "unexposed horses, poor classes and grade, anything could win:
+  learn to pick the correct TYPE of race" (#13 NOVICE IN DISGUISE);
+- 26 Jul: unexposed fields and the AW "remain hard because no case can argue
+  marks into existence";
+- 18 Aug: #14 THE ALL-WEATHER CAUTION;
+- 27 Sep: "novice n maiden avoid from now on", after the Haydock nap (Royal
+  Acclamation, 2nd to an improver).
+The cause: the three-prong checklist written on 26 Oct left out his
+race-selection laws, so the morning read never saw them. A rulebook that is
+not read is not a rulebook. The fix: the morning read reads NAP_SYSTEM and
+VETO_SYSTEM first, and marks every race READABLE or NOT before any horse is
+read. No banker, no spot and no odds-on pick comes from a NOT race.
+
 CLOCKWORK (his question, 26 Oct: "how are you going to make sure this one's
 like clockwork? ... I'm not going to be here prompting you"):
 - The scheduled tasks live on his account and fire into session

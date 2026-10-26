@@ -34,7 +34,8 @@ MORNING READ: William's three-prong paper test (docs/HANDOFF.md, 2026-10-26). Pa
 
 1. Run `date -u`. Run `git fetch origin main reads`. If origin/reads exists, run `git checkout -B reads origin/reads` then `git merge --no-edit origin/main` (to pick up the latest docs); otherwise `git checkout -B reads origin/main`. If data/reads/<UK day>.md already exists there, stop: the day is banked.
    Then read, in this order (docs/LEARNING.md explains why):
-   - the 2026-10-26 section of docs/HANDOFF.md, including the missed-races SCAR;
+   - THE RULEBOOK: NAP_SYSTEM and VETO_SYSTEM in src/racing_edge/study/morningread.py, his laws in his words. Race selection comes before horse selection (his #3). In particular: 1b THE MASTER'S GLANCE (only races a 30-year handicapper would study), #13 NOVICE IN DISGUISE (a field of young, lightly raced horses is a novice race whatever its title), #14 THE ALL-WEATHER CAUTION, and his 27 Sep "novice n maiden avoid from now on";
+   - the 2026-10-26 section of docs/HANDOFF.md, including the missed-races SCAR and the REPEATED-LESSON SCAR;
    - data/reads/LESSONS.md: every YES lesson joins today's checklist;
    - the "my error" lines of the last 7 graded days in data/reads/;
    - data/reads/NOTEBOOK.md;
@@ -61,7 +62,7 @@ MORNING READ: William's three-prong paper test (docs/HANDOFF.md, 2026-10-26). Pa
    - Longest travellers: from trainer_location against the course, for shortlisted horses, with miles estimated;
    - Hot jockeys: the 14-day record for the jockeys of shortlisted horses.
    (First time gelded is not in the API: leave it out rather than guess.)
-4. Read EVERY GB/IE race, and every favourite, using ONLY the fixed checklist. Invent no rule or threshold (his warning: "you have too much information ... you end up making up rules yourself").
+4. RACE SELECTION FIRST: mark every race READABLE or NOT, by the rulebook's race laws (1b, #13, #14, the novice/maiden avoid, the 3yo all-weather lesson). No banker, no spot and no odds-on pick ever comes from a NOT race. Then read EVERY GB/IE race, and every favourite, using ONLY the fixed checklist. Invent no rule or threshold (his warning: "you have too much information ... you end up making up rules yourself").
    - His five-part solid test: short price; in form (consistently placing over five runs and improving, e.g. 5423); has actually won; race-fit (60 days or less unless a class horse from a big yard); proven at today's mark (has won off it or higher).
    - The comments, line by line: trouble, slow start, draw, pace, manner, genuine excuses.
    - Pound-a-length against rivals met before (1 length = 1lb).
