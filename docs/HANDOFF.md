@@ -61,6 +61,15 @@ horse whose comment shows a run better than its finishing position, with
 the comment quoted, and the morning read flags any runner in it. These are
 facts for the read, never a rule.
 
+SCAR, 26 Oct, "a huge mistake ... about races": the Racing API racecards
+call returns a page at a time (20 races a page), and one pull came back with
+20 of 40 GB races, Redcar and Southwell missing, unnoticed. That same morning
+the hand read covered only 8 races of about 54, so prong A chose from 8
+favourites, not every one. The fix: page with skip until the count equals
+"total", check every course on the day is present, and print "races read X
+of Y" at the top of each day's file. A read that has not covered every race
+says so in its first line.
+
 ## 2026-10-18 — THE METHOD IS FROZEN. READ THIS FIRST.
 
 His rulings on 18 Oct. All of them are merged with tests and receipts, and they go live from Monday 19 Oct:
