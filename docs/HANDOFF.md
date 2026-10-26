@@ -33,6 +33,11 @@ from the Claude cloud. The data comes from the Claude Racing API connector
   morning read can bank it with no second run.) Grounded in the box record:
   4/5–11/8 favourites won 63% backed, 50% steady, 33% drifted.
 
+THE SPOTS (his word, 26 Oct: "pick 4 or 5 winners every day ... so many easy
+spots every day. It's just a matter of replicating it"): besides the three
+prongs, every race where the read finds one horse CLEAR of the rest is
+banked as a spot, with no quota and no cap, and graded the same night.
+
 EXACTLY one pick a day per prong, every day: no NO BET, no "not picking
 because of X, Y, Z" (his word, 26 Oct: "you're going to pick a horse ...
 be accountable for why you picked that horse, and understand why that
