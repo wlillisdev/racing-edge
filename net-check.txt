@@ -1,0 +1,3 @@
+racecards: http=000 bytes=0 racecard_matches=0
+results: http=000 bytes=0 racecard_matches=0
+note: curl exit 56 - "CONNECT tunnel failed, response 403" (egress proxy denied www.sportinglife.com:443)
