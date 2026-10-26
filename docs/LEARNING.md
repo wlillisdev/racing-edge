@@ -1,72 +1,69 @@
-# LEARNING — how the apprentice gets better, written down
+# LEARNING — PROJECT REFRESH: back to school
 
-His words, 26 Oct: "get back to a system that will keep learning and getting
-better. That is the bottom line ... We need to be able to be saving this back
-into the project itself, into learning files, so we draw upon it every day
-and don't lose the information we gained."
+His words, 26 Oct: "we're now going to call this project refresh. We're going
+to go back to school again ... we're not going to overcomplicate it. We're
+going to learn from our mistakes and we're going to build from the ground
+up ... I want you to pick the winner of each race ... take a snapshot of the
+form of that race, store it, and then that evening when the results come in,
+look at that snapshot and the results and compare them with your notes ...
+work out what was right, what was wrong, what did you miss ... You need to be
+able to look at the race, read the form, and pick the winner ... by using
+these snapshots and actually comparing them with the results ... you'll be
+able to reverse it."
+
+## Why it works this way
+
+The crux (his words): "When you look at the race in hindsight, you know
+exactly why they lost and why the other horse won." After the race, the
+result shows where to look. Before the race, the read argued for a horse and
+never against it. Refresh closes that gap by doing the same comparison every
+night against a frozen copy of the morning's facts, until the hindsight
+becomes foresight.
 
 The model does not learn between sessions. Nothing in it updates from the
 conversations. The only learning that survives is what is WRITTEN in this
 repo and READ BACK every morning. So the learning is a loop on paper, and
 the scheduled tasks (docs/ROUTINES.md) run it every day.
 
+## The day
+
+1. **Morning, every race.** Read his rulebook, the YES lessons and the last
+   14 days of WHY.md, then read each race clean. Store the SNAPSHOT of the
+   form before reading. For each race: the type, READABLE or NOT, 3 or 4
+   contenders each with "IF HE WINS, it will be because ...", THE PICK (the
+   story with the fewest unknowns) with HOW HE WINS, and HOW HE LOSES.
+2. **Night, every race.** Lay the snapshot, the notes and the result side by
+   side. Write THE TWO-LINE AUTOPSY: why the winner won (and which fact in
+   the morning snapshot showed it), and what the notes got right, wrong or
+   missed. Record WHERE THE WINNER SAT: MY PICK, IN MY CONTENDERS, or NOT
+   SEEN.
+3. **One lesson a night, as a question.** At most one, written to
+   LESSONS.md as ASKED. It enters the read only when he says yes.
+4. **Sunday.** Where the reading works and where it does not (READABLE v
+   NOT, race types), the recurring winning reasons, the repeated misses, and
+   2 or 3 questions for him. The `reads` branch is folded into main.
+
 ## The files (branch `reads`, folded into main every Sunday)
 
 | File | Written | Read | What it holds |
 |---|---|---|---|
-| `data/reads/<day>.md` | morning (banked), night (graded, appended) | the night grade; the last 7 days by every morning read | the picks, each with HOW HE WINS; the signposts page; the favourite verdicts; then the grade |
-| `data/reads/LESSONS.md` | night (one lesson at most, as a question); his answer is recorded when he gives it | every morning read | the lesson ledger: ASKED, then YES or NO in his words |
-| `data/reads/NOTEBOOK.md` | night | every morning read | horses that ran better than their finishing position, comment quoted |
-| `data/reads/WHY.md` | night (about 10 races) | every morning read (last 14 days) | why each winner won, with a reason type: the hindsight, kept so it becomes foresight |
-| `data/reads/TALLY.md` | night | Sunday review | per prong strike rate and £1 P&L; story accuracy; signposts table |
-| `data/reads/WEEKLY.md` | Sunday review | every morning read (latest week) | the week's numbers, what went wrong, 2–3 questions for him |
+| `data/reads/snapshots/<day>/` | morning (racing_api.json, sportinglife.json); night (results.json) | the night grade | the form exactly as it stood at the pick, and the result |
+| `data/reads/<day>.md` | morning (picks and notes); night (graded, appended) | the night grade; the last 7 days by every morning read | every race: type, contenders, pick, how he wins and loses; then the two-line autopsy |
+| `data/reads/WHY.md` | night | every morning read (last 14 days) | why each winner won, with a reason type: the hindsight, kept so it becomes foresight |
+| `data/reads/LESSONS.md` | night (one at most, as a question); his answers when he gives them | every morning read | the lesson ledger: ASKED, then YES or NO in his words |
+| `data/reads/TALLY.md` | night | Sunday review | strike rate and £1 P&L, by READABLE or NOT and race type; the foresight split |
+| `data/reads/NOTEBOOK.md` | night | the morning read, as facts | horses that ran better than their finishing position, comment quoted |
+| `data/reads/WEEKLY.md` | Sunday | every morning read (latest week) | the week's verdict and questions |
 
-## The loop
+## The foresight check
 
-1. **Predict how, not only who.** Every pick carries one line, HOW HE WINS:
-   the race shape the form says he gets (where he sits, when he goes, which
-   rival he beats and why).
-2. **Compare against what happened.** At night the pick's in-running comment
-   (Sporting Life `ride_description`) is set beside HOW HE WINS. Each pick
-   is graded on two counts, horse right or wrong and story right or wrong,
-   giving one of four outcomes: right horse right story (skill), right horse
-   wrong story (lucky, called lucky), wrong horse right story (beaten by a
-   better horse: Rule One says who), wrong horse wrong story (misread: name
-   the line misread).
-3. **One lesson a night, as a question.** At most one, written to
-   LESSONS.md as ASKED, with the incident quoted. A lesson never enters the
-   read until he says yes. A YES lesson joins the morning checklist with
-   his words beside it. A NO is kept, so it is never asked again.
-4. **The Sunday review.** The week's numbers per prong, story accuracy,
-   which signposts found winners, which favourite verdicts were wrong and
-   why, then 2–3 questions for him. The `reads` branch is folded into main
-   by pull request, so the project itself holds the learning.
-5. **The numbers decide at 2–3 weeks.** He keeps what wins and drops what
-   does not.
+For every race, where did the winner sit in the morning notes?
+- MY PICK: the read was right.
+- IN MY CONTENDERS: the read saw him and weighed him wrong. That is a
+  weighing fault.
+- NOT SEEN: the read missed him. That is a reading fault.
 
-## The crux (his words, 26 Oct)
-
-"When you look at the race in hindsight, you know exactly why they lost and
-why the other horse won. And this, my friend, is the crux of our problem."
-After the race, the result shows where to look. Before it, the read looked
-for reasons to back a horse and never wrote the case against. The long-term
-fix runs the hindsight process BEFORE the race:
-- THE AUTOPSY BEFORE THE RACE: "if he wins, it will be because ..." for
-  each serious contender; the pick is the story with the fewest unknowns;
-  HOW HE LOSES is argued for the pick before it is banked;
-- THE WHY LEDGER: every night, why the winners won, tagged by reason, read
-  back every morning, so yesterday's hindsight is today's checklist;
-- THE FORESIGHT CHECK: where each winner sat in the morning read (MY PICK /
-  IN MY CONTENDERS / NOT SEEN). That splits a weighing fault from a reading
-  fault, and the numbers say which one to fix.
-
-## What the morning read must draw on, every day
-
-- every YES lesson in LESSONS.md, applied, and named where it bites;
-- the "my error" lines of the last 7 graded days, so the same mistake is not
-  made twice;
-- the NOTEBOOK, the last 14 days of WHY.md, and the latest WEEKLY questions
-  and answers.
+The counts say which fault to fix first.
 
 ## How his answer is recorded
 
