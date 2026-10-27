@@ -84,18 +84,23 @@ NIGHT GRADE: PROJECT REFRESH (docs/LEARNING.md). There is no deadline: if you re
    - WON or LOST, with the pick's SP and position; the winner, SP and margin;
    - the pick's in-running comment, and the winner's;
    - THE TWO-LINE AUTOPSY (his word: "with two lines you summed up the whole race"): line 1, why the winner won, citing the fact in the morning snapshot that showed it, or "NOT IN THE FORM" when nothing in the snapshot showed it (luck, a hidden improver, trouble in running); line 2, what I got right, wrong or missed in the morning notes. Never invent a pre-race fact the snapshot does not hold;
-   - WHERE THE WINNER SAT in the morning notes: MY PICK, IN MY CONTENDERS, or NOT SEEN.
+   - WHERE THE WINNER SAT in the morning notes: MY PICK, IN MY CONTENDERS, or NOT SEEN;
+   - THE MARKET (his word, 27 Oct: "what started as favourite, did the favourite win, or what ended up as favourite ... the power of the market move ... was there underlying data to show why there was a gamble on that horse, maybe he was hidden in plain sight"). Record:
+     - the MORNING FAVOURITE (shortest in the morning snapshot) and the SP FAVOURITE, and whether either won;
+     - THE GAMBLE: the horse whose price shortened most from the morning snapshot to his SP (Sporting Life historical_odds, Betfair morning file to close) and where he finished;
+     - for the gamble, the line in the MORNING SNAPSHOT that showed why (a recent run, a trainer pattern, a drop in class, an excuse last time), or "NOT IN THE FORM" if nothing did. A gamble that won with the reason in the snapshot is a horse hidden in plain sight: name the line I failed to weigh.
 4. data/reads/WHY.md: one line per race the pick lost, plus any race that teaches: date, race, winner, SP, why he won (in-running comment quoted), and a short reason type (examples, not a closed list: improver from a top yard; unexposed newcomer; class dropper; well-handicapped off a lower mark; trouble last time; pace and draw; course specialist).
 5. data/reads/TALLY.md, running totals:
    - races picked, winners, strike rate, and £1 level-stakes profit or loss at SP, for the day and in total, at bookmaker SP and at Betfair SP where the results file has it;
    - THE MARKET BAR: in the same races, backing every favourite: winners, strike rate, £1 P&L at SP. And my picks that were NOT the favourite: winners and £1 P&L. Reading adds something only when it beats the bar;
    - THE MONEY (Betfair, a measurement only): my picks that shortened from the morning file to the close against those that drifted, winners and £1 P&L for each. The record will say whether the money agrees with the form;
    - the same split by READABLE or NOT, and by race type (handicap, novice-maiden, conditions-pattern; flat, AW, hurdle, chase);
+   - THE MARKET: morning favourites won X of Y, SP favourites won X of Y, gambles won X of Y (and how many of those were in plain sight in the snapshot);
    - the foresight check: MY PICK / IN MY CONTENDERS / NOT SEEN. A high IN MY CONTENDERS count means I read the race but weighed it wrong; a high NOT SEEN count means I did not read it. Say which it is.
 6. data/reads/NOTEBOOK.md: any horse whose in-running comment shows a run better than its finishing position (trouble, slowly away, short of room, hampered, finishing fast off an unsuitable pace), one line each with the comment quoted. These are facts, not rules.
 7. LESSONS: append at most ONE lesson to data/reads/LESSONS.md, as `## <day> — ASKED`: the incidents quoted, what I missed, and the lesson as a yes/no question to William. A lesson is asked only when the same miss or winning reason appears at least twice in WHY.md, or when the miss broke one of his written laws: one race can be luck. Never re-ask a NO; never ask what a YES already covers. Never carve a rule.
 8. Commit ("reads: <day> graded") and run `git push origin reads`, retrying up to 4 times with backoff.
-9. Tell William in ONE short message: winners X from Y races, strike rate and £1 P&L today and in total, AGAINST THE MARKET BAR (favourites in the same races), READABLE v NOT strike rates, the foresight split, and tonight's lesson question (answer yes or no).
+9. Tell William in ONE short message: winners X from Y races, morning favourites v SP favourites v gambles (won X of Y each, and the horses hidden in plain sight), strike rate and £1 P&L today and in total, AGAINST THE MARKET BAR (favourites in the same races), READABLE v NOT strike rates, the foresight split, and tonight's lesson question (answer yes or no).
 ```
 
 ## Sunday review
