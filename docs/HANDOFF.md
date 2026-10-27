@@ -3,6 +3,25 @@
 Last updated: **2026-10-18** (the method is FROZEN for 50 settled days — see CLAUDE.md)
 (update this file whenever state changes — it is how every new chat remembers everything).
 
+## 2026-10-26 (evening) — PROJECT REFRESH. READ THIS FIRST.
+
+His word: "we're now going to call this project refresh. We're going to go
+back to school again ... not overcomplicate it ... build from the ground up."
+From 27 Oct the three prongs, the spots and the signposts page are replaced
+by one routine:
+- Morning: pick the winner of EVERY GB/IE race from a clean read of the
+  form, after reading his rulebook, the YES lessons and WHY.md. Store the
+  snapshot of the form (data/reads/snapshots/<day>/).
+- Night: the two-line autopsy for every race, where the winner sat (MY
+  PICK / IN MY CONTENDERS / NOT SEEN), WHY.md, TALLY.md, and one lesson
+  question.
+- Sunday: the weekly review, folded into main.
+
+The loop: docs/LEARNING.md. The exact instructions: docs/ROUTINES.md. Day
+one of the prongs (26 Oct) finished 1 winner from 3 (Siwa Oasis won at 2/1;
+Blue Prince 5th; Big Money 2nd at 8/11 to a debutant, a lesson taught four
+times before, now a YES in LESSONS.md).
+
 ## 2026-10-26 — THREE PRONGS, READ BY HAND. READ THIS FIRST.
 
 His word, 26 Oct: "form back in picks now", "go back to basics, read the

@@ -6,150 +6,113 @@ clockwork? ... I'm not going to be here prompting you all day."
 Each scheduled task on his account carries only a pointer: "read
 docs/ROUTINES.md on origin/main and carry out section X". The sections below
 ARE the instructions, so a change merged here changes tomorrow's run. Keep
-them right; a broken section breaks the day. If the
-tasks ever stop (the session they fire into was archived or lost), open a
-session on this repo and say: **"restart the daily tasks from
-docs/ROUTINES.md"**. The session recreates each task below with the schedule
-shown, bound to itself, with the one-line pointer prompt, and updates the
-ids here and in docs/HANDOFF.md. When a prompt
-changes, change it here in the same breath.
+them right; a broken section breaks the day. If the tasks ever stop (the
+session they fire into was archived or lost), open a session on this repo
+and say: **"restart the daily tasks from docs/ROUTINES.md"**. The session
+recreates each task below with the schedule shown, bound to itself, with the
+one-line pointer prompt, and updates the ids here and in docs/HANDOFF.md.
 
-| Task | Schedule (UK time) | Id (26 Oct) |
+| Task | Schedule (UK time) | Id |
 |---|---|---|
-| Morning read: three prongs | `CRON_TZ=Europe/London 41 9 * * *` | trig_01G38hu2dqN2NB1vAoAidPe3 |
+| Morning read | `CRON_TZ=Europe/London 41 9 * * *` | trig_01G38hu2dqN2NB1vAoAidPe3 |
 | Backup morning read (only if missed) | `CRON_TZ=Europe/London 41 11 * * *` | trig_01S7x42mvcn4cjTZrPyiZN5D |
-| Night grade: three prongs | `CRON_TZ=Europe/London 30 21 * * *` | trig_01GHqLGELcgadYxQqim9ZZL3 |
+| Night grade | `CRON_TZ=Europe/London 31 22 * * *` (after the 22:05 Betfair results push) | trig_01GHqLGELcgadYxQqim9ZZL3 |
 | Sunday review | `CRON_TZ=Europe/London 41 22 * * 0` | trig_01PYvmJuy6wQ5LEvvPnDM9GM |
 
-How the loop learns, and which files it reads and writes: docs/LEARNING.md.
+THE REFRESH FREEZE (his "that's an honest approach", 26 Oct): from 27 Oct these instructions are frozen. They change only for broken plumbing (a run that fails, a source that dies), or through a YES lesson in data/reads/LESSONS.md, or on his explicit word. No new machinery, list, label or step from the apprentice's own head.
+
+PROJECT REFRESH (his word, 26 Oct, from 27 Oct): pick the winner of every
+race from a clean read of the form, store a snapshot of the form, and each
+night compare the snapshot, the notes and the result. Why, and which files
+the loop reads and writes: docs/LEARNING.md.
 
 Outside the session, `.github/workflows/watchdog.yml` checks the `reads`
 branch at 11:15 and 23:45 UTC and goes red (GitHub emails him) when a day is
 missing or ungraded.
 
-## Morning read: three prongs
+## Morning read
 
 ```
-MORNING READ: William's three-prong paper test (docs/HANDOFF.md, 2026-10-26). Paper stakes only. Never touch code. Never write duty-*.csv.
+MORNING READ: PROJECT REFRESH (docs/LEARNING.md). Pick the winner of every GB/IE race from a clean read of the form. Paper only. Never touch code. Never write duty-*.csv.
 
-1. Run `date -u`. Run `git fetch origin main reads`. If origin/reads exists, run `git checkout -B reads origin/reads` then `git merge --no-edit origin/main` (to pick up the latest docs); otherwise `git checkout -B reads origin/main`. If data/reads/<UK day>.md already exists there, stop: the day is banked.
-   Then read, in this order (docs/LEARNING.md explains why):
-   - THE RULEBOOK: NAP_SYSTEM and VETO_SYSTEM in src/racing_edge/study/morningread.py, his laws in his words. Race selection comes before horse selection (his #3). In particular: 1b THE MASTER'S GLANCE (only races a 30-year handicapper would study), #13 NOVICE IN DISGUISE (a field of young, lightly raced horses is a novice race whatever its title), #14 THE ALL-WEATHER CAUTION, and his 27 Sep "novice n maiden avoid from now on";
-   - the 2026-10-26 section of docs/HANDOFF.md, including the missed-races SCAR and the REPEATED-LESSON SCAR;
-   - data/reads/LESSONS.md: every YES lesson joins today's checklist;
-   - the "my error" lines of the last 7 graded days in data/reads/;
-   - data/reads/NOTEBOOK.md;
-   - data/reads/WHY.md, the last 14 days: why the winners won. These are the hindsight that has to become foresight;
-   - the latest week in data/reads/WEEKLY.md.
-2. Data comes from two sources only:
-   - The Racing API connector:
-     - get_racecards_standard (gb,ire). It returns 20 races a page: page with skip until the count equals "total". Cross-check the course list against the Sporting Life racecards page; every GB/IE course must be present. If an answer is saved to a file, read it with jq or python;
-     - get_race_analysis with depth "full" on shortlisted races;
-     - get_horse_racecard_results for the past-run comments of serious contenders;
-     - get_jockey_course_analysis with start_date 14 days ago, for the jockeys of shortlisted horses only.
-   - Sporting Life race pages, as the supplement:
-     - www.sportinglife.com/racing/racecards lists the day; each race page is /racing/racecards/<day>/<course>/racecard/<id>/x;
-     - the __NEXT_DATA__ JSON in each page gives per ride: the commentary, betting.current_odds, timeform_stars, and horse.previous_results, each past run with its ride_description (the in-running comment);
-     - Fetch with curl and parse with python; one page per shortlisted race, no more.
-   FALLBACKS:
-   - If the Racing API plan has dropped below Standard, use what it gives plus Sporting Life.
-   - If the Racing API fails outright, read from Sporting Life alone (it has every card, comment and price).
-   - If both fail, write the first line as "Races read 0 of ? — DATA DOWN: <what failed>", push the file, and stop.
-   Say in the first line which fallback was used.
-3. THE SIGNPOSTS PAGE (his gg.co.uk list, 26 Oct). Build it from the day's full card with python, listing facts only, no thresholds of your own:
-   - Hot trainers: the 5 trainers with runners today with the best last-14-days win %, listing their runners;
-   - C&D winners: runners with the CD flag;
-   - First time: headgear_run "1" with the headgear code, and wind ops as wind_surgery with its wind_surgery_run;
-   - Longest travellers: from trainer_location against the course, for shortlisted horses, with miles estimated;
-   - Hot jockeys: the 14-day record for the jockeys of shortlisted horses.
-   (First time gelded is not in the API: leave it out rather than guess.)
-4. RACE SELECTION FIRST: mark every race READABLE or NOT, by the rulebook's race laws (1b, #13, #14, the novice/maiden avoid, the 3yo all-weather lesson). No banker, no spot and no odds-on pick ever comes from a NOT race. Then read EVERY GB/IE race, and every favourite, using ONLY the fixed checklist. Invent no rule or threshold (his warning: "you have too much information ... you end up making up rules yourself").
-   - His five-part solid test: short price; in form (consistently placing over five runs and improving, e.g. 5423); has actually won; race-fit (60 days or less unless a class horse from a big yard); proven at today's mark (has won off it or higher).
-   - The comments, line by line: trouble, slow start, draw, pace, manner, genuine excuses.
-   - Pound-a-length against rivals met before (1 length = 1lb).
-   - Class up or down; ground, trip and course proven.
-   - Signposts as facts: the signposts page, plus RPR, Topspeed, Timeform stars, a new yard, and a runner in the NOTEBOOK (quote its note).
-   - Every YES lesson in LESSONS.md, quoted where it bites.
-4b. THE AUTOPSY BEFORE THE RACE (his crux, 26 Oct: "when you look at the race in hindsight, you know exactly why they lost and why the other horse won ... this is the crux of our problem"). In every READABLE race you might pick from, write one line for each serious contender (3 or 4 of them): "IF HE WINS, it will be because ...". Check each against the winning reasons in WHY.md. The pick is the horse whose winning story needs the fewest unknowns, not the one you liked first. A rival with a short, believable story is the danger, named.
-5. EXACTLY ONE pick per prong, every day. NO BET is not allowed. His word: "you're going to pick a horse ... be accountable for why you picked that horse."
-   - A. Banker favourite: the favourite that best passes the five parts, with no excuse made for him and no rival the weights favour. If none passes all five, pick the best one anyway and write down which parts he fails.
-   - B. Hidden gem: the best horse that isn't the favourite, at 4/1 or bigger, whose form stacks up to win.
-   - C. Form plus money: the form passes (has won, race-fit, within 3lb of a winning mark, no unexplained bad run) and his best price now is shorter than the card's betting forecast; price 6/4 to 8/1. If none fits fully, pick the closest and write down which part is missing.
-5b. THE SPOTS (his word, 26 Oct: "you should be able to pick 4 or 5 winners every day ... There are so many easy spots every day. It's just a matter of replicating it"). After reading every race, list EVERY race where the read finds one horse CLEAR of the rest on the form (THE GAP = CLEAR), at any price, favourite or not. There is no quota and no cap: as many as the card honestly gives, which on most days should be several. Each spot gets one line: race, horse, price, the line in the form that makes him clear, HOW HE WINS. A prong pick can also be a spot.
-6. Bank only races whose off is at least 30 minutes after a fresh `date -u` taken at the moment you write. Write data/reads/<day>.md, and never edit an earlier day's file.
+1. Run `date -u`. Run `git fetch origin main reads`. If origin/reads exists, run `git checkout -B reads origin/reads` then `git merge --no-edit origin/main`; otherwise `git checkout -B reads origin/main`. If data/reads/<UK day>.md already exists, stop: the day is banked.
+2. READ FIRST, in this order:
+   - THE RULEBOOK: NAP_SYSTEM and VETO_SYSTEM in src/racing_edge/study/morningread.py, his base rules in his words;
+   - data/reads/LESSONS.md: every YES lesson applies today;
+   - data/reads/WHY.md, the last 14 days: why the winners won;
+   - the "what I missed" lines of the last 7 graded days in data/reads/.
+   Then put them aside and read each race CLEAN: the form decides, not yesterday's mood.
+   OPEN-MINDED, NOT STRICT (his word, 26 Oct: "this is the problem with the whole system you've created, all these strict rules everywhere ... that nullified actually reading the form and finding nuances ... look at every race with a certain amount of open-mindedness, and stop ruling everything out"). His laws and lessons are QUESTIONS TO ASK OF THE FORM, weighed together: never a gate or a number that rules a horse out on its own. A horse a few days past a line, a few pounds up, short of one box on a test, is weighed, not discarded. The only absolutes are the ones he has said in absolute words (e.g. "never back an odds-on" in a 3yo all-weather novice).
+3. THE SNAPSHOT (his word: "take a snapshot of the form of that race, store it"). Before reading, save the form exactly as it stands, so tonight compares against the same facts:
+   - The Racing API connector, get_racecards_standard (gb,ire). It returns 20 races a page: page with skip until the count equals "total". If an answer is saved to a file, copy that file. Save the full cards as data/reads/snapshots/<day>/racing_api.json.
+   - Sporting Life: www.sportinglife.com/racing/racecards lists the day; each race page is /racing/racecards/<day>/<course>/racecard/<id>/x. Fetch every GB/IE race page with curl, one every 2 seconds. From each page's __NEXT_DATA__ JSON keep the race object: per ride the commentary, betting.current_odds, timeform_stars, official_rating, draw, and horse.previous_results with each run's ride_description. Save as data/reads/snapshots/<day>/sportinglife.json.
+   - Betfair (his Oracle London server pushes horse prices every hour from 07:05 UK to racing-edge's `odds` branch): run `git fetch origin odds` and copy the newest data/odds/<day>-*-betfair-horses.json into the snapshot folder as betfair.json. It holds per race the exchange back, lay and last traded price of every runner, each runner's total matched (the weight of money) and Betfair's card for him (meta: form, official rating, weight, draw, age, days since his last run, jockey, trainer, forecast price). If the Racing API card is missing or thin, that card is the backup: say so in the first line. If no Betfair file for today exists yet, say so in the first line and carry on without it.
+   - Cross-check: every GB/IE course on Sporting Life is in the Racing API cards. If one source fails, use the other and say so in the first line. If both fail, write "Races read 0 of ? — DATA DOWN: <what failed>", push, and stop.
+4. FOR EVERY RACE, using the snapshot (and get_race_analysis with depth "full" or get_horse_racecard_results where the form needs more):
+   - TYPE: handicap / novice-maiden / conditions / pattern; flat / AW / hurdle / chase; age band. READABLE or NOT, by the rulebook's race laws (1b, #13, #14, novice/maiden, the 3yo AW lesson). Every race still gets a pick; the label is what we learn from.
+   - THE CONTENDERS: 3 or 4 serious ones, each with one line: "IF HE WINS, it will be because ...". Check each against the rulebook, the YES lessons and WHY.md.
+   - THE PICK: the horse whose winning story needs the fewest unknowns. Write its price, and HOW HE WINS (where he sits, when he goes, who he beats and why).
+   - HOW HE LOSES: the strongest honest case against the pick, as tomorrow's autopsy would write it.
+   Keep it short: a race in five or six lines. Read the form, not the betting.
+5. Bank only races whose off is at least 30 minutes after a fresh `date -u` taken at the moment you write. A race too close to the off is listed as MISSED, with no pick.
+6. Write data/reads/<day>.md, and never edit an earlier day's file:
    - FIRST LINE: "Races read X of Y (courses: ...)", plus any fallback used. If X is less than Y, say why.
-   - Each prong's pick: race, horse, price, banked UTC time, the why in three lines, the danger, and HOW HE WINS: one line on the race shape the form says he gets (where he sits, when he goes, which rival he beats and why).
-     Then HOW HE LOSES (his point, 26 Oct, after Big Money: "even without my knowledge ... logically, you assessed why he would not have won"): before banking, argue the strongest honest case AGAINST the pick, as you would write it in tomorrow's autopsy if he lost. Name the unknowns: unraced or lightly raced rivals, the surface, a rise in the weights, the draw, the pace. If the case against is as strong as HOW HE WINS, he is not a spot or a banker; pick again.
-     Also THE GAP: how clear he is over the next best on the form, as CLEAR, NARROW or COIN-FLIP, naming the next best. This is a measurement, not a filter: every prong still picks.
-   - THE SPOTS list.
-   - The signposts page.
-   - A table of every favourite: SOLID or NOT SOLID, with a one-line why.
-7. Commit ("reads: <day> morning") and run `git push origin reads`, retrying up to 4 times with backoff. A push that never lands means the day is not banked: say so loudly.
-8. Tell William in ONE short message: races read X of Y, each prong's pick with price and off time, then THE SPOTS (horse, race, price), one per line.
+   - Then a table: time, course, pick, price (bookmaker, and Betfair back where the file has it), the favourite and his price (from the snapshot), READABLE or NOT.
+   - Then each race's notes as in step 4.
+7. BANK AS YOU GO (this session has paused for hours before): commit the snapshot first, then write and commit the day file after EACH meeting is read, with the first line's running count kept true, and push each time (`git push origin reads`, retrying up to 4 times with backoff). A pause then costs only the races not yet read. A push that never lands means those races are not banked: say so loudly.
+8. Tell William in ONE short message: races read X of Y, then the picks, one per line (time, course, horse, price).
 ```
 
 ## Backup morning read (only if missed)
 
 ```
-BACKUP MORNING READ. Run `git fetch origin reads`, then check whether data/reads/<today's UK date>.md exists on origin/reads (`git cat-file -e origin/reads:data/reads/<day>.md`). If it exists, the 09:41 read banked the day: do nothing and say nothing. If it is missing, the 09:41 morning read did not run. Run it now, following the morning read's instructions in docs/ROUTINES.md exactly, banking only races still 30 or more minutes from the off. End its first line ("Races read X of Y ...") with " — BACKUP READ at <UTC time>".
+BACKUP MORNING READ. Run `git fetch origin reads`, then check whether data/reads/<today's UK date>.md exists on origin/reads (`git cat-file -e origin/reads:data/reads/<day>.md`). If it exists, the 09:41 read banked the day: do nothing and say nothing. If it is missing, the 09:41 morning read did not run. Run it now, following the "Morning read" section of docs/ROUTINES.md exactly, banking only races still 30 or more minutes from the off. End its first line ("Races read X of Y ...") with " — BACKUP READ at <UTC time>".
 ```
 
-## Night grade: three prongs
+## Night grade
 
 ```
-NIGHT GRADE: William's three-prong paper test (docs/HANDOFF.md, 2026-10-26). There is no deadline: if you resume hours late, finish the work anyway. Never touch code. Never write duty-*.csv.
+NIGHT GRADE: PROJECT REFRESH (docs/LEARNING.md). There is no deadline: if you resume hours late, finish the work anyway. Never touch code. Never write duty-*.csv.
 
-1. Run `date -u`. Run `git fetch origin main reads`, then `git checkout -B reads origin/reads` and `git merge --no-edit origin/main`. If origin/reads does not exist yet, use `git checkout -B reads origin/main`. Today's file is data/reads/<UK day>.md. Read docs/LEARNING.md.
-2. Results:
-   - from The Racing API connector (get_results_today, or get_result_by_id per race);
-   - and from Sporting Life: www.sportinglife.com/racing/results lists the day; each result page is /racing/results/<day>/<course>/<id>/x. Its __NEXT_DATA__ JSON gives per ride: finish_position, ride_description (the in-running comment), betting.historical_odds (the market move) and horse.previous_results.
-   Fetch with curl and parse with python.
-3. Append a "## Graded" section to today's file, never altering what was banked:
-   - each prong's pick: WON or LOST, with SP, the winner and the margin, and the pick's in-running comment;
-   - THE MOVE: the pick's price at bank against its SP, with the Sporting Life betting.historical_odds path. Mark it BACKED (shorter at the off), STEADY, or DRIFTED;
-   - STORY: set HOW HE WINS beside the in-running comment and grade it as one of: right horse right story (skill), right horse wrong story (lucky, called lucky), wrong horse right story (beaten by a better horse: say who), wrong horse wrong story (misread: name the line misread);
-   - THE SPOTS: each spot WON or LOST with SP and its in-running comment; for each lost spot, one line on why it was not clear after all;
-   - each favourite verdict: right or wrong (a SOLID that lost; a NOT SOLID that won);
-   - every losing pick: Rule One ("why was the winner the best horse"), then my error in ONE sentence;
-   - a winning pick: which lines carried it, and a lucky win called lucky.
-4. Update data/reads/TALLY.md:
-   - per prong, and for THE SPOTS as a fourth line: picks, winners, strike rate, and £1 level-stakes profit or loss at SP, plus winners per day for the spots;
-   - the SOLID-favourite strike rate;
-   - STORY accuracy: per prong, the count of each of the four story grades;
-   - THE GAP and THE MOVE: picks, winners and £1 P&L for CLEAR, NARROW and COIN-FLIP, and for BACKED, STEADY and DRIFTED. These come from the GitHub reading list, 26 Oct: results improved on clear-gap races, and the market move before the off carries information. The record will say whether either holds here;
-   - a SIGNPOSTS table: for each list on the morning signposts page (hot trainers, C&D winners, first-time headgear, wind op, long travellers, hot jockeys, notebook horses), the running totals of runners, winners and £1 level-stakes profit or loss at SP. The record judges which nuggets matter.
-4b. THE WHY LEDGER and THE FORESIGHT CHECK.
-   - For every race we picked or spotted, and every READABLE race where the winner was not the favourite, write one line to data/reads/WHY.md: date, race, winner, SP, why he won, with the in-running comment quoted. Tag the reason with a short type (examples, not a closed list: improver from a top yard; unexposed newcomer; class dropper; well-handicapped off a lower mark; trouble last time; pace and draw; course specialist). That is at most about 10 races a night: the ones that teach most.
-   - For every graded race, record where the winner sat in the morning read: MY PICK, IN MY CONTENDERS (named, not picked), or NOT SEEN.
-   - Add running counts of the three to TALLY.md. A high count of IN MY CONTENDERS means I read the race but weighed it wrong. A high count of NOT SEEN means I did not read it at all. Say which it is.
-5. THE NOTEBOOK (his word, 26 Oct: "a hive of information on this website that you could mine every day ... to fill in some of the gaps"). Read every GB/IE ride_description from today's Sporting Life results with a python extract (horse, course, position, comment only). Add to data/reads/NOTEBOOK.md any horse whose comment shows a run better than its finishing position: trouble in running, slowly away, short of room, hampered, or finishing fast after an unsuitable pace. Write one line each: date, course, horse, position, the comment quoted. These are facts for tomorrow's read, not a rule.
-6. LESSONS: append at most ONE lesson to data/reads/LESSONS.md, as `## <day> — ASKED`, then:
-   - the incident, quoted;
-   - the gap between story and race;
-   - the lesson, phrased as a yes/no question to William.
-   Before asking, check the ledger: never re-ask a NO, and never ask what a YES already covers. A pattern goes to him as a question. Never carve a rule.
-7. Commit ("reads: <day> graded") and run `git push origin reads`, retrying up to 4 times with backoff.
-8. Tell William in ONE short message: each prong's result and story grade, the spots (X won of Y), the running tally, how the signposts did today, how many notebook horses were added, and tonight's lesson question (answer yes or no).
+1. Run `date -u`. Run `git fetch origin main reads`, then `git checkout -B reads origin/reads` and `git merge --no-edit origin/main`. Today's notes are data/reads/<UK day>.md; the snapshot is data/reads/snapshots/<day>/. Read docs/LEARNING.md.
+2. RESULTS for every race:
+   - Sporting Life: www.sportinglife.com/racing/results lists the day; each result page is /racing/results/<day>/<course>/<id>/x. Its __NEXT_DATA__ JSON gives per ride finish_position, ride_description (the in-running comment), the SP and betting.historical_odds;
+   - The Racing API connector (get_results_today, or get_result_by_id) as the cross-check;
+   - Betfair: `git fetch origin odds`. Betfair's starting price (BSP) and the result for every race are in data/odds/<day>-2205-betfair-horses-results.json (pushed after the 22:05 server run; if it is not there yet, grade at bookmaker SP and say so). For the move, take for each race the last data/odds/<day>-*-betfair-horses.json taken before its off (the close) against the morning snapshot's betfair.json.
+   Fetch with curl and parse with python. Save the results beside the snapshot as data/reads/snapshots/<day>/results.json, with each pick's Betfair morning and closing price.
+3. THE COMPARISON, for every race. Lay the morning snapshot, the morning notes and the result side by side. Append to today's file a "## Graded" section, never altering what was banked. For each race:
+   - WON or LOST, with the pick's SP and position; the winner, SP and margin;
+   - the pick's in-running comment, and the winner's;
+   - THE TWO-LINE AUTOPSY (his word: "with two lines you summed up the whole race"): line 1, why the winner won, citing the fact in the morning snapshot that showed it, or "NOT IN THE FORM" when nothing in the snapshot showed it (luck, a hidden improver, trouble in running); line 2, what I got right, wrong or missed in the morning notes. Never invent a pre-race fact the snapshot does not hold;
+   - WHERE THE WINNER SAT in the morning notes: MY PICK, IN MY CONTENDERS, or NOT SEEN.
+4. data/reads/WHY.md: one line per race the pick lost, plus any race that teaches: date, race, winner, SP, why he won (in-running comment quoted), and a short reason type (examples, not a closed list: improver from a top yard; unexposed newcomer; class dropper; well-handicapped off a lower mark; trouble last time; pace and draw; course specialist).
+5. data/reads/TALLY.md, running totals:
+   - races picked, winners, strike rate, and £1 level-stakes profit or loss at SP, for the day and in total, at bookmaker SP and at Betfair SP where the results file has it;
+   - THE MARKET BAR: in the same races, backing every favourite: winners, strike rate, £1 P&L at SP. And my picks that were NOT the favourite: winners and £1 P&L. Reading adds something only when it beats the bar;
+   - THE MONEY (Betfair, a measurement only): my picks that shortened from the morning file to the close against those that drifted, winners and £1 P&L for each. The record will say whether the money agrees with the form;
+   - the same split by READABLE or NOT, and by race type (handicap, novice-maiden, conditions-pattern; flat, AW, hurdle, chase);
+   - the foresight check: MY PICK / IN MY CONTENDERS / NOT SEEN. A high IN MY CONTENDERS count means I read the race but weighed it wrong; a high NOT SEEN count means I did not read it. Say which it is.
+6. data/reads/NOTEBOOK.md: any horse whose in-running comment shows a run better than its finishing position (trouble, slowly away, short of room, hampered, finishing fast off an unsuitable pace), one line each with the comment quoted. These are facts, not rules.
+7. LESSONS: append at most ONE lesson to data/reads/LESSONS.md, as `## <day> — ASKED`: the incidents quoted, what I missed, and the lesson as a yes/no question to William. A lesson is asked only when the same miss or winning reason appears at least twice in WHY.md, or when the miss broke one of his written laws: one race can be luck. Never re-ask a NO; never ask what a YES already covers. Never carve a rule.
+8. Commit ("reads: <day> graded") and run `git push origin reads`, retrying up to 4 times with backoff.
+9. Tell William in ONE short message: winners X from Y races, strike rate and £1 P&L today and in total, AGAINST THE MARKET BAR (favourites in the same races), READABLE v NOT strike rates, the foresight split, and tonight's lesson question (answer yes or no).
 ```
 
 ## Sunday review
 
 ```
-SUNDAY REVIEW: the weekly step of the learning loop (docs/LEARNING.md). There is no deadline. Never touch code. Never carve a rule.
+SUNDAY REVIEW: PROJECT REFRESH, the weekly step (docs/LEARNING.md). There is no deadline. Never touch code. Never carve a rule.
 
 1. Run `date -u`. Run `git fetch origin main reads`, then `git checkout -B reads origin/reads` and `git merge --no-edit origin/main`. Read docs/LEARNING.md.
-2. Read this week's data/reads/<day>.md files (Monday to Sunday), TALLY.md, LESSONS.md and NOTEBOOK.md.
+2. Read this week's data/reads/<day>.md files (Monday to Sunday), TALLY.md, WHY.md, LESSONS.md and NOTEBOOK.md.
 3. Append `## Week ending <day>` to data/reads/WEEKLY.md:
-   - per prong: picks, winners, strike rate, £1 P&L, against the running total;
-   - story accuracy: the four story grades per prong, and what they say (skill, luck, beaten by better, misread);
-   - signposts: which lists found winners this week and in total, with numbers only;
-   - favourite verdicts: how many SOLID won; every NOT SOLID that won, with the line that was misjudged;
-   - notebook: how many notebook horses ran, won, at what prices;
-   - the misreads: the "my error" lines of the week, grouped where the same mistake repeats;
-   - WHY.md: the winning reasons that recurred this week, with counts, and the foresight check (MY PICK / IN MY CONTENDERS / NOT SEEN). A reason that keeps beating my picks becomes a question for him;
+   - strike rate and £1 P&L for the week and in total, AGAINST THE MARKET BAR (every favourite in the same races), split by READABLE or NOT and by race type: where the reading works and where it does not;
+   - the foresight check for the week, and what it says (weighing fault or reading fault);
+   - the winning reasons from WHY.md that recurred, with counts, especially the ones that beat my picks;
+   - the "what I missed" lines grouped where the same mistake repeats;
    - 2 or 3 questions for William, each answerable yes or no;
    - lessons still ASKED and awaiting his word.
 4. Commit ("reads: week ending <day>") and run `git push origin reads`, retrying up to 4 times with backoff.
 5. Fold the learning into the project: open a pull request from `reads` into `main` titled "Learning: week ending <day>" (data/reads only). Merge it once the tests are green. If they are red, say why and leave it open.
-6. Tell William in ONE short message: the week per prong, story accuracy in one line, the best and worst signpost, and the 2 or 3 questions.
+6. Tell William in ONE short message: the week's strike rate and P&L, where the reading works and where it does not, the top recurring winning reason, and the 2 or 3 questions.
 ```
