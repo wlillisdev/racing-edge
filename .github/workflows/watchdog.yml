@@ -4,7 +4,7 @@
 # the thing it watches is no watchdog (20 Sep). This runs on GitHub, outside
 # that session: if today's file is missing, or the night grade never landed,
 # the check goes red and GitHub emails the owner. A read that did not cover
-# every race shows as a warning.
+# every race shows as a warning, and so does a day the pre-off check missed.
 name: watchdog
 on:
   schedule:
@@ -35,4 +35,5 @@ jobs:
           fi
           if [ "$NIGHT" = "true" ]; then
             grep -q '^## Graded' "$f" || { echo "::error::$f was never graded: the night grade did not run"; exit 1; }
+            grep -q '^## Pre-off market check' "$f" || echo "::warning::$f has no pre-off market check"
           fi

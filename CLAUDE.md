@@ -54,7 +54,10 @@ project drifted for months. Every night is judged against THE MARKET BAR
 (backing every favourite in the same races). "We're not under huge pressure
 to get an instant result ... create a framework that is reusable on a daily
 basis using Claude to consistently find and pick winners. That's the bottom
-line." 
+line." THE PRE-OFF CHECK (his word, 27 Oct): the morning pick is banked and
+never edited; before the first race the Betfair prices are read again and a
+FINAL PICK (keep or switch, with the reason) is banked beside it. Both are
+graded. That one update is his exception to "never re-pick intraday". 
 
 ## THE THREE PRONGS (the master, 2026-10-26 — replaced by PROJECT REFRESH from 27 Oct)
 
