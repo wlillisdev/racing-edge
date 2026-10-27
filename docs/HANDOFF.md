@@ -1,7 +1,34 @@
 # HANDOFF — the apprenticeship's living memory
 
-Last updated: **2026-10-18** (the method is FROZEN for 50 settled days — see CLAUDE.md)
+Last updated: **2026-10-27** (PROJECT REFRESH, plus the pre-off market check — see CLAUDE.md)
 (update this file whenever state changes — it is how every new chat remembers everything).
+
+## 2026-10-27 (night) — THE PRE-OFF MARKET CHECK. READ THIS FIRST.
+
+His word, after day one of Refresh (North of Richmond 10/1 to 9/4 and Mini
+Mac 12/1 to 3/1 both won, both visible on Betfair at 08:05, both missed): "do
+your initial selection, and then before the first race read Betfair odds
+again, and then update your selection based on that. Implement anything you
+feel that's going to be good addition."
+- The morning pick is banked as always and never edited. At 11:21 UK
+  (trig_014N3tNUwBoLM1JfS1xBJDRJ) the pre-off check reads the 11:05 Betfair
+  push, runs `python -m racing_edge.cli.marketcheck`, and appends a FINAL
+  PICK per race (KEEP or SWITCH, with the reason) under "## Pre-off market
+  check". Both columns are graded at night; the TALLY says which was better.
+- The morning read also asks THE MONEY QUESTION: for any horse Betfair
+  already has shorter than the bookmakers' forecast, what in the form
+  explains it, or NOT IN THE FORM.
+- What day one said, honestly: once both books are normalised, no band of
+  supported horses was steadily profitable (the "+£14.80" first quoted to
+  him came from unnormalised prices at one hour and did not hold at the
+  others). The FRIENDLESS ones (exchange longer than the forecast) were the
+  steady losers (7 of 65, -£30 at 12:05). Money with a reason in the form is
+  the breadcrumb worth testing; money alone is a coin toss. The record
+  decides, not one day.
+- The watchdog warns at 23:45 UTC when a day has no pre-off check.
+- One check a day, before the first race, as he said. A second, evening look
+  is NOT built: only if the record shows late evening moves being missed,
+  and on his word.
 
 ## 2026-10-26 (evening) — PROJECT REFRESH. READ THIS FIRST.
 
@@ -115,8 +142,9 @@ CLOCKWORK (his question, 26 Oct: "how are you going to make sure this one's
 like clockwork? ... I'm not going to be here prompting you"):
 - The scheduled tasks live on his account and fire into session
   session_01AFcG8Gzep3yhvaTtD1Rfdx: 09:41 UK morning read
-  (trig_01G38hu2dqN2NB1vAoAidPe3), 11:41 UK backup read (runs only when the
-  day's file is missing), 21:30 UK night grade (trig_01GHqLGELcgadYxQqim9ZZL3),
+  (trig_01G38hu2dqN2NB1vAoAidPe3), 11:21 UK pre-off market check
+  (trig_014N3tNUwBoLM1JfS1xBJDRJ), 11:41 UK backup read (runs only when the
+  day's file is missing), 22:31 UK night grade (trig_01GHqLGELcgadYxQqim9ZZL3),
   22:41 UK Sunday review (trig_01PYvmJuy6wQ5LEvvPnDM9GM). Each task's prompt
   is a pointer to its section of docs/ROUTINES.md on main, the single source
   of truth. Do not archive that session.
