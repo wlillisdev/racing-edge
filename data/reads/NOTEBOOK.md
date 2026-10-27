@@ -22,3 +22,18 @@
 - 2026-10-26 · Southwell 8:00 · Riley Rocks · 2nd · "In rear, headway when not clear run over 2f out ... switched left 1f out, kept on well, pressed winner 110yds out"
 - 2026-10-26 · Southwell 8:00 · Horace Wallace · 8th · "Led, ridden when headed and hampered over 2f out, soon beaten"
 - 2026-10-26 · Southwell 8:00 · Cosmic Clarets · 7th · "pushed along when badly hampered and stumbled over 2f out, not recover"
+- 2026-10-27 · Catterick 12:40 · Kalahari Flame · 3rd · "Slowly away, towards rear, keen early ... took third inside final furlong, kept on"
+- 2026-10-27 · Catterick 14:10 · Winter Crown · 5th · "Slowly away, in rear, pushed along to make some headway over 1f out kept on"
+- 2026-10-27 · Catterick 15:40 · Corsican Caper · 9th · "Slowly away and lost many lengths start, in rear and detached early"
+- 2026-10-27 · Catterick 15:40 · Rock On Pedro · 3rd · "slowly away, towards rear ... took third over 1f out, kept on" (first flat run for 395 days)
+- 2026-10-27 · Bangor 13:46 · Glance of Glory · fell · "closed 8th, challenging when fell 2 out"
+- 2026-10-27 · Bangor 13:46 · Speed Davis · 3rd · "Held up in rear, headway on outside when hampered 2 out, kept on flat"
+- 2026-10-27 · Bangor 15:16 · Laughing John · fell · "led 10th ... 3 lengths ahead when fell last"
+- 2026-10-27 · Bangor 15:16 · Col Du Pre' · fell · "headway after 3 out, went 3 lengths second when fell last"
+- 2026-10-27 · Bangor 15:16 · Just Golden · 2nd · "outpaced when mistake and hampered last, kept on flat, went second towards finish" (first run for 227 days)
+- 2026-10-27 · Bangor 15:16 · Escort'kheops · 3rd · "left second when hampered last, kept on"
+- 2026-10-27 · Wolverhampton 16:30 · Eighty Eight · 2nd · "not much room and hampered after 1f ... led over 1f out, headed inside final furlong, kept on" (first run for 228 days)
+- 2026-10-27 · Wolverhampton 17:30 · Zeuster · 2nd · "Went right start ... towards rear, ridden and ran on well from over 1f out" (debut)
+- 2026-10-27 · Wolverhampton 17:30 · Renascent · 6th · "headway when not clear run 1f out, kept on one pace"
+- 2026-10-27 · Wolverhampton 18:00 · Ridger · 2nd · "Slowly into stride, held up towards rear, headway going well ... no extra final 110 yards"
+- 2026-10-27 · Wolverhampton 20:00 · Ted Le Saux · 3rd · "Slowly into stride, towards rear ... stayed on well from over 1f out, never nearer"
