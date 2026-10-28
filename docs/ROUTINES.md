@@ -62,9 +62,10 @@ MORNING READ: PROJECT REFRESH (docs/LEARNING.md). Pick the winner of every GB/IE
 6. Write data/reads/<day>.md, and never edit an earlier day's file:
    - FIRST LINE: "Races read X of Y (courses: ...)", plus any fallback used. If X is less than Y, say why.
    - Then a table: time, course, pick, price (bookmaker, and Betfair back where the file has it), the favourite and his price (from the snapshot), READABLE or NOT.
+   - Then THE NAP AND NB for each meeting (his word, 28 Oct: "give me a nap and nb for each race meeting, it will push you more"): a table of meeting, NAP (the pick I am most sure of at that meeting: time, horse, price), NB (the next best), and one line on why the nap. Chosen from the picks already made, the strongest breadcrumbs weighed with an open mind, never by price alone.
    - Then each race's notes as in step 4.
 7. BANK AS YOU GO (this session has paused for hours before): commit the snapshot first, then write and commit the day file after EACH meeting is read, with the first line's running count kept true, and push each time (`git push origin reads`, retrying up to 4 times with backoff). A pause then costs only the races not yet read. A push that never lands means those races are not banked: say so loudly.
-8. Tell William in ONE short message: races read X of Y, then the picks, one per line (time, course, horse, price).
+8. Tell William in ONE short message: races read X of Y, the NAP and NB for each meeting first, then the picks, one per line (time, course, horse, price).
 ```
 
 ## Pre-off market check
@@ -120,13 +121,14 @@ NIGHT GRADE: PROJECT REFRESH (docs/LEARNING.md). There is no deadline: if you re
    - THE MONEY (Betfair, a measurement only): my picks that shortened from the morning file to the close against those that drifted, winners and £1 P&L for each. The record will say whether the money agrees with the form;
    - the same split by READABLE or NOT, and by race type (handicap, novice-maiden, conditions-pattern; flat, AW, hurdle, chase);
    - THE MARKET: morning favourites won X of Y, SP favourites won X of Y, gambles won X of Y (and how many of those were in plain sight in the snapshot);
+   - THE NAPS AND NBs: naps won X of Y and £1 P&L at SP, NBs won X of Y and £1 P&L, for the day and in total, against the market bar;
    - THE PRE-OFF CHECK: morning picks against final picks (winners, strike rate, £1 P&L for each), switches won X of Y, keeps that lost to a horse it flagged SUPPORTED. And the flags themselves: SUPPORTED runners won X of Y and £1 P&L, FRIENDLESS won X of Y, split by "reason in the form" and "NOT IN THE FORM". The record, not one day, will say what the money is worth;
    - THE 50/50s: how many of my picks finished 2nd, how many of those races the winner was in my contenders, and a running count of the TIPPING BREADCRUMBS and the WHY-I-PICKED-WRONG reasons, most frequent first. "If those seconds had been firsts" — say what the day would have been;
    - the foresight check: MY PICK / IN MY CONTENDERS / NOT SEEN. A high IN MY CONTENDERS count means I read the race but weighed it wrong; a high NOT SEEN count means I did not read it. Say which it is.
 6. data/reads/NOTEBOOK.md: any horse whose in-running comment shows a run better than its finishing position (trouble, slowly away, short of room, hampered, finishing fast off an unsuitable pace), one line each with the comment quoted. These are facts, not rules.
 7. LESSONS: when the same WHY-I-PICKED-WRONG reason in the 50/50s reaches three, it is tonight's lesson question. Append at most ONE lesson to data/reads/LESSONS.md, as `## <day> — ASKED`: the incidents quoted, what I missed, and the lesson as a yes/no question to William. A lesson is asked only when the same miss or winning reason appears at least twice in WHY.md, or when the miss broke one of his written laws: one race can be luck. Never re-ask a NO; never ask what a YES already covers. Never carve a rule.
 8. Commit ("reads: <day> graded") and run `git push origin reads`, retrying up to 4 times with backoff.
-9. Tell William in ONE short message: winners X from Y races (morning picks, and final picks after the pre-off check), the seconds and the top reason I picked the wrong one of two, morning favourites v SP favourites v gambles (won X of Y each, and the horses hidden in plain sight), strike rate and £1 P&L today and in total, AGAINST THE MARKET BAR (favourites in the same races), READABLE v NOT strike rates, the foresight split, and tonight's lesson question (answer yes or no).
+9. Tell William in ONE short message: the naps and NBs first (each meeting, won or lost), then winners X from Y races (morning picks, and final picks after the pre-off check), the seconds and the top reason I picked the wrong one of two, morning favourites v SP favourites v gambles (won X of Y each, and the horses hidden in plain sight), strike rate and £1 P&L today and in total, AGAINST THE MARKET BAR (favourites in the same races), READABLE v NOT strike rates, the foresight split, and tonight's lesson question (answer yes or no).
 ```
 
 ## Sunday review
