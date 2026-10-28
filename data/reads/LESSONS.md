@@ -65,3 +65,9 @@ lessons enter the morning read. A NO stays here so it is never asked again.
 - His words: "Also look at the draw on the all weather."
 - Incidents (27 Oct, Wolverhampton, stall numbers from the snapshot): the nine winners were drawn 2, 3, 2, 9, 2, 5, 7, 8, 1, five of them in stalls 1–3. Midnight's Dream, drawn 11 of 11 at 7f, was "steadied start, towards rear ... never nearer" and beaten ¾l by Twitch from stall 2. Cabeza De Llave won the 5f from stall 1. One meeting, so a pointer, not a number.
 - In the read, on the all-weather: write each contender's stall and ask what it means at this track and trip: can he get a position from it, will he be caught wide on the bends, does his run style suit the stall (a horse who needs to lead, drawn wide, has work to do). Weigh it most over the shorter trips. A question for each race, never a gate.
+
+## 2026-10-28 — YES (his breadcrumb list, taught item by item the night after day one)
+
+- His words, in order: "Weight??" · "Also the going and class" · "Also form figures and days since last run" · "Also look at headgear and wind op" · "remember."
+- With the lessons above (C&D form, jockey and trainer form, the booking, trainer-jockey combos, the jockey who dictates the pace, the draw on the all-weather, the money), these make THE BREADCRUMB LINE written under every contender in the morning read (docs/ROUTINES.md, step 4): C&D · trip · going · class · form figures · days since last run · last run (the comment) · headgear and wind op · weight and mark · jockey and trainer · pace · draw · the money.
+- Why it exists, his word: "you knew all these breadcrumbs, and time and time again you don't use them." Read at the top and forgotten is the failure; asked of every contender is the cure. Questions, never gates.
