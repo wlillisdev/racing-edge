@@ -41,3 +41,9 @@ lessons enter the morning read. A NO stays here so it is never asked again.
 - Question for William: **when two horses are close on form, should the read lean to the one whose comments show he races prominently or tracks the pace ("led", "prominent", "chased leaders"), and count "ran on ... never nearer" from the rear as a doubt rather than a strength, especially over sprint trips and on the all-weather? Yes or no.**
 - **ANSWERED NO, 28 Oct, in his words:** "Race pace is different in every race. Depends on many factors: distance, going, track biases. I think this is a factor that you are weighting too heavy."
 - In the read: no general lean to prominent racers. Pace is read race by race (the trip, the going, the track and its bias, who else wants to lead), as one question among many, never a day's statistic turned into a rule. One day's "25 of 30 on the pace" is a fact about 27 Oct, not a law.
+
+## 2026-10-28 — YES (taught by him, the same night as the pace NO)
+
+- His words: "Some jockeys are experts at dictating the pace of a race, and a good jockey can steal a race."
+- Incidents it explains (27 Oct): Wolverhampton 17:00 Show Me Glory, Oisin Murphy, "Always led, restrained in lead, ridden to assert over 2f out, soon in command". Wolverhampton 17:30 Boy Basilica, Billy Loughnane, "Led narrowly, gradually lengthened and stretched field 3f out ... pushed steadily clear". Both races were won from the front by riders who set their own pace.
+- In the read: in each race ask who is likely to lead, who is riding him, and whether he will be left alone. A top rider on a horse who can lead or sit handy, with no other pace in the race, can control the race and steal it from better-rated rivals. A question for each race, never a rule.
