@@ -37,3 +37,13 @@
 - 2026-10-27 · Wolverhampton 17:30 · Renascent · 6th · "headway when not clear run 1f out, kept on one pace"
 - 2026-10-27 · Wolverhampton 18:00 · Ridger · 2nd · "Slowly into stride, held up towards rear, headway going well ... no extra final 110 yards"
 - 2026-10-27 · Wolverhampton 20:00 · Ted Le Saux · 3rd · "Slowly into stride, towards rear ... stayed on well from over 1f out, never nearer"
+- 2026-10-28 · Nottingham 13:16 · Campenaerts · 2nd · "Dwelt and squeezed out start ... led over 1f out ... headed narrowly towards finish"
+- 2026-10-28 · Nottingham 13:16 · Run This Way · 3rd · "Dwelt ... ran on 1f out, went third close home, never nearer"
+- 2026-10-28 · Huntingdon 14:36 · Gallivanted · 2nd · "led approaching 2 out, bad mistake last, soon headed, rallied"
+- 2026-10-28 · Nottingham 14:16 · Centigrade · 8th · "Dwelt, mid-division and refused to settle ... found nil and eased" (13/8 favourite; a behaviour note, not an excuse)
+- 2026-10-28 · Kempton 16:15 · Insuspense · 2nd · "Slowly away ... ran on well ... just held final strides, did well under circumstance"
+- 2026-10-28 · Dundalk 17:00 · Rayastar · 4th · "Dwelt, towards rear ... kept on ... went 4th close home" (debut)
+- 2026-10-28 · Kempton 17:45 · Lady Margo · 4th · "Slowly away ... headway over 1f out, kept on" (debut, Gosdens, Oisin Murphy)
+- 2026-10-28 · Kempton 17:45 · Fifth Amendment · 3rd · "bit short of room briefly over 2f out ... kept on"
+- 2026-10-28 · Kempton 20:15 · Split Elevens · 2nd · "Dwelt, towards rear ... led inside final furlong, headed close home"
+- 2026-10-28 · Dundalk 16:00 · Battleforsupremacy · 11th · "keeping on when hampered over 150 yards out"

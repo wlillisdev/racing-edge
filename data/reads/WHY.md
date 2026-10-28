@@ -31,3 +31,25 @@
 - 2026-10-27 · Wolverhampton 19:00 · **Territorial Star** 11/4 · coming to hand, 3rd "closed well ... ran on"; "led inside final furlong, just prevailed" over my 7f horse at 6f. · *improver, trip*
 - 2026-10-27 · Wolverhampton 19:30 · **Fahidi** 5/2 · Balding and Oisin Murphy booked on poor figures (63-405), exchange favourite at 09:05; "found extra and ran on strongly to lead close home". · *top rider booked, the money*
 - 2026-10-27 · Wolverhampton 20:30 · **Cabeza De Llave** 11/4 · C&D 4th beaten for third on the post, rated 13lb lower than my pick, backed 6/1 → 11/4; "Held up behind leaders ... led inside final furlong". · *course specialist, low mark, the money*
+- 2026-10-28 · Nottingham 12:46 · **The Resdev Roman** 11/1 · the only soft-ground winner in the field (Ripon "eased close home"); "led narrowly 1f out ... just prevailed". · *going: proven on the ground*
+- 2026-10-28 · Nottingham 13:16 · **Vince L'Amour** 9/1 · an excuse last time ("hampered when every chance" on heavy at Pontefract); "led narrowly towards finish". · *trouble last time*
+- 2026-10-28 · Nottingham 13:46 · **Leo Phelps** 5/1 · 320,000gns half-brother to useful stayers, debut on soft over 1m; "led over 1f out ... readily". · *breeding, unexposed newcomer*
+- 2026-10-28 · Nottingham 14:16 · **Oolong Poobong** 7/1 · Class 1 4th at Redcar, Thirsk winner "led 2f out"; the favourite refused to settle. · *form at the level; weak favourite*
+- 2026-10-28 · Nottingham 15:46 · **Electrical** 9/1 · NOT IN THE FORM; 3yo with the weight-for-age in an amateur race, backed 20/1 → 9/1. · *the money (not in the form)*
+- 2026-10-28 · Huntingdon 13:06 · **Anytrixwilldo** 5/1 · front-runner left alone, "soon led ... kept on well"; the danger I named. · *pace: allowed his own lead*
+- 2026-10-28 · Huntingdon 13:36 · **What's Your Game** 22/1 · Listed-placed on the Flat, hurdling debut; beat my pick a short head. · *class from the Flat*
+- 2026-10-28 · Huntingdon 14:06 · **That's Nice** 10/3 · Henderson put up Harry Cobden; "led and a length clear last". · *the booking*
+- 2026-10-28 · Huntingdon 15:06 · **No Mean Feat** 12/1 · won off this mark at Fontwell after a wind op; "led narrowly before 3 out ... just held on". · *well handicapped, wind op*
+- 2026-10-28 · Newton Abbot 14:51 · **Paddockwood** 8/1 · French soft-ground winner, first-time hood, second wind op, backed; "led last, driven out". · *first-time headgear, wind op, the money*
+- 2026-10-28 · Newton Abbot 15:21 · **The Four Sixes** 3/1 · first-time hood on a front-runner "well handicapped back over fences"; the danger I named. · *first-time headgear, pace*
+- 2026-10-28 · Newton Abbot 15:51 · **Mask Of Zorro** 5/2 · four-time winner, "made all ... stayed on", Tizzard flying; the danger I named. · *in-form yard, pace*
+- 2026-10-28 · Dundalk 14:30 · **Leveraging** 5/1 · course winner who got his lead; my pick was friendless on the exchange. · *course specialist, pace*
+- 2026-10-28 · Dundalk 15:00 · **Little Miss Muffet** 12/1 · "bred to be smart", one run in June; beat the rated filly. · *breeding, unexposed*
+- 2026-10-28 · Dundalk 15:30 · **Tantardini** 5/2 · O'Brien, backed, drawn 1, "leave that effort behind"; the danger I named word for word. · *yard, the money, draw*
+- 2026-10-28 · Dundalk 16:00 · **Pocket Jacks** 6/1 · second run after a 4-month break, placed twice before. · *second run back*
+- 2026-10-28 · Dundalk 16:30 · **Roman Harry** 11/2 · C&D winner back at his course, beat my C&D pick a short head. · *course specialist*
+- 2026-10-28 · Kempton 16:15 · **Marianne Mozart** 9/2 · C&D 5th in a first-time hood "nearest at the finish", drawn 2; won by a nose. · *draw, improving C&D run*
+- 2026-10-28 · Kempton 17:15 · **Melodical** 7/1 · 3rd over C&D; my 4/11 pick had run 4 days earlier and was headed close home. · *quick turnaround beat the favourite*
+- 2026-10-28 · Kempton 18:45 · **Treasurer** 20/1 · class drop: a Class 1 runner and sales-race horse into a nursery, cheekpieces. · *class dropper*
+- 2026-10-28 · Kempton 19:15 · **Poor Relation** 17/2 · placed maiden, pressed the pace and led; the favourite raced too keenly. · *weak favourite*
+- 2026-10-28 · Kempton 20:15 · **Strong Voice** 9/2 · 5 stars, unlucky over C&D, drawn 4; the danger I named. · *draw, unlucky last time*
