@@ -31,7 +31,7 @@ Below the bar. Betfair SP: not available (BSP null in the 22:05 results file).
 
 **Foresight (27 Oct):** MY PICK 9 · IN MY CONTENDERS 12 · NOT SEEN 9. A weighing fault more than a reading fault: 21 of 30 winners were on my page.
 
-**Pace (27 Oct, a fact not a rule):** 25 of 30 winners raced on or near the pace; 1 came from the rear.
+**Pace (27 Oct, a fact not a rule):** 25 of 30 winners raced on or near the pace; 1 came from the rear. His NO, 28 Oct: pace differs race by race (distance, going, track bias); not to be weighted as a general lean.
 
 ## The three prongs (26 Oct only)
 
