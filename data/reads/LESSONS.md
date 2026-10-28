@@ -47,3 +47,9 @@ lessons enter the morning read. A NO stays here so it is never asked again.
 - His words: "Some jockeys are experts at dictating the pace of a race, and a good jockey can steal a race."
 - Incidents it explains (27 Oct): Wolverhampton 17:00 Show Me Glory, Oisin Murphy, "Always led, restrained in lead, ridden to assert over 2f out, soon in command". Wolverhampton 17:30 Boy Basilica, Billy Loughnane, "Led narrowly, gradually lengthened and stretched field 3f out ... pushed steadily clear". Both races were won from the front by riders who set their own pace.
 - In the read: in each race ask who is likely to lead, who is riding him, and whether he will be left alone. A top rider on a horse who can lead or sit handy, with no other pace in the race, can control the race and steal it from better-rated rivals. A question for each race, never a rule.
+
+## 2026-10-28 — YES (taught by him, follows the jockey lesson)
+
+- His words: "Also look at trainer jockey combos. But on all weather it is more important, as you can see the 2 jockeys you referred to are masters at it."
+- Incidents (27 Oct, Wolverhampton, from the snapshot and results): Oisin Murphy rode 4 — Show Me Glory (Balding) WON, Fahidi (Balding) WON, Ridger (Sangster) 2nd, Zeuster (Morrison) 2nd on debut. Billy Loughnane rode 4 — Boy Basilica (Richard Hughes) WON, Territorial Star (Rebecca Menzies) WON, Midnight's Dream (Parr) 2nd, Macanudo (Ian Williams) 2nd. Four winners and four seconds from eight rides; I picked against both Balding–Murphy winners.
+- In the read: look at who the trainer has put up, and whether the pair has a record together (the Racing API connector's get_trainer_jockey_analysis gives the pair's record; it costs nothing extra). On the all-weather weigh it more: the top AW riders (Murphy, Loughnane) control the pace and the race. A top rider booked by an in-form yard is a breadcrumb even when the figures are poor (Fahidi, form 63-405). A question for each race, never a rule.
