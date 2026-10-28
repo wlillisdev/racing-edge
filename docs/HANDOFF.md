@@ -1,7 +1,13 @@
 # HANDOFF — the apprenticeship's living memory
 
-Last updated: **2026-10-27** (PROJECT REFRESH, plus the pre-off market check — see CLAUDE.md)
+Last updated: **2026-10-28** (PROJECT REFRESH, the pre-off market check, the breadcrumb line — see CLAUDE.md)
 (update this file whenever state changes — it is how every new chat remembers everything).
+
+## 2026-10-28 (small hours) — THE BREADCRUMB LINE. READ THIS FIRST.
+
+Day one of Refresh (27 Oct): 9 from 30, +0.49, against the favourites' 13 from 30, +8.33. 21 of 30 winners were my pick or in my contenders: a weighing fault. In at least eight races my own HOW HE LOSES named the winner. Nine picks finished 2nd.
+His verdict: "you knew all these breadcrumbs, and time and time again you don't use them." The routine told the read to put the rulebook aside before each race; that line is gone. Now every contender carries THE BREADCRUMB LINE (docs/ROUTINES.md step 4), built item by item from his words that night: C&D · trip · going · class · form figures · days since last run · last run (the comment) · headgear and wind op · weight and mark · jockey and trainer (form, the pair, THE BOOKING: "Oisin Murphy on a dreary night in Wolverhampton is not going there for the fun") · pace (the jockey who dictates it; read per race, his NO to any general lean to front-runners) · draw (on the all-weather) · the money. Every runner's comments are read whatever the price. The night grade names THE UNUSED BREADCRUMB on every loss and runs THE 50/50 on every second.
+All of it is in data/reads/LESSONS.md (27-28 Oct, his words) and the pre-off check (11:21) is live. Questions, never gates: if the line ever becomes a rule-out, it has failed.
 
 ## 2026-10-27 (night) — THE PRE-OFF MARKET CHECK. READ THIS FIRST.
 
