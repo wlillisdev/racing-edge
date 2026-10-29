@@ -15,13 +15,13 @@ After every marked exam, tag the computable faults per race:
 
 Faults accumulate in data/school/faults.csv. When a fault's lifetime
 count crosses 3, the auditor APPENDS a numbered correction to
-docs/SCHOOL_BRIEF.md (version bump, earlier text never edited) and,
+docs/archive/SCHOOL_BRIEF.md (version bump, earlier text never edited) and,
 where a mechanical counter-policy exists, adds it to policies.txt so
 the night grind starts grading the fix the same night.
 
 Usage: PYTHONPATH=src python -m racing_edge.school.audit
          --picks data/school/picks/DAY.csv --key data/school/keys/DAY.csv
-         [--raw data/school/raw] [--brief docs/SCHOOL_BRIEF.md]
+         [--raw data/school/raw] [--brief docs/archive/SCHOOL_BRIEF.md]
          [--school data/school]
 """
 from __future__ import annotations
@@ -155,7 +155,7 @@ def main(argv=None):
     ap.add_argument("--picks", required=True)
     ap.add_argument("--key", required=True)
     ap.add_argument("--raw", default="data/school/raw")
-    ap.add_argument("--brief", default="docs/SCHOOL_BRIEF.md")
+    ap.add_argument("--brief", default="docs/archive/SCHOOL_BRIEF.md")
     ap.add_argument("--school", default="data/school")
     a = ap.parse_args(argv)
     day = Path(a.picks).stem

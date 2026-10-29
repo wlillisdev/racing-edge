@@ -671,7 +671,7 @@ def test_the_box_pushes_whatever_it_rewrites() -> None:
     if not tracked:
         pytest.skip("no git here")
     sh = Path("trial.sh").read_text()
-    for f in ("data/record.csv", "docs/THE_RECORD.md", "data/filter_record.csv"):
+    for f in ("data/record.csv", "docs/archive/THE_RECORD.md", "data/filter_record.csv"):
         if f in tracked:
             assert f in sh, (
                 f"{f} is tracked and the box rewrites it, but trial.sh never "
@@ -686,7 +686,7 @@ def test_the_nightly_hindsight_steps_are_off_by_default() -> None:
     only paid steps in the night run and all three read races AFTER the result
     is known. The lens they produced -- back the favourite whose last run says
     it stayed on -- went +13.4% on the half it was fitted to and -10.0% on the
-    half it had never seen (docs/COMMENTS_TEST.md).
+    half it had never seen (docs/archive/COMMENTS_TEST.md).
 
     They are switched off, not deleted: LEARN=1 restores all three. This test
     fails if any of them creeps back into the default path, and if the free
