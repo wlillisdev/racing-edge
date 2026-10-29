@@ -1,4 +1,4 @@
-"""The full-field archive behind docs/RULEBOOK_TEST.md (2026-09-27).
+"""The full-field archive behind docs/archive/RULEBOOK_TEST.md (2026-09-27).
 
 The first rulebook test ran on a corpus with no draw, weight, mark or going,
 and on 185 scattered days, so half his rules could not be tested and the

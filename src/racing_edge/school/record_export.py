@@ -36,7 +36,7 @@ re-running, never by editing. The record itself is still never edited
 Usage:
     PYTHONPATH=src python -m racing_edge.school.record_export
     PYTHONPATH=src python -m racing_edge.school.record_export --db data/nap.db \
-        --csv data/record.csv --md docs/THE_RECORD.md
+        --csv data/record.csv --md docs/archive/THE_RECORD.md
 """
 from __future__ import annotations
 
@@ -48,7 +48,7 @@ from pathlib import Path
 
 DB = Path("data/nap.db")
 CSV_OUT = Path("data/record.csv")
-MD_OUT = Path("docs/THE_RECORD.md")
+MD_OUT = Path("docs/archive/THE_RECORD.md")
 
 # The first morning under the rebuilt read, mirrored from study.naplog.V2_FROM.
 # Kept as a literal so the export can run against a copied db with no import.

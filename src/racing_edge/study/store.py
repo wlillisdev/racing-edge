@@ -5,7 +5,7 @@ This persists them so the notebook's rules can be tested against a growing body 
 real results ("how often did the 2nd/3rd fav win over 500 races?", "which manner
 preceded our losses?"). One small SQLite table, same pattern as the picks ledger.
 
-The qualitative RULES stay in docs/handicapping_notebook.md — a rulebook to read,
+The qualitative RULES stay in docs/archive/handicapping_notebook.md — a rulebook to read,
 not a query target. This stores the STUDY DATA the rules are tested against.
 """
 

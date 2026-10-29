@@ -1,8 +1,19 @@
 # racing_edge — Architecture
 
+> **PROJECT REFRESH (from 27 Oct 2026): the engine described below is
+> retired.** The PythonAnywhere scheduled flows (07:30 nap, 09:30 health,
+> 12:30 guard, 22:00 night), `data/nap.db`, the method docs it names
+> (HANDICAPPING_METHOD.md, docs/archive/IMPROVEMENT_PROTOCOL.md, docs/archive/handicapping_notebook.md)
+> and the engine lenses no longer pick or grade anything; the box has been
+> silent since 15 Oct. The live loop is docs/LEARNING.md and
+> docs/ROUTINES.md: scheduled Claude tasks read the form by hand and bank
+> to `data/reads/` on the `reads` branch; the only code in the loop is
+> `racing_edge.cli.marketcheck`. The code below still runs in CI and its
+> tests stay green; read this file only when touching that code.
+
 The one-page map. For the betting method itself read `HANDICAPPING_METHOD.md`
-and `docs/handicapping_notebook.md`; for how changes are allowed to happen read
-`docs/IMPROVEMENT_PROTOCOL.md`. This file is the ENGINEERING contract — any
+and `docs/archive/handicapping_notebook.md`; for how changes are allowed to happen read
+`docs/archive/IMPROVEMENT_PROTOCOL.md`. This file is the ENGINEERING contract — any
 session (human or AI) touching the code reads this first.
 
 ## Core beliefs (never break these)
@@ -16,7 +27,7 @@ session (human or AI) touching the code reads this first.
 4. **Fail loudly.** A part that dies must say so — named exception, red line
    in health, crash email. Silent failure is the one unforgivable bug.
 5. **Change by the ladder.** Every behavioural change carries a REVERT-IF, a
-   measurement, and an escape hatch (`docs/IMPROVEMENT_PROTOCOL.md`).
+   measurement, and an escape hatch (`docs/archive/IMPROVEMENT_PROTOCOL.md`).
 6. **Lean.** Costs are real money. No speculative features, no agent fleets,
    no dependency creep.
 
@@ -110,7 +121,7 @@ honest one — "nothing" is a finding, not a formatting choice.
 | 12 | learn (night study) | `cli/learn.py` | 22:00 UTC after settle | `data/nuances.db` (nuances, tracked clues, rule tally) | health "self-study flowing", "rule scoreboard" |
 | 13 | night school | `school/night.py` → `school/fetch.py` (results corpus) → `school/daily.py` (policies) → `school/ladder.py` (verdict) | 22:00 UTC (best-effort) | `data/school/raw/<day>.csv`, `data/school/daily_policy.csv` | health "school ladder" (only when SCHOOL_CHAMPION set) |
 | 14 | tier-0 (every runner v the market) | `school/tier0.py` (this audit) | 22:00 UTC after night school (best-effort) | `data/school/tier0.md` | health line (this audit) |
-| 15 | shape book | `school/shapebook.py` (`build` at import of glance; `main` regenerates the doc) | on demand (`python -m racing_edge.school.shapebook`) | `docs/SHAPE_BOOK.md` + in-process cells | nothing — the doc can drift from the corpus; regenerate after each settled stretch |
+| 15 | shape book | `school/shapebook.py` (`build` at import of glance; `main` regenerates the doc) | on demand (`python -m racing_edge.school.shapebook`) | `docs/archive/SHAPE_BOOK.md` + in-process cells | nothing — the doc can drift from the corpus; regenerate after each settled stretch |
 | 16 | the master's rulings | `study/rulings.py` (this audit) | the hour a ruling is given (chat → `add`) | `data/rulings.csv` (text, git-tracked) | health "rulings never consulted" (this audit) |
 | 17 | the apprentice's duty | Claude session, trigger `morning-duty-daily-pick` | 07:35 UTC | `data/school/picks/duty-<day>.csv` (git) | the master's eye; the Sunday grading |
 | 18 | tests / CI | `.github/workflows/tests.yml` | every push | red/green on the branch page | the box pulls regardless of colour ("push red, race red") |

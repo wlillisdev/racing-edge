@@ -9,7 +9,7 @@ name: watchdog
 on:
   schedule:
     - cron: "15 11 * * *"   # after the 09:41 UK morning read
-    - cron: "45 23 * * *"   # after the 21:30 UK night grade
+    - cron: "45 23 * * *"   # after the 22:31 UK night grade
   workflow_dispatch:
 jobs:
   check:

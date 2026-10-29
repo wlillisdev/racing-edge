@@ -113,7 +113,7 @@ case "${1:-nap}" in
   # that grades the work could not read the thing that judges it, and every
   # strike rate quoted came from a summary or from memory. The settle now
   # exports OUR OWN picks and their SPs (never a card, never a runner we did
-  # not back) to data/record.csv + docs/THE_RECORD.md. Derived and rewritten
+  # not back) to data/record.csv + docs/archive/THE_RECORD.md. Derived and rewritten
   # each run: nap.db stays the source of truth, this is only a readable copy.
   # It runs AFTER the settle so it sees tonight's result, and `|| true` keeps
   # a broken export from ever failing the settle that matters.
@@ -217,7 +217,7 @@ case "${1:-nap}" in
            # the whole export exists to cure. Each case now says which it is,
            # and a real failure mails.
            _rec_push() {
-             git add data/record.csv docs/THE_RECORD.md 2>/dev/null || {
+             git add data/record.csv docs/archive/THE_RECORD.md 2>/dev/null || {
                echo "RECORD: git add failed"; return 1; }
              if [ -f data/filter_record.csv ]; then
                git add data/filter_record.csv || {

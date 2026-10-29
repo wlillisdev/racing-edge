@@ -28,7 +28,7 @@ drift-tolerant band or a pre-off re-glance is the fix; until then the vote is
 an approximation and the decline gate stays the backstop.
 
 Usage: PYTHONPATH=src python -m racing_edge.school.shapebook \
-           [--raw data/school/raw] [--out docs/SHAPE_BOOK.md] [--min-n 30]
+           [--raw data/school/raw] [--out docs/archive/SHAPE_BOOK.md] [--min-n 30]
 """
 
 from __future__ import annotations
@@ -166,7 +166,7 @@ def render(cells: dict, raw: Path, min_n: int) -> str:
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--raw", default="data/school/raw")
-    ap.add_argument("--out", default="docs/SHAPE_BOOK.md")
+    ap.add_argument("--out", default="docs/archive/SHAPE_BOOK.md")
     ap.add_argument("--min-n", type=int, default=30)
     a = ap.parse_args()
     cells = build(Path(a.raw), a.min_n)
