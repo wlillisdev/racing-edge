@@ -104,3 +104,9 @@ lessons enter the morning read. A NO stays here so it is never asked again.
 - His words: "This is quite important, to find patterns of bad favourites. You will also see patterns in the way bookmakers price the market."
 - The first count (27–28 Oct, backfilled): 42 beaten favourites, 30 of them my own picks. Warnings that recurred: a long absence, the habitual runner-up, keenness, the front-runner who has been caught before, odds-on after one run.
 - In the read: a favourite is weighed like any runner, and his price is a question too: why has the market made him favourite, and does the form back it? Read how he is priced: the bookmakers' forecast against Betfair, how far clear of the next in the betting, the morning price against the SP. Over the nights, the folder shows how a bad favourite is priced as well as how he runs. Patterns, never a rule against favourites.
+
+## 2026-10-29 — YES (his word: each way on the bigger prices)
+
+- His words: "Some horses are larger prices. We need to put some type of measure against these: you fancy him on form for whatever reason, obviously the market thinks he has a small chance. We need to look at this from the view of each-way bandits, gems hidden in the long grass. Calculated bets: each way at 8/1, if he places we will be fine."
+- In the read: a pick at 8/1 or bigger is banked EACH WAY, with one line on what the form shows that the market is missing (the gem in the long grass). It is still the pick to win; each way is how a big price is measured. The night grade settles it each way at bookmaker SP on standard each-way terms, and TALLY keeps the each-way record beside the win record.
+- Today (29 Oct), banked before his word reached the routine, the picks at 8/1 or bigger: Equion 10/1, Red Snapper 10/1, Pocket Jacks 12/1, Valiant Soldier 8/1. Graded each way tonight as well as to win.
