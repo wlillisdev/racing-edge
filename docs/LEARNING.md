@@ -50,6 +50,7 @@ the scheduled tasks (docs/ROUTINES.md) run it every day.
 | `data/reads/snapshots/<day>/` | morning (racing_api.json, sportinglife.json); night (results.json) | the night grade | the form exactly as it stood at the pick, and the result |
 | `data/reads/<day>.md` | morning (picks and notes); night (graded, appended) | the night grade; the last 7 days by every morning read | every race: type, contenders, pick, how he wins and loses; then the two-line autopsy |
 | `data/reads/WHY.md` | night | every morning read (last 14 days) | why each winner won, with a reason type: the hindsight, kept so it becomes foresight |
+| `data/reads/why-favourites-lost/<day>.md` | night | every morning read (last 14 days); Sunday review | every beaten favourite: why he lost, his comment quoted, and the warning in the morning snapshot or NOT IN THE FORM (his word, 29 Oct) |
 | `data/reads/LESSONS.md` | night (one at most, as a question); his answers when he gives them | every morning read | the lesson ledger: ASKED, then YES or NO in his words |
 | `data/reads/TALLY.md` | night | Sunday review | strike rate and £1 P&L, by READABLE or NOT and race type; the foresight split |
 | `data/reads/NOTEBOOK.md` | night | the morning read, as facts | horses that ran better than their finishing position, comment quoted |

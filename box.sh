@@ -33,7 +33,7 @@ if [ -z "${PY:-}" ]; then
 fi
 PY="${PY:-python3}"
 STATE=box-state
-FILES="data/nap.db data/filter_record.csv data/record.csv docs/THE_RECORD.md data/market_snapshots"
+FILES="data/nap.db data/filter_record.csv data/record.csv docs/archive/THE_RECORD.md data/market_snapshots"
 
 "$PY" -m pip install -q -r requirements.txt >/dev/null 2>&1 || true
 

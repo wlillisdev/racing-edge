@@ -3,7 +3,7 @@
 The master, 2026-09-07: "there has to be a better way of making the final
 call... learn and improve." Three tie-breaks were invented from good weeks in
 a fortnight and all three were wrong. The counting study of the same night
-(docs/FINAL_CALL_2026-09-07.md) ranked every tie-break the CORPUS can see and
+(docs/archive/FINAL_CALL_2026-09-07.md) ranked every tie-break the CORPUS can see and
 found none that beats the market — while naming the one lens it could not
 see: MANNER OF RUNNING, which the six-week synthesis says has been winning
 consistently. The comments live behind the results door, and this module is
@@ -11,7 +11,7 @@ how we get at them: rebuild a past race as a RACECARD, push it through the
 real engine, and score what each candidate final call would have done.
 
 MEASUREMENT ONLY. Nothing here picks, banks, emails or changes a rule. It
-imports no model. The plan it follows is docs/plans/backward_replay.md.
+imports no model. The plan it follows is docs/archive/plans/backward_replay.md.
 
 Design rule (plan §2): build a RACECARD-SHAPED dict and hand it to the
 existing normaliser. ONE home for normalisation — this module never builds a
