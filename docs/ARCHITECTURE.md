@@ -1,5 +1,16 @@
 # racing_edge — Architecture
 
+> **PROJECT REFRESH (from 27 Oct 2026): the engine described below is
+> retired.** The PythonAnywhere scheduled flows (07:30 nap, 09:30 health,
+> 12:30 guard, 22:00 night), `data/nap.db`, the method docs it names
+> (HANDICAPPING_METHOD.md, IMPROVEMENT_PROTOCOL.md, handicapping_notebook.md)
+> and the engine lenses no longer pick or grade anything; the box has been
+> silent since 15 Oct. The live loop is docs/LEARNING.md and
+> docs/ROUTINES.md: scheduled Claude tasks read the form by hand and bank
+> to `data/reads/` on the `reads` branch; the only code in the loop is
+> `racing_edge.cli.marketcheck`. The code below still runs in CI and its
+> tests stay green; read this file only when touching that code.
+
 The one-page map. For the betting method itself read `HANDICAPPING_METHOD.md`
 and `docs/handicapping_notebook.md`; for how changes are allowed to happen read
 `docs/IMPROVEMENT_PROTOCOL.md`. This file is the ENGINEERING contract — any
