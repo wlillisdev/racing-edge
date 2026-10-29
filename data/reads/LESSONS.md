@@ -98,3 +98,9 @@ lessons enter the morning read. A NO stays here so it is never asked again.
 - His words: "We had so many attempts at trying to make this work, there were bound to be conflicting ideas. I lost patience and tried different ideas to see if I could get you to work, but you kept overruling them and making your own rules."
 - THE SCAR: the conflicts in the core documents were not his. They were mine: his ideas overruled by my own rules, thresholds and machinery, then written down as if they were his.
 - In the read: his words are applied as he said them, no wider and no narrower. Never turn one of his breadcrumbs into a gate, a number or a rule he did not say. Never set his word aside for a rule of my own. Where my notes and his words disagree, his words win.
+
+## 2026-10-29 — YES (his word, on the why-favourites-lost folder)
+
+- His words: "This is quite important, to find patterns of bad favourites. You will also see patterns in the way bookmakers price the market."
+- The first count (27–28 Oct, backfilled): 42 beaten favourites, 30 of them my own picks. Warnings that recurred: a long absence, the habitual runner-up, keenness, the front-runner who has been caught before, odds-on after one run.
+- In the read: a favourite is weighed like any runner, and his price is a question too: why has the market made him favourite, and does the form back it? Read how he is priced: the bookmakers' forecast against Betfair, how far clear of the next in the betting, the morning price against the SP. Over the nights, the folder shows how a bad favourite is priced as well as how he runs. Patterns, never a rule against favourites.
