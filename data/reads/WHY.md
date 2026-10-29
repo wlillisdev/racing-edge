@@ -53,3 +53,28 @@
 - 2026-10-28 · Kempton 18:45 · **Treasurer** 20/1 · class drop: a Class 1 runner and sales-race horse into a nursery, cheekpieces. · *class dropper*
 - 2026-10-28 · Kempton 19:15 · **Poor Relation** 17/2 · placed maiden, pressed the pace and led; the favourite raced too keenly. · *weak favourite*
 - 2026-10-28 · Kempton 20:15 · **Strong Voice** 9/2 · 5 stars, unlucky over C&D, drawn 4; the danger I named. · *draw, unlucky last time*
+- 2026-10-29 · Bath 12:42 · **Roos Racing Rocket** 11/1 · 95,000gns newcomer, half-brother to two useful 2yo winners, drawn 1; "soon led ... three lengths clear" over my 8/15 one-run filly on soft. · *unexposed newcomer, breeding, draw*
+- 2026-10-29 · Bath 14:12 · **Look Back Smiling** 13/2 · slow starter back in cheekpieces off a falling mark, backed 10/1 → 13/2; "ran on strongly to lead 1f out". · *headgear back, well handicapped, the money*
+- 2026-10-29 · Bath 14:42 · **Newtown Duke** 6/1 · "worth treating as if still in form" after racing close to a solid gallop; backed 16/1 → 6/1 while my nap drifted; "stayed on well to lead". · *excuse last time, the money*
+- 2026-10-29 · Bath 15:12 · **Kiss And Run** 3/1 · heavy-ground winner, "return to more testing conditions promises to be in her favour"; "led over 1f out, stayed on gamely". The danger I named. · *going: proven in the mud*
+- 2026-10-29 · Bath 15:42 · **Rinky Tinky Tinky** 9/1 · two C&D wins in September, back up from a bare 5f; "led over 1f out, stayed on gamely". · *course specialist, trip*
+- 2026-10-29 · Bath 16:12 · **Connie's Rose** 20/1 · C&D and heavy-ground winner who leads; "always led, fast away" from stall 17. · *course specialist, going, pace*
+- 2026-10-29 · Ffos Las 13:30 · **Walk Of Faith** 15/2 · €120,000 half-brother to Minella Cocooner, O'Neill 6/26, 742 days off; "led final strides" over my pick by a neck. · *breeding, yard*
+- 2026-10-29 · Ffos Las 14:00 · **Headofthevalley** 9/2 · Minella Indo family, "bred to need time and distance", on heavy; backed 13/2 → 9/2; "won going away". · *stamina breeding, the money*
+- 2026-10-29 · Ffos Las 15:00 · **Lully Du Houx** 13/2 · "shaped as if in need of the run on reappearance", 2lb lower; "led again 2 out ... always doing enough" over my nap. · *second run back*
+- 2026-10-29 · Ffos Las 16:00 · **Doctor Kildare** 3/1 · staying-handicap winner in visor and tongue tie, first-time cheekpieces; "won going away". · *first-time headgear, trip*
+- 2026-10-29 · Ffos Las 16:30 · **Toothless** 10/1 · chase winner, twice 2nd since, wind op, against my chasing debutant; the bookmakers' favourite the exchange ignored; "readily". The danger I named. · *class, chase experience*
+- 2026-10-29 · Stratford 14:50 · **Churchman** 5/1 · placed in 4 of his last 5, "form reads well in the context of this race", 5 stars; beat my no-form plot. · *form over a plot*
+- 2026-10-29 · Stratford 15:50 · **One Last Glance** 5/1 · Leicester winner and 2nd since; my pick's jumping let him down. · *form, jumping*
+- 2026-10-29 · Punchestown 13:05 · **Petticoat Bay** 10/3 · O'Brien, "bred to be smart", second run; "rallied ... edged ahead" over my rated maiden. The danger I named. · *young improver from a top yard*
+- 2026-10-29 · Punchestown 13:35 · **Lady Mary Heath** 10/3 · 5th "nearest finish" after trouble at the Curragh; backed from 13.0; "rapid headway ... led over 100 yards out". The danger I named. · *trouble last time, the money*
+- 2026-10-29 · Punchestown 14:05 · **Imposing** 7/2 · O'Brien, 2nd from the front at Leopardstown, second run, claim; "asserted under 2f out". The danger I named. · *young improver from a top yard*
+- 2026-10-29 · Punchestown 14:35 · **Margot Mae** 11/4 · cheekpieces, "a much easier assignment"; "broke well and led". The danger I named. · *headgear, drop in grade*
+- 2026-10-29 · Punchestown 15:05 · **Celestial Siren** 5/1 · "almost certainly needed it" 8 days earlier after a year off; beat my 4/5 maiden-after-five. · *second run back*
+- 2026-10-29 · Punchestown 15:35 · **Tai Tam Bay** 13/2 · blinkers, second run after 5 months, "shaped as if better for the run ... a danger to all"; "made virtually all" over my nap. The danger I named. · *second run back, headgear*
+- 2026-10-29 · Punchestown 16:05 · **Buttermere Ridge** 11/2 · cheekpieces back, in the frame twice, backed 13 → 9.3; "led 1½f out, asserted". · *headgear, form, the money*
+- 2026-10-29 · Southwell 18:00 · **Edmond Halley** 15/8 · change of headgear, won 5 days earlier, made all again "cosily" over my nap. The danger I named. · *headgear, pace, in form*
+- 2026-10-29 · Southwell 19:00 · **Asuka** 7/2 · three wins from four, placed in stronger races; won from stall 14. The danger I named. · *class over the draw*
+- 2026-10-29 · Southwell 19:30 · **Fram Castle** 5/1 · beaten 3 lengths by my pick last week, now without the penalty difference; "led towards finish". The danger I named. · *weight*
+- 2026-10-29 · Southwell 20:00 · **Fanciulla Del West** 10/1 · keen filly in a first-time hood, Ed Walker; "led towards finish". · *first-time headgear*
+- 2026-10-29 · Southwell 20:30 · **Chambers** 8/1 · 1m6f winner "stretched" by 2m, down to 1m3f, drawn 1, made all. · *trip, draw, pace*

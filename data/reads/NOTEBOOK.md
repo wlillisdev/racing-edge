@@ -47,3 +47,14 @@
 - 2026-10-28 · Kempton 17:45 · Fifth Amendment · 3rd · "bit short of room briefly over 2f out ... kept on"
 - 2026-10-28 · Kempton 20:15 · Split Elevens · 2nd · "Dwelt, towards rear ... led inside final furlong, headed close home"
 - 2026-10-28 · Dundalk 16:00 · Battleforsupremacy · 11th · "keeping on when hampered over 150 yards out"
+- 2026-10-29 · Bath 15:12 · Pedros Dream · 3rd · "Steadied start, switched right, towards rear ... not clear run over 1f out, stayed on well final furlong, never nearer"
+- 2026-10-29 · Bath 15:42 · Up The Anti · 2nd, beaten a head · "Steadied start, towards rear, headway going well 2f out ... ran on well, not reach winner"
+- 2026-10-29 · Bath 16:12 · Red Snapper · 14th · "Went left and bumped rival start, always towards rear" (the start ended it)
+- 2026-10-29 · Punchestown 13:05 · San Juan De Lope · 2nd on debut, beaten a neck · "Dwelt ... led 2f out ... ran green when edged left 1f out ... headed close home"
+- 2026-10-29 · Punchestown 13:35 · Sylkie · 2nd · "Dwelt slightly ... headway when not clear run over 1f out ... kept on well final 150 yards"
+- 2026-10-29 · Punchestown 16:05 · Miss Americana · 2nd · "not clear run and switched left over 1f out ... kept on into 2nd closing stages"
+- 2026-10-29 · Southwell 19:00 · Yorkshire · 2nd, beaten a short head · "kept on to press leader strongly inside final furlong, just denied"
+- 2026-10-29 · Southwell 19:30 · Beaune · 6th · "not clear run over 1f out, switched left and ran on inside final furlong"
+- 2026-10-29 · Stratford 14:50 · Finjimk · 2nd, beaten a short head at 25/1 · "bit short of room last, switched right flat, ran on ... just held"
+- 2026-10-29 · Stratford 16:20 · Ignite The Night · 3rd on debut · "a bit short of room over 2f out ... stayed on ... should do better"
+- 2026-10-29 · Stratford 15:50 · Moor End · 3rd · "not fluent 3rd, not fluent and rider lost iron briefly 6th ... not fluent 3 out" (jumping cost him)

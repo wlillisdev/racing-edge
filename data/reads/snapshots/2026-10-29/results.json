@@ -1,0 +1,7132 @@
+{
+"day": "2026-10-29",
+"source": "sportinglife result pages; Betfair 09:05 morning and near-off/hourly close from the odds branch; BSP null in the 22:05 results file",
+"races": [
+{
+"course": "Ffos Las",
+"time": "13:30",
+"sl_id": 945945,
+"going": "Heavy (Soft in places)",
+"placed": 3,
+"rides": [
+{
+"pos": 1,
+"horse": "Walk Of Faith",
+"btn": null,
+"sp": "15/2",
+"fav": false,
+"hist": [
+"9/1",
+"10/1",
+"9/1",
+"17/2",
+"9/1",
+"17/2"
+],
+"comment": "In touch with leaders, came near side before 3 out, pushed along and disputed lead 2 out, ridden before last, stayed on gamely run-in, led final strides",
+"status": "RUNNER"
+},
+{
+"pos": 2,
+"horse": "Arcadian Star",
+"btn": "nk",
+"sp": "5/2",
+"fav": true,
+"hist": [
+"5/2",
+"9/4",
+"2/1",
+"9/4"
+],
+"comment": "Prominent, chased leaders 3 out, every chance 2 out, ridden to dispute lead last, all out towards finish, headed final stride",
+"status": "RUNNER"
+},
+{
+"pos": 3,
+"horse": "Justalargewhisky",
+"btn": "nk",
+"sp": "6/1",
+"fav": false,
+"hist": [
+"5/1",
+"11/2",
+"5/1",
+"11/2"
+],
+"comment": "In touch with leaders, dropped to midfield 3rd, closed on leaders before 3 out, pushed along to disputed led before 2 out, ridden and every chance but mistake last, stayed on, no extra towards finish",
+"status": "RUNNER"
+},
+{
+"pos": 4,
+"horse": "The Final Word",
+"btn": "8 \u00bd",
+"sp": "9/2",
+"fav": false,
+"hist": [
+"5/1",
+"11/2",
+"6/1",
+"13/2",
+"6/1",
+"11/2",
+"5/1"
+],
+"comment": "Led, set sedate pace, joined 3 out, pushed along and headed 2 out, tired jump last, weakened run-in",
+"status": "RUNNER"
+},
+{
+"pos": 5,
+"horse": "Feel No Fear",
+"btn": "nk",
+"sp": "5/1",
+"fav": false,
+"hist": [
+"6/1",
+"11/2",
+"6/1",
+"11/2",
+"6/1",
+"6/1"
+],
+"comment": "Towards rear, closed on leaders 3 out, pushed along and switched left 2 out, outpaced and landed awkwardly last, weakened run-in",
+"status": "RUNNER"
+},
+{
+"pos": 6,
+"horse": "Baile An Or",
+"btn": "11",
+"sp": "5/1",
+"fav": false,
+"hist": [
+"4/1",
+"9/2",
+"4/1",
+"9/2",
+"4/1",
+"9/2"
+],
+"comment": "In touch with leaders, outpaced after 4 out, weakened before 2 out",
+"status": "RUNNER"
+},
+{
+"pos": 0,
+"horse": "Barrow Hill Lad",
+"btn": null,
+"sp": "25/1",
+"fav": false,
+"hist": [
+"16/1",
+"18/1",
+"22/1"
+],
+"comment": "Wore hood to start, midfield, some headway 3rd, outpaced after 4 out, tailed off after 3 out, pulled up before 2 out",
+"status": "RUNNER"
+},
+{
+"pos": 0,
+"horse": "Common People",
+"btn": null,
+"sp": "66/1",
+"fav": false,
+"hist": [
+"33/1",
+"28/1",
+"40/1",
+"50/1"
+],
+"comment": "Towards rear, mistake 4th, tailed off from 4 out, pulled up before 3 out",
+"status": "RUNNER"
+},
+{
+"pos": 0,
+"horse": "Jpr Two",
+"btn": null,
+"sp": "25/1",
+"fav": false,
+"hist": [],
+"comment": "NonRunner",
+"status": "NONRUNNER"
+},
+{
+"pos": 0,
+"horse": "Lucky Bailly",
+"btn": null,
+"sp": "14/1",
+"fav": false,
+"hist": [
+"18/1",
+"20/1",
+"22/1",
+"20/1",
+"18/1",
+"16/1"
+],
+"comment": "In touch with leaders, outpaced 3 out, weakened quickly and pulled up before 2 out",
+"status": "RUNNER"
+},
+{
+"pos": 0,
+"horse": "Royalty Row'd",
+"btn": null,
+"sp": "20/1",
+"fav": false,
+"hist": [],
+"comment": "NonRunner",
+"status": "NONRUNNER"
+},
+{
+"pos": 0,
+"horse": "Ignite The Spark",
+"btn": null,
+"sp": "200/1",
+"fav": false,
+"hist": [
+"125/1",
+"150/1",
+"125/1",
+"150/1"
+],
+"comment": "In rear, lost touch 4th, pulled up before 3 out",
+"status": "RUNNER"
+},
+{
+"pos": 0,
+"horse": "Some Buck",
+"btn": null,
+"sp": "40/1",
+"fav": false,
+"hist": [
+"25/1",
+"33/1",
+"28/1",
+"33/1"
+],
+"comment": "Towards rear, tailed off after 4 out, pulled up before 3 out",
+"status": "RUNNER"
+}
+],
+"pick": {
+"morning": [
+"Arcadian Star",
+2,
+"5/2"
+],
+"final": [
+"Arcadian Star",
+2,
+"5/2"
+]
+},
+"pick_betfair": {
+"Arcadian Star": {
+"morning_0905": 3.7,
+"close": 3.45,
+"close_polled": "13:25",
+"mins_to_off": 4.7
+}
+}
+},
+{
+"course": "Ffos Las",
+"time": "14:00",
+"sl_id": 945946,
+"going": "Heavy (Soft in places)",
+"placed": 3,
+"rides": [
+{
+"pos": 1,
+"horse": "Headofthevalley",
+"btn": null,
+"sp": "9/2",
+"fav": false,
+"hist": [
+"13/2",
+"6/1",
+"11/2",
+"5/1"
+],
+"comment": "Prominent, headway and led before 2nd, went four lengths clear before 3rd, pushed along after 3 out, headed after 2 out, rallied and regained lead last, ran on well, won going away",
+"status": "RUNNER"
+},
+{
+"pos": 2,
+"horse": "Passage Guenot",
+"btn": "2 \u00bc",
+"sp": "9/4",
+"fav": true,
+"hist": [
+"2/1",
+"15/8",
+"2/1",
+"9/4",
+"5/2",
+"9/4",
+"5/2"
+],
+"comment": "Midfield, headway from 3 out, every chance 2 out, chased leading pair before 2 out, not fluent last, soon recovered and took second, no extra towards finish",
+"status": "RUNNER"
+},
+{
+"pos": 3,
+"horse": "Valiant Soldier",
+"btn": "1 \u00bc",
+"sp": "11/2",
+"fav": false,
+"hist": [
+"9/2",
+"5/1",
+"11/2",
+"5/1"
+],
+"comment": "Rear of midfield, some headway 3 out, tracked leaders 2 out, outpaced before last, rallied run-in, stayed on and took third towards finish",
+"status": "RUNNER"
+},
+{
+"pos": 4,
+"horse": "Kimai",
+"btn": "\u00be",
+"sp": "11/4",
+"fav": false,
+"hist": [
+"10/3",
+"3/1",
+"11/4",
+"5/2",
+"9/4",
+"5/2",
+"11/4",
+"5/2",
+"11/4",
+"3/1",
+"11/4",
+"5/2"
+],
+"comment": "In touch with leaders, soon raced in third, pushed along and every chance 2 out, briefly led before last, headed last, weakened to fourth run-in",
+"status": "RUNNER"
+},
+{
+"pos": 5,
+"horse": "Akrramm",
+"btn": "\u00bd",
+"sp": "100/1",
+"fav": false,
+"hist": [
+"50/1",
+"66/1",
+"80/1",
+"100/1",
+"80/1",
+"100/1",
+"80/1",
+"100/1",
+"80/1",
+"100/1",
+"125/1",
+"100/1",
+"125/1"
+],
+"comment": "Towards rear, detached from main group 3 out, rallied and some headway before 2 out, ridden before last, chased leading trio run-in, weakened and lost one place towards finish",
+"status": "RUNNER"
+},
+{
+"pos": 6,
+"horse": "Elusive Pb",
+"btn": "10",
+"sp": "9/2",
+"fav": false,
+"hist": [
+"5/1",
+"9/2",
+"5/1"
+],
+"comment": "Held up in rear, outpaced from 3 out, weakened after 2 out",
+"status": "RUNNER"
+},
+{
+"pos": 7,
+"horse": "Mr Winter",
+"btn": "sh",
+"sp": "18/1",
+"fav": false,
+"hist": [
+"14/1",
+"16/1",
+"14/1",
+"16/1",
+"18/1",
+"16/1",
+"18/1",
+"20/1"
+],
+"comment": "Disputed lead early, prominent after 2nd, came near side and pushed along 3 out, outpaced before 2 out, weakened before last",
+"status": "RUNNER"
+},
+{
+"pos": 8,
+"horse": "Tottie's Moon",
+"btn": "14",
+"sp": "125/1",
+"fav": false,
+"hist": [
+"50/1",
+"66/1",
+"100/1",
+"80/1",
+"100/1"
+],
+"comment": "Disputed lead early, jumped left throughout, prominent after 2nd, lost position and dropped to midfield before 3rd, went left 4th, tailed off after 3 out",
+"status": "RUNNER"
+},
+{
+"pos": 0,
+"horse": "Fromjago'stomilan",
+"btn": null,
+"sp": "50/1",
+"fav": false,
+"hist": [],
+"comment": "NonRunner",
+"status": "NONRUNNER"
+},
+{
+"pos": 0,
+"horse": "Dontcontradictme",
+"btn": null,
+"sp": "250/1",
+"fav": false,
+"hist": [
+"150/1",
+"300/1",
+"250/1",
+"300/1",
+"250/1",
+"300/1"
+],
+"comment": "Held up towards rear, lost touch before 3 out, tailed off and pulled up before 2 out",
+"status": "RUNNER"
+}
+],
+"pick": {
+"morning": [
+"Valiant Soldier",
+3,
+"11/2"
+],
+"final": [
+"Valiant Soldier",
+3,
+"11/2"
+]
+},
+"pick_betfair": {
+"Valiant Soldier": {
+"morning_0905": 4.8,
+"close": 5.8,
+"close_polled": "13:50",
+"mins_to_off": 9.6
+}
+}
+},
+{
+"course": "Ffos Las",
+"time": "14:30",
+"sl_id": 945947,
+"going": "Heavy (Soft in places)",
+"placed": 2,
+"rides": [
+{
+"pos": 1,
+"horse": "Ugo Bingo",
+"btn": null,
+"sp": "13/8",
+"fav": true,
+"hist": [
+"6/4",
+"11/8",
+"6/4",
+"13/8",
+"7/4",
+"13/8"
+],
+"comment": "Held up in rear, tracked leaders from 3 out, travelling best and took second approaching 2 out, led last, went clear run-in, readily",
+"status": "RUNNER"
+},
+{
+"pos": 2,
+"horse": "Country Mouse",
+"btn": "2 \u00bd",
+"sp": "4/1",
+"fav": false,
+"hist": [
+"7/2",
+"9/2",
+"4/1",
+"9/2",
+"4/1",
+"9/2",
+"4/1",
+"9/2",
+"4/1",
+"9/2",
+"5/1",
+"11/2",
+"5/1",
+"9/2"
+],
+"comment": "Raced in third, headway to lead 3 out, ridden before 2 out, hit 2 out, headed and mistake last, weakened towards finish",
+"status": "RUNNER"
+},
+{
+"pos": 3,
+"horse": "It's Easy",
+"btn": "12",
+"sp": "2/1",
+"fav": false,
+"hist": [
+"5/2",
+"9/4",
+"85/40",
+"2/1",
+"85/40",
+"9/4",
+"85/40",
+"2/1",
+"15/8",
+"7/4",
+"15/8"
+],
+"comment": "Led, hit 2nd, not fluent 5th, headed before 3 out, outpaced before 2 out, not fluent last, kept on one pace run-in",
+"status": "RUNNER"
+},
+{
+"pos": 4,
+"horse": "Shanagolden Girl",
+"btn": "1 \u00be",
+"sp": "10/1",
+"fav": false,
+"hist": [
+"9/1",
+"17/2",
+"9/1",
+"17/2",
+"9/1",
+"9/1"
+],
+"comment": "Raced in fourth, closed on leaders 3 out, briefly disputed lead 3 out, outpaced before 2 out, weakened after last",
+"status": "RUNNER"
+},
+{
+"pos": 0,
+"horse": "Hellfire Princess",
+"btn": null,
+"sp": "15/2",
+"fav": false,
+"hist": [
+"8/1",
+"15/2",
+"8/1"
+],
+"comment": "Held up towards rear, outpaced and lost touch before tired jump 3 out, pulled up before 2 out",
+"status": "RUNNER"
+},
+{
+"pos": 0,
+"horse": "Doonbeg Don",
+"btn": null,
+"sp": "100/1",
+"fav": false,
+"hist": [
+"50/1",
+"80/1",
+"100/1",
+"125/1",
+"100/1",
+"80/1",
+"125/1"
+],
+"comment": "Raced in close second, lost position and ridden along before 3 out, weakened quickly and soon dropped to last, tailed off and pulled up before 2 out",
+"status": "RUNNER"
+}
+],
+"pick": {
+"morning": [
+"Ugo Bingo",
+1,
+"13/8"
+],
+"final": [
+"Ugo Bingo",
+1,
+"13/8"
+]
+},
+"pick_betfair": {
+"Ugo Bingo": {
+"morning_0905": 2.72,
+"close": 2.9,
+"close_polled": "14:25",
+"mins_to_off": 4.6
+}
+}
+},
+{
+"course": "Ffos Las",
+"time": "15:00",
+"sl_id": 945948,
+"going": "Heavy (Soft in places)",
+"placed": 2,
+"rides": [
+{
+"pos": 1,
+"horse": "Lully Du Houx",
+"btn": null,
+"sp": "13/2",
+"fav": false,
+"hist": [
+"6/1",
+"11/2",
+"6/1"
+],
+"comment": "Prominent, raced towards inner, led after 4 out, headed before 3 out, went clear with one other rival approaching after 3 out, not fluent but led again 2 out, wandered and hit last, rallied and always doing enough run-in",
+"status": "RUNNER"
+},
+{
+"pos": 2,
+"horse": "Boyles Hill",
+"btn": "3",
+"sp": "4/5",
+"fav": true,
+"hist": [
+"1/1",
+"10/11",
+"5/6",
+"10/11",
+"5/6"
+],
+"comment": "Soon raced in second, briefly led after 2nd, led before 3 out, went clear with winner before 2 out, headed and mistake 2 out, rallied and chased winner after last, no extra towards finish",
+"status": "RUNNER"
+},
+{
+"pos": 3,
+"horse": "Whatsgoingonmarvin",
+"btn": "32",
+"sp": "10/3",
+"fav": false,
+"hist": [
+"3/1",
+"10/3",
+"3/1"
+],
+"comment": "Towards rear, modest headway after 3 out, chased leading pair from 2 out, kept on",
+"status": "RUNNER"
+},
+{
+"pos": 4,
+"horse": "Dalcassian Girl",
+"btn": "7 \u00bd",
+"sp": "16/1",
+"fav": false,
+"hist": [
+"12/1",
+"14/1",
+"16/1",
+"14/1"
+],
+"comment": "Midfield, outpaced from 3 out, tailed off from 2 out",
+"status": "RUNNER"
+},
+{
+"pos": 5,
+"horse": "Berkshire Smudge",
+"btn": "4 \u00be",
+"sp": "12/1",
+"fav": false,
+"hist": [
+"9/1",
+"10/1",
+"11/1"
+],
+"comment": "Midfield, outpaced from 3 out, weakened after 2 out",
+"status": "RUNNER"
+},
+{
+"pos": 0,
+"horse": "Kates Choice",
+"btn": null,
+"sp": "14/1",
+"fav": false,
+"hist": [
+"12/1"
+],
+"comment": "Held up in rear, pushed along and taken wide after 4 out, tailed off when pulled up before 2 out",
+"status": "RUNNER"
+},
+{
+"pos": 0,
+"horse": "Department Of War",
+"btn": null,
+"sp": "125/1",
+"fav": false,
+"hist": [
+"80/1",
+"100/1"
+],
+"comment": "Led, briefly headed after 2nd, soon led again, headed before 3 out, weakened quickly and soon tailed off, pulled up approaching 2 out",
+"status": "RUNNER"
+}
+],
+"pick": {
+"morning": [
+"Boyles Hill",
+2,
+"4/5"
+],
+"final": [
+"Boyles Hill",
+2,
+"4/5"
+]
+},
+"pick_betfair": {
+"Boyles Hill": {
+"morning_0905": 2.72,
+"close": 2.06,
+"close_polled": "14:50",
+"mins_to_off": 9.6
+}
+}
+},
+{
+"course": "Ffos Las",
+"time": "15:30",
+"sl_id": 945949,
+"going": "Heavy (Soft in places)",
+"placed": 2,
+"rides": [
+{
+"pos": 1,
+"horse": "Verney Fox",
+"btn": null,
+"sp": "11/8",
+"fav": true,
+"hist": [
+"6/4",
+"11/8",
+"6/4"
+],
+"comment": "Soon raced in second, pressed leader 3f out, led over 2f out, went clear inside final furlong, comfortably",
+"status": "RUNNER"
+},
+{
+"pos": 2,
+"horse": "Miravis",
+"btn": "12",
+"sp": "20/1",
+"fav": false,
+"hist": [
+"18/1",
+"16/1",
+"18/1",
+"16/1",
+"18/1",
+"20/1",
+"18/1"
+],
+"comment": "Towards rear, pushed along and some headway 2f out, took second 1f out, kept on but no chance with winner towards finish",
+"status": "RUNNER"
+},
+{
+"pos": 3,
+"horse": "Goodbye Earl",
+"btn": "1",
+"sp": "13/8",
+"fav": false,
+"hist": [
+"7/4",
+"13/8",
+"6/4",
+"13/8",
+"6/4"
+],
+"comment": "Held up in rear but in touch, pushed along and some headway over 1f out, outpaced inside final furlong, kept on one pace towards finish",
+"status": "RUNNER"
+},
+{
+"pos": 4,
+"horse": "Clondaw Sergeant",
+"btn": "1 \u00bd",
+"sp": "11/1",
+"fav": false,
+"hist": [
+"12/1",
+"11/1",
+"10/1"
+],
+"comment": "Raced in third, edged left and impeded rival over 5f out, briefly took second over 2f out, outpaced and lost position inside final furlong, weakened towards finish (rider suspended for seven days for careless riding as he allowed his mount to shift left-handed without sufficient correction)",
+"status": "RUNNER"
+},
+{
+"pos": 5,
+"horse": "Mistral du Chenet",
+"btn": "6",
+"sp": "11/2",
+"fav": false,
+"hist": [
+"9/2",
+"5/1",
+"9/2",
+"5/1",
+"11/2",
+"6/1",
+"13/2",
+"6/1"
+],
+"comment": "Led, set steady pace, pushed along over 3f out, headed over 2f out, weakened quickly inside final furlong",
+"status": "RUNNER"
+},
+{
+"pos": 0,
+"horse": "De Inovator",
+"btn": null,
+"sp": "7/2",
+"fav": false,
+"hist": [],
+"comment": "NonRunner",
+"status": "NONRUNNER"
+},
+{
+"pos": 0,
+"horse": "Memphis Bel",
+"btn": null,
+"sp": "25/1",
+"fav": false,
+"hist": [
+"18/1",
+"20/1",
+"18/1",
+"20/1",
+"22/1",
+"20/1",
+"22/1"
+],
+"comment": "Raced in fourth, yet to be asked a serious question when clipped heels and stumbled and unseated rider over 5f out",
+"status": "RUNNER"
+}
+],
+"pick": {
+"morning": [
+"Verney Fox",
+1,
+"11/8"
+],
+"final": [
+"Verney Fox",
+1,
+"11/8"
+]
+},
+"pick_betfair": {
+"Verney Fox": {
+"morning_0905": 2.36,
+"close": 2.62,
+"close_polled": "15:25",
+"mins_to_off": 4.7
+}
+}
+},
+{
+"course": "Ffos Las",
+"time": "16:00",
+"sl_id": 945950,
+"going": "Good",
+"placed": 2,
+"rides": [
+{
+"pos": 1,
+"horse": "Doctor Kildare",
+"btn": null,
+"sp": "3/1",
+"fav": false,
+"hist": [
+"2/1",
+"15/8",
+"7/4",
+"15/8",
+"7/4",
+"15/8",
+"2/1",
+"9/4",
+"5/2",
+"9/4",
+"5/2",
+"11/4"
+],
+"comment": "Held up in rear but in touch, headway 3 out, took second 2 out, chased leader before last, ran on strongly run-in, led inside final 110yds, won going away",
+"status": "RUNNER"
+},
+{
+"pos": 2,
+"horse": "Muskoka",
+"btn": "2 \u00be",
+"sp": "12/1",
+"fav": false,
+"hist": [
+"14/1",
+"16/1",
+"14/1",
+"16/1",
+"14/1"
+],
+"comment": "Led, headed 8th, pestered 13th, not fluent 14th, led again before 16th, not fluent last, all out when headed inside final 110yds, no extra towards finish",
+"status": "RUNNER"
+},
+{
+"pos": 3,
+"horse": "Getaway Vic",
+"btn": "11",
+"sp": "14/1",
+"fav": false,
+"hist": [
+"12/1"
+],
+"comment": "Soon raced in close second, led 8th, joined 13th, headed before 16th, pushed along before 3 out, outpaced after 2 out, weakened after last",
+"status": "RUNNER"
+},
+{
+"pos": 4,
+"horse": "Loki's Mischief",
+"btn": "8 \u00bd",
+"sp": "11/4",
+"fav": false,
+"hist": [
+"11/4",
+"3/1",
+"11/4",
+"5/2"
+],
+"comment": "Held up in rear, not fluent 3rd, not fluent 9th, outpaced 4 out, tailed off from 3 out",
+"status": "RUNNER"
+},
+{
+"pos": 5,
+"horse": "Fairye Forth",
+"btn": "51",
+"sp": "5/4",
+"fav": true,
+"hist": [
+"13/8",
+"7/4",
+"15/8",
+"2/1",
+"15/8",
+"7/4",
+"15/8",
+"7/4",
+"13/8",
+"6/4",
+"13/8",
+"6/4",
+"11/8"
+],
+"comment": "Soon raced in third, lost ground and dropped to last after 10th, five lengths detached before 12th, tailed off from 4 out",
+"status": "RUNNER"
+},
+{
+"pos": 0,
+"horse": "Mountain Mike",
+"btn": null,
+"sp": "10/3",
+"fav": false,
+"hist": [],
+"comment": "NonRunner",
+"status": "NONRUNNER"
+}
+],
+"pick": {
+"morning": [
+"Loki's Mischief",
+4,
+"11/4"
+],
+"final": [
+"Loki's Mischief",
+4,
+"11/4"
+]
+},
+"pick_betfair": {
+"Loki's Mischief": {
+"morning_0905": 5.8,
+"close": 4.3,
+"close_polled": "15:50",
+"mins_to_off": 9.6
+}
+}
+},
+{
+"course": "Ffos Las",
+"time": "16:30",
+"sl_id": 945951,
+"going": "Good",
+"placed": 2,
+"rides": [
+{
+"pos": 1,
+"horse": "Toothless",
+"btn": null,
+"sp": "10/1",
+"fav": false,
+"hist": [
+"17/2",
+"8/1",
+"17/2",
+"8/1",
+"15/2",
+"8/1",
+"15/2",
+"8/1",
+"17/2"
+],
+"comment": "Raced in third, took second before 5th, disputed lead before 12th, mistake but led 4 out, asserted from 2 out, went clear after last, readily",
+"status": "RUNNER"
+},
+{
+"pos": 2,
+"horse": "Wreckless Eric",
+"btn": "2 \u00bc",
+"sp": "7/4",
+"fav": true,
+"hist": [
+"2/1",
+"15/8",
+"7/4",
+"15/8"
+],
+"comment": "Towards rear, headway from 3 out, chased leaders 2 out, took second on landing last, kept on but not reach winner towards finish",
+"status": "RUNNER"
+},
+{
+"pos": 3,
+"horse": "Just Over Land",
+"btn": "4 \u00bd",
+"sp": "6/1",
+"fav": false,
+"hist": [
+"6/1",
+"11/2",
+"6/1",
+"11/2"
+],
+"comment": "Towards rear, dropped to last after 8th, rallied after 2 out, stayed on well after last, took third final strides",
+"status": "RUNNER"
+},
+{
+"pos": 4,
+"horse": "Leader In The Park",
+"btn": "\u00bd",
+"sp": "4/1",
+"fav": false,
+"hist": [
+"7/2"
+],
+"comment": "Led, joined before 12th, headed 4 out, pushed along and chased winner from 2 out, outpaced run-in, weakened to fourth final strides",
+"status": "RUNNER"
+},
+{
+"pos": 5,
+"horse": "Patriotik",
+"btn": "nk",
+"sp": "4/1",
+"fav": false,
+"hist": [
+"6/1",
+"13/2",
+"6/1",
+"11/2",
+"5/1",
+"11/2",
+"5/1",
+"9/2",
+"4/1",
+"9/2"
+],
+"comment": "Held up in rear, lost ground with slow jump 2nd, taken wide to make some headway after 8th, chased leaders from 3 out, kept on after last, no extra towards finish",
+"status": "RUNNER"
+},
+{
+"pos": 6,
+"horse": "Filanderer",
+"btn": "4 \u00bd",
+"sp": "6/1",
+"fav": false,
+"hist": [
+"9/2",
+"5/1",
+"11/2",
+"6/1",
+"13/2"
+],
+"comment": "Soon raced in second, lost one place before 5th, pushed along 2 out, outpaced and dropped to rear last, weakened run-in",
+"status": "RUNNER"
+}
+],
+"pick": {
+"morning": [
+"Wreckless Eric",
+2,
+"7/4"
+],
+"final": [
+"Wreckless Eric",
+2,
+"7/4"
+]
+},
+"pick_betfair": {
+"Wreckless Eric": {
+"morning_0905": 3.45,
+"close": 3.2,
+"close_polled": "16:25",
+"mins_to_off": 4.7
+}
+}
+},
+{
+"course": "Stratford",
+"time": "13:20",
+"sl_id": 946520,
+"going": "Good to Soft (Soft in places)",
+"placed": 3,
+"rides": [
+{
+"pos": 1,
+"horse": "Trinity Street",
+"btn": null,
+"sp": "11/8",
+"fav": true,
+"hist": [
+"11/8",
+"6/4",
+"13/8",
+"7/4",
+"13/8",
+"6/4"
+],
+"comment": "Made all, clear flat, eased towards finish",
+"status": "RUNNER"
+},
+{
+"pos": 2,
+"horse": "Rosie Mahler",
+"btn": "5 \u00bd",
+"sp": "15/2",
+"fav": false,
+"hist": [
+"6/1",
+"11/2",
+"5/1",
+"11/2",
+"6/1",
+"13/2",
+"7/1"
+],
+"comment": "Held up in mid-division on inside, took keen hold, closed 2nd, steadied next, headway after 2 out, went third before last, kept on flat, went second towards finish, no impression on winner",
+"status": "RUNNER"
+},
+{
+"pos": 3,
+"horse": "Capricciose",
+"btn": "1 \u00bc",
+"sp": "13/8",
+"fav": false,
+"hist": [
+"7/4",
+"13/8",
+"7/4",
+"13/8",
+"7/4"
+],
+"comment": "Held up towards rear, pecked 1st, reached mid-division 4th, headway from 3 out, went second after 2 out, not fluent last, no impression on winner flat, lost second and no extra towards finish",
+"status": "RUNNER"
+},
+{
+"pos": 4,
+"horse": "Western Charm",
+"btn": "13",
+"sp": "12/1",
+"fav": false,
+"hist": [
+"14/1",
+"12/1",
+"11/1"
+],
+"comment": "Held up in rear, not always fluent, some headway 2 out, went fourth before last, never dangerous",
+"status": "RUNNER"
+},
+{
+"pos": 5,
+"horse": "Secret Des Lune",
+"btn": "15",
+"sp": "9/1",
+"fav": false,
+"hist": [
+"11/1",
+"10/1",
+"9/1",
+"17/2"
+],
+"comment": "Prominent until before 2nd, chased leaders, weakened well before mistake last",
+"status": "RUNNER"
+},
+{
+"pos": 6,
+"horse": "Jax Belle",
+"btn": "19",
+"sp": "33/1",
+"fav": false,
+"hist": [
+"50/1",
+"40/1",
+"50/1",
+"40/1",
+"50/1",
+"40/1"
+],
+"comment": "Prominent on outside early, chased leaders, not fluent 6th, weakened after 2 out",
+"status": "RUNNER"
+},
+{
+"pos": 7,
+"horse": "Posh Chick",
+"btn": "14",
+"sp": "14/1",
+"fav": false,
+"hist": [
+"11/1",
+"12/1",
+"14/1",
+"12/1"
+],
+"comment": "Chased winner, not fluent 8th, weakened after 2 out",
+"status": "RUNNER"
+},
+{
+"pos": 0,
+"horse": "Vajra",
+"btn": null,
+"sp": "300/1",
+"fav": false,
+"hist": [
+"200/1",
+"250/1",
+"300/1",
+"250/1"
+],
+"comment": "Towards rear, not fluent 5th, mistake next, ridden and struggling when pulled up after 7th",
+"status": "RUNNER"
+},
+{
+"pos": 0,
+"horse": "Fountains Gala",
+"btn": null,
+"sp": "300/1",
+"fav": false,
+"hist": [
+"200/1",
+"250/1",
+"300/1",
+"400/1",
+"300/1",
+"400/1",
+"300/1",
+"500/1"
+],
+"comment": "In touch when slow 1st, slowly drifted back through field, jumped right and not fluent 7th, well behind after 3 out, mistake 2 out, pulled up before 2 out",
+"status": "RUNNER"
+}
+],
+"pick": {
+"morning": [
+"Trinity Street",
+1,
+"11/8"
+],
+"final": [
+"Trinity Street",
+1,
+"11/8"
+]
+},
+"pick_betfair": {
+"Trinity Street": {
+"morning_0905": 2.38,
+"close": 3.0,
+"close_polled": "13:15",
+"mins_to_off": 4.7
+}
+}
+},
+{
+"course": "Stratford",
+"time": "13:50",
+"sl_id": 945939,
+"going": "Good to Soft (Soft in places)",
+"placed": 3,
+"rides": [
+{
+"pos": 1,
+"horse": "Red Metal",
+"btn": null,
+"sp": "13/8",
+"fav": true,
+"hist": [
+"6/4",
+"13/8",
+"7/4"
+],
+"comment": "Made all, ridden when clear flat, ran on well",
+"status": "RUNNER"
+},
+{
+"pos": 2,
+"horse": "Brecharnon",
+"btn": "3 \u00be",
+"sp": "5/2",
+"fav": false,
+"hist": [
+"7/2",
+"10/3",
+"7/2",
+"10/3",
+"3/1",
+"10/3",
+"3/1",
+"11/4",
+"3/1",
+"11/4"
+],
+"comment": "Mostly chased winner throughout, jumped left last, no impression flat, kept on",
+"status": "RUNNER"
+},
+{
+"pos": 3,
+"horse": "Smile John Boy",
+"btn": "8 \u00bd",
+"sp": "2/1",
+"fav": false,
+"hist": [
+"11/8",
+"6/4",
+"13/8",
+"7/4",
+"13/8",
+"7/4"
+],
+"comment": "Chased leaders, closed after 2 out, went second briefly final bend, ridden before last, weakened flat",
+"status": "RUNNER"
+},
+{
+"pos": 4,
+"horse": "River Don",
+"btn": "40",
+"sp": "150/1",
+"fav": false,
+"hist": [
+"100/1",
+"125/1",
+"150/1",
+"125/1"
+],
+"comment": "Off the pace in mid-division, not always fluent, remote fourth from 3 out, tailed off",
+"status": "RUNNER"
+},
+{
+"pos": 5,
+"horse": "Killarney",
+"btn": "8 \u00bd",
+"sp": "16/1",
+"fav": false,
+"hist": [
+"33/1",
+"28/1",
+"25/1",
+"22/1",
+"20/1",
+"18/1"
+],
+"comment": "Off the pace in mid-division, not always fluent, well adrift of leaders 3 out, tailed off",
+"status": "RUNNER"
+},
+{
+"pos": 6,
+"horse": "Mr Maximillian",
+"btn": "9 \u00bd",
+"sp": "40/1",
+"fav": false,
+"hist": [
+"28/1",
+"33/1",
+"28/1",
+"33/1",
+"40/1",
+"33/1"
+],
+"comment": "Always in rear, tailed off",
+"status": "RUNNER"
+},
+{
+"pos": 7,
+"horse": "Jersey Tex",
+"btn": "8",
+"sp": "300/1",
+"fav": false,
+"hist": [
+"200/1",
+"250/1"
+],
+"comment": "Towards rear of mid-division and off the pace, remote seventh 3 out, tailed off",
+"status": "RUNNER"
+},
+{
+"pos": 8,
+"horse": "Unbelievable Jeff",
+"btn": "2 \u00bd",
+"sp": "40/1",
+"fav": false,
+"hist": [
+"66/1",
+"50/1"
+],
+"comment": "Always towards rear, tailed off",
+"status": "RUNNER"
+},
+{
+"pos": 9,
+"horse": "Whiteoak Duffy",
+"btn": "sh",
+"sp": "300/1",
+"fav": false,
+"hist": [
+"200/1",
+"250/1"
+],
+"comment": "In rear, not fluent 2nd, some headway when mistake 3 out, pressed briefly for remote fourth after 2 out, tailed off",
+"status": "RUNNER"
+},
+{
+"pos": 0,
+"horse": "Posh Dude",
+"btn": null,
+"sp": "16/1",
+"fav": false,
+"hist": [
+"11/1",
+"12/1",
+"11/1",
+"12/1",
+"11/1",
+"14/1",
+"12/1",
+"14/1"
+],
+"comment": "Always in rear, pulled up before last",
+"status": "RUNNER"
+}
+],
+"pick": {
+"morning": [
+"Red Metal",
+1,
+"13/8"
+],
+"final": [
+"Red Metal",
+1,
+"13/8"
+]
+},
+"pick_betfair": {
+"Red Metal": {
+"morning_0905": 2.88,
+"close": 2.78,
+"close_polled": "13:45",
+"mins_to_off": 4.6
+}
+}
+},
+{
+"course": "Stratford",
+"time": "14:20",
+"sl_id": 945940,
+"going": "Good to Soft (Soft in places)",
+"placed": 3,
+"rides": [
+{
+"pos": 1,
+"horse": "Forthfactor",
+"btn": null,
+"sp": "1/8",
+"fav": true,
+"hist": [
+"1/10",
+"1/9",
+"1/7",
+"1/8",
+"1/7",
+"1/8",
+"1/9"
+],
+"comment": "Made all, well clear 5th, eased into last, hard held",
+"status": "RUNNER"
+},
+{
+"pos": 2,
+"horse": "Rock On Ronnie",
+"btn": "24",
+"sp": "11/2",
+"fav": false,
+"hist": [
+"13/2",
+"6/1"
+],
+"comment": "Chased winner throughout, not fluent 3rd, no impression 5th, being closed down by third towards finish",
+"status": "RUNNER"
+},
+{
+"pos": 3,
+"horse": "Chocks Away",
+"btn": "2 \u00bc",
+"sp": "25/1",
+"fav": false,
+"hist": [
+"28/1"
+],
+"comment": "Took keen hold, held up towards rear, not fluent 1st, some headway before 4th, not fluent 5th, went third 3 out, closed on second towards finish, no chance with winner",
+"status": "RUNNER"
+},
+{
+"pos": 4,
+"horse": "Dernier Set",
+"btn": "9",
+"sp": "28/1",
+"fav": false,
+"hist": [
+"25/1"
+],
+"comment": "Chased clear leaders, weakened 2 out",
+"status": "RUNNER"
+},
+{
+"pos": 5,
+"horse": "Emerald Tir",
+"btn": "9",
+"sp": "12/1",
+"fav": false,
+"hist": [],
+"comment": "Held up in mid-division off the pace, some headway through field 2 out, no impression",
+"status": "RUNNER"
+},
+{
+"pos": 6,
+"horse": "Cheap Sandwiches",
+"btn": "6",
+"sp": "28/1",
+"fav": false,
+"hist": [
+"25/1"
+],
+"comment": "Chased clear leaders, not fluent 3rd, weakened before 2 out",
+"status": "RUNNER"
+},
+{
+"pos": 7,
+"horse": "Dressed Overall",
+"btn": "6 \u00bd",
+"sp": "66/1",
+"fav": false,
+"hist": [],
+"comment": "Always behind",
+"status": "RUNNER"
+},
+{
+"pos": 8,
+"horse": "King Rolo",
+"btn": "\u00bd",
+"sp": "50/1",
+"fav": false,
+"hist": [],
+"comment": "Always towards rear",
+"status": "RUNNER"
+},
+{
+"pos": 9,
+"horse": "Maria's Joy",
+"btn": "4 \u00be",
+"sp": "200/1",
+"fav": false,
+"hist": [
+"150/1"
+],
+"comment": "Rear of mid-division off the pace, never involved",
+"status": "RUNNER"
+},
+{
+"pos": 0,
+"horse": "Bebe And Bean",
+"btn": null,
+"sp": "10/1",
+"fav": false,
+"hist": [],
+"comment": "NonRunner",
+"status": "NONRUNNER"
+}
+],
+"pick": {
+"morning": [
+"Forthfactor",
+1,
+"1/8"
+],
+"final": [
+"Forthfactor",
+1,
+"1/8"
+]
+},
+"pick_betfair": {
+"Forthfactor": {
+"morning_0905": 1.14,
+"close": 1.14,
+"close_polled": "14:15",
+"mins_to_off": 4.7
+}
+}
+},
+{
+"course": "Stratford",
+"time": "14:50",
+"sl_id": 945941,
+"going": "Good to Soft (Soft in places)",
+"placed": 3,
+"rides": [
+{
+"pos": 1,
+"horse": "Churchman",
+"btn": null,
+"sp": "5/1",
+"fav": false,
+"hist": [
+"9/2",
+"4/1",
+"9/2"
+],
+"comment": "Prominent early, chased leaders, led last, driven flat, just held on",
+"status": "RUNNER"
+},
+{
+"pos": 2,
+"horse": "Finjimk",
+"btn": "sh",
+"sp": "33/1",
+"fav": false,
+"hist": [],
+"comment": "Held up towards rear, headway when not fluent 3 out, bit short of room last, switched right flat, ran on and went second towards finish, just held",
+"status": "RUNNER"
+},
+{
+"pos": 3,
+"horse": "River Glance",
+"btn": "1 \u00bc",
+"sp": "9/2",
+"fav": true,
+"hist": [
+"13/2",
+"6/1",
+"11/2",
+"5/1",
+"9/2",
+"4/1"
+],
+"comment": "Mid-division, took keen hold, not fluent 2nd, headway on outside when not fluent 2 out, every chance, held final 110 yards",
+"status": "RUNNER"
+},
+{
+"pos": 4,
+"horse": "Bannister",
+"btn": "hd",
+"sp": "14/1",
+"fav": false,
+"hist": [
+"16/1"
+],
+"comment": "Led, headed after 3rd, prominent, led again after 2 out, headed last, no extra towards finish",
+"status": "RUNNER"
+},
+{
+"pos": 5,
+"horse": "Black Dakota",
+"btn": "6",
+"sp": "9/2",
+"fav": true,
+"hist": [
+"4/1"
+],
+"comment": "Held up in rear, headway after 2 out, no impression last, weakened flat",
+"status": "RUNNER"
+},
+{
+"pos": 6,
+"horse": "Wind Your Neck In",
+"btn": "2 \u00bc",
+"sp": "12/1",
+"fav": false,
+"hist": [
+"14/1",
+"11/1"
+],
+"comment": "Prominent, led after 3rd, headed after 2 out, weakened before last",
+"status": "RUNNER"
+},
+{
+"pos": 7,
+"horse": "Drakaris",
+"btn": "hd",
+"sp": "6/1",
+"fav": false,
+"hist": [
+"5/1",
+"11/2",
+"6/1",
+"11/2",
+"5/1",
+"11/2"
+],
+"comment": "Mid-division, closed 2 out, not much room final bend, weakened before last",
+"status": "RUNNER"
+},
+{
+"pos": 8,
+"horse": "Little Pi",
+"btn": "\u00bd",
+"sp": "7/1",
+"fav": false,
+"hist": [
+"7/1",
+"15/2"
+],
+"comment": "Held up towards rear, headway after 2 out, weakened before last",
+"status": "RUNNER"
+},
+{
+"pos": 9,
+"horse": "Yanka Blue",
+"btn": "\u00be",
+"sp": "17/2",
+"fav": false,
+"hist": [
+"17/2",
+"9/1",
+"10/1",
+"11/1",
+"10/1",
+"9/1"
+],
+"comment": "Held up in rear, some headway 2 out, soon weakened",
+"status": "RUNNER"
+},
+{
+"pos": 0,
+"horse": "Tobi Kanobee",
+"btn": null,
+"sp": "28/1",
+"fav": false,
+"hist": [
+"22/1",
+"25/1"
+],
+"comment": "Prominent early, lost place before 4th, well behind 3 out, pulled up after 2 out",
+"status": "RUNNER"
+},
+{
+"pos": 0,
+"horse": "Milan Milos",
+"btn": null,
+"sp": "9/1",
+"fav": false,
+"hist": [
+"17/2",
+"9/1",
+"17/2"
+],
+"comment": "Held up towards rear, pulled up before 5th",
+"status": "RUNNER"
+}
+],
+"pick": {
+"morning": [
+"Drakaris",
+7,
+"6/1"
+],
+"final": [
+"Drakaris",
+7,
+"6/1"
+]
+},
+"pick_betfair": {
+"Drakaris": {
+"morning_0905": 5.7,
+"close": 7.2,
+"close_polled": "14:45",
+"mins_to_off": 4.6
+}
+}
+},
+{
+"course": "Stratford",
+"time": "15:20",
+"sl_id": 945942,
+"going": "Good to Soft (Soft in places)",
+"placed": 3,
+"rides": [
+{
+"pos": 1,
+"horse": "Gatineau Park",
+"btn": null,
+"sp": "5/2",
+"fav": true,
+"hist": [
+"2/1",
+"85/40",
+"2/1",
+"85/40",
+"9/4",
+"5/2",
+"11/4"
+],
+"comment": "Led, headed 3rd, led next, drawing clear last, stayed on well",
+"status": "RUNNER"
+},
+{
+"pos": 2,
+"horse": "Go West",
+"btn": "5",
+"sp": "9/1",
+"fav": false,
+"hist": [
+"11/1",
+"10/1"
+],
+"comment": "Mid-division, headway after 5th, chased winner before 2 out, no impression last",
+"status": "RUNNER"
+},
+{
+"pos": 3,
+"horse": "Mr Hope Street",
+"btn": "1 \u00bc",
+"sp": "17/2",
+"fav": false,
+"hist": [
+"13/2",
+"7/1",
+"15/2",
+"8/1"
+],
+"comment": "Held up in mid-division, headway before 2 out, shaken up and held when left third last",
+"status": "RUNNER"
+},
+{
+"pos": 4,
+"horse": "George's Lad",
+"btn": "8 \u00bd",
+"sp": "17/2",
+"fav": false,
+"hist": [
+"9/1",
+"17/2",
+"9/1",
+"17/2",
+"8/1"
+],
+"comment": "Held up in rear, not fluent 4th, headway 10th, lost place before 2 out, plugging on when mistake, hampered and left fourth last, no impression",
+"status": "RUNNER"
+},
+{
+"pos": 5,
+"horse": "Issam",
+"btn": "9 \u00bd",
+"sp": "7/1",
+"fav": false,
+"hist": [
+"10/1",
+"9/1",
+"17/2",
+"8/1",
+"15/2",
+"13/2"
+],
+"comment": "Mid-division, slow 4 out, never dangerous",
+"status": "RUNNER"
+},
+{
+"pos": 6,
+"horse": "Onemorefortheroad",
+"btn": "6",
+"sp": "28/1",
+"fav": false,
+"hist": [
+"33/1"
+],
+"comment": "Prominent, led 3rd, headed next, not fluent 4 out, lost second before 2 out, weakened before last",
+"status": "RUNNER"
+},
+{
+"pos": 7,
+"horse": "Bucksy Des Epeires",
+"btn": "1 \u00bc",
+"sp": "11/1",
+"fav": false,
+"hist": [
+"12/1",
+"11/1",
+"12/1",
+"11/1",
+"12/1"
+],
+"comment": "Towards rear, mistake and struggling from 9th",
+"status": "RUNNER"
+},
+{
+"pos": 8,
+"horse": "Lounge Lizard",
+"btn": "20",
+"sp": "100/1",
+"fav": false,
+"hist": [
+"100/1",
+"80/1",
+"100/1",
+"80/1"
+],
+"comment": "Held up in rear, in mid-division after 5th, slow 4 out, well beaten next",
+"status": "RUNNER"
+},
+{
+"pos": 0,
+"horse": "Jipcot",
+"btn": null,
+"sp": "9/2",
+"fav": false,
+"hist": [
+"5/1",
+"9/2",
+"4/1"
+],
+"comment": "Chased leaders, not fluent 6th, ridden, hanging left and disputing 3 lengths second when stumbled and unseated rider last",
+"status": "RUNNER"
+},
+{
+"pos": 0,
+"horse": "Big Ticket",
+"btn": null,
+"sp": "9/2",
+"fav": false,
+"hist": [
+"5/1"
+],
+"comment": "Chased leaders, lost ground on inside after 5th, in rear when slow 6th, soon pulled up",
+"status": "RUNNER"
+}
+],
+"pick": {
+"morning": [
+"Gatineau Park",
+1,
+"5/2"
+],
+"final": [
+"Gatineau Park",
+1,
+"5/2"
+]
+},
+"pick_betfair": {
+"Gatineau Park": {
+"morning_0905": 3.95,
+"close": 4.0,
+"close_polled": "15:15",
+"mins_to_off": 4.7
+}
+}
+},
+{
+"course": "Stratford",
+"time": "15:50",
+"sl_id": 945943,
+"going": "Good to Soft (Soft in places)",
+"placed": 2,
+"rides": [
+{
+"pos": 1,
+"horse": "One Last Glance",
+"btn": null,
+"sp": "5/1",
+"fav": false,
+"hist": [
+"11/2",
+"9/2"
+],
+"comment": "Took keen hold, soon in touch, not fluent 3rd, 9 lengths third and held together 2 out, closed final bend then went second, challenging when landed a little awkwardly last, soon led, kept on well",
+"status": "RUNNER"
+},
+{
+"pos": 2,
+"horse": "Pescatorius",
+"btn": "5 \u00bd",
+"sp": "4/1",
+"fav": false,
+"hist": [
+"10/3",
+"7/2"
+],
+"comment": "Chased leader, led 5th, clear 4 out, not fluent 2 out, reduced lead final bend, pressed last, soon headed and no impression on winner",
+"status": "RUNNER"
+},
+{
+"pos": 3,
+"horse": "Moor End",
+"btn": "5",
+"sp": "5/2",
+"fav": false,
+"hist": [
+"9/4",
+"2/1",
+"9/4",
+"2/1",
+"9/4",
+"2/1",
+"9/4"
+],
+"comment": "Chased leaders, not fluent 3rd, not fluent and rider lost iron briefly 6th, went second 8th, not fluent 3 out, 8 lengths down 2 out, lost second before last, soon no extra",
+"status": "RUNNER"
+},
+{
+"pos": 4,
+"horse": "Dunworley",
+"btn": "39",
+"sp": "20/1",
+"fav": false,
+"hist": [
+"18/1",
+"20/1",
+"22/1",
+"25/1",
+"22/1",
+"18/1",
+"16/1",
+"18/1"
+],
+"comment": "Led, headed 5th, struggling from 13th, well beaten 4 out",
+"status": "RUNNER"
+},
+{
+"pos": 0,
+"horse": "Great D'Ange",
+"btn": null,
+"sp": "22/1",
+"fav": false,
+"hist": [
+"16/1",
+"20/1",
+"18/1",
+"20/1",
+"22/1",
+"20/1",
+"18/1",
+"20/1"
+],
+"comment": "Last and pushed along 4th, behind 8th, tailed off 13th, pulled up after",
+"status": "RUNNER"
+},
+{
+"pos": 0,
+"horse": "Ithaka",
+"btn": null,
+"sp": "13/8",
+"fav": true,
+"hist": [
+"9/4",
+"2/1",
+"15/8",
+"2/1",
+"15/8",
+"2/1",
+"7/4"
+],
+"comment": "Jumped left at times and some slow jumps, ran in snatches towards rear, just about in touch before mistake 13th, well beaten from 4 out, pulled up before last",
+"status": "RUNNER"
+}
+],
+"pick": {
+"morning": [
+"Moor End",
+3,
+"5/2"
+],
+"final": [
+"Moor End",
+3,
+"5/2"
+]
+},
+"pick_betfair": {
+"Moor End": {
+"morning_0905": 3.4,
+"close": 3.5,
+"close_polled": "15:45",
+"mins_to_off": 4.6
+}
+}
+},
+{
+"course": "Stratford",
+"time": "16:20",
+"sl_id": 945944,
+"going": "Good to Soft (Soft in places)",
+"placed": 3,
+"rides": [
+{
+"pos": 1,
+"horse": "And So It Begins",
+"btn": null,
+"sp": "1/1",
+"fav": true,
+"hist": [
+"2/1",
+"15/8",
+"7/4",
+"13/8",
+"6/4",
+"11/8",
+"6/5",
+"11/10",
+"1/1",
+"10/11"
+],
+"comment": "Chased leader, led over 1f out, ridden and kept on well inside final furlong",
+"status": "RUNNER"
+},
+{
+"pos": 2,
+"horse": "Lady Loki",
+"btn": "1 \u00bc",
+"sp": "8/1",
+"fav": false,
+"hist": [
+"6/1",
+"13/2",
+"7/1",
+"15/2"
+],
+"comment": "Took keen hold, chased leaders, ridden over 2f out, went second inside final furlong, no impression on winner, kept on",
+"status": "RUNNER"
+},
+{
+"pos": 3,
+"horse": "Ignite The Night",
+"btn": "2",
+"sp": "13/2",
+"fav": false,
+"hist": [
+"7/1",
+"13/2",
+"7/1",
+"15/2",
+"8/1",
+"15/2",
+"8/1",
+"7/1"
+],
+"comment": "Held up in rear, headway on inside when a bit short of room over 2f out, went fourth over 1f out, stayed on inside final furlong, went third towards finish, should do better",
+"status": "RUNNER"
+},
+{
+"pos": 4,
+"horse": "Royal Salamah",
+"btn": "1 \u00bd",
+"sp": "12/1",
+"fav": false,
+"hist": [
+"8/1",
+"9/1",
+"10/1",
+"9/1",
+"10/1",
+"11/1",
+"12/1",
+"14/1"
+],
+"comment": "Took keen hold, led, headed and faltered slightly over 1f out, lost second inside final furlong, no extra and lost third towards finish",
+"status": "RUNNER"
+},
+{
+"pos": 5,
+"horse": "Dance In The Mist",
+"btn": "4 \u00bc",
+"sp": "9/2",
+"fav": false,
+"hist": [
+"4/1",
+"9/2",
+"9/2",
+"5/1",
+"9/2",
+"5/1"
+],
+"comment": "Held up in mid-division, some headway 4f out, outpaced over 2f out, no impression but kept on inside final furlong",
+"status": "RUNNER"
+},
+{
+"pos": 6,
+"horse": "Dreamingofsunshine",
+"btn": "8",
+"sp": "12/1",
+"fav": false,
+"hist": [
+"7/1",
+"15/2",
+"7/1",
+"15/2",
+"17/2",
+"10/1",
+"11/1",
+"10/1",
+"11/1"
+],
+"comment": "In touch in mid-division on inside, fourth and outpaced over 2f out, weakened over 1f out",
+"status": "RUNNER"
+},
+{
+"pos": 7,
+"horse": "Maria's Double",
+"btn": "5",
+"sp": "28/1",
+"fav": false,
+"hist": [
+"25/1",
+"22/1",
+"20/1",
+"22/1",
+"25/1"
+],
+"comment": "Chased leaders on outside, weakened over 3f out",
+"status": "RUNNER"
+},
+{
+"pos": 8,
+"horse": "Indian Crunch",
+"btn": "54",
+"sp": "80/1",
+"fav": false,
+"hist": [
+"40/1",
+"50/1",
+"40/1",
+"50/1",
+"40/1",
+"50/1",
+"40/1",
+"50/1"
+],
+"comment": "Pulled hard in rear, lost touch over 4f out",
+"status": "RUNNER"
+},
+{
+"pos": 9,
+"horse": "Fancymeetinguhere",
+"btn": "3",
+"sp": "12/1",
+"fav": false,
+"hist": [
+"14/1",
+"12/1",
+"11/1",
+"12/1",
+"11/1",
+"12/1",
+"14/1"
+],
+"comment": "Towards rear on outside, headway over 4f out, lost place 3f out, soon well beaten",
+"status": "RUNNER"
+},
+{
+"pos": 0,
+"horse": "Lady Inca",
+"btn": null,
+"sp": "66/1",
+"fav": false,
+"hist": [
+"40/1",
+"50/1",
+"40/1"
+],
+"comment": "Withdrawn",
+"status": "WITHDRAWN"
+}
+],
+"pick": {
+"morning": [
+"And So It Begins",
+1,
+"1/1"
+],
+"final": [
+"And So It Begins",
+1,
+"1/1"
+]
+},
+"pick_betfair": {
+"And So It Begins": {
+"morning_0905": 3.5,
+"close": 3.35,
+"close_polled": "16:15",
+"mins_to_off": 4.7
+}
+}
+},
+{
+"course": "Bath",
+"time": "12:42",
+"sl_id": 946521,
+"going": "Soft (Heavy in places)",
+"placed": 3,
+"rides": [
+{
+"pos": 1,
+"horse": "Roos Racing Rocket",
+"btn": null,
+"sp": "11/1",
+"fav": false,
+"hist": [
+"12/1"
+],
+"comment": "Soon led, ridden to assert over 2f out, soon three lengths clear and in command, pushed out final furlong, always holding rivals",
+"status": "RUNNER"
+},
+{
+"pos": 2,
+"horse": "Lady Phillips",
+"btn": "1 \u00bc",
+"sp": "8/15",
+"fav": true,
+"hist": [
+"4/6",
+"8/11",
+"4/6",
+"8/13",
+"4/7"
+],
+"comment": "Held up behind leaders, ridden 3f out, kept on from over 1f out, no impression on winner",
+"status": "RUNNER"
+},
+{
+"pos": 3,
+"horse": "Civilon",
+"btn": "\u00bd",
+"sp": "25/1",
+"fav": false,
+"hist": [
+"25/1",
+"28/1",
+"33/1",
+"28/1"
+],
+"comment": "Slowly into stride, towards rear, ridden and headway 3f out, staying on when hung left 1f out, kept on, never nearer",
+"status": "RUNNER"
+},
+{
+"pos": 4,
+"horse": "Radical Bay",
+"btn": "nk",
+"sp": "66/1",
+"fav": false,
+"hist": [
+"50/1",
+"66/1",
+"50/1"
+],
+"comment": "Towards rear, headway wide over 3f out, ridden and kept on well from over 2f out",
+"status": "RUNNER"
+},
+{
+"pos": 5,
+"horse": "The Can Can Man",
+"btn": "\u00be",
+"sp": "14/1",
+"fav": false,
+"hist": [
+"12/1",
+"14/1",
+"16/1"
+],
+"comment": "Soon pushed along in rear division, ridden 4f out, headway 3f out, stayed on well from over 1f out, nearest finish",
+"status": "RUNNER"
+},
+{
+"pos": 6,
+"horse": "Silent Wisdom",
+"btn": "2 \u00bc",
+"sp": "11/1",
+"fav": false,
+"hist": [
+"11/1",
+"10/1",
+"9/1",
+"10/1"
+],
+"comment": "Mid-division, ridden over 2f out, weakened inside final furlong",
+"status": "RUNNER"
+},
+{
+"pos": 7,
+"horse": "Buxted Flyer",
+"btn": "1",
+"sp": "8/1",
+"fav": false,
+"hist": [
+"15/2",
+"7/1",
+"13/2",
+"6/1",
+"7/1",
+"15/2"
+],
+"comment": "Towards rear, kept on steadily from 2f out, never nearer",
+"status": "RUNNER"
+},
+{
+"pos": 8,
+"horse": "Zulu Chieftain",
+"btn": "3",
+"sp": "50/1",
+"fav": false,
+"hist": [
+"50/1",
+"40/1"
+],
+"comment": "Rear division, headway and ridden over 2f out, stayed alone far side, weakened final furlong",
+"status": "RUNNER"
+},
+{
+"pos": 9,
+"horse": "Walcourt",
+"btn": "5",
+"sp": "11/2",
+"fav": false,
+"hist": [
+"5/1",
+"9/2",
+"4/1",
+"9/2",
+"4/1",
+"9/2",
+"5/1"
+],
+"comment": "Chased winner, ridden over 2f out, weakened and eased over 1f out",
+"status": "RUNNER"
+},
+{
+"pos": 10,
+"horse": "Smash Royale",
+"btn": "3 \u00bd",
+"sp": "150/1",
+"fav": false,
+"hist": [],
+"comment": "Mid-division, ridden and weakened over 2f out",
+"status": "RUNNER"
+},
+{
+"pos": 11,
+"horse": "Don't Tempt Harry",
+"btn": "6",
+"sp": "66/1",
+"fav": false,
+"hist": [
+"50/1"
+],
+"comment": "Chased leaders, ridden over 2f out, weakened quickly and eased over 1f out",
+"status": "RUNNER"
+},
+{
+"pos": 12,
+"horse": "Boomshakalak",
+"btn": "35",
+"sp": "250/1",
+"fav": false,
+"hist": [
+"125/1",
+"150/1",
+"200/1"
+],
+"comment": "Prominent early, pushed along behind leaders, ridden and lost place quickly after 3f, lost touch over 2f out, tailed off",
+"status": "RUNNER"
+}
+],
+"pick": {
+"morning": [
+"Lady Phillips",
+2,
+"8/15"
+],
+"final": [
+"Lady Phillips",
+2,
+"8/15"
+]
+},
+"pick_betfair": {
+"Lady Phillips": {
+"morning_0905": 1.71,
+"close": 1.84,
+"close_polled": "12:40",
+"mins_to_off": 1.7
+}
+}
+},
+{
+"course": "Bath",
+"time": "13:12",
+"sl_id": 945952,
+"going": "Soft (Heavy in places)",
+"placed": 3,
+"rides": [
+{
+"pos": 1,
+"horse": "Seed",
+"btn": null,
+"sp": "11/1",
+"fav": false,
+"hist": [
+"18/1",
+"16/1",
+"14/1",
+"16/1",
+"16/1",
+"18/1",
+"20/1",
+"22/1",
+"20/1",
+"10/1"
+],
+"comment": "Soon led, ridden over 2f out, soon in command and pushed clear over 1f out",
+"status": "RUNNER"
+},
+{
+"pos": 2,
+"horse": "Master Celeritas",
+"btn": "4 \u00be",
+"sp": "6/1",
+"fav": false,
+"hist": [
+"9/1",
+"10/1",
+"11/1",
+"11/2"
+],
+"comment": "Chased winner, ridden over 2f out, kept on well for clear second from over 1f out, no match for winner",
+"status": "RUNNER"
+},
+{
+"pos": 3,
+"horse": "Hot Port",
+"btn": "4",
+"sp": "13/2",
+"fav": false,
+"hist": [
+"10/1",
+"12/1",
+"14/1"
+],
+"comment": "Held up mid-division, ridden and headway to chase leaders over 2f out, kept on one pace from over 1f out",
+"status": "RUNNER"
+},
+{
+"pos": 4,
+"horse": "Divine Rhythm",
+"btn": "2 \u00be",
+"sp": "5/6",
+"fav": true,
+"hist": [
+"3/1",
+"1/1",
+"4/5"
+],
+"comment": "Mid-division, ridden over 4f out, brief headway 2f out, no extra from over 1f out",
+"status": "RUNNER"
+},
+{
+"pos": 5,
+"horse": "Dancing Gold",
+"btn": "1 \u00be",
+"sp": "14/1",
+"fav": false,
+"hist": [
+"33/1",
+"28/1",
+"14/1",
+"12/1"
+],
+"comment": "Towards rear, pushed along over 4f out, ridden and kept on steadily from over 2f out",
+"status": "RUNNER"
+},
+{
+"pos": 6,
+"horse": "Virtue Charity",
+"btn": "2 \u00bd",
+"sp": "80/1",
+"fav": false,
+"hist": [
+"150/1"
+],
+"comment": "Towards rear, ridden over 2f out, plugged on",
+"status": "RUNNER"
+},
+{
+"pos": 7,
+"horse": "Rupertsbeenrumbled",
+"btn": "1 \u00bd",
+"sp": "100/1",
+"fav": false,
+"hist": [
+"100/1",
+"150/1",
+"125/1",
+"150/1",
+"200/1"
+],
+"comment": "Held up behind leaders, ridden and weakened 2f out",
+"status": "RUNNER"
+},
+{
+"pos": 8,
+"horse": "Sarfraj",
+"btn": "1 \u00be",
+"sp": "40/1",
+"fav": false,
+"hist": [
+"50/1",
+"66/1",
+"50/1",
+"66/1",
+"40/1",
+"50/1"
+],
+"comment": "Held up, always rear division",
+"status": "RUNNER"
+},
+{
+"pos": 9,
+"horse": "Consortium",
+"btn": "5 \u00bd",
+"sp": "9/2",
+"fav": false,
+"hist": [
+"10/1",
+"9/1",
+"17/2",
+"8/1",
+"17/2"
+],
+"comment": "Soon pushed along behind leaders, ridden over 2f out, weakened quickly over 1f out",
+"status": "RUNNER"
+},
+{
+"pos": 10,
+"horse": "Perfect Echo",
+"btn": "7",
+"sp": "125/1",
+"fav": false,
+"hist": [
+"150/1",
+"200/1",
+"250/1"
+],
+"comment": "Soon pushed along, detached in rear, tailed off",
+"status": "RUNNER"
+},
+{
+"pos": 0,
+"horse": "Space Bob",
+"btn": null,
+"sp": "5/2",
+"fav": false,
+"hist": [
+"8/11",
+"4/5",
+"8/11",
+"4/6",
+"8/11",
+"4/6"
+],
+"comment": "Non runner",
+"status": "WITHDRAWN"
+}
+],
+"pick": {
+"morning": [
+"Space Bob",
+"NR",
+""
+],
+"final": [
+"Space Bob",
+"NR",
+""
+]
+},
+"pick_betfair": {
+"Space Bob": {
+"morning_0905": 1.98,
+"close": 1.83,
+"close_polled": "13:10",
+"mins_to_off": 1.7
+}
+}
+},
+{
+"course": "Bath",
+"time": "13:42",
+"sl_id": 945953,
+"going": "Soft (Heavy in places)",
+"placed": 2,
+"rides": [
+{
+"pos": 1,
+"horse": "Kaito",
+"btn": null,
+"sp": "6/5",
+"fav": false,
+"hist": [
+"5/4"
+],
+"comment": "Held up behind leaders, headway going well to chase leader over 2f out, led over 1f out, kept on well final furlong",
+"status": "RUNNER"
+},
+{
+"pos": 2,
+"horse": "Q T Boy",
+"btn": "nk",
+"sp": "10/1",
+"fav": false,
+"hist": [
+"9/1",
+"17/2",
+"9/1",
+"17/2",
+"10/1",
+"11/1",
+"9/1"
+],
+"comment": "Led, ridden over 2f out, headed over 1f out, kept on gamely once headed",
+"status": "RUNNER"
+},
+{
+"pos": 3,
+"horse": "Allaboutthelunch",
+"btn": "5 \u00bd",
+"sp": "18/1",
+"fav": false,
+"hist": [
+"14/1",
+"16/1",
+"18/1",
+"16/1"
+],
+"comment": "Soon pushed along to chase leader, ridden 3f out, kept on gamely at one pace from over 1f out",
+"status": "RUNNER"
+},
+{
+"pos": 4,
+"horse": "Divine Concerto",
+"btn": "4 \u00bd",
+"sp": "20/1",
+"fav": false,
+"hist": [],
+"comment": "Mid-division, ridden 3f out, weakened over 1f out",
+"status": "RUNNER"
+},
+{
+"pos": 5,
+"horse": "Singing Blues",
+"btn": "3 \u00bc",
+"sp": "50/1",
+"fav": false,
+"hist": [
+"50/1",
+"66/1",
+"50/1",
+"66/1",
+"50/1",
+"66/1",
+"50/1",
+"66/1"
+],
+"comment": "Held up towards rear, ridden 3f out, weakened 2f out",
+"status": "RUNNER"
+},
+{
+"pos": 6,
+"horse": "Time Glory",
+"btn": "1 \u00bd",
+"sp": "66/1",
+"fav": false,
+"hist": [
+"50/1"
+],
+"comment": "Steadied start, always rear division",
+"status": "RUNNER"
+},
+{
+"pos": 7,
+"horse": "Pirates Paradise",
+"btn": "nk",
+"sp": "28/1",
+"fav": false,
+"hist": [
+"20/1",
+"18/1",
+"20/1",
+"18/1",
+"20/1",
+"22/1",
+"25/1"
+],
+"comment": "Slowly into stride, always towards rear",
+"status": "RUNNER"
+},
+{
+"pos": 0,
+"horse": "Ground Force",
+"btn": null,
+"sp": "11/10",
+"fav": true,
+"hist": [
+"11/8",
+"6/4",
+"11/8",
+"5/4",
+"6/5",
+"5/4",
+"6/5",
+"5/4",
+"11/10",
+"6/5",
+"5/4",
+"6/5",
+"11/10",
+"6/5"
+],
+"comment": "Withdrawn",
+"status": "WITHDRAWN"
+}
+],
+"pick": {
+"morning": [
+"Ground Force",
+"NR",
+""
+],
+"final": [
+"Ground Force",
+"NR",
+""
+]
+},
+"pick_betfair": {
+"Ground Force": {
+"morning_0905": 2.52,
+"close": 2.54,
+"close_polled": "13:40",
+"mins_to_off": 1.6
+}
+}
+},
+{
+"course": "Bath",
+"time": "14:12",
+"sl_id": 945954,
+"going": "Soft (Heavy in places)",
+"placed": 3,
+"rides": [
+{
+"pos": 1,
+"horse": "Look Back Smiling",
+"btn": null,
+"sp": "13/2",
+"fav": false,
+"hist": [
+"10/1",
+"9/1",
+"17/2",
+"8/1",
+"15/2",
+"7/1"
+],
+"comment": "Mid-division, headway to chase leaders 2f out, ran on strongly to lead 1f out, pushed out",
+"status": "RUNNER"
+},
+{
+"pos": 2,
+"horse": "Just Queen High",
+"btn": "1",
+"sp": "22/1",
+"fav": false,
+"hist": [
+"18/1",
+"20/1",
+"22/1",
+"25/1"
+],
+"comment": "Chased leader, ridden to lead 2f out, headed 1f out, kept on",
+"status": "RUNNER"
+},
+{
+"pos": 3,
+"horse": "Man From Havana",
+"btn": "4",
+"sp": "28/1",
+"fav": false,
+"hist": [
+"25/1"
+],
+"comment": "Towards rear, ridden and headway 2f out, stayed on well final furlong, took third on line",
+"status": "RUNNER"
+},
+{
+"pos": 4,
+"horse": "Rwenearlytheredad",
+"btn": "sh",
+"sp": "33/1",
+"fav": false,
+"hist": [
+"16/1",
+"18/1",
+"20/1",
+"22/1",
+"25/1",
+"28/1",
+"33/1",
+"40/1"
+],
+"comment": "Led, ridden over 2f out, headed 2f out, no extra final furlong, lost third on line",
+"status": "RUNNER"
+},
+{
+"pos": 5,
+"horse": "Pitney",
+"btn": "hd",
+"sp": "9/1",
+"fav": false,
+"hist": [
+"17/2",
+"9/1",
+"17/2"
+],
+"comment": "Mid-division, headway to chase leaders over 3f out, ridden to challenge over 1f out, no extra inside final furlong",
+"status": "RUNNER"
+},
+{
+"pos": 6,
+"horse": "Lovely Jubly",
+"btn": "3",
+"sp": "12/1",
+"fav": false,
+"hist": [
+"9/1",
+"17/2",
+"9/1",
+"10/1",
+"11/1"
+],
+"comment": "Towards rear, ridden over 2f out, kept on one pace from over 1f out",
+"status": "RUNNER"
+},
+{
+"pos": 7,
+"horse": "Kaleidoscope Eyes",
+"btn": "\u00bd",
+"sp": "13/2",
+"fav": false,
+"hist": [
+"15/2",
+"7/1"
+],
+"comment": "Mid-division, ridden over 3f out, brief headway over 1f out, weakened final furlong",
+"status": "RUNNER"
+},
+{
+"pos": 8,
+"horse": "Equion",
+"btn": "1 \u00bc",
+"sp": "5/2",
+"fav": true,
+"hist": [
+"10/3",
+"3/1",
+"11/4",
+"5/2",
+"11/4"
+],
+"comment": "Towards rear, ridden and headway 2f out, weakened 1f out",
+"status": "RUNNER"
+},
+{
+"pos": 9,
+"horse": "Divine Wish",
+"btn": "1 \u00bd",
+"sp": "50/1",
+"fav": false,
+"hist": [
+"40/1"
+],
+"comment": "Slowly into stride, soon prominent, chased leaders, ridden over 3f out, weakened over 1f out",
+"status": "RUNNER"
+},
+{
+"pos": 10,
+"horse": "Rogue Sea",
+"btn": "5 \u00bd",
+"sp": "80/1",
+"fav": false,
+"hist": [
+"40/1",
+"50/1",
+"66/1",
+"50/1",
+"66/1",
+"50/1",
+"66/1",
+"80/1",
+"66/1"
+],
+"comment": "Mid-division, ridden and lost place 3f out, soon beaten",
+"status": "RUNNER"
+},
+{
+"pos": 11,
+"horse": "Spirit Lead Me",
+"btn": "hd",
+"sp": "5/2",
+"fav": true,
+"hist": [
+"5/2",
+"11/4"
+],
+"comment": "Mid-division, ridden and weakened quickly 2f out,",
+"status": "RUNNER"
+},
+{
+"pos": 12,
+"horse": "Havana Mojito",
+"btn": "2 \u00bc",
+"sp": "22/1",
+"fav": false,
+"hist": [
+"14/1",
+"16/1",
+"18/1",
+"18/1",
+"20/1"
+],
+"comment": "Chased leaders, ridden and weakened 2f out",
+"status": "RUNNER"
+},
+{
+"pos": 13,
+"horse": "Riyadh Gem",
+"btn": "2",
+"sp": "50/1",
+"fav": false,
+"hist": [
+"40/1",
+"50/1",
+"50/1",
+"40/1"
+],
+"comment": "Awkward start, always in rear",
+"status": "RUNNER"
+},
+{
+"pos": 14,
+"horse": "Thiscouldbefun",
+"btn": "1 \u00bc",
+"sp": "11/1",
+"fav": false,
+"hist": [
+"11/1",
+"10/1",
+"11/1",
+"10/1"
+],
+"comment": "Held up behind leaders, ridden and weakened over 2f out",
+"status": "RUNNER"
+}
+],
+"pick": {
+"morning": [
+"Equion",
+8,
+"5/2"
+],
+"final": [
+"Equion",
+8,
+"5/2"
+]
+},
+"pick_betfair": {
+"Equion": {
+"morning_0905": 5.3,
+"close": 4.3,
+"close_polled": "14:10",
+"mins_to_off": 1.7
+}
+}
+},
+{
+"course": "Bath",
+"time": "14:42",
+"sl_id": 945955,
+"going": "Soft (Heavy in places)",
+"placed": 3,
+"rides": [
+{
+"pos": 1,
+"horse": "Newtown Duke",
+"btn": null,
+"sp": "6/1",
+"fav": false,
+"hist": [
+"5/1",
+"9/2",
+"5/1",
+"11/2"
+],
+"comment": "Held up behind leaders, headway to chase leader 2f out, ridden over 1f out, stayed on well to lead inside final furlong, pushed out",
+"status": "RUNNER"
+},
+{
+"pos": 2,
+"horse": "Box To Box",
+"btn": "1 \u00be",
+"sp": "9/1",
+"fav": false,
+"hist": [
+"9/1",
+"17/2"
+],
+"comment": "Led, joined and contested lead 3f out, ridden to assert over 2f out, headed inside final furlong, kept on",
+"status": "RUNNER"
+},
+{
+"pos": 3,
+"horse": "Sergei Breeze",
+"btn": "1 \u00be",
+"sp": "11/4",
+"fav": true,
+"hist": [
+"4/1",
+"7/2",
+"10/3",
+"3/1",
+"10/3",
+"3/1",
+"11/4",
+"5/2"
+],
+"comment": "Chased leaders, ridden 3f out, kept on well from 2f out",
+"status": "RUNNER"
+},
+{
+"pos": 4,
+"horse": "Due To Henry",
+"btn": "nk",
+"sp": "5/1",
+"fav": false,
+"hist": [
+"13/2",
+"6/1",
+"9/2"
+],
+"comment": "Mid-division, headway over 2f out, ridden and kept on well from 2f out",
+"status": "RUNNER"
+},
+{
+"pos": 5,
+"horse": "The Dark Baron",
+"btn": "4 \u00be",
+"sp": "22/1",
+"fav": false,
+"hist": [
+"20/1",
+"22/1",
+"20/1",
+"22/1",
+"25/1",
+"22/1",
+"20/1",
+"22/1",
+"20/1"
+],
+"comment": "Held up behind leaders, headway to contest lead 3f out, ridden and headed over 2f out, weakened over 1f out",
+"status": "RUNNER"
+},
+{
+"pos": 6,
+"horse": "Albus Anne",
+"btn": "nk",
+"sp": "4/1",
+"fav": false,
+"hist": [
+"4/1",
+"7/2"
+],
+"comment": "Slowly into stride, held up towards rear, ridden over 2f out, brief headway over 1f out, , no further headway, never threatened leaders",
+"status": "RUNNER"
+},
+{
+"pos": 7,
+"horse": "Wisper",
+"btn": "1 \u00bd",
+"sp": "5/1",
+"fav": false,
+"hist": [
+"4/1",
+"9/2",
+"4/1",
+"9/2",
+"5/1",
+"11/2"
+],
+"comment": "Mid-division, ridden over 2f out, weakened over 1f out",
+"status": "RUNNER"
+},
+{
+"pos": 8,
+"horse": "Oratorical",
+"btn": "6 \u00bd",
+"sp": "33/1",
+"fav": false,
+"hist": [
+"25/1",
+"28/1"
+],
+"comment": "Chased leader, ridden over 2f out, weakened over 1f out, eased final furlong",
+"status": "RUNNER"
+},
+{
+"pos": 9,
+"horse": "Belfrina",
+"btn": "2",
+"sp": "25/1",
+"fav": false,
+"hist": [
+"18/1",
+"20/1",
+"22/1"
+],
+"comment": "Mid-division, ridden 3f out, weakened over 2f out",
+"status": "RUNNER"
+},
+{
+"pos": 10,
+"horse": "Royal Approval",
+"btn": "2 \u00bd",
+"sp": "50/1",
+"fav": false,
+"hist": [
+"40/1"
+],
+"comment": "Steadied start, always towards rear",
+"status": "RUNNER"
+},
+{
+"pos": 11,
+"horse": "Helga",
+"btn": "sh",
+"sp": "40/1",
+"fav": false,
+"hist": [
+"33/1",
+"40/1",
+"33/1",
+"40/1",
+"33/1"
+],
+"comment": "Chased leader, ridden and weakened over 2f out",
+"status": "RUNNER"
+},
+{
+"pos": 12,
+"horse": "Liveinthelight",
+"btn": "13",
+"sp": "16/1",
+"fav": false,
+"hist": [
+"14/1",
+"16/1",
+"18/1",
+"20/1",
+"18/1"
+],
+"comment": "Always rear division",
+"status": "RUNNER"
+},
+{
+"pos": 0,
+"horse": "Kokoluna",
+"btn": null,
+"sp": "16/1",
+"fav": false,
+"hist": [],
+"comment": "NonRunner",
+"status": "NONRUNNER"
+},
+{
+"pos": 0,
+"horse": "Just An Hour",
+"btn": null,
+"sp": "7/1",
+"fav": false,
+"hist": [],
+"comment": "NonRunner",
+"status": "NONRUNNER"
+}
+],
+"pick": {
+"morning": [
+"Albus Anne",
+6,
+"4/1"
+],
+"final": [
+"Albus Anne",
+6,
+"4/1"
+]
+},
+"pick_betfair": {
+"Albus Anne": {
+"morning_0905": 5.2,
+"close": 6.0,
+"close_polled": "14:40",
+"mins_to_off": 1.6
+}
+}
+},
+{
+"course": "Bath",
+"time": "15:12",
+"sl_id": 945956,
+"going": "Soft (Heavy in places)",
+"placed": 3,
+"rides": [
+{
+"pos": 1,
+"horse": "Kiss And Run",
+"btn": null,
+"sp": "3/1",
+"fav": false,
+"hist": [
+"4/1",
+"7/2",
+"10/3"
+],
+"comment": "Chased leader, ridden over 2f out, led over 1f out, stayed on gamely inside final furlong",
+"status": "RUNNER"
+},
+{
+"pos": 2,
+"horse": "Maharajas Express",
+"btn": "hd",
+"sp": "10/1",
+"fav": false,
+"hist": [],
+"comment": "Mid-division, headway going well 2f out, ridden and stayed on strongly from over 1f out, not reach winner",
+"status": "RUNNER"
+},
+{
+"pos": 3,
+"horse": "Pedros Dream",
+"btn": "1 \u00bd",
+"sp": "11/4",
+"fav": true,
+"hist": [
+"11/4",
+"3/1"
+],
+"comment": "Steadied start, switched right, towards rear, ridden over 2f out, headway and not clear run over 1f out, stayed on well final furlong, never nearer",
+"status": "RUNNER"
+},
+{
+"pos": 4,
+"horse": "Gelato",
+"btn": "nk",
+"sp": "20/1",
+"fav": false,
+"hist": [
+"18/1",
+"20/1",
+"18/1",
+"20/1",
+"22/1"
+],
+"comment": "Towards rear, ridden over 2f out, ran on strongly from over 1f out, nearest finish",
+"status": "RUNNER"
+},
+{
+"pos": 5,
+"horse": "Nogo's Dream",
+"btn": "\u00bd",
+"sp": "22/1",
+"fav": false,
+"hist": [
+"16/1",
+"14/1",
+"16/1",
+"18/1",
+"16/1",
+"18/1",
+"20/1"
+],
+"comment": "Held up behind leaders, ridden to chase winner over 1f out, weakened inside final furlong",
+"status": "RUNNER"
+},
+{
+"pos": 6,
+"horse": "Over Spiced",
+"btn": "1 \u00bd",
+"sp": "9/1",
+"fav": false,
+"hist": [
+"15/2",
+"8/1",
+"8/1",
+"15/2",
+"8/1",
+"17/2"
+],
+"comment": "Mid-division, ridden 2f out, kept on one pace from over 1f out",
+"status": "RUNNER"
+},
+{
+"pos": 7,
+"horse": "Thunderous Love",
+"btn": "\u00be",
+"sp": "7/2",
+"fav": false,
+"hist": [
+"4/1"
+],
+"comment": "Held up towards rear, ridden over 2f out, no impression on leaders",
+"status": "RUNNER"
+},
+{
+"pos": 8,
+"horse": "Born Slippy",
+"btn": "hd",
+"sp": "16/1",
+"fav": false,
+"hist": [
+"16/1",
+"18/1",
+"18/1"
+],
+"comment": "Held up behind leaders, ridden over 2f out, weakened 1f out",
+"status": "RUNNER"
+},
+{
+"pos": 9,
+"horse": "Perfect Location",
+"btn": "3",
+"sp": "40/1",
+"fav": false,
+"hist": [],
+"comment": "Slowly into stride, always towards rear",
+"status": "RUNNER"
+},
+{
+"pos": 10,
+"horse": "Mumayaz",
+"btn": "3 \u00be",
+"sp": "25/1",
+"fav": false,
+"hist": [
+"18/1",
+"20/1",
+"22/1"
+],
+"comment": "Towards rear, ridden and no impression over 1f out, eased final furlong",
+"status": "RUNNER"
+},
+{
+"pos": 11,
+"horse": "Punchbowl Flyer",
+"btn": "3 \u00bc",
+"sp": "16/1",
+"fav": false,
+"hist": [
+"25/1",
+"22/1",
+"20/1",
+"18/1"
+],
+"comment": "Chased leaders, ridden and hampered by weakening rival 2f out",
+"status": "RUNNER"
+},
+{
+"pos": 12,
+"horse": "Burdett Estate",
+"btn": "\u00be",
+"sp": "25/1",
+"fav": false,
+"hist": [
+"20/1",
+"22/1"
+],
+"comment": "Soon led, ridden over 2f out, headed over 1f out, weakened quickly",
+"status": "RUNNER"
+},
+{
+"pos": 0,
+"horse": "Musical Soldier",
+"btn": null,
+"sp": "9/2",
+"fav": false,
+"hist": [],
+"comment": "NonRunner",
+"status": "NONRUNNER"
+}
+],
+"pick": {
+"morning": [
+"Pedros Dream",
+3,
+"11/4"
+],
+"final": [
+"Pedros Dream",
+3,
+"11/4"
+]
+},
+"pick_betfair": {
+"Pedros Dream": {
+"morning_0905": 3.6,
+"close": 4.2,
+"close_polled": "15:10",
+"mins_to_off": 1.7
+}
+}
+},
+{
+"course": "Bath",
+"time": "15:42",
+"sl_id": 945957,
+"going": "Soft (Heavy in places)",
+"placed": 4,
+"rides": [
+{
+"pos": 1,
+"horse": "Rinky Tinky Tinky",
+"btn": null,
+"sp": "9/1",
+"fav": false,
+"hist": [
+"17/2",
+"9/1"
+],
+"comment": "Chased leaders, ridden to lead over 1f out, stayed on gamely final furlong, found extra close home",
+"status": "RUNNER"
+},
+{
+"pos": 2,
+"horse": "Up The Anti",
+"btn": "hd",
+"sp": "17/2",
+"fav": false,
+"hist": [],
+"comment": "Steadied start, towards rear, headway going well 2f out, ridden and ran on well from over 1f out, not reach winner",
+"status": "RUNNER"
+},
+{
+"pos": 3,
+"horse": "Mintana",
+"btn": "\u00be",
+"sp": "6/1",
+"fav": false,
+"hist": [
+"15/2",
+"7/1",
+"13/2"
+],
+"comment": "Mid-division, ridden over 2f out, stayed on well from over 1f out",
+"status": "RUNNER"
+},
+{
+"pos": 4,
+"horse": "No Claims Bonus",
+"btn": "1",
+"sp": "22/1",
+"fav": false,
+"hist": [],
+"comment": "Chased leaders, ridden over 1f out, every chance 1f out, no extra final furlong",
+"status": "RUNNER"
+},
+{
+"pos": 5,
+"horse": "Roman Spring",
+"btn": "1",
+"sp": "17/2",
+"fav": false,
+"hist": [],
+"comment": "Held up behind leaders, ridden over 2f out, stayed on on pace from over 1f out",
+"status": "RUNNER"
+},
+{
+"pos": 6,
+"horse": "Big Bard",
+"btn": "nse",
+"sp": "17/2",
+"fav": false,
+"hist": [
+"9/1",
+"10/1",
+"9/1",
+"10/1",
+"9/1"
+],
+"comment": "Mid-division, ridden over 2f out, kept on one pace from over 1f out",
+"status": "RUNNER"
+},
+{
+"pos": 7,
+"horse": "Whiteley Way",
+"btn": "\u00bd",
+"sp": "7/1",
+"fav": false,
+"hist": [
+"15/2"
+],
+"comment": "Very slowly into stride, in rear, ridden over 2f out, kept on well from over 1f out",
+"status": "RUNNER"
+},
+{
+"pos": 8,
+"horse": "Barnsnape Boy",
+"btn": "1 \u00be",
+"sp": "28/1",
+"fav": false,
+"hist": [],
+"comment": "Contested lead, led over 2f out, headed over 1f out, weakened final furlong",
+"status": "RUNNER"
+},
+{
+"pos": 9,
+"horse": "Bonnita",
+"btn": "2 \u00bc",
+"sp": "25/1",
+"fav": false,
+"hist": [
+"28/1"
+],
+"comment": "Chased leaders, ridden over 2f out, weakened over 1f out",
+"status": "RUNNER"
+},
+{
+"pos": 10,
+"horse": "Forever My Prince",
+"btn": "nk",
+"sp": "11/1",
+"fav": false,
+"hist": [
+"9/1",
+"10/1",
+"10/1"
+],
+"comment": "Mid-division, ridden over 2f out, never threatened leaders",
+"status": "RUNNER"
+},
+{
+"pos": 11,
+"horse": "Blue Point Express",
+"btn": "\u00bd",
+"sp": "20/1",
+"fav": false,
+"hist": [
+"22/1"
+],
+"comment": "Towards rear, alone far side, never in contention",
+"status": "RUNNER"
+},
+{
+"pos": 12,
+"horse": "Unico",
+"btn": "\u00bd",
+"sp": "4/1",
+"fav": true,
+"hist": [
+"4/1",
+"9/2"
+],
+"comment": "Chased leaders, ridden 2f out, weakened quickly final furlong",
+"status": "RUNNER"
+},
+{
+"pos": 13,
+"horse": "Ken Brulee",
+"btn": "1 \u00bd",
+"sp": "25/1",
+"fav": false,
+"hist": [],
+"comment": "Always towards rear, never in contention",
+"status": "RUNNER"
+},
+{
+"pos": 14,
+"horse": "Just King High",
+"btn": "1",
+"sp": "8/1",
+"fav": false,
+"hist": [
+"15/2"
+],
+"comment": "Always towards rear",
+"status": "RUNNER"
+},
+{
+"pos": 15,
+"horse": "Grimese's Special",
+"btn": "nk",
+"sp": "22/1",
+"fav": false,
+"hist": [
+"22/1",
+"20/1"
+],
+"comment": "Soon outpaced and always towards rear",
+"status": "RUNNER"
+},
+{
+"pos": 16,
+"horse": "Dusk Damsel",
+"btn": "3",
+"sp": "50/1",
+"fav": false,
+"hist": [
+"40/1"
+],
+"comment": "Contested lead, ridden, headed and weakened over 2f out",
+"status": "RUNNER"
+},
+{
+"pos": 0,
+"horse": "Kyoto",
+"btn": null,
+"sp": "14/1",
+"fav": false,
+"hist": [],
+"comment": "NonRunner",
+"status": "NONRUNNER"
+}
+],
+"pick": {
+"morning": [
+"Unico",
+12,
+"4/1"
+],
+"final": [
+"Unico",
+12,
+"4/1"
+]
+},
+"pick_betfair": {
+"Unico": {
+"morning_0905": 7.2,
+"close": 5.9,
+"close_polled": "15:40",
+"mins_to_off": 1.6
+}
+}
+},
+{
+"course": "Bath",
+"time": "16:12",
+"sl_id": 945958,
+"going": "Soft (Heavy in places)",
+"placed": 3,
+"rides": [
+{
+"pos": 1,
+"horse": "Connie's Rose",
+"btn": null,
+"sp": "20/1",
+"fav": false,
+"hist": [
+"22/1",
+"25/1",
+"22/1"
+],
+"comment": "Always led, fast away, led, ridden over 2f out, stayed on very gamely from over 1f out",
+"status": "RUNNER"
+},
+{
+"pos": 2,
+"horse": "Maid In Devon",
+"btn": "\u00be",
+"sp": "9/1",
+"fav": false,
+"hist": [
+"9/1",
+"17/2",
+"9/1",
+"17/2"
+],
+"comment": "Mid-division, ridden over 2f out, ran on strongly from over 1f out",
+"status": "RUNNER"
+},
+{
+"pos": 3,
+"horse": "Iconic Dawn",
+"btn": "nk",
+"sp": "14/1",
+"fav": false,
+"hist": [
+"12/1"
+],
+"comment": "Mid-division, ridden and headway to chase leaders 2f out, ran on well from over 1f out",
+"status": "RUNNER"
+},
+{
+"pos": 4,
+"horse": "Savannah Smiles",
+"btn": "nk",
+"sp": "50/1",
+"fav": false,
+"hist": [
+"33/1",
+"40/1"
+],
+"comment": "Held up towards rear, ridden and headway over 2f out, stayed on final furlong",
+"status": "RUNNER"
+},
+{
+"pos": 5,
+"horse": "Call Time",
+"btn": "1",
+"sp": "6/1",
+"fav": false,
+"hist": [
+"13/2",
+"7/1",
+"13/2",
+"7/1",
+"13/2",
+"7/1",
+"13/2"
+],
+"comment": "Chased leaders, ridden 2f out, every chance 1f out, no extra final furlong",
+"status": "RUNNER"
+},
+{
+"pos": 6,
+"horse": "Alkuwarrior",
+"btn": "1",
+"sp": "8/1",
+"fav": false,
+"hist": [
+"17/2",
+"8/1",
+"17/2",
+"17/2"
+],
+"comment": "Chased winner, ridden to challenge 2f out, weakened inside final furlong",
+"status": "RUNNER"
+},
+{
+"pos": 7,
+"horse": "Lahina Bay",
+"btn": "nse",
+"sp": "16/1",
+"fav": false,
+"hist": [
+"20/1",
+"18/1"
+],
+"comment": "Held up mid-division, headway 2f out, ridden and stayed on one pace from over 1f out,",
+"status": "RUNNER"
+},
+{
+"pos": 8,
+"horse": "Two And Two",
+"btn": "sh",
+"sp": "22/1",
+"fav": false,
+"hist": [],
+"comment": "Held up behind leaders, ridden to chase leaders over 2f out, weakened 1f out",
+"status": "RUNNER"
+},
+{
+"pos": 9,
+"horse": "Legendsoftheland",
+"btn": "1 \u00be",
+"sp": "10/3",
+"fav": true,
+"hist": [
+"7/2",
+"4/1",
+"7/2"
+],
+"comment": "Towards rear, ridden over 2f out, no impression on leaders",
+"status": "RUNNER"
+},
+{
+"pos": 10,
+"horse": "Jenny Jerome",
+"btn": "nk",
+"sp": "11/1",
+"fav": false,
+"hist": [
+"10/1",
+"9/1",
+"10/1",
+"9/1",
+"10/1"
+],
+"comment": "Chased leaders, ridden and weakened 2f out",
+"status": "RUNNER"
+},
+{
+"pos": 11,
+"horse": "Arnaz",
+"btn": "hd",
+"sp": "28/1",
+"fav": false,
+"hist": [
+"33/1",
+"28/1",
+"25/1"
+],
+"comment": "Always towards rear, never in contention",
+"status": "RUNNER"
+},
+{
+"pos": 12,
+"horse": "Neptune Legend",
+"btn": "nk",
+"sp": "80/1",
+"fav": false,
+"hist": [
+"66/1"
+],
+"comment": "Soon outpaced and always in rear division",
+"status": "RUNNER"
+},
+{
+"pos": 13,
+"horse": "Act Of Violence",
+"btn": "sh",
+"sp": "6/1",
+"fav": false,
+"hist": [
+"15/2",
+"7/1",
+"13/2"
+],
+"comment": "Mid-division, ridden over 2f out, weakened over 1f out",
+"status": "RUNNER"
+},
+{
+"pos": 14,
+"horse": "Red Snapper",
+"btn": "\u00bd",
+"sp": "9/2",
+"fav": false,
+"hist": [
+"5/1"
+],
+"comment": "Went left and bumped rival start, always towards rear",
+"status": "RUNNER"
+},
+{
+"pos": 15,
+"horse": "Emporess",
+"btn": "14",
+"sp": "20/1",
+"fav": false,
+"hist": [
+"12/1",
+"14/1",
+"16/1",
+"18/1"
+],
+"comment": "Bumped by rival start, always behind",
+"status": "RUNNER"
+},
+{
+"pos": 0,
+"horse": "Dragon Spin",
+"btn": null,
+"sp": "16/1",
+"fav": false,
+"hist": [],
+"comment": "NonRunner",
+"status": "NONRUNNER"
+},
+{
+"pos": 0,
+"horse": "Beerwah",
+"btn": null,
+"sp": "20/1",
+"fav": false,
+"hist": [],
+"comment": "NonRunner",
+"status": "NONRUNNER"
+}
+],
+"pick": {
+"morning": [
+"Red Snapper",
+14,
+"9/2"
+],
+"final": [
+"Red Snapper",
+14,
+"9/2"
+]
+},
+"pick_betfair": {
+"Red Snapper": {
+"morning_0905": 6.6,
+"close": 6.6,
+"close_polled": "16:10",
+"mins_to_off": 1.7
+}
+}
+},
+{
+"course": "Southwell",
+"time": "16:25",
+"sl_id": 946522,
+"going": "Standard",
+"placed": 3,
+"rides": [
+{
+"pos": 1,
+"horse": "Anthropologist",
+"btn": null,
+"sp": "1/1",
+"fav": true,
+"hist": [
+"5/4",
+"6/5",
+"11/10",
+"6/5",
+"11/10"
+],
+"comment": "Raced in rear of mid-division, headway over 2f out, ridden to lead inside final furlong, comfortably",
+"status": "RUNNER"
+},
+{
+"pos": 2,
+"horse": "Dovey Moon",
+"btn": "1 \u00be",
+"sp": "7/1",
+"fav": false,
+"hist": [
+"8/1",
+"15/2"
+],
+"comment": "Led, shaken up over 2f out, headed over 1f out, ran on well inside final furlong, no chance with comfortable winner",
+"status": "RUNNER"
+},
+{
+"pos": 3,
+"horse": "Mount King",
+"btn": "1",
+"sp": "22/1",
+"fav": false,
+"hist": [
+"20/1",
+"22/1",
+"25/1",
+"22/1",
+"20/1"
+],
+"comment": "Slowly into stride, towards rear, ridden over 2f out, soon headway, kept on well and took third towards finish",
+"status": "RUNNER"
+},
+{
+"pos": 4,
+"horse": "Monsieur Bondy",
+"btn": "\u00bd",
+"sp": "9/2",
+"fav": false,
+"hist": [
+"9/2",
+"4/1"
+],
+"comment": "Midfield, shaken up over 2f out, kept on inside final furlong, never nearer",
+"status": "RUNNER"
+},
+{
+"pos": 5,
+"horse": "Exotic Baby",
+"btn": "\u00be",
+"sp": "22/1",
+"fav": false,
+"hist": [
+"18/1",
+"20/1",
+"22/1",
+"20/1"
+],
+"comment": "Wore hood to post, towards rear, ridden over 2f out, soon not much room, switched left and kept on inside final furlong",
+"status": "RUNNER"
+},
+{
+"pos": 6,
+"horse": "Up The Jazz",
+"btn": "nk",
+"sp": "22/1",
+"fav": false,
+"hist": [
+"22/1",
+"25/1"
+],
+"comment": "Raced in rear of mid-division, switched left for clear run and shaken up over 1f out, plugged on inside final furlong",
+"status": "RUNNER"
+},
+{
+"pos": 7,
+"horse": "Timely Affair",
+"btn": "sh",
+"sp": "8/1",
+"fav": false,
+"hist": [
+"15/2",
+"7/1",
+"15/2",
+"7/1",
+"15/2"
+],
+"comment": "Prominent, ridden to lead over 1f out, headed and weakened inside final furlong, lost many places towards finish",
+"status": "RUNNER"
+},
+{
+"pos": 8,
+"horse": "Popeye Doyle",
+"btn": "\u00be",
+"sp": "50/1",
+"fav": false,
+"hist": [
+"33/1",
+"40/1"
+],
+"comment": "Close up tracking leaders, shaken up over 2f out, weakened inside final furlong",
+"status": "RUNNER"
+},
+{
+"pos": 9,
+"horse": "Have You A Minute",
+"btn": "nk",
+"sp": "16/1",
+"fav": false,
+"hist": [
+"14/1",
+"16/1",
+"18/1"
+],
+"comment": "Towards rear throughout, never a factor",
+"status": "RUNNER"
+},
+{
+"pos": 10,
+"horse": "Quiet Resolve",
+"btn": "1",
+"sp": "28/1",
+"fav": false,
+"hist": [
+"25/1",
+"28/1",
+"33/1"
+],
+"comment": "Midfield, ridden over 2f out, weakened inside final furlong",
+"status": "RUNNER"
+},
+{
+"pos": 11,
+"horse": "Alcaraz",
+"btn": "1 \u00bd",
+"sp": "14/1",
+"fav": false,
+"hist": [
+"16/1",
+"14/1",
+"12/1",
+"14/1",
+"12/1"
+],
+"comment": "Raced alone near side start, joined main group and chased along after 2f, soon prominent, ridden over 2f out, weakened over 1f out",
+"status": "RUNNER"
+},
+{
+"pos": 12,
+"horse": "Anton Mauve",
+"btn": "2 \u00bd",
+"sp": "18/1",
+"fav": false,
+"hist": [
+"22/1",
+"25/1",
+"25/1",
+"22/1",
+"20/1"
+],
+"comment": "Raced in rear of mid-division throughout",
+"status": "RUNNER"
+},
+{
+"pos": 13,
+"horse": "Galileo Island",
+"btn": "4 \u00bd",
+"sp": "25/1",
+"fav": false,
+"hist": [
+"22/1",
+"25/1",
+"22/1",
+"22/1"
+],
+"comment": "Midfield, ridden over 2f out, soon weakened",
+"status": "RUNNER"
+},
+{
+"pos": 0,
+"horse": "Calyxoh",
+"btn": null,
+"sp": "25/1",
+"fav": false,
+"hist": [],
+"comment": "NonRunner",
+"status": "NONRUNNER"
+}
+],
+"pick": {
+"morning": [
+"Anthropologist",
+1,
+"1/1"
+],
+"final": [
+"Anthropologist",
+1,
+"1/1"
+]
+},
+"pick_betfair": {
+"Anthropologist": {
+"morning_0905": 2.7,
+"close": 2.28,
+"close_polled": "16:20",
+"mins_to_off": 4.7
+}
+}
+},
+{
+"course": "Southwell",
+"time": "17:00",
+"sl_id": 945959,
+"going": "Standard",
+"placed": 3,
+"rides": [
+{
+"pos": 1,
+"horse": "Beaujon",
+"btn": null,
+"sp": "5/4",
+"fav": true,
+"hist": [
+"11/8",
+"5/4",
+"11/8"
+],
+"comment": "Raced in second, shaken up over 1f out, soon led, kept on inside final furlong, easily",
+"status": "RUNNER"
+},
+{
+"pos": 2,
+"horse": "Shadow Boxer",
+"btn": "3 \u00be",
+"sp": "5/2",
+"fav": false,
+"hist": [
+"11/4"
+],
+"comment": "Close up tracking leaders, ridden over 2f out, kept on well inside final furlong, no chance with easy winner",
+"status": "RUNNER"
+},
+{
+"pos": 3,
+"horse": "Sin City",
+"btn": "1 \u00bd",
+"sp": "6/4",
+"fav": false,
+"hist": [
+"11/8"
+],
+"comment": "Led, ridden and headed over 1f out, ran on but no danger inside final furlong",
+"status": "RUNNER"
+},
+{
+"pos": 4,
+"horse": "Casement Park",
+"btn": "6 \u00bd",
+"sp": "200/1",
+"fav": false,
+"hist": [
+"250/1"
+],
+"comment": "Close up tracking leaders, shaken up over 2f out, plugged on same pace over 1f out",
+"status": "RUNNER"
+},
+{
+"pos": 5,
+"horse": "Momotombo",
+"btn": "1 \u00bd",
+"sp": "66/1",
+"fav": false,
+"hist": [
+"50/1"
+],
+"comment": "Slowly into stride, midfield, ridden over 3f out, plugged on same pace over 1f out",
+"status": "RUNNER"
+},
+{
+"pos": 6,
+"horse": "Dream Of Albion",
+"btn": "4",
+"sp": "150/1",
+"fav": false,
+"hist": [
+"200/1"
+],
+"comment": "Keen in midfield, shaken up over 2f out, soon no extra",
+"status": "RUNNER"
+},
+{
+"pos": 7,
+"horse": "Wild Rock",
+"btn": "11",
+"sp": "66/1",
+"fav": false,
+"hist": [
+"80/1"
+],
+"comment": "Raced in rear throughout, never on terms",
+"status": "RUNNER"
+},
+{
+"pos": 8,
+"horse": "Galileo's Gift",
+"btn": "\u00bd",
+"sp": "33/1",
+"fav": false,
+"hist": [
+"28/1"
+],
+"comment": "Towards rear, never a factor",
+"status": "RUNNER"
+}
+],
+"pick": {
+"morning": [
+"Beaujon",
+1,
+"5/4"
+],
+"final": [
+"Beaujon",
+1,
+"5/4"
+]
+},
+"pick_betfair": {
+"Beaujon": {
+"morning_0905": 2.14,
+"close": 2.62,
+"close_polled": "16:50",
+"mins_to_off": 9.6
+}
+}
+},
+{
+"course": "Southwell",
+"time": "17:30",
+"sl_id": 945960,
+"going": "Standard",
+"placed": 3,
+"rides": [
+{
+"pos": 1,
+"horse": "Son Of Light",
+"btn": null,
+"sp": "85/40",
+"fav": true,
+"hist": [
+"2/1",
+"15/8",
+"2/1",
+"85/40",
+"9/4",
+"2/1"
+],
+"comment": "Towards rear, ridden over 2f out, kept on well and headway inside final furlong, led close home, ran on",
+"status": "RUNNER"
+},
+{
+"pos": 2,
+"horse": "Perfect Hope",
+"btn": "nk",
+"sp": "6/1",
+"fav": false,
+"hist": [
+"15/2",
+"7/1",
+"13/2",
+"6/1",
+"13/2"
+],
+"comment": "Raced in rear of mid-division, ridden over 2f out, kept on inside final furlong, briefly led narrowly but headed close home, ran on",
+"status": "RUNNER"
+},
+{
+"pos": 3,
+"horse": "Lilywhite Hart",
+"btn": "1 \u00bc",
+"sp": "12/1",
+"fav": false,
+"hist": [
+"10/1",
+"11/1",
+"10/1",
+"11/1"
+],
+"comment": "Midfield, ridden over 2f out, headway to lead inside final furlong, headed close home, no extra",
+"status": "RUNNER"
+},
+{
+"pos": 4,
+"horse": "Diamondise",
+"btn": "1",
+"sp": "11/1",
+"fav": false,
+"hist": [
+"11/1",
+"10/1",
+"9/1",
+"10/1",
+"9/1",
+"10/1"
+],
+"comment": "Raced in rear of mid-division, ridden and headway over 1f out, kept on inside final furlong",
+"status": "RUNNER"
+},
+{
+"pos": 5,
+"horse": "Lopefernza",
+"btn": "\u00bd",
+"sp": "12/1",
+"fav": false,
+"hist": [
+"11/1"
+],
+"comment": "Raced in rear, ridden over 2f out, minor headway to pass beaten rivals inside final furlong",
+"status": "RUNNER"
+},
+{
+"pos": 6,
+"horse": "Kochella",
+"btn": "hd",
+"sp": "20/1",
+"fav": false,
+"hist": [
+"22/1",
+"20/1",
+"18/1"
+],
+"comment": "Wore hood to post, midfield, ridden over 2f out, plugged on inside final furlong, never nearer",
+"status": "RUNNER"
+},
+{
+"pos": 7,
+"horse": "Tarn Hows",
+"btn": "hd",
+"sp": "11/1",
+"fav": false,
+"hist": [
+"10/1",
+"11/1",
+"10/1",
+"11/1",
+"10/1",
+"11/1",
+"10/1"
+],
+"comment": "Prominent, ridden over 2f out, headway to lead over 1f out, headed inside final furlong, soon weakened",
+"status": "RUNNER"
+},
+{
+"pos": 8,
+"horse": "Forever Faithfull",
+"btn": "sh",
+"sp": "40/1",
+"fav": false,
+"hist": [
+"33/1"
+],
+"comment": "Raced in rear of mid-division, ridden over 2f out, ran on same pace over 1f out",
+"status": "RUNNER"
+},
+{
+"pos": 9,
+"horse": "From Me To You",
+"btn": "\u00bd",
+"sp": "10/1",
+"fav": false,
+"hist": [
+"15/2",
+"8/1",
+"17/2",
+"9/1",
+"10/1",
+"9/1"
+],
+"comment": "Midfield, shaken up over 2f out, weakened inside final furlong",
+"status": "RUNNER"
+},
+{
+"pos": 10,
+"horse": "Passerine",
+"btn": "nk",
+"sp": "14/1",
+"fav": false,
+"hist": [
+"22/1",
+"20/1",
+"18/1",
+"16/1",
+"18/1",
+"16/1"
+],
+"comment": "Prominent, ridden over 2f out, weakened inside final furlong",
+"status": "RUNNER"
+},
+{
+"pos": 11,
+"horse": "Caravel",
+"btn": "nk",
+"sp": "20/1",
+"fav": false,
+"hist": [
+"16/1",
+"18/1"
+],
+"comment": "Midfield, ridden over 2f out, not much room over 1f out, soon weakened",
+"status": "RUNNER"
+},
+{
+"pos": 12,
+"horse": "Wintour",
+"btn": "\u00be",
+"sp": "12/1",
+"fav": false,
+"hist": [
+"11/1"
+],
+"comment": "Midfield, shaken up over 2f out, weakened over 1f out",
+"status": "RUNNER"
+},
+{
+"pos": 13,
+"horse": "Hoosier",
+"btn": "10",
+"sp": "13/2",
+"fav": false,
+"hist": [
+"9/1",
+"10/1",
+"9/1",
+"17/2",
+"8/1",
+"15/2",
+"7/1",
+"13/2",
+"7/1"
+],
+"comment": "Wore hood to post, led, shaken up over 2f out, headed and weakened over 1f out",
+"status": "RUNNER"
+},
+{
+"pos": 0,
+"horse": "Ten Of Clubs",
+"btn": null,
+"sp": "50/1",
+"fav": false,
+"hist": [],
+"comment": "NonRunner",
+"status": "NONRUNNER"
+}
+],
+"pick": {
+"morning": [
+"Son Of Light",
+1,
+"85/40"
+],
+"final": [
+"Son Of Light",
+1,
+"85/40"
+]
+},
+"pick_betfair": {
+"Son Of Light": {
+"morning_0905": 3.8,
+"close": 3.3,
+"close_polled": "17:25",
+"mins_to_off": 4.6
+}
+}
+},
+{
+"course": "Southwell",
+"time": "18:00",
+"sl_id": 945961,
+"going": "Standard",
+"placed": 3,
+"rides": [
+{
+"pos": 1,
+"horse": "Edmond Halley",
+"btn": null,
+"sp": "15/8",
+"fav": false,
+"hist": [
+"9/4",
+"2/1",
+"15/8",
+"7/4"
+],
+"comment": "Wore hood to post, keen, made all, ridden over 1f out, extended lead by many lengths inside final furlong, eased down close home, cosily",
+"status": "RUNNER"
+},
+{
+"pos": 2,
+"horse": "Sovereign Class",
+"btn": "\u00bd",
+"sp": "33/1",
+"fav": false,
+"hist": [
+"33/1",
+"28/1",
+"33/1",
+"28/1",
+"33/1",
+"28/1",
+"33/1",
+"28/1"
+],
+"comment": "Raced in rear of mid-division, ridden over 2f out, soon stayed on, headway inside final furlong, kept on well but always well held by cosy winner towards finish",
+"status": "RUNNER"
+},
+{
+"pos": 3,
+"horse": "Distillate",
+"btn": "1 \u00bd",
+"sp": "11/10",
+"fav": true,
+"hist": [
+"1/1",
+"11/10",
+"11/10",
+"6/5"
+],
+"comment": "Keen towards rear, shaken up over 1f out, soon not much room, ran on well inside final furlong, took third close home",
+"status": "RUNNER"
+},
+{
+"pos": 4,
+"horse": "Mister Sky Blue",
+"btn": "hd",
+"sp": "22/1",
+"fav": false,
+"hist": [
+"20/1",
+"22/1",
+"25/1"
+],
+"comment": "Prominent, shaken up over 2f out, stayed on inside final furlong, weakened and lost third close home",
+"status": "RUNNER"
+},
+{
+"pos": 5,
+"horse": "Al Suil Eile",
+"btn": "2",
+"sp": "16/1",
+"fav": false,
+"hist": [
+"14/1",
+"16/1",
+"18/1"
+],
+"comment": "Keen in midfield, headway over 2f out, ridden over 1f out, plugged on inside final furlong, soon no extra",
+"status": "RUNNER"
+},
+{
+"pos": 6,
+"horse": "Crystal Dagger",
+"btn": "1 \u00bd",
+"sp": "80/1",
+"fav": false,
+"hist": [],
+"comment": "Midfield, ridden over 2f out, plugged on same pace inside final furlong",
+"status": "RUNNER"
+},
+{
+"pos": 7,
+"horse": "Keep Me Stable",
+"btn": "2",
+"sp": "18/1",
+"fav": false,
+"hist": [],
+"comment": "Raced in rear of mid-division, ridden over 2f out, plugged on same pace over 1f out",
+"status": "RUNNER"
+},
+{
+"pos": 8,
+"horse": "Brother Dave",
+"btn": "2 \u00bc",
+"sp": "33/1",
+"fav": false,
+"hist": [
+"28/1",
+"25/1",
+"28/1",
+"28/1",
+"33/1",
+"28/1"
+],
+"comment": "Always towards rear, never a factor",
+"status": "RUNNER"
+},
+{
+"pos": 9,
+"horse": "Homme De Fer",
+"btn": "13",
+"sp": "6/1",
+"fav": false,
+"hist": [
+"6/1",
+"11/2",
+"6/1",
+"11/2"
+],
+"comment": "Midfield on outer, shaken up over 2f out, weakened quickly over 1f out",
+"status": "RUNNER"
+},
+{
+"pos": 10,
+"horse": "Miss Willows",
+"btn": "4 \u00bc",
+"sp": "50/1",
+"fav": false,
+"hist": [],
+"comment": "Prominent, shaken up over 2f out, weakened over 1f out",
+"status": "RUNNER"
+},
+{
+"pos": 11,
+"horse": "Joshuas Dream",
+"btn": "hd",
+"sp": "28/1",
+"fav": false,
+"hist": [],
+"comment": "Chased along in rear throughout",
+"status": "RUNNER"
+},
+{
+"pos": 12,
+"horse": "Jenni",
+"btn": "1 \u00bd",
+"sp": "28/1",
+"fav": false,
+"hist": [
+"25/1"
+],
+"comment": "Slowly away, in rear of mid-division throughout",
+"status": "RUNNER"
+},
+{
+"pos": 0,
+"horse": "Ramon Di Loria",
+"btn": null,
+"sp": "16/1",
+"fav": false,
+"hist": [],
+"comment": "NonRunner",
+"status": "NONRUNNER"
+}
+],
+"pick": {
+"morning": [
+"Distillate",
+3,
+"11/10"
+],
+"final": [
+"Distillate",
+3,
+"11/10"
+]
+},
+"pick_betfair": {
+"Distillate": {
+"morning_0905": 2.36,
+"close": 2.18,
+"close_polled": "17:50",
+"mins_to_off": 9.6
+}
+}
+},
+{
+"course": "Southwell",
+"time": "18:30",
+"sl_id": 945962,
+"going": "Standard",
+"placed": 3,
+"rides": [
+{
+"pos": 1,
+"horse": "Mini Mac",
+"btn": null,
+"sp": "10/11",
+"fav": true,
+"hist": [
+"5/6"
+],
+"comment": "Wore hood to post, towards rear, ridden over 2f out, kept on and headway to lead over 1f out, ran on well inside final furlong",
+"status": "RUNNER"
+},
+{
+"pos": 2,
+"horse": "Blackjack",
+"btn": "1 \u00be",
+"sp": "40/1",
+"fav": false,
+"hist": [
+"50/1"
+],
+"comment": "Prominent, ridden over 2f out, kept on inside final furlong, pressed winner gamely but always held towards finish",
+"status": "RUNNER"
+},
+{
+"pos": 3,
+"horse": "Little Beck Annie",
+"btn": "nk",
+"sp": "18/1",
+"fav": false,
+"hist": [
+"14/1",
+"12/1",
+"14/1",
+"16/1",
+"14/1",
+"16/1"
+],
+"comment": "Raced in rear of mid-division, ridden over 2f out, headway inside final furlong, no extra close home",
+"status": "RUNNER"
+},
+{
+"pos": 4,
+"horse": "Mickey Mongoose",
+"btn": "1 \u00bc",
+"sp": "28/1",
+"fav": false,
+"hist": [
+"25/1"
+],
+"comment": "Keen in rear of mid-division, ridden over 2f out, kept on inside final furlong, weakened towards finish",
+"status": "RUNNER"
+},
+{
+"pos": 5,
+"horse": "Coulsty Exchange",
+"btn": "1 \u00bc",
+"sp": "15/2",
+"fav": false,
+"hist": [
+"13/2",
+"7/1"
+],
+"comment": "Midfield, shaken up over 2f out, plugged on same pace inside final furlong",
+"status": "RUNNER"
+},
+{
+"pos": 6,
+"horse": "She's A Goldigger",
+"btn": "hd",
+"sp": "50/1",
+"fav": false,
+"hist": [
+"50/1",
+"66/1"
+],
+"comment": "Prominent, ridden over 2f out, plugged on inside final furlong, no extra towards finish",
+"status": "RUNNER"
+},
+{
+"pos": 7,
+"horse": "Diligent Henry",
+"btn": "1 \u00bd",
+"sp": "16/1",
+"fav": false,
+"hist": [
+"16/1",
+"18/1",
+"16/1",
+"18/1"
+],
+"comment": "Prominent, shaken up over 2f out, weakened inside final furlong",
+"status": "RUNNER"
+},
+{
+"pos": 8,
+"horse": "Zabriskie Point",
+"btn": "nk",
+"sp": "4/1",
+"fav": false,
+"hist": [
+"9/2"
+],
+"comment": "Midfield, shaken up over 2f out, plugged on same pace inside final furlong",
+"status": "RUNNER"
+},
+{
+"pos": 9,
+"horse": "Sanditon",
+"btn": "nse",
+"sp": "40/1",
+"fav": false,
+"hist": [
+"33/1",
+"40/1",
+"33/1"
+],
+"comment": "Raced in rear throughout, never a factor",
+"status": "RUNNER"
+},
+{
+"pos": 10,
+"horse": "Bad Habits",
+"btn": "2",
+"sp": "25/1",
+"fav": false,
+"hist": [
+"25/1",
+"28/1"
+],
+"comment": "Went early to post, keen in rear of mid-division throughout",
+"status": "RUNNER"
+},
+{
+"pos": 11,
+"horse": "Regal Guest",
+"btn": "1 \u00bc",
+"sp": "80/1",
+"fav": false,
+"hist": [],
+"comment": "Always towards rear, never on terms",
+"status": "RUNNER"
+},
+{
+"pos": 12,
+"horse": "Tilsworth Max",
+"btn": "4 \u00be",
+"sp": "25/1",
+"fav": false,
+"hist": [
+"28/1",
+"33/1",
+"28/1"
+],
+"comment": "Led, ridden over 2f out, headed and weakened quickly over 1f out",
+"status": "RUNNER"
+},
+{
+"pos": 13,
+"horse": "Ardaddy",
+"btn": "4 \u00be",
+"sp": "6/1",
+"fav": false,
+"hist": [
+"7/1",
+"13/2"
+],
+"comment": "Prominent, ridden over 2f out, weakened over 1f out",
+"status": "RUNNER"
+}
+],
+"pick": {
+"morning": [
+"Mini Mac",
+1,
+"10/11"
+],
+"final": [
+"Mini Mac",
+1,
+"10/11"
+]
+},
+"pick_betfair": {
+"Mini Mac": {
+"morning_0905": 2.44,
+"close": 2.02,
+"close_polled": "18:25",
+"mins_to_off": 4.7
+}
+}
+},
+{
+"course": "Southwell",
+"time": "19:00",
+"sl_id": 945963,
+"going": "Standard",
+"placed": 3,
+"rides": [
+{
+"pos": 1,
+"horse": "Asuka",
+"btn": null,
+"sp": "7/2",
+"fav": false,
+"hist": [],
+"comment": "Prominent, ridden over 2f out, headway to lead over 1f out, kept on inside final furlong, all out towards finish, just prevailed",
+"status": "RUNNER"
+},
+{
+"pos": 2,
+"horse": "Yorkshire",
+"btn": "sh",
+"sp": "13/2",
+"fav": false,
+"hist": [
+"13/2",
+"7/1"
+],
+"comment": "Wore hood and went early to post, midfield, ridden and headway over 2f out, kept on to press leader strongly inside final furlong, just denied",
+"status": "RUNNER"
+},
+{
+"pos": 3,
+"horse": "Khaleejy",
+"btn": "1 \u00bd",
+"sp": "13/2",
+"fav": false,
+"hist": [
+"13/2",
+"6/1"
+],
+"comment": "Towards rear, ridden over 2f out, kept on well inside final furlong, not reach leaders",
+"status": "RUNNER"
+},
+{
+"pos": 4,
+"horse": "Dapper Guest",
+"btn": "sh",
+"sp": "33/1",
+"fav": false,
+"hist": [
+"50/1",
+"40/1",
+"33/1",
+"28/1"
+],
+"comment": "Raced in rear, shaken up over 2f out, headway inside final furlong, ran on towards finish",
+"status": "RUNNER"
+},
+{
+"pos": 5,
+"horse": "First Legion",
+"btn": "\u00be",
+"sp": "5/1",
+"fav": false,
+"hist": [
+"11/2"
+],
+"comment": "Raced in rear of mid-division, shaken up over 2f out, soon headway, every chance over 1f out, ran on same pace inside final furlong",
+"status": "RUNNER"
+},
+{
+"pos": 6,
+"horse": "Oliver Show",
+"btn": "nk",
+"sp": "12/1",
+"fav": false,
+"hist": [
+"11/1"
+],
+"comment": "Towards rear, ridden over 2f out, kept on inside final furlong, weakened towards finish",
+"status": "RUNNER"
+},
+{
+"pos": 7,
+"horse": "Alfa Kellenic",
+"btn": "1 \u00bd",
+"sp": "33/1",
+"fav": false,
+"hist": [
+"28/1"
+],
+"comment": "Close up tracking leaders, shaken up over 2f out, plugged on same pace inside final furlong",
+"status": "RUNNER"
+},
+{
+"pos": 8,
+"horse": "Raging Raj",
+"btn": "nse",
+"sp": "12/1",
+"fav": false,
+"hist": [
+"14/1"
+],
+"comment": "Wore hood and went early to post, towards rear, shaken up over 2f out, drifted left 1f out, weakened inside final furlong",
+"status": "RUNNER"
+},
+{
+"pos": 9,
+"horse": "Mirabeau",
+"btn": "nk",
+"sp": "40/1",
+"fav": false,
+"hist": [
+"33/1"
+],
+"comment": "Led, ridden and headed over 1f out, weakened inside final furlong",
+"status": "RUNNER"
+},
+{
+"pos": 10,
+"horse": "Storm Free",
+"btn": "1 \u00bc",
+"sp": "10/3",
+"fav": true,
+"hist": [
+"7/2"
+],
+"comment": "Midfield, shaken up over 2f out, not much room and hampered over 1f out, ran on same pace inside final furlong",
+"status": "RUNNER"
+},
+{
+"pos": 11,
+"horse": "Nikovo",
+"btn": "3",
+"sp": "11/1",
+"fav": false,
+"hist": [
+"12/1",
+"11/1",
+"10/1"
+],
+"comment": "Went early to post, always towards rear, hampered inside final furlong",
+"status": "RUNNER"
+},
+{
+"pos": 12,
+"horse": "Down To The Kid",
+"btn": "2",
+"sp": "40/1",
+"fav": false,
+"hist": [
+"28/1",
+"33/1"
+],
+"comment": "Midfield, ridden over 2f out, bumped and hampered 1f out, weakened inside final furlong",
+"status": "RUNNER"
+},
+{
+"pos": 13,
+"horse": "American Gulf",
+"btn": "\u00be",
+"sp": "28/1",
+"fav": false,
+"hist": [
+"25/1",
+"28/1",
+"25/1"
+],
+"comment": "Keen, prominent, ridden over 1f out, soon weakened",
+"status": "RUNNER"
+},
+{
+"pos": 14,
+"horse": "Grand Traverse",
+"btn": "6",
+"sp": "40/1",
+"fav": false,
+"hist": [],
+"comment": "Raced in rear of mid-division throughout",
+"status": "RUNNER"
+}
+],
+"pick": {
+"morning": [
+"First Legion",
+5,
+"5/1"
+],
+"final": [
+"First Legion",
+5,
+"5/1"
+]
+},
+"pick_betfair": {
+"First Legion": {
+"morning_0905": 6.0,
+"close": 7.8,
+"close_polled": "18:50",
+"mins_to_off": 9.7
+}
+}
+},
+{
+"course": "Southwell",
+"time": "19:30",
+"sl_id": 945964,
+"going": "Standard",
+"placed": 3,
+"rides": [
+{
+"pos": 1,
+"horse": "Fram Castle",
+"btn": null,
+"sp": "5/1",
+"fav": false,
+"hist": [
+"11/2"
+],
+"comment": "Towards rear, shaken up over 2f out, kept on well inside final furlong, led towards finish, ran on",
+"status": "RUNNER"
+},
+{
+"pos": 2,
+"horse": "Fleur De Mer",
+"btn": "nk",
+"sp": "8/1",
+"fav": false,
+"hist": [],
+"comment": "Midfield, shaken up over 2f out, headway to challenge strongly inside final furlong, kept on towards finish, just held",
+"status": "RUNNER"
+},
+{
+"pos": 3,
+"horse": "Sycamore Gap",
+"btn": "1 \u00bd",
+"sp": "3/1",
+"fav": true,
+"hist": [
+"10/3"
+],
+"comment": "Midfield, ridden over 2f out, headway to lead over 1f out, headed inside final furlong, kept on and took third close home",
+"status": "RUNNER"
+},
+{
+"pos": 4,
+"horse": "Sevenkingsmustdie",
+"btn": "nk",
+"sp": "3/1",
+"fav": true,
+"hist": [
+"5/2",
+"11/4"
+],
+"comment": "Prominent, ridden over 2f out, headway to lead inside final furlong, soon headed and weakened, lost two places close home",
+"status": "RUNNER"
+},
+{
+"pos": 5,
+"horse": "Charlie Darling",
+"btn": "\u00bd",
+"sp": "33/1",
+"fav": false,
+"hist": [
+"28/1"
+],
+"comment": "Towards rear, ridden over 2f out, not much room over 1f out, kept on inside final furlong",
+"status": "RUNNER"
+},
+{
+"pos": 6,
+"horse": "Beaune",
+"btn": "\u00bd",
+"sp": "11/1",
+"fav": false,
+"hist": [
+"14/1",
+"12/1"
+],
+"comment": "Raced in rear, shaken up over 2f out, not clear run over 1f out, switched left and ran on inside final furlong, no extra towards finish",
+"status": "RUNNER"
+},
+{
+"pos": 7,
+"horse": "Revelio",
+"btn": "\u00be",
+"sp": "9/1",
+"fav": false,
+"hist": [
+"17/2"
+],
+"comment": "Keen, prominent, headway to lead over 3f out, ridden over 2f out, headed over 1f out, soon weakened",
+"status": "RUNNER"
+},
+{
+"pos": 8,
+"horse": "Togeather Forever",
+"btn": "2 \u00be",
+"sp": "14/1",
+"fav": false,
+"hist": [],
+"comment": "Wore hood and went early to post, prominent, shaken up over 3f out, weakened over 1f out",
+"status": "RUNNER"
+},
+{
+"pos": 9,
+"horse": "Smokey Malone",
+"btn": "1 \u00be",
+"sp": "33/1",
+"fav": false,
+"hist": [
+"28/1",
+"33/1",
+"28/1"
+],
+"comment": "Midfield, ridden over 2f out, ran on same pace over 1f out",
+"status": "RUNNER"
+},
+{
+"pos": 10,
+"horse": "Bulldog Spirit",
+"btn": "2",
+"sp": "25/1",
+"fav": false,
+"hist": [
+"20/1",
+"22/1"
+],
+"comment": "Towards rear throughout, never on terms",
+"status": "RUNNER"
+},
+{
+"pos": 11,
+"horse": "Edwardtheninth",
+"btn": "13",
+"sp": "9/1",
+"fav": false,
+"hist": [
+"11/1",
+"10/1"
+],
+"comment": "Midfield, ridden over 2f out, soon weakened quickly",
+"status": "RUNNER"
+},
+{
+"pos": 12,
+"horse": "Crystal Jet",
+"btn": "10",
+"sp": "33/1",
+"fav": false,
+"hist": [
+"40/1",
+"50/1",
+"40/1"
+],
+"comment": "Led, ridden and headed over 3f out, soon weakened quickly",
+"status": "RUNNER"
+}
+],
+"pick": {
+"morning": [
+"Sycamore Gap",
+3,
+"3/1"
+],
+"final": [
+"Sycamore Gap",
+3,
+"3/1"
+]
+},
+"pick_betfair": {
+"Sycamore Gap": {
+"morning_0905": 5.7,
+"close": 5.5,
+"close_polled": "19:25",
+"mins_to_off": 4.7
+}
+}
+},
+{
+"course": "Southwell",
+"time": "20:00",
+"sl_id": 945965,
+"going": "Standard",
+"placed": 2,
+"rides": [
+{
+"pos": 1,
+"horse": "Fanciulla Del West",
+"btn": null,
+"sp": "10/1",
+"fav": false,
+"hist": [
+"12/1",
+"11/1",
+"10/1",
+"11/1"
+],
+"comment": "Slowly away in rear, ridden and headway between horses over 1f out, kept on well inside final furlong, led towards finish, ran on",
+"status": "RUNNER"
+},
+{
+"pos": 2,
+"horse": "Time To Sparkle",
+"btn": "hd",
+"sp": "7/1",
+"fav": false,
+"hist": [
+"13/2",
+"6/1",
+"13/2"
+],
+"comment": "Raced in second, ridden over 2f out, headway to lead inside final furlong, headed towards finish, just held",
+"status": "RUNNER"
+},
+{
+"pos": 3,
+"horse": "Midnight Media",
+"btn": "sh",
+"sp": "15/8",
+"fav": true,
+"hist": [
+"5/2",
+"9/4",
+"2/1",
+"2/1"
+],
+"comment": "Midfield, shaken up over 2f out, headway to press leaders inside final furlong, plugged on well towards finish, no extra close home",
+"status": "RUNNER"
+},
+{
+"pos": 4,
+"horse": "Kashooda",
+"btn": "3 \u00be",
+"sp": "5/1",
+"fav": false,
+"hist": [
+"7/2",
+"4/1",
+"5/1",
+"9/2"
+],
+"comment": "Midfield, ridden over 2f out, ran on same pace over 1f out",
+"status": "RUNNER"
+},
+{
+"pos": 5,
+"horse": "Lilly Lux",
+"btn": "\u00be",
+"sp": "5/2",
+"fav": false,
+"hist": [
+"5/2",
+"11/4",
+"5/2",
+"9/4"
+],
+"comment": "Led, ridden over 2f out, headed inside final furlong, soon no extra",
+"status": "RUNNER"
+},
+{
+"pos": 6,
+"horse": "Molo Del Palazzo",
+"btn": "\u00be",
+"sp": "11/1",
+"fav": false,
+"hist": [
+"9/1",
+"17/2",
+"9/1",
+"10/1",
+"11/1",
+"10/1"
+],
+"comment": "Midfield, shaken up over 2f out, plugged on same pace inside final furlong",
+"status": "RUNNER"
+},
+{
+"pos": 7,
+"horse": "Box Clever",
+"btn": "11",
+"sp": "33/1",
+"fav": false,
+"hist": [
+"25/1",
+"28/1",
+"33/1",
+"28/1",
+"28/1",
+"33/1",
+"28/1"
+],
+"comment": "Midfield, ridden over 2f out, weakened over 1f out",
+"status": "RUNNER"
+},
+{
+"pos": 0,
+"horse": "Sibling Rivelry",
+"btn": null,
+"sp": "5/1",
+"fav": false,
+"hist": [],
+"comment": "NonRunner",
+"status": "NONRUNNER"
+}
+],
+"pick": {
+"morning": [
+"Kashooda",
+4,
+"5/1"
+],
+"final": [
+"Kashooda",
+4,
+"5/1"
+]
+},
+"pick_betfair": {
+"Kashooda": {
+"morning_0905": 5.7,
+"close": 5.4,
+"close_polled": "19:50",
+"mins_to_off": 9.7
+}
+}
+},
+{
+"course": "Southwell",
+"time": "20:30",
+"sl_id": 945966,
+"going": "Standard",
+"placed": 3,
+"rides": [
+{
+"pos": 1,
+"horse": "Chambers",
+"btn": null,
+"sp": "8/1",
+"fav": false,
+"hist": [
+"15/2",
+"8/1",
+"17/2"
+],
+"comment": "Made all, ridden over 2f out, stayed on well inside final furlong, always holding second towards finish",
+"status": "RUNNER"
+},
+{
+"pos": 2,
+"horse": "Mr Moonshine",
+"btn": "1 \u00bd",
+"sp": "11/4",
+"fav": true,
+"hist": [
+"10/3",
+"3/1",
+"11/4",
+"3/1"
+],
+"comment": "Towards rear, shaken up over 2f out, good headway inside final furlong, no match for winner",
+"status": "RUNNER"
+},
+{
+"pos": 3,
+"horse": "West Tyrone",
+"btn": "1 \u00bc",
+"sp": "14/1",
+"fav": false,
+"hist": [
+"11/1",
+"12/1"
+],
+"comment": "Prominent, ridden over 3f out, kept on inside final furlong",
+"status": "RUNNER"
+},
+{
+"pos": 4,
+"horse": "Pappa Louis",
+"btn": "nk",
+"sp": "16/1",
+"fav": false,
+"hist": [
+"14/1"
+],
+"comment": "Prominent, shaken up over 2f out, ran on inside final furlong",
+"status": "RUNNER"
+},
+{
+"pos": 5,
+"horse": "Light Speed",
+"btn": "sh",
+"sp": "18/1",
+"fav": false,
+"hist": [
+"16/1"
+],
+"comment": "Went early to post, midfield, ridden over 2f out, plugged on inside final furlong, faded towards finish",
+"status": "RUNNER"
+},
+{
+"pos": 6,
+"horse": "I'd Go Maniac",
+"btn": "1",
+"sp": "3/1",
+"fav": false,
+"hist": [
+"10/3"
+],
+"comment": "Raced in rear of mid-division, shaken up over 3f out, plugged on and minor headway to pass beaten rivals inside final furlong",
+"status": "RUNNER"
+},
+{
+"pos": 7,
+"horse": "Regalian",
+"btn": "sh",
+"sp": "9/1",
+"fav": false,
+"hist": [
+"15/2",
+"8/1",
+"17/2"
+],
+"comment": "Midfield, shaken up over 2f out, ran on same pace inside final furlong",
+"status": "RUNNER"
+},
+{
+"pos": 7,
+"horse": "Cobalt Comet",
+"btn": "dh",
+"sp": "10/3",
+"fav": false,
+"hist": [
+"4/1",
+"7/2"
+],
+"comment": "Prominent, ridden over 2f out, ran on same pace inside final furlong",
+"status": "RUNNER"
+},
+{
+"pos": 9,
+"horse": "Silky Lass",
+"btn": "nk",
+"sp": "66/1",
+"fav": false,
+"hist": [
+"66/1",
+"80/1"
+],
+"comment": "Midfield, ridden over 2f out, weakened over 1f out",
+"status": "RUNNER"
+},
+{
+"pos": 10,
+"horse": "King Chaos",
+"btn": "1 \u00be",
+"sp": "14/1",
+"fav": false,
+"hist": [
+"12/1",
+"14/1",
+"16/1"
+],
+"comment": "Towards rear throughout, never on terms",
+"status": "RUNNER"
+},
+{
+"pos": 0,
+"horse": "Meet Me In Meraki",
+"btn": null,
+"sp": "14/1",
+"fav": false,
+"hist": [],
+"comment": "NonRunner",
+"status": "NONRUNNER"
+},
+{
+"pos": 0,
+"horse": "Sea The Light",
+"btn": null,
+"sp": "5/2",
+"fav": false,
+"hist": [],
+"comment": "NonRunner",
+"status": "NONRUNNER"
+},
+{
+"pos": 0,
+"horse": "Harlington",
+"btn": null,
+"sp": "6/1",
+"fav": false,
+"hist": [],
+"comment": "NonRunner",
+"status": "NONRUNNER"
+}
+],
+"pick": {
+"morning": [
+"Cobalt Comet",
+7,
+"10/3"
+],
+"final": [
+"Cobalt Comet",
+7,
+"10/3"
+]
+},
+"pick_betfair": {
+"Cobalt Comet": {
+"morning_0905": 4.9,
+"close": 5.5,
+"close_polled": "20:25",
+"mins_to_off": 4.7
+}
+}
+},
+{
+"course": "Punchestown",
+"time": "13:05",
+"sl_id": 946639,
+"going": "Yielding (Yielding to Soft in places)",
+"placed": 3,
+"rides": [
+{
+"pos": 1,
+"horse": "Petticoat Bay",
+"btn": null,
+"sp": "10/3",
+"fav": false,
+"hist": [
+"4/1",
+"7/2",
+"10/3",
+"7/2"
+],
+"comment": "Prominent, led after 2f, pushed along and headed 2f out, ridden over 1f out, rallied and disputed final 150 yards, kept on well, edged ahead close home",
+"status": "RUNNER"
+},
+{
+"pos": 2,
+"horse": "San Juan De Lope",
+"btn": "nk",
+"sp": "6/1",
+"fav": false,
+"hist": [
+"9/2",
+"5/1",
+"11/2"
+],
+"comment": "Dwelt, soon prominent, tracked leader on inner after 2f, led 2f out, pushed along over 1f out, ridden and ran green when edged left 1f out, joined final 150 yards, kept on well, headed close home",
+"status": "RUNNER"
+},
+{
+"pos": 3,
+"horse": "Wunderschon",
+"btn": "\u00be",
+"sp": "8/13",
+"fav": true,
+"hist": [
+"8/11",
+"4/5",
+"8/11",
+"4/6"
+],
+"comment": "Prominent, tracked leaders after 1 1/2f, 4th on inner when slight stumble over 4f out, pushed along in 3rd when angled out entering straight, ridden over 1f out and closed early final furlong, no impression final 100 yards, kept on one pace",
+"status": "RUNNER"
+},
+{
+"pos": 4,
+"horse": "Duquesne Bay",
+"btn": "6",
+"sp": "28/1",
+"fav": false,
+"hist": [
+"25/1",
+"28/1",
+"22/1",
+"25/1",
+"28/1",
+"25/1",
+"25/1"
+],
+"comment": "Held up towards rear, took keen hold, 6th halfway, pushed along 2f out, soon ridden and no impression",
+"status": "RUNNER"
+},
+{
+"pos": 5,
+"horse": "Unreal Friend",
+"btn": "\u00bd",
+"sp": "33/1",
+"fav": false,
+"hist": [
+"25/1",
+"28/1",
+"33/1",
+"28/1"
+],
+"comment": "Broke well and prominent, tracked leaders after 2f, 3rd halfway, pushed along in 4th when carried left entering straight, ridden in 5th over 1f out, no extra",
+"status": "RUNNER"
+},
+{
+"pos": 6,
+"horse": "Lan De Ghaire",
+"btn": "\u00be",
+"sp": "28/1",
+"fav": false,
+"hist": [
+"22/1",
+"20/1",
+"22/1",
+"25/1",
+"28/1",
+"25/1"
+],
+"comment": "Held up in touch, 5th halfway, pushed along when carried left entering straight, ridden over 1f out, no extra",
+"status": "RUNNER"
+},
+{
+"pos": 7,
+"horse": "Handsoffshesmine",
+"btn": "1 \u00bc",
+"sp": "80/1",
+"fav": false,
+"hist": [
+"40/1",
+"50/1",
+"66/1",
+"50/1",
+"80/1",
+"66/1"
+],
+"comment": "Always towards rear, 6th halfway, pushed along approaching straight, no impression when short of room on rail and switched left under 2f out, soon ridden and no extra",
+"status": "RUNNER"
+},
+{
+"pos": 8,
+"horse": "Looking For Love",
+"btn": "hd",
+"sp": "11/1",
+"fav": false,
+"hist": [
+"10/1",
+"9/1",
+"10/1"
+],
+"comment": "Slowly into stride, in rear and pushed along early, pushed along again approaching straight, ridden when hung right 1 1/2f out, no extra, never a factor",
+"status": "RUNNER"
+},
+{
+"pos": 0,
+"horse": "Anymore",
+"btn": null,
+"sp": "20/1",
+"fav": false,
+"hist": [],
+"comment": "NonRunner",
+"status": "NONRUNNER"
+}
+],
+"pick": {
+"morning": [
+"Wunderschon",
+3,
+"8/13"
+],
+"final": [
+"Wunderschon",
+3,
+"8/13"
+]
+},
+"pick_betfair": {
+"Wunderschon": {
+"morning_0905": 2.36,
+"close": 1.97,
+"close_polled": "12:50",
+"mins_to_off": 14.7
+}
+}
+},
+{
+"course": "Punchestown",
+"time": "13:35",
+"sl_id": 946640,
+"going": "Yielding (Yielding to Soft in places)",
+"placed": 3,
+"rides": [
+{
+"pos": 1,
+"horse": "Lady Mary Heath",
+"btn": null,
+"sp": "10/3",
+"fav": true,
+"hist": [
+"10/3",
+"7/2"
+],
+"comment": "Dwelt slightly, towards rear, pushed along approaching straight, no impression when not clear run and checked under 2f out, soon dropped to rear and switched left, rapid headway from over 1f out, ridden and led over 100 yards out, kept on well, eased close home",
+"status": "RUNNER"
+},
+{
+"pos": 2,
+"horse": "Sylkie",
+"btn": "2 \u00bd",
+"sp": "11/1",
+"fav": false,
+"hist": [
+"12/1"
+],
+"comment": "Dwelt slightly and pushed along early, soon mid-division on inner, 7th halfway, headway when not clear run over 1f out, 4th 1f out and soon switched left, ridden and kept on well final 150 yards, 2nd post, no chance with winner",
+"status": "RUNNER"
+},
+{
+"pos": 3,
+"horse": "Cash Me",
+"btn": "sh",
+"sp": "40/1",
+"fav": false,
+"hist": [
+"50/1"
+],
+"comment": "Prominent and ran freely, disputed after 1f, pushed along and led entering straight, ridden over 1f out, joined 1f out, headed over 100 yards out, no extra, 3rd post",
+"status": "RUNNER"
+},
+{
+"pos": 4,
+"horse": "Flash Of Fire",
+"btn": "sh",
+"sp": "9/2",
+"fav": false,
+"hist": [
+"5/1",
+"9/2",
+"5/1"
+],
+"comment": "Tracked leaders on inner, took keen hold, 4th halfway, 3rd entering straight, pushed along in 2nd over 1f out, ridden and disputed 1f out, headed and hung right over 100 yards out, soon 3rd and no extra, 4th close home",
+"status": "RUNNER"
+},
+{
+"pos": 5,
+"horse": "Speckled Meadow",
+"btn": "2 \u00bc",
+"sp": "9/1",
+"fav": false,
+"hist": [
+"8/1",
+"17/2",
+"8/1",
+"17/2"
+],
+"comment": "Dwelt, towards rear and took keen hold, pushed along and headway on inner when not clear run under 2f out, switched left over 1f out, ridden in 5th over 100 yards out, no extra",
+"status": "RUNNER"
+},
+{
+"pos": 6,
+"horse": "San Aer",
+"btn": "1",
+"sp": "10/1",
+"fav": false,
+"hist": [
+"10/1",
+"11/1"
+],
+"comment": "Mid-division, pushed along when caught on heels and not clear run under 2f out, soon switched right, ridden and no impression 1f out, kept on one pace",
+"status": "RUNNER"
+},
+{
+"pos": 7,
+"horse": "Lady Arwen",
+"btn": "\u00be",
+"sp": "14/1",
+"fav": false,
+"hist": [],
+"comment": "Slowly into stride, in rear, pushed along and wide entering straight, ridden over 1f out, mid-division 1f out, no impression",
+"status": "RUNNER"
+},
+{
+"pos": 8,
+"horse": "Amplitude",
+"btn": "\u00bd",
+"sp": "6/1",
+"fav": false,
+"hist": [
+"7/1",
+"13/2"
+],
+"comment": "Prominent, disputed after 1f, headed and tracked leaders after 2f, 3rd halfway, pushed along in 4th entering straight, ridden in 3rd and no impression 1f out, weakened",
+"status": "RUNNER"
+},
+{
+"pos": 9,
+"horse": "Aquilla Star",
+"btn": "hd",
+"sp": "14/1",
+"fav": false,
+"hist": [
+"12/1"
+],
+"comment": "Dwelt and pushed along early, towards rear, pushed along and wide entering straight, ridden over 1f out, mid-division 1f out, no impression",
+"status": "RUNNER"
+},
+{
+"pos": 10,
+"horse": "Titanium",
+"btn": "1 \u00bd",
+"sp": "11/1",
+"fav": false,
+"hist": [
+"14/1",
+"12/1"
+],
+"comment": "Mid-division, never a factor, towards rear entering straight, soon pushed along and no impression",
+"status": "RUNNER"
+},
+{
+"pos": 11,
+"horse": "Flying Fortress",
+"btn": "\u00bd",
+"sp": "22/1",
+"fav": false,
+"hist": [
+"18/1",
+"20/1"
+],
+"comment": "Prominent, tracked leaders after 1f, 6th halfway, pushed along entering straight, ridden and no impression over 1f out, weakened",
+"status": "RUNNER"
+},
+{
+"pos": 12,
+"horse": "Earls",
+"btn": "1 \u00bc",
+"sp": "22/1",
+"fav": false,
+"hist": [
+"20/1"
+],
+"comment": "Mid-division, pushed along and wide entering straight, ridden and no impression over 1f out, weakened",
+"status": "RUNNER"
+},
+{
+"pos": 13,
+"horse": "Jp's Express",
+"btn": "12",
+"sp": "10/1",
+"fav": false,
+"hist": [
+"17/2",
+"9/1"
+],
+"comment": "Tracked leaders, 5th halfway, pushed along and no impression approaching straight, weakened over 1f out",
+"status": "RUNNER"
+},
+{
+"pos": 14,
+"horse": "Excuzio Joe",
+"btn": "1 \u00bc",
+"sp": "16/1",
+"fav": false,
+"hist": [
+"12/1",
+"14/1",
+"12/1",
+"14/1",
+"12/1",
+"14/1"
+],
+"comment": "Tracked leaders on inner, improved to dispute after 2f, pushed along and headed entering straight, ridden and weakened over 1f out",
+"status": "RUNNER"
+},
+{
+"pos": 0,
+"horse": "The Rock Factor",
+"btn": null,
+"sp": "20/1",
+"fav": false,
+"hist": [],
+"comment": "NonRunner",
+"status": "NONRUNNER"
+}
+],
+"pick": {
+"morning": [
+"Jp's Express",
+13,
+"10/1"
+],
+"final": [
+"Jp's Express",
+13,
+"10/1"
+]
+},
+"pick_betfair": {
+"Jp's Express": {
+"morning_0905": 6.0,
+"close": 14.0,
+"close_polled": "13:30",
+"mins_to_off": 4.6
+}
+}
+},
+{
+"course": "Punchestown",
+"time": "14:05",
+"sl_id": 946641,
+"going": "Yielding (Yielding to Soft in places)",
+"placed": 3,
+"rides": [
+{
+"pos": 1,
+"horse": "Imposing",
+"btn": null,
+"sp": "7/2",
+"fav": false,
+"hist": [
+"5/1",
+"9/2",
+"4/1",
+"7/2",
+"10/3",
+"7/2",
+"10/3",
+"7/2",
+"10/3"
+],
+"comment": "Prominent and soon pushed along to lead, joined over 4f out, pushed along and led approaching straight, asserted under 2f out, ridden and kept on well inside final furlong",
+"status": "RUNNER"
+},
+{
+"pos": 2,
+"horse": "Nonsense",
+"btn": "1 \u00bd",
+"sp": "15/8",
+"fav": true,
+"hist": [
+"9/4",
+"5/2",
+"9/4",
+"2/1",
+"15/8",
+"2/1"
+],
+"comment": "A little slowly away, soon tracked leaders and ran freely on outer, 5th halfway, pushed along entering straight, ridden and no impression over 1f out, stayed on to go 2nd final 100 yards, kept on, no threat to winner",
+"status": "RUNNER"
+},
+{
+"pos": 3,
+"horse": "Princeton",
+"btn": "1 \u00bc",
+"sp": "4/1",
+"fav": false,
+"hist": [
+"9/4",
+"5/2",
+"11/4",
+"3/1",
+"10/3",
+"7/2"
+],
+"comment": "Tracked leaders on inner, 4th halfway, pushed along 2f out, ridden and no impression over 1f out, 3rd final 100 yards, kept on one pace",
+"status": "RUNNER"
+},
+{
+"pos": 4,
+"horse": "Dawnmore",
+"btn": "1 \u00bc",
+"sp": "17/2",
+"fav": false,
+"hist": [
+"6/1",
+"13/2",
+"7/1",
+"15/2",
+"8/1",
+"15/2",
+"8/1"
+],
+"comment": "Tracked leaders and pushed along early, ran freely and improved to dispute over 4f out, headed approaching straight, ridden and no impression under 2f out, 3rd 1f out, 5th when rider dropped rein 100 yards out, kept on one pace",
+"status": "RUNNER"
+},
+{
+"pos": 5,
+"horse": "Oklahoma",
+"btn": "nk",
+"sp": "9/4",
+"fav": false,
+"hist": [
+"10/3",
+"3/1",
+"11/4",
+"3/1",
+"11/4",
+"5/2",
+"11/4",
+"5/2",
+"5/2",
+"9/4",
+"2/1",
+"9/4",
+"5/2",
+"9/4",
+"5/2"
+],
+"comment": "Broke well, soon tracked leaders, 3rd halfway, pushed along 2f out, ridden in 2nd and no impression over 1f out, no extra final 150 yards",
+"status": "RUNNER"
+},
+{
+"pos": 6,
+"horse": "Maxims Of Equity",
+"btn": "8",
+"sp": "200/1",
+"fav": false,
+"hist": [
+"150/1",
+"200/1",
+"250/1",
+"200/1",
+"300/1",
+"250/1"
+],
+"comment": "Mid-division, 6th halfway, pushed along approaching straight, ridden over 1f out, no extra",
+"status": "RUNNER"
+},
+{
+"pos": 7,
+"horse": "Rockfleet",
+"btn": "7",
+"sp": "150/1",
+"fav": false,
+"hist": [
+"100/1",
+"125/1",
+"125/1",
+"150/1",
+"200/1"
+],
+"comment": "Dwelt, towards rear, pushed along in 7th entering straight, soon ridden and weakened",
+"status": "RUNNER"
+},
+{
+"pos": 8,
+"horse": "Lash La Rue",
+"btn": "nk",
+"sp": "200/1",
+"fav": false,
+"hist": [
+"125/1",
+"150/1",
+"200/1",
+"150/1",
+"125/1",
+"150/1",
+"125/1",
+"150/1"
+],
+"comment": "Tracked leaders early, soon restrained in mid-division and took keen hold, off pace halfway, pushed along approaching straight, weakened",
+"status": "RUNNER"
+},
+{
+"pos": 9,
+"horse": "System Reset",
+"btn": "4",
+"sp": "80/1",
+"fav": false,
+"hist": [
+"28/1",
+"33/1",
+"40/1",
+"50/1",
+"40/1",
+"50/1",
+"66/1",
+"80/1",
+"66/1"
+],
+"comment": "Always towards rear and never a factor, ridden and off pace halfway, weakened entering straight",
+"status": "RUNNER"
+},
+{
+"pos": 10,
+"horse": "Angel Invincible",
+"btn": "2 \u00bd",
+"sp": "150/1",
+"fav": false,
+"hist": [
+"100/1",
+"125/1",
+"100/1",
+"125/1",
+"100/1",
+"125/1",
+"100/1",
+"125/1"
+],
+"comment": "Always towards rear and never a factor, pushed along in rear and off pace halfway, weakened entering straight",
+"status": "RUNNER"
+},
+{
+"pos": 11,
+"horse": "Evan D Invincible",
+"btn": "1 \u00bc",
+"sp": "300/1",
+"fav": false,
+"hist": [
+"200/1",
+"250/1",
+"300/1",
+"250/1",
+"300/1",
+"250/1",
+"300/1",
+"250/1",
+"300/1",
+"400/1"
+],
+"comment": "Slowly into stride, always towards rear and never a factor, a little keen, off pace halfway, pushed along approaching straight, weakened",
+"status": "RUNNER"
+}
+],
+"pick": {
+"morning": [
+"Nonsense",
+2,
+"15/8"
+],
+"final": [
+"Princeton",
+3,
+"4/1"
+]
+},
+"pick_betfair": {
+"Nonsense": {
+"morning_0905": 3.3,
+"close": 3.55,
+"close_polled": "13:50",
+"mins_to_off": 14.6
+},
+"Princeton": {
+"morning_0905": 7.8,
+"close": 3.9,
+"close_polled": "13:50",
+"mins_to_off": 14.6
+}
+}
+},
+{
+"course": "Punchestown",
+"time": "14:35",
+"sl_id": 946642,
+"going": "Yielding (Yielding to Soft in places)",
+"placed": 2,
+"rides": [
+{
+"pos": 1,
+"horse": "Margot Mae",
+"btn": null,
+"sp": "11/4",
+"fav": false,
+"hist": [
+"10/3",
+"3/1",
+"11/4",
+"5/2"
+],
+"comment": "Broke well and led, crossed to rail after 1f, pushed along and joined early straight, soon ridden, led again 1f out, kept on well",
+"status": "RUNNER"
+},
+{
+"pos": 2,
+"horse": "Darlene",
+"btn": "1 \u00bc",
+"sp": "9/1",
+"fav": false,
+"hist": [
+"9/1",
+"10/1",
+"11/1",
+"10/1",
+"9/1",
+"10/1"
+],
+"comment": "Tracked leaders on inner, 3rd halfway, 4th entering straight and soon pushed along, ridden over 1f out, 3rd and no impression 1f out, kept on same pace, 2nd closing stages",
+"status": "RUNNER"
+},
+{
+"pos": 3,
+"horse": "Knockraha Pa",
+"btn": "hd",
+"sp": "20/1",
+"fav": false,
+"hist": [
+"16/1",
+"18/1",
+"20/1",
+"18/1",
+"20/1",
+"22/1"
+],
+"comment": "Tracked leader, took keen hold, pushed along and disputed early straight, soon ridden, headed 1f out, no impression final 150 yards, kept on one pace, 3rd closing stages",
+"status": "RUNNER"
+},
+{
+"pos": 4,
+"horse": "Miss Cornelia",
+"btn": "sh",
+"sp": "10/3",
+"fav": false,
+"hist": [
+"10/3",
+"7/2",
+"4/1",
+"9/2",
+"4/1",
+"7/2"
+],
+"comment": "Towards rear and pushed along early, pushed along in 5th entering straight, ridden and no impression over 1f out, 4th 1f out, kept on same pace",
+"status": "RUNNER"
+},
+{
+"pos": 5,
+"horse": "Wecouldavehaditall",
+"btn": "1 \u00bc",
+"sp": "13/8",
+"fav": true,
+"hist": [
+"6/4",
+"11/8",
+"6/4",
+"11/8",
+"6/4",
+"11/8",
+"6/4",
+"11/8",
+"6/4",
+"11/8",
+"6/4",
+"11/8",
+"6/4"
+],
+"comment": "Tracked leaders, 4th halfway, pushed along in 3rd entering straight, ridden and no impression over 1f out, 5th 1f out, no extra",
+"status": "RUNNER"
+},
+{
+"pos": 6,
+"horse": "Gabby Hayes",
+"btn": "6 \u00bd",
+"sp": "8/1",
+"fav": false,
+"hist": [
+"17/2",
+"8/1",
+"7/1",
+"15/2",
+"7/1",
+"15/2"
+],
+"comment": "Always towards rear, never a factor, 5th halfway, pushed along and wide entering straight, ridden in rear and no impression 2f out, weakened over 1f out",
+"status": "RUNNER"
+},
+{
+"pos": 0,
+"horse": "Melchizedek",
+"btn": null,
+"sp": "11/2",
+"fav": false,
+"hist": [],
+"comment": "NonRunner",
+"status": "NONRUNNER"
+}
+],
+"pick": {
+"morning": [
+"Wecouldavehaditall",
+5,
+"13/8"
+],
+"final": [
+"Wecouldavehaditall",
+5,
+"13/8"
+]
+},
+"pick_betfair": {
+"Wecouldavehaditall": {
+"morning_0905": 3.05,
+"close": 2.6,
+"close_polled": "14:30",
+"mins_to_off": 4.6
+}
+}
+},
+{
+"course": "Punchestown",
+"time": "15:05",
+"sl_id": 946643,
+"going": "Yielding (Yielding to Soft in places)",
+"placed": 3,
+"rides": [
+{
+"pos": 1,
+"horse": "Celestial Siren",
+"btn": null,
+"sp": "5/1",
+"fav": false,
+"hist": [
+"4/1",
+"7/2",
+"4/1",
+"9/2"
+],
+"comment": "Tracked leader on inner, pushed along and disputed entering straight, ridden and led 1 1/2f out, 2 lengths lead 1f out, kept on well, reduced advantage closing stages",
+"status": "RUNNER"
+},
+{
+"pos": 2,
+"horse": "Spacebound",
+"btn": "\u00bd",
+"sp": "4/5",
+"fav": true,
+"hist": [
+"10/11",
+"1/1",
+"5/6",
+"10/11",
+"5/6",
+"4/5",
+"5/6"
+],
+"comment": "Led, pushed along and joined entering straight, ridden and headed when edged left 1 1/2f out, no impression 1f out, kept on same pace final 100 yards",
+"status": "RUNNER"
+},
+{
+"pos": 3,
+"horse": "Tide Of Fortune",
+"btn": "\u00bd",
+"sp": "9/1",
+"fav": false,
+"hist": [
+"12/1",
+"11/1",
+"10/1"
+],
+"comment": "Tracked leaders, 3rd halfway, pushed along 2f out, ridden and no impression when edged left over 1f out, kept on final 150 yards",
+"status": "RUNNER"
+},
+{
+"pos": 4,
+"horse": "Saliba",
+"btn": "nk",
+"sp": "4/1",
+"fav": false,
+"hist": [
+"9/2"
+],
+"comment": "Held up in touch, 6th halfway, pushed along entering straight, ridden in 4th and no impression over 1f out, kept on final 150 yards, not reach principals",
+"status": "RUNNER"
+},
+{
+"pos": 5,
+"horse": "Abiding Memory",
+"btn": "6",
+"sp": "16/1",
+"fav": false,
+"hist": [
+"12/1",
+"14/1",
+"16/1",
+"18/1",
+"20/1",
+"18/1"
+],
+"comment": "Held up in touch on outer, 5th halfway, pushed along entering straight, ridden in 6th over 1f out, no extra",
+"status": "RUNNER"
+},
+{
+"pos": 6,
+"horse": "Spectical",
+"btn": "\u00bd",
+"sp": "14/1",
+"fav": false,
+"hist": [
+"12/1",
+"11/1",
+"12/1",
+"14/1",
+"12/1"
+],
+"comment": "Held up in touch, 4th halfway, pushed along entering straight, ridden in 5th over 1f out, no extra",
+"status": "RUNNER"
+},
+{
+"pos": 7,
+"horse": "Sibaza",
+"btn": "1 \u00bd",
+"sp": "16/1",
+"fav": false,
+"hist": [
+"22/1",
+"20/1",
+"18/1"
+],
+"comment": "Towards rear, never a factor, pushed along in 7th entering straight, soon ridden and no extra",
+"status": "RUNNER"
+},
+{
+"pos": 8,
+"horse": "Howya Pal",
+"btn": "hd",
+"sp": "250/1",
+"fav": false,
+"hist": [
+"200/1",
+"250/1",
+"300/1"
+],
+"comment": "Mid-division on inner, took keen hold, pushed along in 8th entering straight, soon ridden and no extra",
+"status": "RUNNER"
+},
+{
+"pos": 9,
+"horse": "Shorten The Winter",
+"btn": "1 \u00be",
+"sp": "66/1",
+"fav": false,
+"hist": [
+"50/1",
+"66/1",
+"50/1",
+"66/1",
+"50/1"
+],
+"comment": "Always towards rear, never a factor, a little keen, pushed along approaching straight, ridden over 1f out, no impression",
+"status": "RUNNER"
+},
+{
+"pos": 10,
+"horse": "Maybe Art",
+"btn": "5 \u00bd",
+"sp": "250/1",
+"fav": false,
+"hist": [
+"200/1",
+"250/1"
+],
+"comment": "Always towards rear, never a factor, pushed along and no impression entering straight, weakened over 1f out",
+"status": "RUNNER"
+},
+{
+"pos": 11,
+"horse": "Danpaddyandy",
+"btn": "16",
+"sp": "80/1",
+"fav": false,
+"hist": [
+"50/1",
+"66/1",
+"50/1",
+"66/1",
+"80/1",
+"66/1"
+],
+"comment": "Dwelt, always towards rear and never a factor, pushed along and no impression approaching straight, weakened over 1f out",
+"status": "RUNNER"
+},
+{
+"pos": 0,
+"horse": "Oracle Of Delphi",
+"btn": null,
+"sp": "5/2",
+"fav": false,
+"hist": [],
+"comment": "NonRunner",
+"status": "NONRUNNER"
+}
+],
+"pick": {
+"morning": [
+"Spacebound",
+2,
+"4/5"
+],
+"final": [
+"Spacebound",
+2,
+"4/5"
+]
+},
+"pick_betfair": {
+"Spacebound": {
+"morning_0905": 2.26,
+"close": 2.18,
+"close_polled": "14:50",
+"mins_to_off": 14.6
+}
+}
+},
+{
+"course": "Punchestown",
+"time": "15:35",
+"sl_id": 946644,
+"going": "Yielding (Yielding to Soft in places)",
+"placed": 3,
+"rides": [
+{
+"pos": 1,
+"horse": "Tai Tam Bay",
+"btn": null,
+"sp": "13/2",
+"fav": false,
+"hist": [
+"13/2",
+"6/1",
+"11/2",
+"6/1"
+],
+"comment": "Soon led and made virtually all, raced off rail early and took keen hold, 3 lengths lead approaching straight, pushed along over 1f out, ridden and reduced advantage early final furlong, kept on well",
+"status": "RUNNER"
+},
+{
+"pos": 2,
+"horse": "Micasso",
+"btn": "1 \u00bc",
+"sp": "15/2",
+"fav": false,
+"hist": [
+"13/2",
+"7/1"
+],
+"comment": "Tracked leaders, took keen hold, 2nd halfway, pushed along approaching straight, ridden and no impression over 1f out, closed on winner final furlong, no extra, kept on same pace",
+"status": "RUNNER"
+},
+{
+"pos": 3,
+"horse": "Tariff",
+"btn": "3 \u00bc",
+"sp": "9/4",
+"fav": true,
+"hist": [
+"9/4",
+"85/40",
+"2/1",
+"85/40",
+"9/4",
+"85/40",
+"2/1"
+],
+"comment": "Mid-division, 6th halfway, pushed along approaching straight, ridden and no impression over 1f out, 5th 1f out, kept on one pace, 3rd close home",
+"status": "RUNNER"
+},
+{
+"pos": 4,
+"horse": "Tempted Angel",
+"btn": "nk",
+"sp": "25/1",
+"fav": false,
+"hist": [
+"28/1",
+"33/1",
+"28/1",
+"33/1",
+"28/1"
+],
+"comment": "Tracked leaders, took keen hold, 3rd halfway, pushed along and hung right early straight, ridden and no impression over 1f out, kept on one pace, lost 3rd close home",
+"status": "RUNNER"
+},
+{
+"pos": 5,
+"horse": "Staywitherjohnny",
+"btn": "1",
+"sp": "14/1",
+"fav": false,
+"hist": [
+"14/1",
+"16/1"
+],
+"comment": "Towards rear and pushed along from early, never a factor, moderate 10th 2f out, ridden and no impression 1f out, kept on one pace inside final furlong",
+"status": "RUNNER"
+},
+{
+"pos": 6,
+"horse": "La Tulipe Noire",
+"btn": "\u00bd",
+"sp": "6/1",
+"fav": false,
+"hist": [
+"6/1",
+"11/2"
+],
+"comment": "Never better than mid-division, pushed along entering straight, ridden and no impression over 1f out, kept on one pace",
+"status": "RUNNER"
+},
+{
+"pos": 7,
+"horse": "Racing Royalty",
+"btn": "1 \u00bc",
+"sp": "14/1",
+"fav": false,
+"hist": [
+"12/1",
+"14/1",
+"16/1",
+"14/1",
+"16/1"
+],
+"comment": "Tracked leaders on inner, 4th halfway, pushed along approaching straight, ridden and no impression over 1f out, no extra inside final furlong",
+"status": "RUNNER"
+},
+{
+"pos": 8,
+"horse": "Movin And Groovin",
+"btn": "1",
+"sp": "11/2",
+"fav": false,
+"hist": [
+"8/1",
+"15/2",
+"7/1",
+"13/2",
+"6/1"
+],
+"comment": "Towards rear and pushed along early, never a factor, pushed along again approaching straight, ridden in 9th 2f out, no impression",
+"status": "RUNNER"
+},
+{
+"pos": 9,
+"horse": "Mogwli",
+"btn": "hd",
+"sp": "12/1",
+"fav": false,
+"hist": [
+"16/1",
+"14/1",
+"12/1",
+"14/1"
+],
+"comment": "Broke well and led early strides, soon mid-division, pushed along entering straight, ridden over 1f out, no extra",
+"status": "RUNNER"
+},
+{
+"pos": 10,
+"horse": "Free Solo",
+"btn": "1 \u00bd",
+"sp": "10/1",
+"fav": false,
+"hist": [
+"8/1",
+"17/2",
+"9/1"
+],
+"comment": "Tracked leaders, 5th halfway, pushed along entering straight, soon ridden and no impression, weakened over 1f out",
+"status": "RUNNER"
+},
+{
+"pos": 11,
+"horse": "Think About It",
+"btn": "3 \u00be",
+"sp": "50/1",
+"fav": false,
+"hist": [],
+"comment": "Always towards rear, never a factor, pushed along 3f out, ridden and weakened entering straight",
+"status": "RUNNER"
+},
+{
+"pos": 12,
+"horse": "Capolinea",
+"btn": "7 \u00bd",
+"sp": "25/1",
+"fav": false,
+"hist": [
+"14/1",
+"16/1",
+"18/1",
+"20/1",
+"22/1",
+"20/1",
+"22/1"
+],
+"comment": "Always behind, never a factor, pushed along in rear 3f out, ridden and weakened entering straight",
+"status": "RUNNER"
+},
+{
+"pos": 0,
+"horse": "Fan Club",
+"btn": null,
+"sp": "25/1",
+"fav": false,
+"hist": [],
+"comment": "NonRunner",
+"status": "NONRUNNER"
+}
+],
+"pick": {
+"morning": [
+"Tariff",
+3,
+"9/4"
+],
+"final": [
+"Tariff",
+3,
+"9/4"
+]
+},
+"pick_betfair": {
+"Tariff": {
+"morning_0905": 3.45,
+"close": 3.7,
+"close_polled": "15:30",
+"mins_to_off": 4.6
+}
+}
+},
+{
+"course": "Punchestown",
+"time": "16:05",
+"sl_id": 946645,
+"going": "Yielding (Yielding to Soft in places)",
+"placed": 3,
+"rides": [
+{
+"pos": 1,
+"horse": "Buttermere Ridge",
+"btn": null,
+"sp": "11/2",
+"fav": false,
+"hist": [
+"6/1",
+"13/2",
+"6/1",
+"13/2",
+"6/1",
+"13/2",
+"6/1",
+"13/2",
+"6/1"
+],
+"comment": "Prominent, soon tracked leaders, 2nd halfway, pushed along and closed approaching straight, ridden and led 1 1/2f out, asserted 1f out, kept on well",
+"status": "RUNNER"
+},
+{
+"pos": 2,
+"horse": "Miss Americana",
+"btn": "1 \u00bd",
+"sp": "15/2",
+"fav": false,
+"hist": [
+"13/2",
+"7/1"
+],
+"comment": "Held up towards rear, 10th 3f out, some headway on inner early straight, pushed along when not clear run and switched left over 1f out, 6th 1f out, ridden and kept on into 2nd closing stages, no threat to winner",
+"status": "RUNNER"
+},
+{
+"pos": 3,
+"horse": "Saith Seren",
+"btn": "nk",
+"sp": "15/2",
+"fav": false,
+"hist": [],
+"comment": "Towards rear, pushed along approaching straight, 7th 2f out, ridden in 5th and no impression 1f out, kept on one pace, 3rd closing stages",
+"status": "RUNNER"
+},
+{
+"pos": 4,
+"horse": "Arizona Star",
+"btn": "\u00be",
+"sp": "4/1",
+"fav": false,
+"hist": [
+"9/2",
+"4/1",
+"9/2"
+],
+"comment": "Tracked leaders, 5th halfway, pushed along approaching straight, ridden in 3rd and no impression over 1f out, 2nd early final furlong, no extra, kept on one pace",
+"status": "RUNNER"
+},
+{
+"pos": 5,
+"horse": "God Knows",
+"btn": "2 \u00bd",
+"sp": "7/2",
+"fav": true,
+"hist": [
+"9/2",
+"4/1",
+"9/2",
+"4/1"
+],
+"comment": "Towards rear and pushed along early, pushed along again approaching straight, 7th and no impression when not clear run briefly over 1f out, soon ridden and kept on one pace",
+"status": "RUNNER"
+},
+{
+"pos": 6,
+"horse": "Master Garvey",
+"btn": "1 \u00bc",
+"sp": "28/1",
+"fav": false,
+"hist": [
+"33/1"
+],
+"comment": "Prominent, ran freely, led after 1f and soon crossed to inner, 4 lengths lead halfway, reduced advantage approaching straight, ridden and headed 1 1/2f out, 3rd and no impression early final furlong, weakened",
+"status": "RUNNER"
+},
+{
+"pos": 7,
+"horse": "Survivor's Code",
+"btn": "1 \u00bd",
+"sp": "13/2",
+"fav": false,
+"hist": [
+"9/2",
+"5/1",
+"11/2",
+"6/1"
+],
+"comment": "Awkward from stalls, in rear and pushed along from early, never a factor, ridden in rear and no impression early straight, kept on one pace without threatening",
+"status": "RUNNER"
+},
+{
+"pos": 8,
+"horse": "Real Petite",
+"btn": "sh",
+"sp": "11/2",
+"fav": false,
+"hist": [
+"5/1",
+"9/2",
+"5/1",
+"9/2",
+"5/1"
+],
+"comment": "Held up in touch, 7th halfway, pushed along approaching straight, ridden over 1f out, no extra",
+"status": "RUNNER"
+},
+{
+"pos": 9,
+"horse": "Girl Bear",
+"btn": "\u00be",
+"sp": "16/1",
+"fav": false,
+"hist": [
+"16/1",
+"18/1"
+],
+"comment": "Mid-division on inner, 6th halfway, pushed along approaching straight, ridden in 4th and no impression 1f out, weakened",
+"status": "RUNNER"
+},
+{
+"pos": 10,
+"horse": "Kayamite",
+"btn": "8",
+"sp": "33/1",
+"fav": false,
+"hist": [],
+"comment": "Prominent, tracked leader after 1f, pushed along in 3rd halfway, 4th and no impression entering straight, soon ridden and weakened",
+"status": "RUNNER"
+},
+{
+"pos": 11,
+"horse": "Amazing Force",
+"btn": "2 \u00be",
+"sp": "66/1",
+"fav": false,
+"hist": [
+"40/1",
+"50/1",
+"40/1",
+"50/1",
+"66/1",
+"80/1"
+],
+"comment": "Tracked leaders on inner, 4th halfway, ridden in 3rd and no impression entering straight, weakened quickly over 1f out",
+"status": "RUNNER"
+},
+{
+"pos": 0,
+"horse": "Pocket Jacks",
+"btn": null,
+"sp": "12/1",
+"fav": false,
+"hist": [],
+"comment": "NonRunner",
+"status": "NONRUNNER"
+}
+],
+"pick": {
+"morning": [
+"Pocket Jacks",
+"NR",
+""
+],
+"final": [
+"God Knows",
+5,
+"7/2"
+]
+},
+"pick_betfair": {
+"Pocket Jacks": {
+"morning_0905": 4.7,
+"close": null,
+"close_polled": "15:50",
+"mins_to_off": 14.6
+},
+"God Knows": {
+"morning_0905": 7.0,
+"close": 6.0,
+"close_polled": "15:50",
+"mins_to_off": 14.6
+}
+}
+}
+]
+}
