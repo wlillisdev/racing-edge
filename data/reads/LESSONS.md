@@ -92,3 +92,9 @@ lessons enter the morning read. A NO stays here so it is never asked again.
 - The method does not change. The mistake stops: when HOW HE LOSES names a rival with a real form reason, answer it in writing before the pick is banked — why does my horse beat him? If there is no honest answer, the rival is the pick. Not a gate, not a number: the last question of the read, so a 50/50 is settled, never waved through.
 - The night grade counts every race where the winner was the danger I named. That count going to zero is the proof.
 - And, the same afternoon: "Keep learning, keep finding patterns, keep finding breadcrumbs. You need to be fluid; one size doesn't fit all when it comes to racing." Every race is its own puzzle: the breadcrumb that decides a soft-ground handicap at Nottingham is not the one that decides a 2yo maiden at Kempton. Read each race for what matters in THAT race.
+
+## 2026-10-29 — YES (his word, after the core-document audit)
+
+- His words: "We had so many attempts at trying to make this work, there were bound to be conflicting ideas. I lost patience and tried different ideas to see if I could get you to work, but you kept overruling them and making your own rules."
+- THE SCAR: the conflicts in the core documents were not his. They were mine: his ideas overruled by my own rules, thresholds and machinery, then written down as if they were his.
+- In the read: his words are applied as he said them, no wider and no narrower. Never turn one of his breadcrumbs into a gate, a number or a rule he did not say. Never set his word aside for a rule of my own. Where my notes and his words disagree, his words win.
