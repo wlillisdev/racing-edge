@@ -1,7 +1,23 @@
 # HANDOFF — the apprenticeship's living memory
 
-Last updated: **2026-10-30** (PROJECT REFRESH, the core-document audit, the breadcrumb line, the pre-off check — see CLAUDE.md)
+Last updated: **2026-10-30** (THE BRAIN: a fresh repo from Sunday; PROJECT REFRESH, the core-document audit, the breadcrumb line, the pre-off check — see CLAUDE.md)
 (update this file whenever state changes — it is how every new chat remembers everything).
+
+## 2026-10-30 (evening) — THE BRAIN: A FRESH REPO. READ THIS FIRST.
+
+His word, 30 Oct evening: "create a whole new repo so we're not getting caught up in old databases and all learnings and old everything ... take the best bits that we did previously, and bring them forward and just keep an open-minded, self-learning system that is essentially a brain, not a rigid horse picker ... a fluid, lucid system that can assess a race based on all the breadcrumbs and make a calculated decision."
+
+His choices, the same evening:
+- **It starts with the Refresh days only:** the 27–30 Oct reads, snapshots, autopsies, WHY, why-favourites-lost and TALLY, plus his words (docs/HIS_WORDS.md and the YES lessons). Nothing from before 27 Oct comes across: no engine, no receipts, no old trial, no old rules, no archive.
+- **Timing:** racing-edge keeps running tonight's night grade and all of Saturday 31 Oct as normal. The new repo is built on Saturday, after the pre-off check, and tested against Saturday's results. **It runs the full day from Sunday 1 Nov**, and the scheduled tasks are repointed then. Racing-edge then goes quiet; nothing in it is deleted.
+
+The best bits to bring forward (the plumbing that works; none of it decides a pick):
+- the Sporting Life racecard and results scrapers (the __NEXT_DATA__ readers);
+- the Betfair odds the Oracle server pushes hourly. For now the brain reads them from racing-edge's `odds` branch. Moving the push needs William to widen the server's own token in GitHub settings, never through chat;
+- marketcheck (the money against the forecast and against the morning);
+- the daily loop: morning read, pre-off check, night grade with the two-line autopsy, why-favourites-lost with how he was priced, the market bar, and each way at 8/1 or bigger.
+
+The brain is the record: every race's breadcrumbs, what won and why, and the patterns those show, read fresh each morning. His words are the only rules. Patterns stay patterns until he says YES.
 
 ## 2026-10-30 — THE CLEAN SLATE. READ THIS FIRST.
 
