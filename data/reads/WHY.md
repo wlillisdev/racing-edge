@@ -78,3 +78,30 @@
 - 2026-10-29 · Southwell 19:30 · **Fram Castle** 5/1 · beaten 3 lengths by my pick last week, now without the penalty difference; "led towards finish". The danger I named. · *weight*
 - 2026-10-29 · Southwell 20:00 · **Fanciulla Del West** 10/1 · keen filly in a first-time hood, Ed Walker; "led towards finish". · *first-time headgear*
 - 2026-10-29 · Southwell 20:30 · **Chambers** 8/1 · 1m6f winner "stretched" by 2m, down to 1m3f, drawn 1, made all. · *trip, draw, pace*
+- 2026-10-30 · Newmarket 12:40 · **Covet** 4/1 · Kingman newcomer, half-brother to a 2yo winner, backed 9/1→4/1; "asserted ... readily". · *breeding, unexposed newcomer, the money*
+- 2026-10-30 · Newmarket 13:15 · **Fiorella Princess** 20/1 · course winner for this yard, 7lb claimer on, made all; "kept on well". · *weight: the claim; pace*
+- 2026-10-30 · Wetherby 13:20 · **Florida Dreams** 7/2 · chase experience against a novice who jumped poorly; "ran on well". · *experience over fences*
+- 2026-10-30 · Down Royal 13:30 · **Lost Features** 33/1 · a maiden stepping up to 3m; "kept on well". · *trip (NOT IN THE FORM)*
+- 2026-10-30 · Down Royal 14:00 · **Ash Hobbs** 4/1 · £170,000 point winner, second hurdles run, "capable of better". The danger I named. · *young improver from a top yard*
+- 2026-10-30 · Uttoxeter 14:10 · **Las Canals** 16/1 · two handicap wins in the spring, fresh, good ground. · *in form last season, fresh*
+- 2026-10-30 · Wetherby 14:25 · **Washington** 13/8 · 10yo, excellent fresh record, mark down from 129 to 122. The danger I named. · *falling mark on a proven horse*
+- 2026-10-30 · Down Royal 14:35 · **Heads Up** 10/1 · rated 133, led unchallenged. · *pace: allowed his own lead; class*
+- 2026-10-30 · Uttoxeter 14:45 · **Nevershedatear** 6/1 · "gets the nod from her stable jockey"; backed 10/1→6/1. · *the booking, the money*
+- 2026-10-30 · Newmarket 14:55 · **Devil's Brigade** 15/2 · first run in a handicap after making all in a maiden, drawn 2, made all. · *handicap debutant, pace, draw*
+- 2026-10-30 · Wetherby 15:00 · **Charles Darnay** 11/4 · progressive Flat 3yo, the yard's proven type. The danger I named. · *class from the Flat*
+- 2026-10-30 · Down Royal 15:10 · **Claude** 9/2 · "potentially well treated back in a handicap", blinkers, backed. · *well handicapped, the money*
+- 2026-10-30 · Newmarket 15:30 · **Venetian Storm** 7/2 · "shaped as if amiss" on debut; the second run; made all. · *second run after an excuse*
+- 2026-10-30 · Wetherby 15:35 · **Crebilly** 7/1 · two wins from four in small handicaps; my pick 104 days off. · *form, fitness*
+- 2026-10-30 · Uttoxeter 15:55 · **Hello Charlie** 4/1 · Skelton, a top jumps family. · *yard, breeding*
+- 2026-10-30 · Newmarket 16:05 · **Church Wedding** 4/1 · first run in a handicap, Beckett. The danger I named. · *handicap debutant*
+- 2026-10-30 · Wetherby 16:10 · **Lillistar** 9/2 · "reunited with handy 5-lb claimer". · *weight: the claim*
+- 2026-10-30 · Newcastle 16:15 · **Golspie** 10/3 · C&D winner, very consistent, down in trip and grade. The danger I named. · *course specialist*
+- 2026-10-30 · Newcastle 16:45 · **Petula** 7/2 · Prescott, easy debut winner, 450 days off. · *class runs well fresh*
+- 2026-10-30 · Newcastle 17:45 · **Tactical Blitz** 9/1 · C&D winner, back down in trip, blinkers second time. · *trip, course specialist, headgear*
+- 2026-10-30 · Dundalk 18:30 · **City House** 11/4 · first-time visor, falling mark. · *first-time headgear, falling mark*
+- 2026-10-30 · Newcastle 18:45 · **Camino Del Ray** 11/2 · course winner, cheekpieces, backed. · *course winner, the money*
+- 2026-10-30 · Newcastle 19:15 · **Sugar Baby** 22/1 · 9-time winner, falling mark, made all. · *pace: allowed his own lead; falling mark*
+- 2026-10-30 · Dundalk 19:30 · **Son Of Beauty** 7/1 · C&D maiden winner, an excuse two starts back. · *course specialist, excuse*
+- 2026-10-30 · Newcastle 19:45 · **Concert Boy** 9/2 · "well treated back on all-weather", C&D. · *well handicapped, course specialist*
+- 2026-10-30 · Newcastle 20:20 · **Cavallo Pazzo** 85/40 · visor second time, C&D winner, "even a 10 lb rise may not stop him". The danger I named. · *headgear, in form*
+- 2026-10-30 · Dundalk 20:30 · **Not Just Any Eagle** 8/1 · jockey and trainer in form, course winner. · *yard and rider in form*

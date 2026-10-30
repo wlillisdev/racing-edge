@@ -72,3 +72,24 @@ BACKED 1-1 (+2.00) · STEADY 0-2 (−2.00) · DRIFTED 0-0
 **EACH WAY (his word, 29 Oct; picks at 8/1 or bigger in the morning):** 29 Oct: 3 EW picks (Pocket Jacks a non-runner): Valiant Soldier PLACED 3rd at 11/2 (+0.10 each way), Equion unplaced (−2.00), Red Snapper unplaced (−2.00). Won 0, placed 1 of 3, £1 each way −3.90 (a £6 stake); to win only the same picks −3.00. All three were backed into single figures before the off (5/2, 9/2, 11/2), so they were settled at SP far shorter than the 8/1 that made them EW. **Total EW: placed 1 of 3, −3.90.**
 
 **Foresight (29 Oct):** MY PICK 11 · IN MY CONTENDERS 15 · NOT SEEN 12. Both faults: weighing (15) and reading (12, eight of them on flat turf, where I did not see the winner at all).
+
+### 2026-10-30 (counted by code in horse-racing-brain; non-runners and the withdrawn Last Horizon void)
+| | Day | Total (27–30 Oct) |
+|---|---|---|
+| Morning picks | 16 from 41 (39%), −3.25 | 52 from 143 (36%), +0.52 |
+| Final picks (after the pre-off check) | 16 from 42 (38%), −4.25 | 51 from 146 (35%), −5.48 |
+| THE MARKET BAR (every favourite, joint ones sharing) | 19 from 45 (42%), −0.63 | 58 from 151 (38%), −2.33 |
+| Naps | 4 from 6, +2.00 | 6 from 16, −4.13 |
+| NBs | 2 from 5, +1.25 | 5 from 14, −0.85 |
+| Each way (£1 e/w) | 4 bets: 1 won, 1 placed, −1.64 | 7 bets: 1 won, 2 placed, −5.54 |
+
+(Final picks before today, recounted by code: 27 Oct 9/30 +0.49, 28 Oct 15/38 +8.37, 29 Oct 11/36 −10.09.)
+
+**Foresight (30 Oct):** MY PICK 16 · IN MY CONTENDERS 12 · NOT SEEN 17. Mostly a READING fault today: 17 winners I never named.
+**Gems (winners at 5/1+):** 12; found 0, seen 1, missed 11. Total 27–30 Oct: 56 gems; found 2, seen 17, missed 37.
+**The 50/50s:** 8 final picks 2nd; if those had been firsts, 24 from 42. Why I picked the wrong one: trusted the rating over the improver or the experienced horse 3 (running total 5), the record over the yard in form 2.
+**Unused breadcrumbs:** weight and claim 3, C&D 3, headgear 2, handicap debutant 2, the booking 1, the second run 1.
+**The market:** morning favourites 18 of 45, SP favourites 19 of 45, gambles 7 of 45 (6 with the reason in the snapshot). Favourites made favourite by the money against a longer forecast: 0 of 8 won.
+**The 11:05 flags:** SUPPORTED 18 of 85, −16.08; FRIENDLESS 8 of 61, +25.12 (29 Oct: SUPPORTED 20 of 91, +10.62; FRIENDLESS 4 of 50, −15.00). Opposite on the two days: not a pattern yet.
+**Pre-off:** switches 0 of 2 (Blake to El Cairos no difference; the forced Chicago Call lost).
+**READABLE v NOT:** see the brain's patterns from Sunday (the race-type splits are counted there by code).
