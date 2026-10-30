@@ -27,7 +27,7 @@ the scheduled tasks (docs/ROUTINES.md) run it every day.
 
 ## The day
 
-1. **Morning, every race.** Read his rulebook, the YES lessons and the last
+1. **Morning, every race.** Read his words (docs/HIS_WORDS.md), the YES lessons and the last
    14 days of WHY.md, then read each race clean. Store the SNAPSHOT of the
    form before reading. For each race: the type, READABLE or NOT, 3 or 4
    contenders each with "IF HE WINS, it will be because ...", THE PICK (the
