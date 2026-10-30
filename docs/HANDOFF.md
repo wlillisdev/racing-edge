@@ -1,15 +1,22 @@
 # HANDOFF — the apprenticeship's living memory
 
-Last updated: **2026-10-29** (PROJECT REFRESH, the core-document audit, the breadcrumb line, the pre-off check — see CLAUDE.md)
+Last updated: **2026-10-30** (PROJECT REFRESH, the core-document audit, the breadcrumb line, the pre-off check — see CLAUDE.md)
 (update this file whenever state changes — it is how every new chat remembers everything).
+
+## 2026-10-30 — THE CLEAN SLATE. READ THIS FIRST.
+
+His word: "Remember this is a clean slate, a new start. You need to wipe away any misinformed rules you made and approach with a clean slate." Done:
+- The morning read no longer reads the old engine prompt (NAP_SYSTEM). Its rulebook is docs/HIS_WORDS.md: his own quotes from that prompt, exactly as recorded, and nothing of mine. With the YES lessons in data/reads/LESSONS.md, those are the only rules.
+- BEAT THE DANGER is wiped. It was not his: rule 8 was written after a nap lost on 9 Jul with no word of his, and I wrongly called it "his rule 8" on 28 and 29 Oct. The named-danger count is gone from the grade, the tally and the night message (his word, 30 Oct: "that's just an excuse to why you are so bad"). HOW HE LOSES stays: the honest case against, weighed before banking.
+- His YES of 30 Oct, the second run back, is on the breadcrumb line.
 
 ## 2026-10-29 — THE AUDIT: ONE METHOD, NO CONFLICTS. READ THIS FIRST.
 
 His word: "as this is project refresh you need to audit core documents and weed out any bad data or conflicting rules." Done:
 - Everything older than Refresh (the engine, the flip, the school, the 18 Oct freeze, the prongs) moved out of this file to docs/archive/HANDOFF_before_refresh.md, marked HISTORICAL, NOT INSTRUCTIONS. The same for CLAUDE.md's superseded sections (docs/archive/CLAUDE_before_refresh.md). Nothing deleted.
-- His rulebook (NAP_SYSTEM in src/racing_edge/study/morningread.py) is untouched, but the morning read now names the parts of it his later words overrule, each with the words that overrule it (docs/ROUTINES.md step 2): the PASS and LEAN rules, "when in doubt the favourite IS the pick", the five-part SOLID test and the ELIMINATE cross-off as gates, "Class 6 flat is a pass", and the engine machinery (JSON answers, VETO_SYSTEM). Rule One ("the best horse wins the race") and every law about how to read a horse stand, read as questions.
+- (Superseded by the clean slate of 30 Oct.) His rulebook (NAP_SYSTEM in src/racing_edge/study/morningread.py) is untouched, but the morning read now names the parts of it his later words overrule, each with the words that overrule it (docs/ROUTINES.md step 2): the PASS and LEAN rules, "when in doubt the favourite IS the pick", the five-part SOLID test and the ELIMINATE cross-off as gates, "Class 6 flat is a pass", and the engine machinery (JSON answers, VETO_SYSTEM). Rule One ("the best horse wins the race") and every law about how to read a horse stand, read as questions.
 - The breadcrumbs he taught on 28 Oct that sat only in LESSONS.md are now on the breadcrumb line in the routine: the horse's age, the trainer's record with the horse, and the breeding (sire, dam, damsire: for trip, going, surface, class, age, headgear).
-- HOW HE LOSES now carries his rule 8, BEAT THE DANGER (taught 9 Jul, broken five times on 28 Oct and eight on 27 Oct): name the danger, answer it in writing, and if there is no honest answer the danger is the pick. The night grade counts THE NAMED DANGER, and TALLY keeps the count. It must fall to zero.
+- (Wiped on 30 Oct, see above: BEAT THE DANGER was not his rule.)
 - His "Move": every other document in docs/ (about 40 engine-era files) is now in docs/archive/. docs/ holds only HANDOFF, LEARNING, ROUTINES and ARCHITECTURE.
 - His "create a folder why the favourites lost": data/reads/why-favourites-lost/<day>.md, written by the night grade for every beaten favourite (why he lost, his comment quoted, the warning in the morning snapshot or NOT IN THE FORM), read by every morning read (last 14 days) and the Sunday review. Facts, never a rule against favourites.
 - docs/ARCHITECTURE.md carries a banner: the PythonAnywhere engine flows are retired (the box has been silent since 15 Oct). Law 1 now points at data/reads, not data/nap.db.
