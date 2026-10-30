@@ -124,3 +124,10 @@ lessons enter the morning read. A NO stays here so it is never asked again.
 - His words: "The naps have been quite poor. I know we keep going on about the danger always winning, but that's just an excuse to why you are so bad."
 - THE SCAR: the naps are 2 from 10, −6.13. I led the night message with "the named danger" as if it explained the losses. It explains nothing: a loss is my loss (Law 3). The night grade says why the winner was the best horse and what I got wrong, in plain words, and never offers a count as the reason.
 - In the read: the nap is the pick I am most sure of on the form, earned by the breadcrumbs, and it is graded first and plainly: won or lost, and what I got wrong.
+
+## 2026-10-30 — YES (his word: a clean slate)
+
+- His words: "Remember this is a clean slate, a new start. You need to wipe away any misinformed rules you made and approach with a clean slate."
+- In the read, from today: the only rules are HIS WORDS. That means his own quoted words in the YES lessons above, the places to look on the breadcrumb line (his list, item by item), and his own quoted laws in the old rulebook (NAP_SYSTEM). Everything I wrote around them is a note at most, never a rule: the engine-era text of NAP_SYSTEM (cross-offs, passes, the solid test, the sitting floor, the anchor bar, the "favourite IS the pick" default, scores and lenses, and the 74 rules the register marks UNRECEIPTED), and my own "In the read" lines wherever they go further than his words.
+- No gate, threshold, number or count of my making decides a pick. The market flags (SUPPORTED, FRIENDLESS) are measurements to ask the form about. The named-danger count is not offered as a reason for anything.
+- Each race is read fresh: the form, his breadcrumbs, his lessons, an open mind.
