@@ -111,8 +111,16 @@ lessons enter the morning read. A NO stays here so it is never asked again.
 - In the read: a pick at 8/1 or bigger is banked EACH WAY, with one line on what the form shows that the market is missing (the gem in the long grass). It is still the pick to win; each way is how a big price is measured. The night grade settles it each way at bookmaker SP on standard each-way terms, and TALLY keeps the each-way record beside the win record.
 - Today (29 Oct), banked before his word reached the routine, the picks at 8/1 or bigger: Equion 10/1, Red Snapper 10/1, Pocket Jacks 12/1, Valiant Soldier 8/1. Graded each way tonight as well as to win.
 
-## 2026-10-29 — ASKED (the second run back)
+## 2026-10-29 — YES (the second run back)
 
 - Incidents: four winners in two days were on their second run after a break, and each had a comment saying the first run was needed. Pocket Jacks (Dundalk 16:00, 28 Oct, 6/1): second run after a 4-month break. Lully Du Houx (Ffos Las 15:00, 29 Oct, 13/2): "shaped as if in need of the run on reappearance", beat my nap. Celestial Siren (Punchestown 15:05, 29 Oct, 5/1): "almost certainly needed it at Navan last week" after a year off, beat my 4/5 pick. Tai Tam Bay (Punchestown 15:35, 29 Oct, 13/2): "shaped as if better for the run" after 5 months, "looks a danger to all", made all and beat my nap. I named Tai Tam Bay and dismissed her on a cold yard and a 2024 win.
 - What I missed: I read DAYS SINCE LAST RUN as fit or fresh, and never asked what the first run back had done for the horse.
 - Question for William: **when a horse's comment says he "needed the run" or "shaped as if better for the run" on his return from a break, and he runs again within about three weeks, should the read count the second run back as a breadcrumb for him (expect him to step forward), weighed with the rest? Yes or no.**
+- **ANSWERED YES, 30 Oct, in his words:** "This is a very important comment, because imagine any athlete: he's been on a break, he's had a run, he'd be a bit rusty, he'd be a bit not sharp. He does have a race, runs okay, but the next day he's obviously going to be sharper. So if he's come off a break, he's had a run, the horse will be sharper, he'd be fitter, he'd be zeroed in, he will improve again. That's what that comment means, and this should be evaluated better."
+- In the read: on DAYS SINCE LAST RUN, ask what the last run was. If it was his first run back from a break and the comment says he needed it ("needed the run", "shaped as if better for the run", "rusty", "blew up", "will come on for it"), he is on the second run back: sharper, fitter, expected to improve. Weigh it for him, and read the first run back as a guide to what he can do, not his level. A breadcrumb weighed with the rest, never a rule.
+
+## 2026-10-30 — YES (his word, after the night grade of 29 Oct)
+
+- His words: "The naps have been quite poor. I know we keep going on about the danger always winning, but that's just an excuse to why you are so bad."
+- THE SCAR: the naps are 2 from 10, −6.13. I led the night message with "the named danger" as if it explained the losses. It explains nothing: a loss is my loss (Law 3). The night grade says why the winner was the best horse and what I got wrong, in plain words, and never offers a count as the reason.
+- In the read: the nap is the pick I am most sure of on the form, earned by the breadcrumbs, and it is graded first and plainly: won or lost, and what I got wrong.
