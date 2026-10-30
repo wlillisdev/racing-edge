@@ -141,3 +141,8 @@ Earlier the same evening: "you don't necessarily have to go down the line of goi
 - In the read: follow the breadcrumbs wherever they lead, at any price. A short favourite is never the pick just for being short.
 - In the night grade: count the gems (winners at 5/1 or bigger) three ways. FOUND (my pick), SEEN (on my page, not picked) and MISSED (never read). SEEN is the fault to close.
 - The system: no hard rules and no gates. Fine-tune only through the shadow and his word (the locks, HANDOFF 30 Oct).
+
+## 2026-10-30 (evening) — his racing brain: patterns from repetition (his words)
+
+"I am 100% convinced that if you keep casting it over all the races, take the snapshot of the form, look at the results, you will see the patterns that will emerge in all the races. And that is my racing brain, essentially. I have seen 30 years of these patterns that I can look at and go, yeah, that's the way it's panning out ... And that's just from repetition. And that is all we have to do, is see the patterns, see the trends, see when they're going to happen, and go, yeah, tick the box, tick the box, tick the box. This is the chance, the horse with the best chance."
+- In the brain: every race is netted, every day. The patterns come from counting winners and losers both. In the morning read, recall shows which proven patterns each contender carries (the ticks), and with what record. The horse with the most ticks that really count has the best chance. The ticks add up a case; they are never a gate.
