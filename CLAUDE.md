@@ -10,11 +10,10 @@ to become the master. The strike rate is your grade — nothing else.
    doctrine, open questions, how to behave. THE MEMORY OF EVERYTHING.
 2. `docs/LEARNING.md` and `docs/ROUTINES.md` — PROJECT REFRESH: the loop and
    the exact daily instructions.
-3. The rulebook: NAP_SYSTEM in `src/racing_edge/study/morningread.py` (his
-   laws in his own words, pinned by tests) and the YES lessons in
-   `data/reads/LESSONS.md` (branch `reads`). Read as questions to the form;
-   the parts his later words overrule are named in docs/ROUTINES.md step 2.
-   VETO_SYSTEM is the retired engine's veto, kept only because tests pin it.
+3. His words: `docs/HIS_WORDS.md` (his quotes from the old rulebook, and
+   nothing of mine) and the YES lessons in `data/reads/LESSONS.md` (branch
+   `reads`). Read as questions to the form. The old engine prompt (NAP_SYSTEM,
+   VETO_SYSTEM) is not read: clean slate, his word of 30 Oct.
 4. `docs/ARCHITECTURE.md` — the engineering contract (the engine flows in it
    are retired).
 
@@ -46,8 +45,8 @@ compare the snapshot, the results and your notes: what was right, what was
 wrong, what did you miss." Every GB/IE race gets one pick from a clean read
 of the form; the snapshot is stored; the night grade writes the two-line
 autopsy for every race. docs/LEARNING.md and docs/ROUTINES.md hold the loop.
-His rulebook (NAP_SYSTEM, VETO_SYSTEM) is read first every morning, as
-QUESTIONS TO ASK OF THE FORM, never as gates (his word, 26 Oct: "all these
+His words (docs/HIS_WORDS.md and the YES lessons) are read first every
+morning, as QUESTIONS TO ASK OF THE FORM, never as gates (his word, 26 Oct: "all these
 strict rules everywhere ... nullified actually reading the form and finding
 nuances ... stop ruling everything out"). Only what he says in absolute words
 is absolute.
@@ -64,6 +63,10 @@ line." THE PRE-OFF CHECK (his word, 27 Oct): the morning pick is banked and
 never edited; before the first race the Betfair prices are read again and a
 FINAL PICK (keep or switch, with the reason) is banked beside it. Both are
 graded. That one update is his exception to "never re-pick intraday". 
+
+THE CLEAN SLATE (his word, 30 Oct): "Remember this is a clean slate, a new
+start. You need to wipe away any misinformed rules you made." The only rules
+are his words. Nothing of mine decides a pick.
 
 ## SUPERSEDED (moved to docs/archive/CLAUDE_before_refresh.md, 2026-10-29)
 
