@@ -1,9 +1,14 @@
 # THE GATE (2026-08-01 architecture pass): a red suite reached the live box
 # because a human piped pytest and lost its exit code. Machines don't pipe.
-# Every push runs the full suite; the branch page shows red before the box
-# ever pulls it.
+# Every push to main and every pull request runs the full suite. The data
+# branches (reads: the daily reads, ~15 pushes a day; odds: the server's
+# hourly Betfair pushes) carry no code and are not tested: running the suite
+# on them used 90% of the account's Actions minutes by 30 Oct.
 name: tests
-on: [push, pull_request]
+on:
+  push:
+    branches: [main]
+  pull_request:
 jobs:
   test:
     runs-on: ubuntu-latest
