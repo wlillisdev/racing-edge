@@ -146,3 +146,9 @@ Earlier the same evening: "you don't necessarily have to go down the line of goi
 
 "I am 100% convinced that if you keep casting it over all the races, take the snapshot of the form, look at the results, you will see the patterns that will emerge in all the races. And that is my racing brain, essentially. I have seen 30 years of these patterns that I can look at and go, yeah, that's the way it's panning out ... And that's just from repetition. And that is all we have to do, is see the patterns, see the trends, see when they're going to happen, and go, yeah, tick the box, tick the box, tick the box. This is the chance, the horse with the best chance."
 - In the brain: every race is netted, every day. The patterns come from counting winners and losers both. In the morning read, recall shows which proven patterns each contender carries (the ticks), and with what record. The horse with the most ticks that really count has the best chance. The ticks add up a case; they are never a gate.
+
+## 2026-10-30 (night) — his word: money talks
+
+His word, after the night grade (7 of 45 races won by the day's biggest gamble, first show to SP, six of them with the reason in the morning form): "I ALWAYS SAID MONEY TALKS." His earlier words on it: "sometimes if it is a stable in form, good jockey booking, and the market is positive, it often stacks up to a winner" (30 Aug) · "favourite was flip flopping never goes well" (15 Aug).
+- In the read and at the pre-off check: the money is a breadcrumb that speaks, read with the form. When a horse is being backed, find the reason in his card (the booking, the yard, the breeding, the mark); when the reason is there, the money is telling me something I should have weighed.
+- In the night grade: the gamble (first show to SP) and the morning moves (09:05 to 11:05) are counted separately, so the record shows which money talks loudest. 30 Oct: the late gamble won 7 of 45; the 11:05 SUPPORTED flag won 18 of 85 (−16.08).
