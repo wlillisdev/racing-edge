@@ -133,3 +133,11 @@ lessons enter the morning read. A NO stays here so it is never asked again.
 - Each race is read fresh: the form, his breadcrumbs, his lessons, an open mind.
 - Also wiped, the same morning: BEAT THE DANGER. It was never his. It was written into the engine after a nap lost on 9 Jul, with no word of his, and on 28 and 29 Oct I called it "his rule 8". That was wrong. The line in the 28 Oct lesson above ("if there is no honest answer, the rival is the pick") is mine and is withdrawn; his words there ("the method is solid, you need to stop making the same mistake") stand. HOW HE LOSES stays as the honest case against the pick, weighed before banking.
 - And, the same morning: "So we build on this with our daily learning, finding breadcrumbs and patterns as we go. Every race is different, so one hat doesn't fit all. That's the problem with your hard rules: they end up ruling out a lot of good dogs."
+
+## 2026-10-30 (evening) — YES: follow the breadcrumbs to the gems (his words)
+
+His words, after seeing the v1 winners' prices (Dark Viper 9/1, Glenfinnan 11/2, Duke Of Luckley 5/1, and Daiquiri Bay 14/1 and Arqoob 15/2 from full reads): "the gems are there ... that just shows and proves my point that if you can look at the breadcrumbs, you will eventually follow the trail to the winner. And it's just a matter of being consistent, systematic, and ... determined to get the result. ... it's proven that we can do this. We just need to fine-tune it and stop wrecking the system and making hard rules and gates."
+Earlier the same evening: "you don't necessarily have to go down the line of going for the short odds favorite ... there is value".
+- In the read: follow the breadcrumbs wherever they lead, at any price. A short favourite is never the pick just for being short.
+- In the night grade: count the gems (winners at 5/1 or bigger) three ways. FOUND (my pick), SEEN (on my page, not picked) and MISSED (never read). SEEN is the fault to close.
+- The system: no hard rules and no gates. Fine-tune only through the shadow and his word (the locks, HANDOFF 30 Oct).
