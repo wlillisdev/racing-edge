@@ -152,3 +152,9 @@ Earlier the same evening: "you don't necessarily have to go down the line of goi
 His word, after the night grade (7 of 45 races won by the day's biggest gamble, first show to SP, six of them with the reason in the morning form): "I ALWAYS SAID MONEY TALKS." His earlier words on it: "sometimes if it is a stable in form, good jockey booking, and the market is positive, it often stacks up to a winner" (30 Aug) · "favourite was flip flopping never goes well" (15 Aug).
 - In the read and at the pre-off check: the money is a breadcrumb that speaks, read with the form. When a horse is being backed, find the reason in his card (the booking, the yard, the breeding, the mark); when the reason is there, the money is telling me something I should have weighed.
 - In the night grade: the gamble (first show to SP) and the morning moves (09:05 to 11:05) are counted separately, so the record shows which money talks loudest. 30 Oct: the late gamble won 7 of 45; the 11:05 SUPPORTED flag won 18 of 85 (−16.08).
+
+## 2026-10-31 — YES: Timeform's opinion is the last breadcrumb (his words)
+
+His words, asked whether Timeform's stars and flags ("ahead of the handicapper") belong in the read: "stay clear, if you cant split 2 horses use it as a refence". Then: "add as a breadcrumb"; asked which, he chose the LAST breadcrumb, to split two horses only.
+- In the read: the case for each horse is the form and the facts. Timeform's stars and flags are never a reason on their own, and never quoted beside every contender.
+- Only when two horses cannot be split on everything else: look at Timeform's stars and flags for those two, as the last breadcrumb, and write that it was used.
