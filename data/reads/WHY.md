@@ -105,3 +105,24 @@
 - 2026-10-30 · Newcastle 19:45 · **Concert Boy** 9/2 · "well treated back on all-weather", C&D. · *well handicapped, course specialist*
 - 2026-10-30 · Newcastle 20:20 · **Cavallo Pazzo** 85/40 · visor second time, C&D winner, "even a 10 lb rise may not stop him". The danger I named. · *headgear, in form*
 - 2026-10-30 · Dundalk 20:30 · **Not Just Any Eagle** 8/1 · jockey and trainer in form, course winner. · *yard and rider in form*
+- 2026-10-31 · Newmarket 11:50 · **Lyra Lea** 5/1 · trouble in running last time ("not much room ... switched ... kept on"), a 7f winner at 6f on good to soft; "kept on well ... led close home". · *trouble last time*
+- 2026-10-31 · Ascot 12:50 · **Media Mogul** 9/4 · fit, a Class 2 2nd after losing lengths at the start, "form working out well"; "challenged 2 out, soon led ... driven out". The danger I named. · *the last run read for how; well handicapped*
+- 2026-10-31 · Down Royal 13:00 · **Admiral Will Brown** 5/1 · Flat winner, first-time tongue strap, "check the betting", backed; "asserted before last ... comfortably". · *Flat class to hurdles; headgear; the money*
+- 2026-10-31 · Wetherby 13:10 · **Marty Mcfly** 12/1 · chase four-timer back over fences, the hurdle run "will have served a purpose"; "stayed on dourly". · *second run back; back to his discipline*
+- 2026-10-31 · Ascot 13:25 · **The Gray Ghost** 7/2 · second run over fences after an encouraging chase debut; "led 10th ... stayed on well". · *experience over fences*
+- 2026-10-31 · Newmarket 13:40 · **Bengal Tiger** 6/4 · progressive 2yo, listed winner 7 days ago, O'Brien; "always holding runner-up". · *improver from a top yard*
+- 2026-10-31 · Ascot 14:00 · **Vanderpoel** 4/1 · C&D winner, class 141, Grand Annual run better than it read, wind op; "in command from 2 out". The danger I named. · *class; course specialist*
+- 2026-10-31 · Newmarket 14:10 · **Haldon Pier** 80/1 · bare debut win; the trainer "seeking a third successive win in this listed prize"; "not clear run ... led towards finish". · *the trainer with this race; unexposed*
+- 2026-10-31 · Ascot 14:33 · **Viroflay** 3/1 · 7lb claimer off top weight ("good value for his claim"), made the running; "led again 2 out, ridden out". · *weight and claim; pace*
+- 2026-10-31 · Down Royal 14:38 · **Intense Approach** 9/1 · "much more like it" 2nd back over hurdles 18 days ago, back to fences, made virtually all; "rallied ... gamely". · *second run back; pace*
+- 2026-10-31 · Newmarket 14:44 · **Arabian Light** 9/2 · Appleby, 111, fresh; my pick drifted 3.6 to 5.1; "ran on well". · *the money against my pick*
+- 2026-10-31 · Ayr 15:03 · **Liberty Coach** 5/1 · useful Flat form, better ground, promising 5lb claimer; "stayed on strongly". The danger I named. · *weight and claim; going*
+- 2026-10-31 · Ascot 15:10 · **Babs** 11/4 · two hurdle wins, fit, against a hurdling debutant; "led 2 out ... stayed on well". · *experience over hurdles*
+- 2026-10-31 · Newmarket 15:23 · **High Calibre** 7/2 · good nursery 3rd 12 days ago, Hannon/Levey; "led over 2f out ... comfortably". · *nursery experience; in form*
+- 2026-10-31 · Wetherby 15:30 · **Filibustering** 1/1 · class drop, Skelton, the money; "led towards finish". The danger I named. · *class dropper; the money*
+- 2026-10-31 · Ayr 15:37 · **He's Bresilian** 4/1 · "has gone well fresh", left alone in front; "made all". · *pace: allowed his own lead*
+- 2026-10-31 · Newmarket 15:58 · **George Wickham** 6/1 · progressive 3yo, C&D 2nd "finishing well", up 1lb; "led close home". The danger I named. · *improver; weight and mark*
+- 2026-10-31 · Southwell 16:00 · **Oxford Circus** 13/2 · first-time visor, low mark; "led 1f out, kept on well". · *headgear*
+- 2026-10-31 · Ayr 16:10 · **Coventry** 6/1 · back up to 3m, Perth winner off a falling mark; "led final strides". · *trip; falling mark*
+- 2026-10-31 · Ascot 16:15 · **Saint Argente** 2/1 · backed, Sam T-D, Warwick win from last; "led entering final furlong". · *the money; booking*
+- 2026-10-31 · Southwell 17:05 · **Talamon** 13/2 · nursery debutant placed in all three, 2nd at Kempton over the trip on the all-weather; "forged away". · *handicap debutant*

@@ -93,3 +93,25 @@ BACKED 1-1 (+2.00) · STEADY 0-2 (−2.00) · DRIFTED 0-0
 **The 11:05 flags:** SUPPORTED 18 of 85, −16.08; FRIENDLESS 8 of 61, +25.12 (29 Oct: SUPPORTED 20 of 91, +10.62; FRIENDLESS 4 of 50, −15.00). Opposite on the two days: not a pattern yet.
 **Pre-off:** switches 0 of 2 (Blake to El Cairos no difference; the forced Chicago Call lost).
 **READABLE v NOT:** see the brain's patterns from Sunday (the race-type splits are counted there by code).
+
+### 2026-10-31 (counted by code in horse-racing-brain; four Down Royal non-runners and six abandoned Southwell races void)
+| | Day | Total (27–31 Oct) |
+|---|---|---|
+| Morning picks | 14 from 36 (39%), +0.95 | 66 from 179 (37%), +1.47 |
+| Final picks (after the pre-off check) | 15 from 36 (42%), +3.58 | 66 from 182 (36%), −1.90 |
+| THE MARKET BAR (every favourite, joint ones sharing) | 18 from 40 (45%), +5.00 | 76 from 191 (40%), +2.67 |
+| Naps | 4 from 6, +2.10 | 10 from 22, −2.03 |
+| NBs | 3 from 5, +5.13 | 8 from 19, +4.28 |
+| Each way (£1 e/w) | 2 bets: none placed, −4.00 (win only −2.00) | 9 bets: 1 won, 2 placed, −9.54 |
+
+Betfair SP: the 22:05 results file has no BSP; the published SP file for the day arrives on 2 Nov.
+
+**Foresight (31 Oct):** MY PICK 15 · IN MY CONTENDERS 16 · NOT SEEN 9. A WEIGHING fault today: 16 winners on my page, picked against.
+**Gems (winners at 5/1+):** 13; found 0, seen 5, missed 8. Total 27–31 Oct: 69 gems; found 2, seen 22, missed 45.
+**The 50/50s:** 4 final picks 2nd; if those had been firsts, 19 from 36. 16 races where the winner was in my contenders or my pick was 2nd. Why I picked the wrong one today: answered the danger with my objection 5 · trusted the rating over the improver or the experienced horse 4 (running total 9) · ignored the money 2 (running total 6) · the falling mark on an exposed horse 1 (running total 2) · course form over current form 1 · a closer over a handy horse 1 · a story over the form 1 · dismissed an outsider unread 1.
+**Unused breadcrumbs (31 Oct):** last run 5 · weight and claim 3 · experience over the obstacle 2 · the money 2 · class, form figures, the trainer with this race, headgear, pace, trip, handicap debutant 1 each.
+**The market:** morning favourites (Betfair 09:05) 17 of 40, SP favourites 18 of 40, gambles 5 of 40 (all five with the reason in the snapshot; one my pick, three more on my page).
+**The 11:05 flags:** SUPPORTED 20 of 81, −11.62; FRIENDLESS 6 of 85, +26.00. Running (29–31 Oct): SUPPORTED 58 of 257, −17.08; FRIENDLESS 18 of 196, +36.12. Three days: the friendless flag has paid on two, the supported flag lost on two. Still a measurement, not a pattern.
+**Pre-off:** morning 14/36 +0.95, final 15/36 +3.58; switches 1 of 1 (Strong Leader WON at 13/8). Total switches 1 of 7. Keeps that lost to a horse flagged SUPPORTED at 11:05: 8.
+**THE MONEY (my picks, Betfair 09:05 → close):** shortened 12, won 6, +0.31 · steady 17, won 8, +5.93 · drifted 7, won 1, −2.67.
+**READABLE v NOT (31 Oct):** READABLE 28, won 14, +9.67 · NOT 8, won 1, −6.09. Handicaps 23, won 8, +3.29 · others 13, won 7, +0.29 · hurdles 13, won 7, +2.72 · chases 10, won 4, +2.04 · flat turf 9, won 3, +1.24 · all-weather 3, won 1, −1.43 · bumper 1, won 0.

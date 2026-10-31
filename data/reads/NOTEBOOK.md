@@ -73,3 +73,14 @@
 - 2026-10-30 · Newcastle 18:45 · Mwafaq · 4th · "Dwelt, mid-division, pushed along and improved over 2f out, ridden disputing third over 1f out, no extra"
 - 2026-10-30 · Newcastle 18:45 · Blue To Blue · 6th · "Dwelt, towards rear, pushed along 2f out, repeatedly denied clear run from over 1f out, not recover"
 - 2026-10-30 · Newcastle 19:15 · The Green Man · 5th · "Slowly away, rear mid-division, pushed along over 1f out, ran on, never nearer"
+- 2026-10-31 · Ayr 12:43 · King Kubala · 2nd · "slightly hampered 1st, closed travelling well when slight mistake 2 out ... stayed on well final 110 yards, just failed"
+- 2026-10-31 · Wetherby 13:10 · Koukeo · 2nd · "ridden in fourth after 3 out, stayed on well run-in, nearest finish" (second run back after 8 months)
+- 2026-10-31 · Newmarket 13:40 · Mezzo Forte · 3rd at 28/1 · "took keen hold ... headway when hampered over 1f out ... kept on"
+- 2026-10-31 · Newmarket 13:40 · Kicking Bear · 5th · "took keen hold ... switched left ... switched right over 2f out, no extra when slightly hampered inside final furlong"
+- 2026-10-31 · Newmarket 13:40 · Jassas · 6th · "led overall, headed when hampered over 2f out, soon faded"
+- 2026-10-31 · Ayr 14:28 · Moon Phases · 4th · "short of room briefly after next, staying on when mistake last"
+- 2026-10-31 · Ascot 14:33 · Your Darling · 2nd at 16/1 · "held up in rear, not much room 14th, headway 4 out ... stayed on final 110 yards"
+- 2026-10-31 · Down Royal 15:50 · Herja · 3rd · "bit short of room and pushed along before omitted last"
+- 2026-10-31 · Newmarket 15:58 · Tex · 3rd · "switched right for clear run and ridden over 1f out, kept on inside final furlong"
+- 2026-10-31 · Newmarket 15:58 · Alpha Magic · 6th · "switched right for clear run over 1f out, kept on inside final furlong"
+- 2026-10-31 · Newmarket 11:50 · Winged Messenger · 4th · "headway over 1f out, kept on inside final furlong, never nearer" (the race's gamble, 11/1→7/1)
