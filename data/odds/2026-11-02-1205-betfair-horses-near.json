@@ -1,0 +1,122 @@
+[
+ {
+  "market_id": "1.264841544",
+  "venue": "Plumpton 13:00",
+  "start": "2026-11-02T13:00:00Z",
+  "polled_at": "2026-11-02T12:40:33Z",
+  "mins_to_off": 19.4,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 51402.19,
+  "runners": [
+   {
+    "selection_id": 67336975,
+    "status": "ACTIVE",
+    "back": 3.1,
+    "lay_best": 3.15,
+    "ltp": 3.15
+   },
+   {
+    "selection_id": 81578849,
+    "status": "ACTIVE",
+    "back": 3.15,
+    "lay_best": 3.2,
+    "ltp": 3.15
+   },
+   {
+    "selection_id": 92514105,
+    "status": "ACTIVE",
+    "back": 5.0,
+    "lay_best": 5.1,
+    "ltp": 5.0
+   },
+   {
+    "selection_id": 92713168,
+    "status": "ACTIVE",
+    "back": 6.0,
+    "lay_best": 6.2,
+    "ltp": 6.0
+   }
+  ]
+ },
+ {
+  "market_id": "1.264841544",
+  "venue": "Plumpton 13:00",
+  "start": "2026-11-02T13:00:00Z",
+  "polled_at": "2026-11-02T12:45:34Z",
+  "mins_to_off": 14.4,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 54566.73,
+  "runners": [
+   {
+    "selection_id": 67336975,
+    "status": "ACTIVE",
+    "back": 3.1,
+    "lay_best": 3.15,
+    "ltp": 3.15
+   },
+   {
+    "selection_id": 81578849,
+    "status": "ACTIVE",
+    "back": 3.1,
+    "lay_best": 3.15,
+    "ltp": 3.1
+   },
+   {
+    "selection_id": 92514105,
+    "status": "ACTIVE",
+    "back": 4.8,
+    "lay_best": 5.0,
+    "ltp": 4.9
+   },
+   {
+    "selection_id": 92713168,
+    "status": "ACTIVE",
+    "back": 6.4,
+    "lay_best": 6.6,
+    "ltp": 6.4
+   }
+  ]
+ },
+ {
+  "market_id": "1.264841544",
+  "venue": "Plumpton 13:00",
+  "start": "2026-11-02T13:00:00Z",
+  "polled_at": "2026-11-02T12:50:34Z",
+  "mins_to_off": 9.4,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 63663.08,
+  "runners": [
+   {
+    "selection_id": 67336975,
+    "status": "ACTIVE",
+    "back": 2.92,
+    "lay_best": 2.94,
+    "ltp": 2.94
+   },
+   {
+    "selection_id": 81578849,
+    "status": "ACTIVE",
+    "back": 3.1,
+    "lay_best": 3.2,
+    "ltp": 3.1
+   },
+   {
+    "selection_id": 92514105,
+    "status": "ACTIVE",
+    "back": 4.9,
+    "lay_best": 5.0,
+    "ltp": 4.9
+   },
+   {
+    "selection_id": 92713168,
+    "status": "ACTIVE",
+    "back": 7.0,
+    "lay_best": 7.4,
+    "ltp": 7.2
+   }
+  ]
+ }
+]
