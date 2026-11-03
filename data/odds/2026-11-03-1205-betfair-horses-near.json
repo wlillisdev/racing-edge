@@ -1,0 +1,995 @@
+[
+ {
+  "market_id": "1.264886209",
+  "venue": "Warwick 12:18",
+  "start": "2026-11-03T12:18:00Z",
+  "polled_at": "2026-11-03T12:05:23Z",
+  "mins_to_off": 12.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 25488.59,
+  "runners": [
+   {
+    "selection_id": 80278957,
+    "status": "ACTIVE",
+    "back": 1.46,
+    "lay_best": 1.47,
+    "ltp": 1.47
+   },
+   {
+    "selection_id": 75798976,
+    "status": "ACTIVE",
+    "back": 3.1,
+    "lay_best": 3.15,
+    "ltp": 3.1
+   }
+  ]
+ },
+ {
+  "market_id": "1.264886209",
+  "venue": "Warwick 12:18",
+  "start": "2026-11-03T12:18:00Z",
+  "polled_at": "2026-11-03T12:10:23Z",
+  "mins_to_off": 7.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 37537.67,
+  "runners": [
+   {
+    "selection_id": 80278957,
+    "status": "ACTIVE",
+    "back": 1.43,
+    "lay_best": 1.44,
+    "ltp": 1.44
+   },
+   {
+    "selection_id": 75798976,
+    "status": "ACTIVE",
+    "back": 3.25,
+    "lay_best": 3.3,
+    "ltp": 3.3
+   }
+  ]
+ },
+ {
+  "market_id": "1.264886065",
+  "venue": "Fairyhouse 12:35",
+  "start": "2026-11-03T12:35:00Z",
+  "polled_at": "2026-11-03T12:15:23Z",
+  "mins_to_off": 19.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 11363.51,
+  "runners": [
+   {
+    "selection_id": 42220283,
+    "status": "ACTIVE",
+    "back": 4.4,
+    "lay_best": 4.5,
+    "ltp": 4.4
+   },
+   {
+    "selection_id": 86321174,
+    "status": "ACTIVE",
+    "back": 4.6,
+    "lay_best": 4.8,
+    "ltp": 4.6
+   },
+   {
+    "selection_id": 91496782,
+    "status": "ACTIVE",
+    "back": 5.4,
+    "lay_best": 5.6,
+    "ltp": 5.4
+   },
+   {
+    "selection_id": 2202017,
+    "status": "ACTIVE",
+    "back": 6.2,
+    "lay_best": 6.4,
+    "ltp": 6.4
+   },
+   {
+    "selection_id": 72322095,
+    "status": "ACTIVE",
+    "back": 10.0,
+    "lay_best": 11.5,
+    "ltp": 10.5
+   },
+   {
+    "selection_id": 69366256,
+    "status": "ACTIVE",
+    "back": 11.0,
+    "lay_best": 12.5,
+    "ltp": 11.5
+   },
+   {
+    "selection_id": 57154558,
+    "status": "ACTIVE",
+    "back": 20.0,
+    "lay_best": 23.0,
+    "ltp": 21.0
+   }
+  ]
+ },
+ {
+  "market_id": "1.264886209",
+  "venue": "Warwick 12:18",
+  "start": "2026-11-03T12:18:00Z",
+  "polled_at": "2026-11-03T12:15:23Z",
+  "mins_to_off": 2.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 63679.46,
+  "runners": [
+   {
+    "selection_id": 80278957,
+    "status": "ACTIVE",
+    "back": 1.45,
+    "lay_best": 1.46,
+    "ltp": 1.45
+   },
+   {
+    "selection_id": 75798976,
+    "status": "ACTIVE",
+    "back": 3.15,
+    "lay_best": 3.2,
+    "ltp": 3.15
+   }
+  ]
+ },
+ {
+  "market_id": "1.264886065",
+  "venue": "Fairyhouse 12:35",
+  "start": "2026-11-03T12:35:00Z",
+  "polled_at": "2026-11-03T12:20:24Z",
+  "mins_to_off": 14.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 13163.48,
+  "runners": [
+   {
+    "selection_id": 42220283,
+    "status": "ACTIVE",
+    "back": 4.3,
+    "lay_best": 4.5,
+    "ltp": 4.3
+   },
+   {
+    "selection_id": 86321174,
+    "status": "ACTIVE",
+    "back": 4.8,
+    "lay_best": 4.9,
+    "ltp": 4.8
+   },
+   {
+    "selection_id": 91496782,
+    "status": "ACTIVE",
+    "back": 5.5,
+    "lay_best": 5.7,
+    "ltp": 5.6
+   },
+   {
+    "selection_id": 2202017,
+    "status": "ACTIVE",
+    "back": 6.4,
+    "lay_best": 6.6,
+    "ltp": 6.6
+   },
+   {
+    "selection_id": 72322095,
+    "status": "ACTIVE",
+    "back": 10.5,
+    "lay_best": 12.0,
+    "ltp": 11.0
+   },
+   {
+    "selection_id": 69366256,
+    "status": "ACTIVE",
+    "back": 11.0,
+    "lay_best": 11.5,
+    "ltp": 11.0
+   },
+   {
+    "selection_id": 57154558,
+    "status": "ACTIVE",
+    "back": 19.5,
+    "lay_best": 21.0,
+    "ltp": 20.0
+   }
+  ]
+ },
+ {
+  "market_id": "1.264886065",
+  "venue": "Fairyhouse 12:35",
+  "start": "2026-11-03T12:35:00Z",
+  "polled_at": "2026-11-03T12:25:24Z",
+  "mins_to_off": 9.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 16275.13,
+  "runners": [
+   {
+    "selection_id": 42220283,
+    "status": "ACTIVE",
+    "back": 4.3,
+    "lay_best": 4.4,
+    "ltp": 4.4
+   },
+   {
+    "selection_id": 86321174,
+    "status": "ACTIVE",
+    "back": 4.9,
+    "lay_best": 5.1,
+    "ltp": 5.0
+   },
+   {
+    "selection_id": 91496782,
+    "status": "ACTIVE",
+    "back": 5.5,
+    "lay_best": 5.7,
+    "ltp": 5.5
+   },
+   {
+    "selection_id": 2202017,
+    "status": "ACTIVE",
+    "back": 6.8,
+    "lay_best": 7.0,
+    "ltp": 6.8
+   },
+   {
+    "selection_id": 72322095,
+    "status": "ACTIVE",
+    "back": 9.4,
+    "lay_best": 9.8,
+    "ltp": 9.6
+   },
+   {
+    "selection_id": 69366256,
+    "status": "ACTIVE",
+    "back": 11.0,
+    "lay_best": 12.0,
+    "ltp": 11.0
+   },
+   {
+    "selection_id": 57154558,
+    "status": "ACTIVE",
+    "back": 19.5,
+    "lay_best": 22.0,
+    "ltp": 20.0
+   }
+  ]
+ },
+ {
+  "market_id": "1.264886174",
+  "venue": "Sedgefield 12:44",
+  "start": "2026-11-03T12:44:00Z",
+  "polled_at": "2026-11-03T12:25:24Z",
+  "mins_to_off": 18.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 39761.41,
+  "runners": [
+   {
+    "selection_id": 27943898,
+    "status": "ACTIVE",
+    "back": 2.12,
+    "lay_best": 2.14,
+    "ltp": 2.12
+   },
+   {
+    "selection_id": 41198881,
+    "status": "ACTIVE",
+    "back": 3.35,
+    "lay_best": 3.4,
+    "ltp": 3.35
+   },
+   {
+    "selection_id": 44348865,
+    "status": "ACTIVE",
+    "back": 8.2,
+    "lay_best": 8.6,
+    "ltp": 8.0
+   },
+   {
+    "selection_id": 49597132,
+    "status": "ACTIVE",
+    "back": 8.6,
+    "lay_best": 9.0,
+    "ltp": 8.6
+   }
+  ]
+ },
+ {
+  "market_id": "1.264886065",
+  "venue": "Fairyhouse 12:35",
+  "start": "2026-11-03T12:35:00Z",
+  "polled_at": "2026-11-03T12:30:24Z",
+  "mins_to_off": 4.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 24912.64,
+  "runners": [
+   {
+    "selection_id": 42220283,
+    "status": "ACTIVE",
+    "back": 4.1,
+    "lay_best": 4.2,
+    "ltp": 4.1
+   },
+   {
+    "selection_id": 86321174,
+    "status": "ACTIVE",
+    "back": 4.9,
+    "lay_best": 5.0,
+    "ltp": 4.9
+   },
+   {
+    "selection_id": 91496782,
+    "status": "ACTIVE",
+    "back": 5.6,
+    "lay_best": 5.7,
+    "ltp": 5.7
+   },
+   {
+    "selection_id": 2202017,
+    "status": "ACTIVE",
+    "back": 6.8,
+    "lay_best": 7.0,
+    "ltp": 6.8
+   },
+   {
+    "selection_id": 72322095,
+    "status": "ACTIVE",
+    "back": 9.6,
+    "lay_best": 10.5,
+    "ltp": 9.8
+   },
+   {
+    "selection_id": 69366256,
+    "status": "ACTIVE",
+    "back": 12.0,
+    "lay_best": 12.5,
+    "ltp": 12.0
+   },
+   {
+    "selection_id": 57154558,
+    "status": "ACTIVE",
+    "back": 19.0,
+    "lay_best": 21.0,
+    "ltp": 20.0
+   }
+  ]
+ },
+ {
+  "market_id": "1.264886174",
+  "venue": "Sedgefield 12:44",
+  "start": "2026-11-03T12:44:00Z",
+  "polled_at": "2026-11-03T12:30:24Z",
+  "mins_to_off": 13.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 46926.98,
+  "runners": [
+   {
+    "selection_id": 27943898,
+    "status": "ACTIVE",
+    "back": 2.06,
+    "lay_best": 2.08,
+    "ltp": 2.06
+   },
+   {
+    "selection_id": 41198881,
+    "status": "ACTIVE",
+    "back": 3.35,
+    "lay_best": 3.4,
+    "ltp": 3.4
+   },
+   {
+    "selection_id": 44348865,
+    "status": "ACTIVE",
+    "back": 8.8,
+    "lay_best": 9.4,
+    "ltp": 8.8
+   },
+   {
+    "selection_id": 49597132,
+    "status": "ACTIVE",
+    "back": 8.8,
+    "lay_best": 9.0,
+    "ltp": 8.8
+   }
+  ]
+ },
+ {
+  "market_id": "1.264886174",
+  "venue": "Sedgefield 12:44",
+  "start": "2026-11-03T12:44:00Z",
+  "polled_at": "2026-11-03T12:35:24Z",
+  "mins_to_off": 8.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 53132.08,
+  "runners": [
+   {
+    "selection_id": 27943898,
+    "status": "ACTIVE",
+    "back": 2.06,
+    "lay_best": 2.1,
+    "ltp": 2.06
+   },
+   {
+    "selection_id": 41198881,
+    "status": "ACTIVE",
+    "back": 3.2,
+    "lay_best": 3.25,
+    "ltp": 3.25
+   },
+   {
+    "selection_id": 44348865,
+    "status": "ACTIVE",
+    "back": 9.0,
+    "lay_best": 9.4,
+    "ltp": 9.2
+   },
+   {
+    "selection_id": 49597132,
+    "status": "ACTIVE",
+    "back": 9.8,
+    "lay_best": 10.5,
+    "ltp": 9.8
+   }
+  ]
+ },
+ {
+  "market_id": "1.264886210",
+  "venue": "Warwick 12:53",
+  "start": "2026-11-03T12:53:00Z",
+  "polled_at": "2026-11-03T12:35:24Z",
+  "mins_to_off": 17.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 33550.11,
+  "runners": [
+   {
+    "selection_id": 2535922,
+    "status": "ACTIVE",
+    "back": 2.16,
+    "lay_best": 2.18,
+    "ltp": 2.16
+   },
+   {
+    "selection_id": 90725959,
+    "status": "ACTIVE",
+    "back": 3.35,
+    "lay_best": 3.4,
+    "ltp": 3.35
+   },
+   {
+    "selection_id": 86072296,
+    "status": "ACTIVE",
+    "back": 8.4,
+    "lay_best": 8.6,
+    "ltp": 8.4
+   },
+   {
+    "selection_id": 87511700,
+    "status": "ACTIVE",
+    "back": 16.0,
+    "lay_best": 16.5,
+    "ltp": 16.0
+   },
+   {
+    "selection_id": 92216133,
+    "status": "ACTIVE",
+    "back": 25.0,
+    "lay_best": 26.0,
+    "ltp": 26.0
+   },
+   {
+    "selection_id": 86905814,
+    "status": "ACTIVE",
+    "back": 55.0,
+    "lay_best": 80.0,
+    "ltp": 70.0
+   },
+   {
+    "selection_id": 88088329,
+    "status": "ACTIVE",
+    "back": 90.0,
+    "lay_best": 180.0,
+    "ltp": 110.0
+   }
+  ]
+ },
+ {
+  "market_id": "1.264886174",
+  "venue": "Sedgefield 12:44",
+  "start": "2026-11-03T12:44:00Z",
+  "polled_at": "2026-11-03T12:40:24Z",
+  "mins_to_off": 3.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 77986.95,
+  "runners": [
+   {
+    "selection_id": 27943898,
+    "status": "ACTIVE",
+    "back": 2.04,
+    "lay_best": 2.06,
+    "ltp": 2.04
+   },
+   {
+    "selection_id": 41198881,
+    "status": "ACTIVE",
+    "back": 3.55,
+    "lay_best": 3.6,
+    "ltp": 3.6
+   },
+   {
+    "selection_id": 44348865,
+    "status": "ACTIVE",
+    "back": 7.4,
+    "lay_best": 7.6,
+    "ltp": 7.4
+   },
+   {
+    "selection_id": 49597132,
+    "status": "ACTIVE",
+    "back": 9.8,
+    "lay_best": 10.0,
+    "ltp": 10.0
+   }
+  ]
+ },
+ {
+  "market_id": "1.264886210",
+  "venue": "Warwick 12:53",
+  "start": "2026-11-03T12:53:00Z",
+  "polled_at": "2026-11-03T12:40:24Z",
+  "mins_to_off": 12.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 34722.75,
+  "runners": [
+   {
+    "selection_id": 2535922,
+    "status": "ACTIVE",
+    "back": 2.18,
+    "lay_best": 2.2,
+    "ltp": 2.18
+   },
+   {
+    "selection_id": 90725959,
+    "status": "ACTIVE",
+    "back": 3.35,
+    "lay_best": 3.4,
+    "ltp": 3.35
+   },
+   {
+    "selection_id": 86072296,
+    "status": "ACTIVE",
+    "back": 8.4,
+    "lay_best": 8.6,
+    "ltp": 8.6
+   },
+   {
+    "selection_id": 87511700,
+    "status": "ACTIVE",
+    "back": 16.0,
+    "lay_best": 16.5,
+    "ltp": 16.0
+   },
+   {
+    "selection_id": 92216133,
+    "status": "ACTIVE",
+    "back": 23.0,
+    "lay_best": 25.0,
+    "ltp": 23.0
+   },
+   {
+    "selection_id": 86905814,
+    "status": "ACTIVE",
+    "back": 60.0,
+    "lay_best": 90.0,
+    "ltp": 65.0
+   },
+   {
+    "selection_id": 88088329,
+    "status": "ACTIVE",
+    "back": 85.0,
+    "lay_best": 130.0,
+    "ltp": 90.0
+   }
+  ]
+ },
+ {
+  "market_id": "1.264886134",
+  "venue": "Lingfield 13:02",
+  "start": "2026-11-03T13:02:00Z",
+  "polled_at": "2026-11-03T12:45:25Z",
+  "mins_to_off": 16.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 10556.2,
+  "runners": [
+   {
+    "selection_id": 104551884,
+    "status": "ACTIVE",
+    "back": 2.72,
+    "lay_best": 2.74,
+    "ltp": 2.74
+   },
+   {
+    "selection_id": 71809,
+    "status": "ACTIVE",
+    "back": 6.4,
+    "lay_best": 6.6,
+    "ltp": 6.4
+   },
+   {
+    "selection_id": 103937649,
+    "status": "ACTIVE",
+    "back": 6.0,
+    "lay_best": 6.2,
+    "ltp": 6.0
+   },
+   {
+    "selection_id": 104551882,
+    "status": "ACTIVE",
+    "back": 6.0,
+    "lay_best": 6.2,
+    "ltp": 6.2
+   },
+   {
+    "selection_id": 96703038,
+    "status": "ACTIVE",
+    "back": 18.0,
+    "lay_best": 21.0,
+    "ltp": 19.5
+   },
+   {
+    "selection_id": 10205292,
+    "status": "ACTIVE",
+    "back": 20.0,
+    "lay_best": 23.0,
+    "ltp": 20.0
+   },
+   {
+    "selection_id": 1233813,
+    "status": "ACTIVE",
+    "back": 36.0,
+    "lay_best": 44.0,
+    "ltp": 38.0
+   },
+   {
+    "selection_id": 6456187,
+    "status": "ACTIVE",
+    "back": 34.0,
+    "lay_best": 50.0,
+    "ltp": 38.0
+   },
+   {
+    "selection_id": 15341060,
+    "status": "REMOVED",
+    "back": null,
+    "lay_best": null,
+    "ltp": null
+   },
+   {
+    "selection_id": 104551885,
+    "status": "REMOVED",
+    "back": null,
+    "lay_best": null,
+    "ltp": null
+   }
+  ]
+ },
+ {
+  "market_id": "1.264886210",
+  "venue": "Warwick 12:53",
+  "start": "2026-11-03T12:53:00Z",
+  "polled_at": "2026-11-03T12:45:25Z",
+  "mins_to_off": 7.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 42435.7,
+  "runners": [
+   {
+    "selection_id": 2535922,
+    "status": "ACTIVE",
+    "back": 2.2,
+    "lay_best": 2.22,
+    "ltp": 2.22
+   },
+   {
+    "selection_id": 90725959,
+    "status": "ACTIVE",
+    "back": 3.45,
+    "lay_best": 3.5,
+    "ltp": 3.45
+   },
+   {
+    "selection_id": 86072296,
+    "status": "ACTIVE",
+    "back": 7.4,
+    "lay_best": 7.6,
+    "ltp": 7.4
+   },
+   {
+    "selection_id": 87511700,
+    "status": "ACTIVE",
+    "back": 15.5,
+    "lay_best": 16.0,
+    "ltp": 15.5
+   },
+   {
+    "selection_id": 92216133,
+    "status": "ACTIVE",
+    "back": 23.0,
+    "lay_best": 25.0,
+    "ltp": 24.0
+   },
+   {
+    "selection_id": 86905814,
+    "status": "ACTIVE",
+    "back": 70.0,
+    "lay_best": 75.0,
+    "ltp": 75.0
+   },
+   {
+    "selection_id": 88088329,
+    "status": "ACTIVE",
+    "back": 90.0,
+    "lay_best": 140.0,
+    "ltp": 100.0
+   }
+  ]
+ },
+ {
+  "market_id": "1.264886072",
+  "venue": "Fairyhouse 13:10",
+  "start": "2026-11-03T13:10:00Z",
+  "polled_at": "2026-11-03T12:50:25Z",
+  "mins_to_off": 19.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 8746.97,
+  "runners": [
+   {
+    "selection_id": 87964172,
+    "status": "ACTIVE",
+    "back": 3.05,
+    "lay_best": 3.3,
+    "ltp": 3.1
+   },
+   {
+    "selection_id": 96854576,
+    "status": "ACTIVE",
+    "back": 3.1,
+    "lay_best": 3.2,
+    "ltp": 3.15
+   },
+   {
+    "selection_id": 74545546,
+    "status": "ACTIVE",
+    "back": 12.0,
+    "lay_best": 13.0,
+    "ltp": 12.5
+   },
+   {
+    "selection_id": 96854578,
+    "status": "ACTIVE",
+    "back": 11.5,
+    "lay_best": 15.5,
+    "ltp": 13.0
+   },
+   {
+    "selection_id": 86632282,
+    "status": "ACTIVE",
+    "back": 17.5,
+    "lay_best": 24.0,
+    "ltp": 20.0
+   },
+   {
+    "selection_id": 84958306,
+    "status": "ACTIVE",
+    "back": 20.0,
+    "lay_best": 26.0,
+    "ltp": 22.0
+   },
+   {
+    "selection_id": 232459,
+    "status": "ACTIVE",
+    "back": 20.0,
+    "lay_best": 25.0,
+    "ltp": 21.0
+   },
+   {
+    "selection_id": 83498281,
+    "status": "ACTIVE",
+    "back": 23.0,
+    "lay_best": 38.0,
+    "ltp": 28.0
+   },
+   {
+    "selection_id": 96975629,
+    "status": "ACTIVE",
+    "back": 48.0,
+    "lay_best": 95.0,
+    "ltp": 70.0
+   },
+   {
+    "selection_id": 84993355,
+    "status": "ACTIVE",
+    "back": 60.0,
+    "lay_best": 100.0,
+    "ltp": 85.0
+   },
+   {
+    "selection_id": 88669353,
+    "status": "ACTIVE",
+    "back": 38.0,
+    "lay_best": 360.0,
+    "ltp": 85.0
+   },
+   {
+    "selection_id": 96782765,
+    "status": "ACTIVE",
+    "back": 170.0,
+    "lay_best": 850.0,
+    "ltp": 230.0
+   },
+   {
+    "selection_id": 84671266,
+    "status": "ACTIVE",
+    "back": 270.0,
+    "lay_best": 1000.0,
+    "ltp": 640.0
+   }
+  ]
+ },
+ {
+  "market_id": "1.264886134",
+  "venue": "Lingfield 13:02",
+  "start": "2026-11-03T13:02:00Z",
+  "polled_at": "2026-11-03T12:50:25Z",
+  "mins_to_off": 11.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 13413.6,
+  "runners": [
+   {
+    "selection_id": 104551884,
+    "status": "ACTIVE",
+    "back": 3.15,
+    "lay_best": 3.25,
+    "ltp": 3.2
+   },
+   {
+    "selection_id": 104551882,
+    "status": "ACTIVE",
+    "back": 5.5,
+    "lay_best": 5.6,
+    "ltp": 5.6
+   },
+   {
+    "selection_id": 103937649,
+    "status": "ACTIVE",
+    "back": 5.5,
+    "lay_best": 5.8,
+    "ltp": 5.6
+   },
+   {
+    "selection_id": 71809,
+    "status": "ACTIVE",
+    "back": 5.7,
+    "lay_best": 5.8,
+    "ltp": 5.8
+   },
+   {
+    "selection_id": 96703038,
+    "status": "ACTIVE",
+    "back": 17.0,
+    "lay_best": 21.0,
+    "ltp": 18.5
+   },
+   {
+    "selection_id": 10205292,
+    "status": "ACTIVE",
+    "back": 20.0,
+    "lay_best": 23.0,
+    "ltp": 21.0
+   },
+   {
+    "selection_id": 6456187,
+    "status": "ACTIVE",
+    "back": 34.0,
+    "lay_best": 44.0,
+    "ltp": 38.0
+   },
+   {
+    "selection_id": 1233813,
+    "status": "ACTIVE",
+    "back": 36.0,
+    "lay_best": 42.0,
+    "ltp": 38.0
+   },
+   {
+    "selection_id": 15341060,
+    "status": "REMOVED",
+    "back": null,
+    "lay_best": null,
+    "ltp": null
+   },
+   {
+    "selection_id": 104551885,
+    "status": "REMOVED",
+    "back": null,
+    "lay_best": null,
+    "ltp": null
+   }
+  ]
+ },
+ {
+  "market_id": "1.264886210",
+  "venue": "Warwick 12:53",
+  "start": "2026-11-03T12:53:00Z",
+  "polled_at": "2026-11-03T12:50:25Z",
+  "mins_to_off": 2.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 81764.0,
+  "runners": [
+   {
+    "selection_id": 2535922,
+    "status": "ACTIVE",
+    "back": 2.34,
+    "lay_best": 2.36,
+    "ltp": 2.34
+   },
+   {
+    "selection_id": 90725959,
+    "status": "ACTIVE",
+    "back": 3.05,
+    "lay_best": 3.1,
+    "ltp": 3.05
+   },
+   {
+    "selection_id": 86072296,
+    "status": "ACTIVE",
+    "back": 7.6,
+    "lay_best": 8.0,
+    "ltp": 7.8
+   },
+   {
+    "selection_id": 87511700,
+    "status": "ACTIVE",
+    "back": 16.5,
+    "lay_best": 17.0,
+    "ltp": 16.5
+   },
+   {
+    "selection_id": 92216133,
+    "status": "ACTIVE",
+    "back": 22.0,
+    "lay_best": 24.0,
+    "ltp": 23.0
+   },
+   {
+    "selection_id": 86905814,
+    "status": "ACTIVE",
+    "back": 85.0,
+    "lay_best": 110.0,
+    "ltp": 90.0
+   },
+   {
+    "selection_id": 88088329,
+    "status": "ACTIVE",
+    "back": 110.0,
+    "lay_best": 180.0,
+    "ltp": 130.0
+   }
+  ]
+ }
+]
