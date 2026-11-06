@@ -1,0 +1,875 @@
+[
+ {
+  "market_id": "1.265087952",
+  "venue": "Hexham 12:25",
+  "start": "2026-11-06T12:25:00Z",
+  "polled_at": "2026-11-06T12:05:22Z",
+  "mins_to_off": 19.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 37180.95,
+  "runners": [
+   {
+    "selection_id": 80105990,
+    "status": "ACTIVE",
+    "back": 2.76,
+    "lay_best": 2.78,
+    "ltp": 2.76
+   },
+   {
+    "selection_id": 61833083,
+    "status": "ACTIVE",
+    "back": 3.5,
+    "lay_best": 3.55,
+    "ltp": 3.5
+   },
+   {
+    "selection_id": 40838969,
+    "status": "ACTIVE",
+    "back": 5.6,
+    "lay_best": 5.7,
+    "ltp": 5.6
+   },
+   {
+    "selection_id": 62143610,
+    "status": "ACTIVE",
+    "back": 14.5,
+    "lay_best": 15.0,
+    "ltp": 14.5
+   },
+   {
+    "selection_id": 40157723,
+    "status": "ACTIVE",
+    "back": 17.0,
+    "lay_best": 18.0,
+    "ltp": 17.5
+   },
+   {
+    "selection_id": 39880852,
+    "status": "ACTIVE",
+    "back": 26.0,
+    "lay_best": 29.0,
+    "ltp": 27.0
+   },
+   {
+    "selection_id": 81947247,
+    "status": "ACTIVE",
+    "back": 44.0,
+    "lay_best": 55.0,
+    "ltp": 50.0
+   }
+  ]
+ },
+ {
+  "market_id": "1.265087952",
+  "venue": "Hexham 12:25",
+  "start": "2026-11-06T12:25:00Z",
+  "polled_at": "2026-11-06T12:10:22Z",
+  "mins_to_off": 14.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 45984.76,
+  "runners": [
+   {
+    "selection_id": 80105990,
+    "status": "ACTIVE",
+    "back": 2.66,
+    "lay_best": 2.7,
+    "ltp": 2.68
+   },
+   {
+    "selection_id": 61833083,
+    "status": "ACTIVE",
+    "back": 3.65,
+    "lay_best": 3.7,
+    "ltp": 3.65
+   },
+   {
+    "selection_id": 40838969,
+    "status": "ACTIVE",
+    "back": 5.5,
+    "lay_best": 5.7,
+    "ltp": 5.6
+   },
+   {
+    "selection_id": 62143610,
+    "status": "ACTIVE",
+    "back": 15.0,
+    "lay_best": 15.5,
+    "ltp": 15.0
+   },
+   {
+    "selection_id": 40157723,
+    "status": "ACTIVE",
+    "back": 17.5,
+    "lay_best": 18.5,
+    "ltp": 18.0
+   },
+   {
+    "selection_id": 39880852,
+    "status": "ACTIVE",
+    "back": 28.0,
+    "lay_best": 30.0,
+    "ltp": 28.0
+   },
+   {
+    "selection_id": 81947247,
+    "status": "ACTIVE",
+    "back": 44.0,
+    "lay_best": 55.0,
+    "ltp": 50.0
+   }
+  ]
+ },
+ {
+  "market_id": "1.265087952",
+  "venue": "Hexham 12:25",
+  "start": "2026-11-06T12:25:00Z",
+  "polled_at": "2026-11-06T12:15:22Z",
+  "mins_to_off": 9.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 53484.57,
+  "runners": [
+   {
+    "selection_id": 80105990,
+    "status": "ACTIVE",
+    "back": 2.72,
+    "lay_best": 2.74,
+    "ltp": 2.74
+   },
+   {
+    "selection_id": 61833083,
+    "status": "ACTIVE",
+    "back": 3.7,
+    "lay_best": 3.75,
+    "ltp": 3.75
+   },
+   {
+    "selection_id": 40838969,
+    "status": "ACTIVE",
+    "back": 5.4,
+    "lay_best": 5.5,
+    "ltp": 5.5
+   },
+   {
+    "selection_id": 62143610,
+    "status": "ACTIVE",
+    "back": 14.5,
+    "lay_best": 15.0,
+    "ltp": 14.5
+   },
+   {
+    "selection_id": 40157723,
+    "status": "ACTIVE",
+    "back": 18.0,
+    "lay_best": 19.0,
+    "ltp": 18.0
+   },
+   {
+    "selection_id": 39880852,
+    "status": "ACTIVE",
+    "back": 28.0,
+    "lay_best": 29.0,
+    "ltp": 28.0
+   },
+   {
+    "selection_id": 81947247,
+    "status": "ACTIVE",
+    "back": 40.0,
+    "lay_best": 42.0,
+    "ltp": 40.0
+   }
+  ]
+ },
+ {
+  "market_id": "1.265087900",
+  "venue": "Aintree 12:40",
+  "start": "2026-11-06T12:40:00Z",
+  "polled_at": "2026-11-06T12:20:23Z",
+  "mins_to_off": 19.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 74250.29,
+  "runners": [
+   {
+    "selection_id": 93178094,
+    "status": "ACTIVE",
+    "back": 2.26,
+    "lay_best": 2.3,
+    "ltp": 2.28
+   },
+   {
+    "selection_id": 104121044,
+    "status": "ACTIVE",
+    "back": 3.35,
+    "lay_best": 3.45,
+    "ltp": 3.35
+   },
+   {
+    "selection_id": 90650267,
+    "status": "ACTIVE",
+    "back": 5.3,
+    "lay_best": 5.5,
+    "ltp": 5.4
+   },
+   {
+    "selection_id": 76756029,
+    "status": "ACTIVE",
+    "back": 12.5,
+    "lay_best": 13.5,
+    "ltp": 13.0
+   }
+  ]
+ },
+ {
+  "market_id": "1.265087952",
+  "venue": "Hexham 12:25",
+  "start": "2026-11-06T12:25:00Z",
+  "polled_at": "2026-11-06T12:20:23Z",
+  "mins_to_off": 4.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 69589.88,
+  "runners": [
+   {
+    "selection_id": 80105990,
+    "status": "ACTIVE",
+    "back": 2.66,
+    "lay_best": 2.68,
+    "ltp": 2.66
+   },
+   {
+    "selection_id": 61833083,
+    "status": "ACTIVE",
+    "back": 3.8,
+    "lay_best": 3.9,
+    "ltp": 3.85
+   },
+   {
+    "selection_id": 40838969,
+    "status": "ACTIVE",
+    "back": 5.5,
+    "lay_best": 5.6,
+    "ltp": 5.5
+   },
+   {
+    "selection_id": 62143610,
+    "status": "ACTIVE",
+    "back": 14.5,
+    "lay_best": 15.0,
+    "ltp": 14.5
+   },
+   {
+    "selection_id": 40157723,
+    "status": "ACTIVE",
+    "back": 17.0,
+    "lay_best": 17.5,
+    "ltp": 17.5
+   },
+   {
+    "selection_id": 39880852,
+    "status": "ACTIVE",
+    "back": 28.0,
+    "lay_best": 29.0,
+    "ltp": 29.0
+   },
+   {
+    "selection_id": 81947247,
+    "status": "ACTIVE",
+    "back": 36.0,
+    "lay_best": 38.0,
+    "ltp": 36.0
+   }
+  ]
+ },
+ {
+  "market_id": "1.265087900",
+  "venue": "Aintree 12:40",
+  "start": "2026-11-06T12:40:00Z",
+  "polled_at": "2026-11-06T12:25:23Z",
+  "mins_to_off": 14.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 83873.1,
+  "runners": [
+   {
+    "selection_id": 93178094,
+    "status": "ACTIVE",
+    "back": 2.18,
+    "lay_best": 2.2,
+    "ltp": 2.2
+   },
+   {
+    "selection_id": 104121044,
+    "status": "ACTIVE",
+    "back": 3.4,
+    "lay_best": 3.45,
+    "ltp": 3.45
+   },
+   {
+    "selection_id": 90650267,
+    "status": "ACTIVE",
+    "back": 5.5,
+    "lay_best": 5.7,
+    "ltp": 5.6
+   },
+   {
+    "selection_id": 76756029,
+    "status": "ACTIVE",
+    "back": 13.0,
+    "lay_best": 14.0,
+    "ltp": 13.0
+   }
+  ]
+ },
+ {
+  "market_id": "1.265087900",
+  "venue": "Aintree 12:40",
+  "start": "2026-11-06T12:40:00Z",
+  "polled_at": "2026-11-06T12:30:23Z",
+  "mins_to_off": 9.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 100470.1,
+  "runners": [
+   {
+    "selection_id": 93178094,
+    "status": "ACTIVE",
+    "back": 2.22,
+    "lay_best": 2.26,
+    "ltp": 2.22
+   },
+   {
+    "selection_id": 104121044,
+    "status": "ACTIVE",
+    "back": 3.4,
+    "lay_best": 3.45,
+    "ltp": 3.4
+   },
+   {
+    "selection_id": 90650267,
+    "status": "ACTIVE",
+    "back": 5.2,
+    "lay_best": 5.3,
+    "ltp": 5.3
+   },
+   {
+    "selection_id": 76756029,
+    "status": "ACTIVE",
+    "back": 13.5,
+    "lay_best": 14.5,
+    "ltp": 13.5
+   }
+  ]
+ },
+ {
+  "market_id": "1.265087912",
+  "venue": "Fontwell 12:50",
+  "start": "2026-11-06T12:50:00Z",
+  "polled_at": "2026-11-06T12:30:23Z",
+  "mins_to_off": 19.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 32343.02,
+  "runners": [
+   {
+    "selection_id": 39933169,
+    "status": "ACTIVE",
+    "back": 1.82,
+    "lay_best": 1.83,
+    "ltp": 1.83
+   },
+   {
+    "selection_id": 81408999,
+    "status": "ACTIVE",
+    "back": 5.6,
+    "lay_best": 5.8,
+    "ltp": 5.7
+   },
+   {
+    "selection_id": 60316041,
+    "status": "ACTIVE",
+    "back": 6.4,
+    "lay_best": 6.6,
+    "ltp": 6.6
+   },
+   {
+    "selection_id": 104693706,
+    "status": "ACTIVE",
+    "back": 28.0,
+    "lay_best": 32.0,
+    "ltp": 30.0
+   },
+   {
+    "selection_id": 96232201,
+    "status": "ACTIVE",
+    "back": 30.0,
+    "lay_best": 40.0,
+    "ltp": 36.0
+   },
+   {
+    "selection_id": 95033420,
+    "status": "ACTIVE",
+    "back": 29.0,
+    "lay_best": 36.0,
+    "ltp": 30.0
+   },
+   {
+    "selection_id": 97009349,
+    "status": "ACTIVE",
+    "back": 55.0,
+    "lay_best": 60.0,
+    "ltp": 55.0
+   },
+   {
+    "selection_id": 91496923,
+    "status": "ACTIVE",
+    "back": 48.0,
+    "lay_best": 90.0,
+    "ltp": 60.0
+   },
+   {
+    "selection_id": 103580944,
+    "status": "ACTIVE",
+    "back": 240.0,
+    "lay_best": 1000.0,
+    "ltp": 420.0
+   },
+   {
+    "selection_id": 8504172,
+    "status": "ACTIVE",
+    "back": 410.0,
+    "lay_best": 1000.0,
+    "ltp": 970.0
+   }
+  ]
+ },
+ {
+  "market_id": "1.265087900",
+  "venue": "Aintree 12:40",
+  "start": "2026-11-06T12:40:00Z",
+  "polled_at": "2026-11-06T12:35:23Z",
+  "mins_to_off": 4.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 169832.45,
+  "runners": [
+   {
+    "selection_id": 93178094,
+    "status": "ACTIVE",
+    "back": 2.16,
+    "lay_best": 2.18,
+    "ltp": 2.18
+   },
+   {
+    "selection_id": 104121044,
+    "status": "ACTIVE",
+    "back": 3.75,
+    "lay_best": 3.8,
+    "ltp": 3.75
+   },
+   {
+    "selection_id": 90650267,
+    "status": "ACTIVE",
+    "back": 4.9,
+    "lay_best": 5.0,
+    "ltp": 5.0
+   },
+   {
+    "selection_id": 76756029,
+    "status": "ACTIVE",
+    "back": 13.0,
+    "lay_best": 13.5,
+    "ltp": 13.0
+   }
+  ]
+ },
+ {
+  "market_id": "1.265087912",
+  "venue": "Fontwell 12:50",
+  "start": "2026-11-06T12:50:00Z",
+  "polled_at": "2026-11-06T12:35:23Z",
+  "mins_to_off": 14.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 36075.53,
+  "runners": [
+   {
+    "selection_id": 39933169,
+    "status": "ACTIVE",
+    "back": 1.81,
+    "lay_best": 1.82,
+    "ltp": 1.81
+   },
+   {
+    "selection_id": 81408999,
+    "status": "ACTIVE",
+    "back": 5.5,
+    "lay_best": 5.6,
+    "ltp": 5.5
+   },
+   {
+    "selection_id": 60316041,
+    "status": "ACTIVE",
+    "back": 6.4,
+    "lay_best": 6.6,
+    "ltp": 6.6
+   },
+   {
+    "selection_id": 104693706,
+    "status": "ACTIVE",
+    "back": 29.0,
+    "lay_best": 32.0,
+    "ltp": 30.0
+   },
+   {
+    "selection_id": 96232201,
+    "status": "ACTIVE",
+    "back": 30.0,
+    "lay_best": 40.0,
+    "ltp": 34.0
+   },
+   {
+    "selection_id": 95033420,
+    "status": "ACTIVE",
+    "back": 29.0,
+    "lay_best": 34.0,
+    "ltp": 30.0
+   },
+   {
+    "selection_id": 97009349,
+    "status": "ACTIVE",
+    "back": 55.0,
+    "lay_best": 80.0,
+    "ltp": 65.0
+   },
+   {
+    "selection_id": 91496923,
+    "status": "ACTIVE",
+    "back": 80.0,
+    "lay_best": 160.0,
+    "ltp": 110.0
+   },
+   {
+    "selection_id": 103580944,
+    "status": "ACTIVE",
+    "back": 170.0,
+    "lay_best": 1000.0,
+    "ltp": 440.0
+   },
+   {
+    "selection_id": 8504172,
+    "status": "ACTIVE",
+    "back": 400.0,
+    "lay_best": 1000.0,
+    "ltp": 970.0
+   }
+  ]
+ },
+ {
+  "market_id": "1.265087912",
+  "venue": "Fontwell 12:50",
+  "start": "2026-11-06T12:50:00Z",
+  "polled_at": "2026-11-06T12:40:24Z",
+  "mins_to_off": 9.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 39568.59,
+  "runners": [
+   {
+    "selection_id": 39933169,
+    "status": "ACTIVE",
+    "back": 1.84,
+    "lay_best": 1.85,
+    "ltp": 1.85
+   },
+   {
+    "selection_id": 81408999,
+    "status": "ACTIVE",
+    "back": 5.4,
+    "lay_best": 5.5,
+    "ltp": 5.4
+   },
+   {
+    "selection_id": 60316041,
+    "status": "ACTIVE",
+    "back": 6.6,
+    "lay_best": 6.8,
+    "ltp": 6.8
+   },
+   {
+    "selection_id": 104693706,
+    "status": "ACTIVE",
+    "back": 28.0,
+    "lay_best": 32.0,
+    "ltp": 30.0
+   },
+   {
+    "selection_id": 96232201,
+    "status": "ACTIVE",
+    "back": 30.0,
+    "lay_best": 36.0,
+    "ltp": 32.0
+   },
+   {
+    "selection_id": 95033420,
+    "status": "ACTIVE",
+    "back": 26.0,
+    "lay_best": 29.0,
+    "ltp": 28.0
+   },
+   {
+    "selection_id": 97009349,
+    "status": "ACTIVE",
+    "back": 50.0,
+    "lay_best": 60.0,
+    "ltp": 55.0
+   },
+   {
+    "selection_id": 91496923,
+    "status": "ACTIVE",
+    "back": 65.0,
+    "lay_best": 160.0,
+    "ltp": 95.0
+   },
+   {
+    "selection_id": 103580944,
+    "status": "ACTIVE",
+    "back": 120.0,
+    "lay_best": 1000.0,
+    "ltp": 380.0
+   },
+   {
+    "selection_id": 8504172,
+    "status": "ACTIVE",
+    "back": 380.0,
+    "lay_best": 1000.0,
+    "ltp": 730.0
+   }
+  ]
+ },
+ {
+  "market_id": "1.265087958",
+  "venue": "Hexham 13:00",
+  "start": "2026-11-06T13:00:00Z",
+  "polled_at": "2026-11-06T12:40:24Z",
+  "mins_to_off": 19.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 32770.12,
+  "runners": [
+   {
+    "selection_id": 95820322,
+    "status": "ACTIVE",
+    "back": 1.44,
+    "lay_best": 1.46,
+    "ltp": 1.45
+   },
+   {
+    "selection_id": 96350791,
+    "status": "ACTIVE",
+    "back": 4.6,
+    "lay_best": 4.8,
+    "ltp": 4.7
+   },
+   {
+    "selection_id": 104693709,
+    "status": "ACTIVE",
+    "back": 10.5,
+    "lay_best": 11.0,
+    "ltp": 10.5
+   },
+   {
+    "selection_id": 104121043,
+    "status": "ACTIVE",
+    "back": 100.0,
+    "lay_best": 1000.0,
+    "ltp": 150.0
+   },
+   {
+    "selection_id": 76934848,
+    "status": "REMOVED",
+    "back": null,
+    "lay_best": null,
+    "ltp": null
+   }
+  ]
+ },
+ {
+  "market_id": "1.265087912",
+  "venue": "Fontwell 12:50",
+  "start": "2026-11-06T12:50:00Z",
+  "polled_at": "2026-11-06T12:45:24Z",
+  "mins_to_off": 4.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 60951.02,
+  "runners": [
+   {
+    "selection_id": 39933169,
+    "status": "ACTIVE",
+    "back": 1.87,
+    "lay_best": 1.88,
+    "ltp": 1.87
+   },
+   {
+    "selection_id": 81408999,
+    "status": "ACTIVE",
+    "back": 5.0,
+    "lay_best": 5.1,
+    "ltp": 5.1
+   },
+   {
+    "selection_id": 60316041,
+    "status": "ACTIVE",
+    "back": 7.0,
+    "lay_best": 7.2,
+    "ltp": 7.2
+   },
+   {
+    "selection_id": 104693706,
+    "status": "ACTIVE",
+    "back": 26.0,
+    "lay_best": 28.0,
+    "ltp": 27.0
+   },
+   {
+    "selection_id": 96232201,
+    "status": "ACTIVE",
+    "back": 28.0,
+    "lay_best": 30.0,
+    "ltp": 28.0
+   },
+   {
+    "selection_id": 95033420,
+    "status": "ACTIVE",
+    "back": 29.0,
+    "lay_best": 32.0,
+    "ltp": 30.0
+   },
+   {
+    "selection_id": 97009349,
+    "status": "ACTIVE",
+    "back": 65.0,
+    "lay_best": 85.0,
+    "ltp": 70.0
+   },
+   {
+    "selection_id": 91496923,
+    "status": "ACTIVE",
+    "back": 130.0,
+    "lay_best": 160.0,
+    "ltp": 140.0
+   },
+   {
+    "selection_id": 103580944,
+    "status": "ACTIVE",
+    "back": 290.0,
+    "lay_best": 960.0,
+    "ltp": 320.0
+   },
+   {
+    "selection_id": 8504172,
+    "status": "ACTIVE",
+    "back": 370.0,
+    "lay_best": 1000.0,
+    "ltp": 750.0
+   }
+  ]
+ },
+ {
+  "market_id": "1.265087958",
+  "venue": "Hexham 13:00",
+  "start": "2026-11-06T13:00:00Z",
+  "polled_at": "2026-11-06T12:45:24Z",
+  "mins_to_off": 14.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 35997.62,
+  "runners": [
+   {
+    "selection_id": 95820322,
+    "status": "ACTIVE",
+    "back": 1.46,
+    "lay_best": 1.48,
+    "ltp": 1.47
+   },
+   {
+    "selection_id": 96350791,
+    "status": "ACTIVE",
+    "back": 4.5,
+    "lay_best": 4.7,
+    "ltp": 4.5
+   },
+   {
+    "selection_id": 104693709,
+    "status": "ACTIVE",
+    "back": 10.5,
+    "lay_best": 11.5,
+    "ltp": 11.0
+   },
+   {
+    "selection_id": 104121043,
+    "status": "ACTIVE",
+    "back": 95.0,
+    "lay_best": 250.0,
+    "ltp": 130.0
+   },
+   {
+    "selection_id": 76934848,
+    "status": "REMOVED",
+    "back": null,
+    "lay_best": null,
+    "ltp": null
+   }
+  ]
+ },
+ {
+  "market_id": "1.265087958",
+  "venue": "Hexham 13:00",
+  "start": "2026-11-06T13:00:00Z",
+  "polled_at": "2026-11-06T12:50:24Z",
+  "mins_to_off": 9.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 39479.43,
+  "runners": [
+   {
+    "selection_id": 95820322,
+    "status": "ACTIVE",
+    "back": 1.46,
+    "lay_best": 1.47,
+    "ltp": 1.46
+   },
+   {
+    "selection_id": 96350791,
+    "status": "ACTIVE",
+    "back": 4.6,
+    "lay_best": 4.8,
+    "ltp": 4.7
+   },
+   {
+    "selection_id": 104693709,
+    "status": "ACTIVE",
+    "back": 10.5,
+    "lay_best": 11.0,
+    "ltp": 10.5
+   },
+   {
+    "selection_id": 104121043,
+    "status": "ACTIVE",
+    "back": 95.0,
+    "lay_best": 240.0,
+    "ltp": 140.0
+   },
+   {
+    "selection_id": 76934848,
+    "status": "REMOVED",
+    "back": null,
+    "lay_best": null,
+    "ltp": null
+   }
+  ]
+ }
+]
