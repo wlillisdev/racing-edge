@@ -6,10 +6,10 @@
 # the check goes red and GitHub emails the owner. A read that did not cover
 # every race shows as a warning, and so does a day the pre-off check missed.
 name: watchdog
+# SWITCHED OFF (his word, 8 Nov 2026): it watched the OLD engine's reads branch, which
+# PROJECT REFRESH no longer writes, so it failed every day. The watchdog moves to
+# wlillisdev/horse-racing-brain. Kept runnable by hand only.
 on:
-  schedule:
-    - cron: "15 11 * * *"   # after the 09:41 UK morning read
-    - cron: "45 23 * * *"   # after the 22:31 UK night grade
   workflow_dispatch:
 jobs:
   check:
