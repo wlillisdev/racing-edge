@@ -1,0 +1,123 @@
+[
+ {
+  "venue": "Ffos Las 16:12",
+  "start": "2026-11-08T16:12:00Z",
+  "market_id": "1.265168323",
+  "market_name": "2m Hcap Chs",
+  "total_matched": 65874.27,
+  "runners": [
+   {
+    "selection_id": 62597369,
+    "name": "Pure Carbon",
+    "back": 2.62,
+    "lay_best": 2.66,
+    "ltp": 2.62,
+    "total_matched": 0.0,
+    "meta": {
+     "FORM": "4/21U1231-",
+     "OFFICIAL_RATING": "122",
+     "ADJUSTED_RATING": "125",
+     "WEIGHT_VALUE": "170.0",
+     "WEIGHT_UNITS": "pounds",
+     "AGE": "7",
+     "SEX_TYPE": "g",
+     "DAYS_SINCE_LAST_RUN": "203",
+     "JOCKEY_NAME": "Paul O'Brien",
+     "JOCKEY_CLAIM": "0",
+     "TRAINER_NAME": "Harry Derham",
+     "FORECASTPRICE_NUMERATOR": "9",
+     "FORECASTPRICE_DENOMINATOR": "4",
+     "SIRE_NAME": "DIAMOND BOY",
+     "DAM_NAME": "ROSIE'S REIN",
+     "DAMSIRE_NAME": "KAYF TARA",
+     "OWNER_NAME": "Mr J. Palmer-Brown"
+    }
+   },
+   {
+    "selection_id": 61833085,
+    "name": "Rula Bula",
+    "back": 3.2,
+    "lay_best": 3.25,
+    "ltp": 3.25,
+    "total_matched": 0.0,
+    "meta": {
+     "FORM": "25/1575-2U",
+     "OFFICIAL_RATING": "121",
+     "ADJUSTED_RATING": "127",
+     "WEIGHT_VALUE": "169.0",
+     "WEIGHT_UNITS": "pounds",
+     "AGE": "7",
+     "SEX_TYPE": "f",
+     "DAYS_SINCE_LAST_RUN": "4",
+     "JOCKEY_NAME": "Jonjo O'Neill Jr.",
+     "JOCKEY_CLAIM": "0",
+     "TRAINER_NAME": "Jonjo & A.J. O'Neill",
+     "FORECASTPRICE_NUMERATOR": "5",
+     "FORECASTPRICE_DENOMINATOR": "2",
+     "SIRE_NAME": "MOUNT NELSON",
+     "DAM_NAME": "KOPITAR",
+     "DAMSIRE_NAME": "KALANISI",
+     "BRED": "IRE",
+     "OWNER_NAME": "Jeremy & Germaine Hitchins"
+    }
+   },
+   {
+    "selection_id": 53789468,
+    "name": "Centara",
+    "back": 4.9,
+    "lay_best": 5.0,
+    "ltp": 4.9,
+    "total_matched": 0.0,
+    "meta": {
+     "FORM": "21P-64534",
+     "OFFICIAL_RATING": "120",
+     "ADJUSTED_RATING": "122",
+     "WEIGHT_VALUE": "168.0",
+     "WEIGHT_UNITS": "pounds",
+     "AGE": "8",
+     "SEX_TYPE": "g",
+     "DAYS_SINCE_LAST_RUN": "11",
+     "JOCKEY_NAME": "Jay Tidball",
+     "JOCKEY_CLAIM": "5",
+     "TRAINER_NAME": "Paul Nicholls",
+     "WEARING": "tongue strap",
+     "FORECASTPRICE_NUMERATOR": "7",
+     "FORECASTPRICE_DENOMINATOR": "2",
+     "SIRE_NAME": "SAGEBURG",
+     "DAM_NAME": "SPARTAN ANGEL",
+     "DAMSIRE_NAME": "BENEFICIAL",
+     "BRED": "IRE",
+     "OWNER_NAME": "Mrs Kathy Stuart"
+    }
+   },
+   {
+    "selection_id": 40747026,
+    "name": "Imperial Bede",
+    "back": 9.0,
+    "lay_best": 9.2,
+    "ltp": 9.0,
+    "total_matched": 0.0,
+    "meta": {
+     "FORM": "52-544368",
+     "OFFICIAL_RATING": "98",
+     "ADJUSTED_RATING": "0",
+     "WEIGHT_VALUE": "146.0",
+     "WEIGHT_UNITS": "pounds",
+     "AGE": "8",
+     "SEX_TYPE": "g",
+     "DAYS_SINCE_LAST_RUN": "18",
+     "JOCKEY_NAME": "Harry Cobden",
+     "JOCKEY_CLAIM": "0",
+     "TRAINER_NAME": "Jonjo & A.J. O'Neill",
+     "FORECASTPRICE_NUMERATOR": "11",
+     "FORECASTPRICE_DENOMINATOR": "1",
+     "SIRE_NAME": "ROBIN DU NORD",
+     "DAM_NAME": "AMUSEZ MOI",
+     "DAMSIRE_NAME": "MISTER CONWAY",
+     "BRED": "FR",
+     "OWNER_NAME": "Mr John P. McManus"
+    }
+   }
+  ]
+ }
+]
