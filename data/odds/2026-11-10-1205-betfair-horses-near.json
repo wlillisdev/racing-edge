@@ -1,0 +1,791 @@
+[
+ {
+  "market_id": "1.265258150",
+  "venue": "Fairyhouse 12:30",
+  "start": "2026-11-10T12:30:00Z",
+  "polled_at": "2026-11-10T12:10:21Z",
+  "mins_to_off": 19.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 23528.59,
+  "runners": [
+   {
+    "selection_id": 104882809,
+    "status": "ACTIVE",
+    "back": 2.84,
+    "lay_best": 2.86,
+    "ltp": 2.84
+   },
+   {
+    "selection_id": 104882810,
+    "status": "ACTIVE",
+    "back": 4.2,
+    "lay_best": 4.3,
+    "ltp": 4.3
+   },
+   {
+    "selection_id": 104882816,
+    "status": "ACTIVE",
+    "back": 6.6,
+    "lay_best": 6.8,
+    "ltp": 6.8
+   },
+   {
+    "selection_id": 88390310,
+    "status": "ACTIVE",
+    "back": 9.8,
+    "lay_best": 10.0,
+    "ltp": 10.0
+   },
+   {
+    "selection_id": 103828643,
+    "status": "ACTIVE",
+    "back": 20.0,
+    "lay_best": 24.0,
+    "ltp": 21.0
+   },
+   {
+    "selection_id": 104224908,
+    "status": "ACTIVE",
+    "back": 25.0,
+    "lay_best": 28.0,
+    "ltp": 25.0
+   },
+   {
+    "selection_id": 12713128,
+    "status": "ACTIVE",
+    "back": 50.0,
+    "lay_best": 85.0,
+    "ltp": 70.0
+   },
+   {
+    "selection_id": 103828637,
+    "status": "ACTIVE",
+    "back": 55.0,
+    "lay_best": 75.0,
+    "ltp": 60.0
+   },
+   {
+    "selection_id": 5869578,
+    "status": "ACTIVE",
+    "back": 60.0,
+    "lay_best": 120.0,
+    "ltp": 70.0
+   },
+   {
+    "selection_id": 104882811,
+    "status": "ACTIVE",
+    "back": 55.0,
+    "lay_best": 75.0,
+    "ltp": 60.0
+   },
+   {
+    "selection_id": 10108597,
+    "status": "ACTIVE",
+    "back": 100.0,
+    "lay_best": 680.0,
+    "ltp": 130.0
+   },
+   {
+    "selection_id": 104882815,
+    "status": "ACTIVE",
+    "back": 150.0,
+    "lay_best": 800.0,
+    "ltp": 200.0
+   },
+   {
+    "selection_id": 104882813,
+    "status": "ACTIVE",
+    "back": 260.0,
+    "lay_best": 1000.0,
+    "ltp": 330.0
+   },
+   {
+    "selection_id": 104224904,
+    "status": "ACTIVE",
+    "back": 350.0,
+    "lay_best": 540.0,
+    "ltp": 440.0
+   },
+   {
+    "selection_id": 57511,
+    "status": "REMOVED",
+    "back": null,
+    "lay_best": null,
+    "ltp": null
+   },
+   {
+    "selection_id": 103828638,
+    "status": "REMOVED",
+    "back": null,
+    "lay_best": null,
+    "ltp": null
+   }
+  ]
+ },
+ {
+  "market_id": "1.265258150",
+  "venue": "Fairyhouse 12:30",
+  "start": "2026-11-10T12:30:00Z",
+  "polled_at": "2026-11-10T12:15:22Z",
+  "mins_to_off": 14.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 26770.37,
+  "runners": [
+   {
+    "selection_id": 104882809,
+    "status": "ACTIVE",
+    "back": 2.94,
+    "lay_best": 2.98,
+    "ltp": 2.96
+   },
+   {
+    "selection_id": 104882810,
+    "status": "ACTIVE",
+    "back": 4.2,
+    "lay_best": 4.3,
+    "ltp": 4.3
+   },
+   {
+    "selection_id": 104882816,
+    "status": "ACTIVE",
+    "back": 6.2,
+    "lay_best": 6.6,
+    "ltp": 6.4
+   },
+   {
+    "selection_id": 88390310,
+    "status": "ACTIVE",
+    "back": 10.0,
+    "lay_best": 10.5,
+    "ltp": 10.5
+   },
+   {
+    "selection_id": 103828643,
+    "status": "ACTIVE",
+    "back": 20.0,
+    "lay_best": 23.0,
+    "ltp": 20.0
+   },
+   {
+    "selection_id": 104224908,
+    "status": "ACTIVE",
+    "back": 25.0,
+    "lay_best": 28.0,
+    "ltp": 26.0
+   },
+   {
+    "selection_id": 12713128,
+    "status": "ACTIVE",
+    "back": 48.0,
+    "lay_best": 80.0,
+    "ltp": 55.0
+   },
+   {
+    "selection_id": 103828637,
+    "status": "ACTIVE",
+    "back": 55.0,
+    "lay_best": 75.0,
+    "ltp": 60.0
+   },
+   {
+    "selection_id": 5869578,
+    "status": "ACTIVE",
+    "back": 60.0,
+    "lay_best": 100.0,
+    "ltp": 80.0
+   },
+   {
+    "selection_id": 104882811,
+    "status": "ACTIVE",
+    "back": 55.0,
+    "lay_best": 70.0,
+    "ltp": 60.0
+   },
+   {
+    "selection_id": 10108597,
+    "status": "ACTIVE",
+    "back": 100.0,
+    "lay_best": 210.0,
+    "ltp": 130.0
+   },
+   {
+    "selection_id": 104882815,
+    "status": "ACTIVE",
+    "back": 210.0,
+    "lay_best": 1000.0,
+    "ltp": 330.0
+   },
+   {
+    "selection_id": 104882813,
+    "status": "ACTIVE",
+    "back": 280.0,
+    "lay_best": 1000.0,
+    "ltp": 310.0
+   },
+   {
+    "selection_id": 104224904,
+    "status": "ACTIVE",
+    "back": 320.0,
+    "lay_best": 540.0,
+    "ltp": 410.0
+   },
+   {
+    "selection_id": 57511,
+    "status": "REMOVED",
+    "back": null,
+    "lay_best": null,
+    "ltp": null
+   },
+   {
+    "selection_id": 103828638,
+    "status": "REMOVED",
+    "back": null,
+    "lay_best": null,
+    "ltp": null
+   }
+  ]
+ },
+ {
+  "market_id": "1.265258150",
+  "venue": "Fairyhouse 12:30",
+  "start": "2026-11-10T12:30:00Z",
+  "polled_at": "2026-11-10T12:20:22Z",
+  "mins_to_off": 9.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 28867.29,
+  "runners": [
+   {
+    "selection_id": 104882809,
+    "status": "ACTIVE",
+    "back": 2.9,
+    "lay_best": 2.94,
+    "ltp": 2.9
+   },
+   {
+    "selection_id": 104882810,
+    "status": "ACTIVE",
+    "back": 4.2,
+    "lay_best": 4.3,
+    "ltp": 4.2
+   },
+   {
+    "selection_id": 104882816,
+    "status": "ACTIVE",
+    "back": 6.0,
+    "lay_best": 6.2,
+    "ltp": 6.0
+   },
+   {
+    "selection_id": 88390310,
+    "status": "ACTIVE",
+    "back": 10.5,
+    "lay_best": 11.0,
+    "ltp": 10.5
+   },
+   {
+    "selection_id": 103828643,
+    "status": "ACTIVE",
+    "back": 20.0,
+    "lay_best": 23.0,
+    "ltp": 20.0
+   },
+   {
+    "selection_id": 104224908,
+    "status": "ACTIVE",
+    "back": 25.0,
+    "lay_best": 27.0,
+    "ltp": 26.0
+   },
+   {
+    "selection_id": 12713128,
+    "status": "ACTIVE",
+    "back": 48.0,
+    "lay_best": 75.0,
+    "ltp": 60.0
+   },
+   {
+    "selection_id": 103828637,
+    "status": "ACTIVE",
+    "back": 50.0,
+    "lay_best": 75.0,
+    "ltp": 60.0
+   },
+   {
+    "selection_id": 5869578,
+    "status": "ACTIVE",
+    "back": 60.0,
+    "lay_best": 100.0,
+    "ltp": 70.0
+   },
+   {
+    "selection_id": 104882811,
+    "status": "ACTIVE",
+    "back": 55.0,
+    "lay_best": 70.0,
+    "ltp": 60.0
+   },
+   {
+    "selection_id": 10108597,
+    "status": "ACTIVE",
+    "back": 110.0,
+    "lay_best": 290.0,
+    "ltp": 150.0
+   },
+   {
+    "selection_id": 104882815,
+    "status": "ACTIVE",
+    "back": 210.0,
+    "lay_best": 1000.0,
+    "ltp": 330.0
+   },
+   {
+    "selection_id": 104882813,
+    "status": "ACTIVE",
+    "back": 230.0,
+    "lay_best": 1000.0,
+    "ltp": 310.0
+   },
+   {
+    "selection_id": 104224904,
+    "status": "ACTIVE",
+    "back": 320.0,
+    "lay_best": 540.0,
+    "ltp": 460.0
+   },
+   {
+    "selection_id": 57511,
+    "status": "REMOVED",
+    "back": null,
+    "lay_best": null,
+    "ltp": null
+   },
+   {
+    "selection_id": 103828638,
+    "status": "REMOVED",
+    "back": null,
+    "lay_best": null,
+    "ltp": null
+   }
+  ]
+ },
+ {
+  "market_id": "1.265258150",
+  "venue": "Fairyhouse 12:30",
+  "start": "2026-11-10T12:30:00Z",
+  "polled_at": "2026-11-10T12:25:22Z",
+  "mins_to_off": 4.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 36706.85,
+  "runners": [
+   {
+    "selection_id": 104882809,
+    "status": "ACTIVE",
+    "back": 2.86,
+    "lay_best": 2.88,
+    "ltp": 2.88
+   },
+   {
+    "selection_id": 104882810,
+    "status": "ACTIVE",
+    "back": 4.3,
+    "lay_best": 4.4,
+    "ltp": 4.3
+   },
+   {
+    "selection_id": 104882816,
+    "status": "ACTIVE",
+    "back": 6.0,
+    "lay_best": 6.2,
+    "ltp": 6.2
+   },
+   {
+    "selection_id": 88390310,
+    "status": "ACTIVE",
+    "back": 10.5,
+    "lay_best": 11.0,
+    "ltp": 10.5
+   },
+   {
+    "selection_id": 103828643,
+    "status": "ACTIVE",
+    "back": 23.0,
+    "lay_best": 25.0,
+    "ltp": 25.0
+   },
+   {
+    "selection_id": 104224908,
+    "status": "ACTIVE",
+    "back": 23.0,
+    "lay_best": 24.0,
+    "ltp": 23.0
+   },
+   {
+    "selection_id": 12713128,
+    "status": "ACTIVE",
+    "back": 60.0,
+    "lay_best": 70.0,
+    "ltp": 60.0
+   },
+   {
+    "selection_id": 103828637,
+    "status": "ACTIVE",
+    "back": 50.0,
+    "lay_best": 65.0,
+    "ltp": 55.0
+   },
+   {
+    "selection_id": 5869578,
+    "status": "ACTIVE",
+    "back": 65.0,
+    "lay_best": 85.0,
+    "ltp": 70.0
+   },
+   {
+    "selection_id": 104882811,
+    "status": "ACTIVE",
+    "back": 65.0,
+    "lay_best": 75.0,
+    "ltp": 65.0
+   },
+   {
+    "selection_id": 10108597,
+    "status": "ACTIVE",
+    "back": 160.0,
+    "lay_best": 330.0,
+    "ltp": 180.0
+   },
+   {
+    "selection_id": 104882815,
+    "status": "ACTIVE",
+    "back": 210.0,
+    "lay_best": 540.0,
+    "ltp": 240.0
+   },
+   {
+    "selection_id": 104882813,
+    "status": "ACTIVE",
+    "back": 240.0,
+    "lay_best": 800.0,
+    "ltp": 310.0
+   },
+   {
+    "selection_id": 104224904,
+    "status": "ACTIVE",
+    "back": 320.0,
+    "lay_best": 540.0,
+    "ltp": 360.0
+   },
+   {
+    "selection_id": 57511,
+    "status": "REMOVED",
+    "back": null,
+    "lay_best": null,
+    "ltp": null
+   },
+   {
+    "selection_id": 103828638,
+    "status": "REMOVED",
+    "back": null,
+    "lay_best": null,
+    "ltp": null
+   }
+  ]
+ },
+ {
+  "market_id": "1.265258158",
+  "venue": "Fairyhouse 13:00",
+  "start": "2026-11-10T13:00:00Z",
+  "polled_at": "2026-11-10T12:40:23Z",
+  "mins_to_off": 19.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 54420.78,
+  "runners": [
+   {
+    "selection_id": 103501083,
+    "status": "ACTIVE",
+    "back": 1.68,
+    "lay_best": 1.7,
+    "ltp": 1.68
+   },
+   {
+    "selection_id": 99006182,
+    "status": "ACTIVE",
+    "back": 5.6,
+    "lay_best": 5.7,
+    "ltp": 5.6
+   },
+   {
+    "selection_id": 94238086,
+    "status": "ACTIVE",
+    "back": 10.5,
+    "lay_best": 12.0,
+    "ltp": 10.5
+   },
+   {
+    "selection_id": 100339382,
+    "status": "ACTIVE",
+    "back": 25.0,
+    "lay_best": 27.0,
+    "ltp": 26.0
+   },
+   {
+    "selection_id": 90579920,
+    "status": "ACTIVE",
+    "back": 23.0,
+    "lay_best": 28.0,
+    "ltp": 26.0
+   },
+   {
+    "selection_id": 97009159,
+    "status": "ACTIVE",
+    "back": 30.0,
+    "lay_best": 32.0,
+    "ltp": 32.0
+   },
+   {
+    "selection_id": 98284656,
+    "status": "ACTIVE",
+    "back": 65.0,
+    "lay_best": 120.0,
+    "ltp": 75.0
+   },
+   {
+    "selection_id": 97460036,
+    "status": "ACTIVE",
+    "back": 95.0,
+    "lay_best": 270.0,
+    "ltp": 120.0
+   },
+   {
+    "selection_id": 103501080,
+    "status": "ACTIVE",
+    "back": 170.0,
+    "lay_best": 300.0,
+    "ltp": 220.0
+   },
+   {
+    "selection_id": 102109469,
+    "status": "ACTIVE",
+    "back": 530.0,
+    "lay_best": 1000.0,
+    "ltp": 980.0
+   }
+  ]
+ },
+ {
+  "market_id": "1.265258158",
+  "venue": "Fairyhouse 13:00",
+  "start": "2026-11-10T13:00:00Z",
+  "polled_at": "2026-11-10T12:45:23Z",
+  "mins_to_off": 14.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 67902.28,
+  "runners": [
+   {
+    "selection_id": 103501083,
+    "status": "ACTIVE",
+    "back": 1.76,
+    "lay_best": 1.77,
+    "ltp": 1.76
+   },
+   {
+    "selection_id": 99006182,
+    "status": "ACTIVE",
+    "back": 4.9,
+    "lay_best": 5.0,
+    "ltp": 4.9
+   },
+   {
+    "selection_id": 94238086,
+    "status": "ACTIVE",
+    "back": 10.0,
+    "lay_best": 11.0,
+    "ltp": 11.0
+   },
+   {
+    "selection_id": 90579920,
+    "status": "ACTIVE",
+    "back": 23.0,
+    "lay_best": 29.0,
+    "ltp": 25.0
+   },
+   {
+    "selection_id": 100339382,
+    "status": "ACTIVE",
+    "back": 26.0,
+    "lay_best": 29.0,
+    "ltp": 26.0
+   },
+   {
+    "selection_id": 97009159,
+    "status": "ACTIVE",
+    "back": 32.0,
+    "lay_best": 36.0,
+    "ltp": 32.0
+   },
+   {
+    "selection_id": 98284656,
+    "status": "ACTIVE",
+    "back": 55.0,
+    "lay_best": 100.0,
+    "ltp": 65.0
+   },
+   {
+    "selection_id": 97460036,
+    "status": "ACTIVE",
+    "back": 100.0,
+    "lay_best": 270.0,
+    "ltp": 130.0
+   },
+   {
+    "selection_id": 103501080,
+    "status": "ACTIVE",
+    "back": 140.0,
+    "lay_best": 300.0,
+    "ltp": 170.0
+   },
+   {
+    "selection_id": 102109469,
+    "status": "ACTIVE",
+    "back": 570.0,
+    "lay_best": 1000.0,
+    "ltp": 620.0
+   }
+  ]
+ },
+ {
+  "market_id": "1.265256813",
+  "venue": "Huntingdon 13:10",
+  "start": "2026-11-10T13:10:00Z",
+  "polled_at": "2026-11-10T12:50:23Z",
+  "mins_to_off": 19.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 46292.65,
+  "runners": [
+   {
+    "selection_id": 42038473,
+    "status": "ACTIVE",
+    "back": 3.0,
+    "lay_best": 3.05,
+    "ltp": 3.05
+   },
+   {
+    "selection_id": 6237120,
+    "status": "ACTIVE",
+    "back": 5.4,
+    "lay_best": 5.5,
+    "ltp": 5.4
+   },
+   {
+    "selection_id": 36972754,
+    "status": "ACTIVE",
+    "back": 5.6,
+    "lay_best": 5.8,
+    "ltp": 5.6
+   },
+   {
+    "selection_id": 26354184,
+    "status": "ACTIVE",
+    "back": 5.7,
+    "lay_best": 5.8,
+    "ltp": 5.7
+   },
+   {
+    "selection_id": 27009403,
+    "status": "ACTIVE",
+    "back": 7.2,
+    "lay_best": 7.4,
+    "ltp": 7.2
+   }
+  ]
+ },
+ {
+  "market_id": "1.265258158",
+  "venue": "Fairyhouse 13:00",
+  "start": "2026-11-10T13:00:00Z",
+  "polled_at": "2026-11-10T12:50:23Z",
+  "mins_to_off": 9.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 75468.76,
+  "runners": [
+   {
+    "selection_id": 103501083,
+    "status": "ACTIVE",
+    "back": 1.74,
+    "lay_best": 1.76,
+    "ltp": 1.74
+   },
+   {
+    "selection_id": 99006182,
+    "status": "ACTIVE",
+    "back": 4.9,
+    "lay_best": 5.0,
+    "ltp": 5.0
+   },
+   {
+    "selection_id": 94238086,
+    "status": "ACTIVE",
+    "back": 11.0,
+    "lay_best": 11.5,
+    "ltp": 11.0
+   },
+   {
+    "selection_id": 90579920,
+    "status": "ACTIVE",
+    "back": 23.0,
+    "lay_best": 26.0,
+    "ltp": 25.0
+   },
+   {
+    "selection_id": 100339382,
+    "status": "ACTIVE",
+    "back": 26.0,
+    "lay_best": 29.0,
+    "ltp": 27.0
+   },
+   {
+    "selection_id": 97009159,
+    "status": "ACTIVE",
+    "back": 32.0,
+    "lay_best": 34.0,
+    "ltp": 32.0
+   },
+   {
+    "selection_id": 98284656,
+    "status": "ACTIVE",
+    "back": 65.0,
+    "lay_best": 100.0,
+    "ltp": 75.0
+   },
+   {
+    "selection_id": 97460036,
+    "status": "ACTIVE",
+    "back": 95.0,
+    "lay_best": 270.0,
+    "ltp": 130.0
+   },
+   {
+    "selection_id": 103501080,
+    "status": "ACTIVE",
+    "back": 170.0,
+    "lay_best": 300.0,
+    "ltp": 210.0
+   },
+   {
+    "selection_id": 102109469,
+    "status": "ACTIVE",
+    "back": 380.0,
+    "lay_best": 1000.0,
+    "ltp": 600.0
+   }
+  ]
+ }
+]
