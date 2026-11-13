@@ -1,0 +1,442 @@
+[
+ {
+  "market_id": "1.265415407",
+  "venue": "Dundalk 20:30",
+  "start": "2026-11-13T20:30:00Z",
+  "polled_at": "2026-11-13T20:10:19Z",
+  "mins_to_off": 19.7,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 26129.04,
+  "runners": [
+   {
+    "selection_id": 99931612,
+    "status": "ACTIVE",
+    "back": 3.8,
+    "lay_best": 3.9,
+    "ltp": 3.75
+   },
+   {
+    "selection_id": 84993361,
+    "status": "ACTIVE",
+    "back": 4.7,
+    "lay_best": 4.8,
+    "ltp": 4.7
+   },
+   {
+    "selection_id": 59325,
+    "status": "ACTIVE",
+    "back": 4.5,
+    "lay_best": 4.6,
+    "ltp": 4.6
+   },
+   {
+    "selection_id": 45227659,
+    "status": "ACTIVE",
+    "back": 7.4,
+    "lay_best": 7.6,
+    "ltp": 7.4
+   },
+   {
+    "selection_id": 86321184,
+    "status": "ACTIVE",
+    "back": 11.0,
+    "lay_best": 11.5,
+    "ltp": 11.5
+   },
+   {
+    "selection_id": 5526406,
+    "status": "ACTIVE",
+    "back": 22.0,
+    "lay_best": 26.0,
+    "ltp": 23.0
+   },
+   {
+    "selection_id": 101361851,
+    "status": "ACTIVE",
+    "back": 42.0,
+    "lay_best": 48.0,
+    "ltp": 48.0
+   },
+   {
+    "selection_id": 2858073,
+    "status": "ACTIVE",
+    "back": 100.0,
+    "lay_best": 140.0,
+    "ltp": 110.0
+   },
+   {
+    "selection_id": 99072897,
+    "status": "ACTIVE",
+    "back": 90.0,
+    "lay_best": 160.0,
+    "ltp": 95.0
+   },
+   {
+    "selection_id": 92470723,
+    "status": "ACTIVE",
+    "back": 180.0,
+    "lay_best": 380.0,
+    "ltp": 210.0
+   },
+   {
+    "selection_id": 83916845,
+    "status": "REMOVED",
+    "back": null,
+    "lay_best": null,
+    "ltp": null
+   },
+   {
+    "selection_id": 8647940,
+    "status": "REMOVED",
+    "back": null,
+    "lay_best": null,
+    "ltp": null
+   },
+   {
+    "selection_id": 98284672,
+    "status": "REMOVED",
+    "back": null,
+    "lay_best": null,
+    "ltp": null
+   },
+   {
+    "selection_id": 84707912,
+    "status": "REMOVED",
+    "back": null,
+    "lay_best": null,
+    "ltp": null
+   }
+  ]
+ },
+ {
+  "market_id": "1.265415407",
+  "venue": "Dundalk 20:30",
+  "start": "2026-11-13T20:30:00Z",
+  "polled_at": "2026-11-13T20:15:19Z",
+  "mins_to_off": 14.7,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 43889.87,
+  "runners": [
+   {
+    "selection_id": 99931612,
+    "status": "ACTIVE",
+    "back": 3.75,
+    "lay_best": 3.85,
+    "ltp": 3.75
+   },
+   {
+    "selection_id": 59325,
+    "status": "ACTIVE",
+    "back": 4.6,
+    "lay_best": 4.7,
+    "ltp": 4.6
+   },
+   {
+    "selection_id": 84993361,
+    "status": "ACTIVE",
+    "back": 4.7,
+    "lay_best": 4.9,
+    "ltp": 4.7
+   },
+   {
+    "selection_id": 45227659,
+    "status": "ACTIVE",
+    "back": 7.8,
+    "lay_best": 8.2,
+    "ltp": 7.8
+   },
+   {
+    "selection_id": 86321184,
+    "status": "ACTIVE",
+    "back": 11.5,
+    "lay_best": 12.0,
+    "ltp": 11.5
+   },
+   {
+    "selection_id": 5526406,
+    "status": "ACTIVE",
+    "back": 20.0,
+    "lay_best": 24.0,
+    "ltp": 22.0
+   },
+   {
+    "selection_id": 101361851,
+    "status": "ACTIVE",
+    "back": 40.0,
+    "lay_best": 44.0,
+    "ltp": 42.0
+   },
+   {
+    "selection_id": 99072897,
+    "status": "ACTIVE",
+    "back": 95.0,
+    "lay_best": 160.0,
+    "ltp": 100.0
+   },
+   {
+    "selection_id": 2858073,
+    "status": "ACTIVE",
+    "back": 50.0,
+    "lay_best": 100.0,
+    "ltp": 65.0
+   },
+   {
+    "selection_id": 92470723,
+    "status": "ACTIVE",
+    "back": 180.0,
+    "lay_best": 600.0,
+    "ltp": 210.0
+   },
+   {
+    "selection_id": 83916845,
+    "status": "REMOVED",
+    "back": null,
+    "lay_best": null,
+    "ltp": null
+   },
+   {
+    "selection_id": 8647940,
+    "status": "REMOVED",
+    "back": null,
+    "lay_best": null,
+    "ltp": null
+   },
+   {
+    "selection_id": 98284672,
+    "status": "REMOVED",
+    "back": null,
+    "lay_best": null,
+    "ltp": null
+   },
+   {
+    "selection_id": 84707912,
+    "status": "REMOVED",
+    "back": null,
+    "lay_best": null,
+    "ltp": null
+   }
+  ]
+ },
+ {
+  "market_id": "1.265415407",
+  "venue": "Dundalk 20:30",
+  "start": "2026-11-13T20:30:00Z",
+  "polled_at": "2026-11-13T20:20:19Z",
+  "mins_to_off": 9.7,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 55137.03,
+  "runners": [
+   {
+    "selection_id": 99931612,
+    "status": "ACTIVE",
+    "back": 3.6,
+    "lay_best": 3.65,
+    "ltp": 3.6
+   },
+   {
+    "selection_id": 59325,
+    "status": "ACTIVE",
+    "back": 4.9,
+    "lay_best": 5.0,
+    "ltp": 4.9
+   },
+   {
+    "selection_id": 84993361,
+    "status": "ACTIVE",
+    "back": 4.6,
+    "lay_best": 4.8,
+    "ltp": 4.6
+   },
+   {
+    "selection_id": 45227659,
+    "status": "ACTIVE",
+    "back": 7.8,
+    "lay_best": 8.0,
+    "ltp": 7.8
+   },
+   {
+    "selection_id": 86321184,
+    "status": "ACTIVE",
+    "back": 12.0,
+    "lay_best": 12.5,
+    "ltp": 12.0
+   },
+   {
+    "selection_id": 5526406,
+    "status": "ACTIVE",
+    "back": 21.0,
+    "lay_best": 24.0,
+    "ltp": 22.0
+   },
+   {
+    "selection_id": 101361851,
+    "status": "ACTIVE",
+    "back": 42.0,
+    "lay_best": 46.0,
+    "ltp": 46.0
+   },
+   {
+    "selection_id": 99072897,
+    "status": "ACTIVE",
+    "back": 80.0,
+    "lay_best": 130.0,
+    "ltp": 90.0
+   },
+   {
+    "selection_id": 2858073,
+    "status": "ACTIVE",
+    "back": 50.0,
+    "lay_best": 95.0,
+    "ltp": 55.0
+   },
+   {
+    "selection_id": 92470723,
+    "status": "ACTIVE",
+    "back": 190.0,
+    "lay_best": 330.0,
+    "ltp": 210.0
+   },
+   {
+    "selection_id": 83916845,
+    "status": "REMOVED",
+    "back": null,
+    "lay_best": null,
+    "ltp": null
+   },
+   {
+    "selection_id": 8647940,
+    "status": "REMOVED",
+    "back": null,
+    "lay_best": null,
+    "ltp": null
+   },
+   {
+    "selection_id": 98284672,
+    "status": "REMOVED",
+    "back": null,
+    "lay_best": null,
+    "ltp": null
+   },
+   {
+    "selection_id": 84707912,
+    "status": "REMOVED",
+    "back": null,
+    "lay_best": null,
+    "ltp": null
+   }
+  ]
+ },
+ {
+  "market_id": "1.265415407",
+  "venue": "Dundalk 20:30",
+  "start": "2026-11-13T20:30:00Z",
+  "polled_at": "2026-11-13T20:25:20Z",
+  "mins_to_off": 4.7,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 63207.54,
+  "runners": [
+   {
+    "selection_id": 99931612,
+    "status": "ACTIVE",
+    "back": 3.75,
+    "lay_best": 3.8,
+    "ltp": 3.8
+   },
+   {
+    "selection_id": 59325,
+    "status": "ACTIVE",
+    "back": 4.9,
+    "lay_best": 5.0,
+    "ltp": 4.9
+   },
+   {
+    "selection_id": 84993361,
+    "status": "ACTIVE",
+    "back": 4.3,
+    "lay_best": 4.5,
+    "ltp": 4.4
+   },
+   {
+    "selection_id": 45227659,
+    "status": "ACTIVE",
+    "back": 7.8,
+    "lay_best": 8.0,
+    "ltp": 7.8
+   },
+   {
+    "selection_id": 86321184,
+    "status": "ACTIVE",
+    "back": 11.5,
+    "lay_best": 12.0,
+    "ltp": 11.5
+   },
+   {
+    "selection_id": 5526406,
+    "status": "ACTIVE",
+    "back": 24.0,
+    "lay_best": 25.0,
+    "ltp": 24.0
+   },
+   {
+    "selection_id": 101361851,
+    "status": "ACTIVE",
+    "back": 40.0,
+    "lay_best": 44.0,
+    "ltp": 42.0
+   },
+   {
+    "selection_id": 99072897,
+    "status": "ACTIVE",
+    "back": 80.0,
+    "lay_best": 110.0,
+    "ltp": 85.0
+   },
+   {
+    "selection_id": 2858073,
+    "status": "ACTIVE",
+    "back": 55.0,
+    "lay_best": 75.0,
+    "ltp": 65.0
+   },
+   {
+    "selection_id": 92470723,
+    "status": "ACTIVE",
+    "back": 190.0,
+    "lay_best": 230.0,
+    "ltp": 210.0
+   },
+   {
+    "selection_id": 83916845,
+    "status": "REMOVED",
+    "back": null,
+    "lay_best": null,
+    "ltp": null
+   },
+   {
+    "selection_id": 8647940,
+    "status": "REMOVED",
+    "back": null,
+    "lay_best": null,
+    "ltp": null
+   },
+   {
+    "selection_id": 98284672,
+    "status": "REMOVED",
+    "back": null,
+    "lay_best": null,
+    "ltp": null
+   },
+   {
+    "selection_id": 84707912,
+    "status": "REMOVED",
+    "back": null,
+    "lay_best": null,
+    "ltp": null
+   }
+  ]
+ }
+]
