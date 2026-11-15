@@ -1,0 +1,615 @@
+[
+ {
+  "market_id": "1.265502041",
+  "venue": "Navan 11:40",
+  "start": "2026-11-15T11:40:00Z",
+  "polled_at": "2026-11-15T11:20:21Z",
+  "mins_to_off": 19.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 25150.02,
+  "runners": [
+   {
+    "selection_id": 97139063,
+    "status": "ACTIVE",
+    "back": 2.56,
+    "lay_best": 2.6,
+    "ltp": 2.58
+   },
+   {
+    "selection_id": 89943658,
+    "status": "ACTIVE",
+    "back": 4.1,
+    "lay_best": 4.3,
+    "ltp": 4.1
+   },
+   {
+    "selection_id": 83498276,
+    "status": "ACTIVE",
+    "back": 7.6,
+    "lay_best": 8.2,
+    "ltp": 8.0
+   },
+   {
+    "selection_id": 87874656,
+    "status": "ACTIVE",
+    "back": 9.4,
+    "lay_best": 10.0,
+    "ltp": 9.6
+   },
+   {
+    "selection_id": 90021346,
+    "status": "ACTIVE",
+    "back": 11.0,
+    "lay_best": 12.5,
+    "ltp": 11.5
+   },
+   {
+    "selection_id": 98785267,
+    "status": "ACTIVE",
+    "back": 40.0,
+    "lay_best": 48.0,
+    "ltp": 42.0
+   },
+   {
+    "selection_id": 41864266,
+    "status": "ACTIVE",
+    "back": 90.0,
+    "lay_best": 300.0,
+    "ltp": 130.0
+   },
+   {
+    "selection_id": 84958304,
+    "status": "ACTIVE",
+    "back": 95.0,
+    "lay_best": 590.0,
+    "ltp": 120.0
+   },
+   {
+    "selection_id": 96854571,
+    "status": "ACTIVE",
+    "back": 95.0,
+    "lay_best": 1000.0,
+    "ltp": 220.0
+   },
+   {
+    "selection_id": 6666907,
+    "status": "ACTIVE",
+    "back": 200.0,
+    "lay_best": 1000.0,
+    "ltp": 350.0
+   },
+   {
+    "selection_id": 90021344,
+    "status": "ACTIVE",
+    "back": 130.0,
+    "lay_best": 1000.0,
+    "ltp": 270.0
+   },
+   {
+    "selection_id": 97400795,
+    "status": "ACTIVE",
+    "back": 290.0,
+    "lay_best": 1000.0,
+    "ltp": 590.0
+   },
+   {
+    "selection_id": 96854574,
+    "status": "ACTIVE",
+    "back": 290.0,
+    "lay_best": 1000.0,
+    "ltp": 390.0
+   },
+   {
+    "selection_id": 88669367,
+    "status": "ACTIVE",
+    "back": 610.0,
+    "lay_best": 1000.0,
+    "ltp": 700.0
+   },
+   {
+    "selection_id": 84671266,
+    "status": "ACTIVE",
+    "back": 610.0,
+    "lay_best": 1000.0,
+    "ltp": 810.0
+   }
+  ]
+ },
+ {
+  "market_id": "1.265502041",
+  "venue": "Navan 11:40",
+  "start": "2026-11-15T11:40:00Z",
+  "polled_at": "2026-11-15T11:25:21Z",
+  "mins_to_off": 14.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 28774.65,
+  "runners": [
+   {
+    "selection_id": 97139063,
+    "status": "ACTIVE",
+    "back": 2.64,
+    "lay_best": 2.68,
+    "ltp": 2.64
+   },
+   {
+    "selection_id": 89943658,
+    "status": "ACTIVE",
+    "back": 4.0,
+    "lay_best": 4.1,
+    "ltp": 4.1
+   },
+   {
+    "selection_id": 83498276,
+    "status": "ACTIVE",
+    "back": 7.6,
+    "lay_best": 8.2,
+    "ltp": 7.8
+   },
+   {
+    "selection_id": 87874656,
+    "status": "ACTIVE",
+    "back": 9.8,
+    "lay_best": 10.0,
+    "ltp": 10.0
+   },
+   {
+    "selection_id": 90021346,
+    "status": "ACTIVE",
+    "back": 11.0,
+    "lay_best": 11.5,
+    "ltp": 11.5
+   },
+   {
+    "selection_id": 98785267,
+    "status": "ACTIVE",
+    "back": 38.0,
+    "lay_best": 55.0,
+    "ltp": 40.0
+   },
+   {
+    "selection_id": 96854571,
+    "status": "ACTIVE",
+    "back": 200.0,
+    "lay_best": 1000.0,
+    "ltp": 290.0
+   },
+   {
+    "selection_id": 41864266,
+    "status": "ACTIVE",
+    "back": 80.0,
+    "lay_best": 180.0,
+    "ltp": 90.0
+   },
+   {
+    "selection_id": 84958304,
+    "status": "ACTIVE",
+    "back": 90.0,
+    "lay_best": 180.0,
+    "ltp": 120.0
+   },
+   {
+    "selection_id": 90021344,
+    "status": "ACTIVE",
+    "back": 250.0,
+    "lay_best": 1000.0,
+    "ltp": 280.0
+   },
+   {
+    "selection_id": 6666907,
+    "status": "ACTIVE",
+    "back": 200.0,
+    "lay_best": 1000.0,
+    "ltp": 210.0
+   },
+   {
+    "selection_id": 96854574,
+    "status": "ACTIVE",
+    "back": 290.0,
+    "lay_best": 1000.0,
+    "ltp": 430.0
+   },
+   {
+    "selection_id": 97400795,
+    "status": "ACTIVE",
+    "back": 290.0,
+    "lay_best": 1000.0,
+    "ltp": 830.0
+   },
+   {
+    "selection_id": 84671266,
+    "status": "ACTIVE",
+    "back": 620.0,
+    "lay_best": null,
+    "ltp": 1000.0
+   },
+   {
+    "selection_id": 88669367,
+    "status": "ACTIVE",
+    "back": 610.0,
+    "lay_best": null,
+    "ltp": 1000.0
+   }
+  ]
+ },
+ {
+  "market_id": "1.265502041",
+  "venue": "Navan 11:40",
+  "start": "2026-11-15T11:40:00Z",
+  "polled_at": "2026-11-15T11:30:22Z",
+  "mins_to_off": 9.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 35878.04,
+  "runners": [
+   {
+    "selection_id": 97139063,
+    "status": "ACTIVE",
+    "back": 2.6,
+    "lay_best": 2.64,
+    "ltp": 2.64
+   },
+   {
+    "selection_id": 89943658,
+    "status": "ACTIVE",
+    "back": 4.0,
+    "lay_best": 4.2,
+    "ltp": 4.1
+   },
+   {
+    "selection_id": 83498276,
+    "status": "ACTIVE",
+    "back": 7.6,
+    "lay_best": 8.0,
+    "ltp": 7.6
+   },
+   {
+    "selection_id": 87874656,
+    "status": "ACTIVE",
+    "back": 10.0,
+    "lay_best": 10.5,
+    "ltp": 10.0
+   },
+   {
+    "selection_id": 90021346,
+    "status": "ACTIVE",
+    "back": 11.0,
+    "lay_best": 12.0,
+    "ltp": 12.0
+   },
+   {
+    "selection_id": 98785267,
+    "status": "ACTIVE",
+    "back": 36.0,
+    "lay_best": 48.0,
+    "ltp": 42.0
+   },
+   {
+    "selection_id": 96854571,
+    "status": "ACTIVE",
+    "back": 200.0,
+    "lay_best": 1000.0,
+    "ltp": 230.0
+   },
+   {
+    "selection_id": 41864266,
+    "status": "ACTIVE",
+    "back": 80.0,
+    "lay_best": 180.0,
+    "ltp": 90.0
+   },
+   {
+    "selection_id": 84958304,
+    "status": "ACTIVE",
+    "back": 90.0,
+    "lay_best": 180.0,
+    "ltp": 120.0
+   },
+   {
+    "selection_id": 90021344,
+    "status": "ACTIVE",
+    "back": 200.0,
+    "lay_best": 1000.0,
+    "ltp": 340.0
+   },
+   {
+    "selection_id": 6666907,
+    "status": "ACTIVE",
+    "back": 220.0,
+    "lay_best": 1000.0,
+    "ltp": 340.0
+   },
+   {
+    "selection_id": 96854574,
+    "status": "ACTIVE",
+    "back": 290.0,
+    "lay_best": 1000.0,
+    "ltp": 330.0
+   },
+   {
+    "selection_id": 97400795,
+    "status": "ACTIVE",
+    "back": 290.0,
+    "lay_best": null,
+    "ltp": 1000.0
+   },
+   {
+    "selection_id": 84671266,
+    "status": "ACTIVE",
+    "back": 610.0,
+    "lay_best": null,
+    "ltp": 1000.0
+   },
+   {
+    "selection_id": 88669367,
+    "status": "ACTIVE",
+    "back": 610.0,
+    "lay_best": null,
+    "ltp": 1000.0
+   }
+  ]
+ },
+ {
+  "market_id": "1.265502041",
+  "venue": "Navan 11:40",
+  "start": "2026-11-15T11:40:00Z",
+  "polled_at": "2026-11-15T11:35:22Z",
+  "mins_to_off": 4.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 49610.36,
+  "runners": [
+   {
+    "selection_id": 97139063,
+    "status": "ACTIVE",
+    "back": 2.96,
+    "lay_best": 2.98,
+    "ltp": 2.96
+   },
+   {
+    "selection_id": 89943658,
+    "status": "ACTIVE",
+    "back": 4.3,
+    "lay_best": 4.4,
+    "ltp": 4.4
+   },
+   {
+    "selection_id": 83498276,
+    "status": "ACTIVE",
+    "back": 7.0,
+    "lay_best": 7.2,
+    "ltp": 7.0
+   },
+   {
+    "selection_id": 87874656,
+    "status": "ACTIVE",
+    "back": 7.6,
+    "lay_best": 7.8,
+    "ltp": 7.8
+   },
+   {
+    "selection_id": 90021346,
+    "status": "ACTIVE",
+    "back": 10.0,
+    "lay_best": 10.5,
+    "ltp": 10.5
+   },
+   {
+    "selection_id": 98785267,
+    "status": "ACTIVE",
+    "back": 36.0,
+    "lay_best": 42.0,
+    "ltp": 40.0
+   },
+   {
+    "selection_id": 96854571,
+    "status": "ACTIVE",
+    "back": 200.0,
+    "lay_best": 1000.0,
+    "ltp": 290.0
+   },
+   {
+    "selection_id": 41864266,
+    "status": "ACTIVE",
+    "back": 65.0,
+    "lay_best": 100.0,
+    "ltp": 80.0
+   },
+   {
+    "selection_id": 84958304,
+    "status": "ACTIVE",
+    "back": 100.0,
+    "lay_best": 160.0,
+    "ltp": 120.0
+   },
+   {
+    "selection_id": 90021344,
+    "status": "ACTIVE",
+    "back": 200.0,
+    "lay_best": 1000.0,
+    "ltp": 240.0
+   },
+   {
+    "selection_id": 6666907,
+    "status": "ACTIVE",
+    "back": 210.0,
+    "lay_best": 1000.0,
+    "ltp": 280.0
+   },
+   {
+    "selection_id": 96854574,
+    "status": "ACTIVE",
+    "back": 290.0,
+    "lay_best": 1000.0,
+    "ltp": 370.0
+   },
+   {
+    "selection_id": 97400795,
+    "status": "ACTIVE",
+    "back": 750.0,
+    "lay_best": null,
+    "ltp": 1000.0
+   },
+   {
+    "selection_id": 84671266,
+    "status": "ACTIVE",
+    "back": 650.0,
+    "lay_best": 1000.0,
+    "ltp": 1000.0
+   },
+   {
+    "selection_id": 88669367,
+    "status": "ACTIVE",
+    "back": 620.0,
+    "lay_best": 1000.0,
+    "ltp": 840.0
+   }
+  ]
+ },
+ {
+  "market_id": "1.265495895",
+  "venue": "Navan 12:10",
+  "start": "2026-11-15T12:10:00Z",
+  "polled_at": "2026-11-15T11:50:22Z",
+  "mins_to_off": 19.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 28605.82,
+  "runners": [
+   {
+    "selection_id": 80332613,
+    "status": "ACTIVE",
+    "back": 1.72,
+    "lay_best": 1.73,
+    "ltp": 1.73
+   },
+   {
+    "selection_id": 97087851,
+    "status": "ACTIVE",
+    "back": 6.8,
+    "lay_best": 7.2,
+    "ltp": 6.8
+   },
+   {
+    "selection_id": 105082070,
+    "status": "ACTIVE",
+    "back": 11.5,
+    "lay_best": 12.0,
+    "ltp": 11.5
+   },
+   {
+    "selection_id": 98720597,
+    "status": "ACTIVE",
+    "back": 11.5,
+    "lay_best": 12.5,
+    "ltp": 12.0
+   },
+   {
+    "selection_id": 57468,
+    "status": "ACTIVE",
+    "back": 16.5,
+    "lay_best": 17.5,
+    "ltp": 16.5
+   },
+   {
+    "selection_id": 105082068,
+    "status": "ACTIVE",
+    "back": 80.0,
+    "lay_best": 490.0,
+    "ltp": 150.0
+   },
+   {
+    "selection_id": 88124480,
+    "status": "ACTIVE",
+    "back": 85.0,
+    "lay_best": 480.0,
+    "ltp": 120.0
+   },
+   {
+    "selection_id": 69652932,
+    "status": "ACTIVE",
+    "back": 100.0,
+    "lay_best": 1000.0,
+    "ltp": 110.0
+   },
+   {
+    "selection_id": 105082071,
+    "status": "ACTIVE",
+    "back": 80.0,
+    "lay_best": 1000.0,
+    "ltp": 150.0
+   },
+   {
+    "selection_id": 83421783,
+    "status": "ACTIVE",
+    "back": 90.0,
+    "lay_best": 200.0,
+    "ltp": 170.0
+   },
+   {
+    "selection_id": 102913043,
+    "status": "ACTIVE",
+    "back": 160.0,
+    "lay_best": 850.0,
+    "ltp": 200.0
+   },
+   {
+    "selection_id": 265287,
+    "status": "ACTIVE",
+    "back": 90.0,
+    "lay_best": 1000.0,
+    "ltp": 300.0
+   },
+   {
+    "selection_id": 71153770,
+    "status": "ACTIVE",
+    "back": 120.0,
+    "lay_best": 1000.0,
+    "ltp": 330.0
+   },
+   {
+    "selection_id": 97372388,
+    "status": "ACTIVE",
+    "back": 65.0,
+    "lay_best": 1000.0,
+    "ltp": 310.0
+   },
+   {
+    "selection_id": 26983281,
+    "status": "ACTIVE",
+    "back": 330.0,
+    "lay_best": 1000.0,
+    "ltp": 610.0
+   },
+   {
+    "selection_id": 102037350,
+    "status": "ACTIVE",
+    "back": 230.0,
+    "lay_best": 1000.0,
+    "ltp": 700.0
+   },
+   {
+    "selection_id": 90262027,
+    "status": "ACTIVE",
+    "back": 1000.0,
+    "lay_best": null,
+    "ltp": 1000.0
+   },
+   {
+    "selection_id": 97460025,
+    "status": "REMOVED",
+    "back": null,
+    "lay_best": null,
+    "ltp": null
+   },
+   {
+    "selection_id": 91935951,
+    "status": "REMOVED",
+    "back": null,
+    "lay_best": null,
+    "ltp": null
+   }
+  ]
+ }
+]
