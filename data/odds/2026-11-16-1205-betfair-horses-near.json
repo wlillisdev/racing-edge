@@ -1,0 +1,218 @@
+[
+ {
+  "market_id": "1.265536708",
+  "venue": "Plumpton 12:45",
+  "start": "2026-11-16T12:45:00Z",
+  "polled_at": "2026-11-16T12:25:23Z",
+  "mins_to_off": 19.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 119236.3,
+  "runners": [
+   {
+    "selection_id": 104093142,
+    "status": "ACTIVE",
+    "back": 2.22,
+    "lay_best": 2.24,
+    "ltp": 2.22
+   },
+   {
+    "selection_id": 98427915,
+    "status": "ACTIVE",
+    "back": 2.68,
+    "lay_best": 2.7,
+    "ltp": 2.68
+   },
+   {
+    "selection_id": 8339297,
+    "status": "ACTIVE",
+    "back": 12.5,
+    "lay_best": 13.5,
+    "ltp": 13.0
+   },
+   {
+    "selection_id": 105135270,
+    "status": "ACTIVE",
+    "back": 15.0,
+    "lay_best": 15.5,
+    "ltp": 15.0
+   },
+   {
+    "selection_id": 2737133,
+    "status": "ACTIVE",
+    "back": 48.0,
+    "lay_best": 55.0,
+    "ltp": 50.0
+   },
+   {
+    "selection_id": 96921856,
+    "status": "ACTIVE",
+    "back": 60.0,
+    "lay_best": 90.0,
+    "ltp": 60.0
+   }
+  ]
+ },
+ {
+  "market_id": "1.265536708",
+  "venue": "Plumpton 12:45",
+  "start": "2026-11-16T12:45:00Z",
+  "polled_at": "2026-11-16T12:30:24Z",
+  "mins_to_off": 14.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 144090.79,
+  "runners": [
+   {
+    "selection_id": 104093142,
+    "status": "ACTIVE",
+    "back": 2.1,
+    "lay_best": 2.14,
+    "ltp": 2.1
+   },
+   {
+    "selection_id": 98427915,
+    "status": "ACTIVE",
+    "back": 2.8,
+    "lay_best": 2.82,
+    "ltp": 2.82
+   },
+   {
+    "selection_id": 8339297,
+    "status": "ACTIVE",
+    "back": 13.0,
+    "lay_best": 13.5,
+    "ltp": 13.0
+   },
+   {
+    "selection_id": 105135270,
+    "status": "ACTIVE",
+    "back": 15.0,
+    "lay_best": 16.0,
+    "ltp": 15.0
+   },
+   {
+    "selection_id": 2737133,
+    "status": "ACTIVE",
+    "back": 50.0,
+    "lay_best": 65.0,
+    "ltp": 55.0
+   },
+   {
+    "selection_id": 96921856,
+    "status": "ACTIVE",
+    "back": 65.0,
+    "lay_best": 90.0,
+    "ltp": 70.0
+   }
+  ]
+ },
+ {
+  "market_id": "1.265536708",
+  "venue": "Plumpton 12:45",
+  "start": "2026-11-16T12:45:00Z",
+  "polled_at": "2026-11-16T12:35:24Z",
+  "mins_to_off": 9.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 155696.68,
+  "runners": [
+   {
+    "selection_id": 104093142,
+    "status": "ACTIVE",
+    "back": 2.14,
+    "lay_best": 2.16,
+    "ltp": 2.16
+   },
+   {
+    "selection_id": 98427915,
+    "status": "ACTIVE",
+    "back": 2.72,
+    "lay_best": 2.74,
+    "ltp": 2.74
+   },
+   {
+    "selection_id": 8339297,
+    "status": "ACTIVE",
+    "back": 13.5,
+    "lay_best": 14.0,
+    "ltp": 14.0
+   },
+   {
+    "selection_id": 105135270,
+    "status": "ACTIVE",
+    "back": 14.5,
+    "lay_best": 15.0,
+    "ltp": 15.0
+   },
+   {
+    "selection_id": 2737133,
+    "status": "ACTIVE",
+    "back": 65.0,
+    "lay_best": 70.0,
+    "ltp": 65.0
+   },
+   {
+    "selection_id": 96921856,
+    "status": "ACTIVE",
+    "back": 70.0,
+    "lay_best": 85.0,
+    "ltp": 70.0
+   }
+  ]
+ },
+ {
+  "market_id": "1.265536708",
+  "venue": "Plumpton 12:45",
+  "start": "2026-11-16T12:45:00Z",
+  "polled_at": "2026-11-16T12:40:24Z",
+  "mins_to_off": 4.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 224963.5,
+  "runners": [
+   {
+    "selection_id": 104093142,
+    "status": "ACTIVE",
+    "back": 2.02,
+    "lay_best": 2.04,
+    "ltp": 2.02
+   },
+   {
+    "selection_id": 98427915,
+    "status": "ACTIVE",
+    "back": 2.86,
+    "lay_best": 2.9,
+    "ltp": 2.9
+   },
+   {
+    "selection_id": 8339297,
+    "status": "ACTIVE",
+    "back": 13.5,
+    "lay_best": 14.0,
+    "ltp": 13.5
+   },
+   {
+    "selection_id": 105135270,
+    "status": "ACTIVE",
+    "back": 15.5,
+    "lay_best": 16.0,
+    "ltp": 15.5
+   },
+   {
+    "selection_id": 2737133,
+    "status": "ACTIVE",
+    "back": 75.0,
+    "lay_best": 90.0,
+    "ltp": 80.0
+   },
+   {
+    "selection_id": 96921856,
+    "status": "ACTIVE",
+    "back": 95.0,
+    "lay_best": 100.0,
+    "ltp": 100.0
+   }
+  ]
+ }
+]
