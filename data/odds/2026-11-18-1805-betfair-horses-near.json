@@ -1,0 +1,772 @@
+[
+ {
+  "market_id": "1.265635896",
+  "venue": "Kempton 18:30",
+  "start": "2026-11-18T18:30:00Z",
+  "polled_at": "2026-11-18T18:10:22Z",
+  "mins_to_off": 19.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 46741.98,
+  "runners": [
+   {
+    "selection_id": 6748736,
+    "status": "ACTIVE",
+    "back": 3.0,
+    "lay_best": 3.05,
+    "ltp": 3.0
+   },
+   {
+    "selection_id": 200414,
+    "status": "ACTIVE",
+    "back": 6.0,
+    "lay_best": 6.2,
+    "ltp": 6.0
+   },
+   {
+    "selection_id": 104256631,
+    "status": "ACTIVE",
+    "back": 11.0,
+    "lay_best": 11.5,
+    "ltp": 11.0
+   },
+   {
+    "selection_id": 380551,
+    "status": "ACTIVE",
+    "back": 9.6,
+    "lay_best": 9.8,
+    "ltp": 9.6
+   },
+   {
+    "selection_id": 105218183,
+    "status": "ACTIVE",
+    "back": 9.8,
+    "lay_best": 10.0,
+    "ltp": 10.0
+   },
+   {
+    "selection_id": 104093127,
+    "status": "ACTIVE",
+    "back": 14.5,
+    "lay_best": 15.0,
+    "ltp": 14.5
+   },
+   {
+    "selection_id": 102037595,
+    "status": "ACTIVE",
+    "back": 24.0,
+    "lay_best": 27.0,
+    "ltp": 25.0
+   },
+   {
+    "selection_id": 29029706,
+    "status": "ACTIVE",
+    "back": 30.0,
+    "lay_best": 32.0,
+    "ltp": 30.0
+   },
+   {
+    "selection_id": 105218180,
+    "status": "ACTIVE",
+    "back": 50.0,
+    "lay_best": 75.0,
+    "ltp": 50.0
+   },
+   {
+    "selection_id": 39049282,
+    "status": "ACTIVE",
+    "back": 60.0,
+    "lay_best": 65.0,
+    "ltp": 60.0
+   },
+   {
+    "selection_id": 105218181,
+    "status": "ACTIVE",
+    "back": 75.0,
+    "lay_best": 100.0,
+    "ltp": 80.0
+   },
+   {
+    "selection_id": 4353378,
+    "status": "ACTIVE",
+    "back": 60.0,
+    "lay_best": 95.0,
+    "ltp": 75.0
+   },
+   {
+    "selection_id": 41512350,
+    "status": "ACTIVE",
+    "back": 100.0,
+    "lay_best": 200.0,
+    "ltp": 120.0
+   },
+   {
+    "selection_id": 104093156,
+    "status": "ACTIVE",
+    "back": 300.0,
+    "lay_best": 900.0,
+    "ltp": 350.0
+   }
+  ]
+ },
+ {
+  "market_id": "1.265635896",
+  "venue": "Kempton 18:30",
+  "start": "2026-11-18T18:30:00Z",
+  "polled_at": "2026-11-18T18:15:23Z",
+  "mins_to_off": 14.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 67700.65,
+  "runners": [
+   {
+    "selection_id": 6748736,
+    "status": "ACTIVE",
+    "back": 2.9,
+    "lay_best": 2.92,
+    "ltp": 2.9
+   },
+   {
+    "selection_id": 200414,
+    "status": "ACTIVE",
+    "back": 6.6,
+    "lay_best": 6.8,
+    "ltp": 6.8
+   },
+   {
+    "selection_id": 380551,
+    "status": "ACTIVE",
+    "back": 9.4,
+    "lay_best": 9.8,
+    "ltp": 9.6
+   },
+   {
+    "selection_id": 105218183,
+    "status": "ACTIVE",
+    "back": 8.0,
+    "lay_best": 8.4,
+    "ltp": 8.2
+   },
+   {
+    "selection_id": 104256631,
+    "status": "ACTIVE",
+    "back": 11.0,
+    "lay_best": 11.5,
+    "ltp": 11.0
+   },
+   {
+    "selection_id": 104093127,
+    "status": "ACTIVE",
+    "back": 14.5,
+    "lay_best": 15.0,
+    "ltp": 15.0
+   },
+   {
+    "selection_id": 102037595,
+    "status": "ACTIVE",
+    "back": 25.0,
+    "lay_best": 28.0,
+    "ltp": 27.0
+   },
+   {
+    "selection_id": 29029706,
+    "status": "ACTIVE",
+    "back": 30.0,
+    "lay_best": 32.0,
+    "ltp": 32.0
+   },
+   {
+    "selection_id": 105218180,
+    "status": "ACTIVE",
+    "back": 55.0,
+    "lay_best": 70.0,
+    "ltp": 60.0
+   },
+   {
+    "selection_id": 4353378,
+    "status": "ACTIVE",
+    "back": 70.0,
+    "lay_best": 75.0,
+    "ltp": 75.0
+   },
+   {
+    "selection_id": 39049282,
+    "status": "ACTIVE",
+    "back": 60.0,
+    "lay_best": 85.0,
+    "ltp": 70.0
+   },
+   {
+    "selection_id": 105218181,
+    "status": "ACTIVE",
+    "back": 75.0,
+    "lay_best": 100.0,
+    "ltp": 85.0
+   },
+   {
+    "selection_id": 41512350,
+    "status": "ACTIVE",
+    "back": 110.0,
+    "lay_best": 200.0,
+    "ltp": 160.0
+   },
+   {
+    "selection_id": 104093156,
+    "status": "ACTIVE",
+    "back": 300.0,
+    "lay_best": 770.0,
+    "ltp": 430.0
+   }
+  ]
+ },
+ {
+  "market_id": "1.265635896",
+  "venue": "Kempton 18:30",
+  "start": "2026-11-18T18:30:00Z",
+  "polled_at": "2026-11-18T18:20:23Z",
+  "mins_to_off": 9.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 84400.86,
+  "runners": [
+   {
+    "selection_id": 6748736,
+    "status": "ACTIVE",
+    "back": 2.92,
+    "lay_best": 2.94,
+    "ltp": 2.92
+   },
+   {
+    "selection_id": 200414,
+    "status": "ACTIVE",
+    "back": 7.0,
+    "lay_best": 7.2,
+    "ltp": 7.0
+   },
+   {
+    "selection_id": 380551,
+    "status": "ACTIVE",
+    "back": 9.8,
+    "lay_best": 10.5,
+    "ltp": 9.6
+   },
+   {
+    "selection_id": 105218183,
+    "status": "ACTIVE",
+    "back": 6.4,
+    "lay_best": 6.6,
+    "ltp": 6.6
+   },
+   {
+    "selection_id": 104256631,
+    "status": "ACTIVE",
+    "back": 13.0,
+    "lay_best": 14.0,
+    "ltp": 13.0
+   },
+   {
+    "selection_id": 104093127,
+    "status": "ACTIVE",
+    "back": 15.0,
+    "lay_best": 15.5,
+    "ltp": 15.0
+   },
+   {
+    "selection_id": 102037595,
+    "status": "ACTIVE",
+    "back": 27.0,
+    "lay_best": 29.0,
+    "ltp": 28.0
+   },
+   {
+    "selection_id": 29029706,
+    "status": "ACTIVE",
+    "back": 30.0,
+    "lay_best": 32.0,
+    "ltp": 30.0
+   },
+   {
+    "selection_id": 105218180,
+    "status": "ACTIVE",
+    "back": 60.0,
+    "lay_best": 70.0,
+    "ltp": 60.0
+   },
+   {
+    "selection_id": 4353378,
+    "status": "ACTIVE",
+    "back": 70.0,
+    "lay_best": 90.0,
+    "ltp": 75.0
+   },
+   {
+    "selection_id": 39049282,
+    "status": "ACTIVE",
+    "back": 60.0,
+    "lay_best": 85.0,
+    "ltp": 70.0
+   },
+   {
+    "selection_id": 105218181,
+    "status": "ACTIVE",
+    "back": 85.0,
+    "lay_best": 110.0,
+    "ltp": 100.0
+   },
+   {
+    "selection_id": 41512350,
+    "status": "ACTIVE",
+    "back": 130.0,
+    "lay_best": 200.0,
+    "ltp": 150.0
+   },
+   {
+    "selection_id": 104093156,
+    "status": "ACTIVE",
+    "back": 330.0,
+    "lay_best": 750.0,
+    "ltp": 370.0
+   }
+  ]
+ },
+ {
+  "market_id": "1.265635896",
+  "venue": "Kempton 18:30",
+  "start": "2026-11-18T18:30:00Z",
+  "polled_at": "2026-11-18T18:25:23Z",
+  "mins_to_off": 4.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 114681.66,
+  "runners": [
+   {
+    "selection_id": 6748736,
+    "status": "ACTIVE",
+    "back": 2.72,
+    "lay_best": 2.74,
+    "ltp": 2.74
+   },
+   {
+    "selection_id": 200414,
+    "status": "ACTIVE",
+    "back": 7.0,
+    "lay_best": 7.2,
+    "ltp": 7.0
+   },
+   {
+    "selection_id": 380551,
+    "status": "ACTIVE",
+    "back": 11.0,
+    "lay_best": 11.5,
+    "ltp": 11.0
+   },
+   {
+    "selection_id": 105218183,
+    "status": "ACTIVE",
+    "back": 6.4,
+    "lay_best": 6.6,
+    "ltp": 6.4
+   },
+   {
+    "selection_id": 104256631,
+    "status": "ACTIVE",
+    "back": 15.0,
+    "lay_best": 16.0,
+    "ltp": 15.0
+   },
+   {
+    "selection_id": 104093127,
+    "status": "ACTIVE",
+    "back": 16.5,
+    "lay_best": 17.0,
+    "ltp": 17.0
+   },
+   {
+    "selection_id": 102037595,
+    "status": "ACTIVE",
+    "back": 29.0,
+    "lay_best": 30.0,
+    "ltp": 29.0
+   },
+   {
+    "selection_id": 29029706,
+    "status": "ACTIVE",
+    "back": 30.0,
+    "lay_best": 32.0,
+    "ltp": 32.0
+   },
+   {
+    "selection_id": 105218180,
+    "status": "ACTIVE",
+    "back": 65.0,
+    "lay_best": 75.0,
+    "ltp": 65.0
+   },
+   {
+    "selection_id": 4353378,
+    "status": "ACTIVE",
+    "back": 70.0,
+    "lay_best": 75.0,
+    "ltp": 70.0
+   },
+   {
+    "selection_id": 39049282,
+    "status": "ACTIVE",
+    "back": 65.0,
+    "lay_best": 70.0,
+    "ltp": 65.0
+   },
+   {
+    "selection_id": 105218181,
+    "status": "ACTIVE",
+    "back": 100.0,
+    "lay_best": 140.0,
+    "ltp": 110.0
+   },
+   {
+    "selection_id": 41512350,
+    "status": "ACTIVE",
+    "back": 160.0,
+    "lay_best": 280.0,
+    "ltp": 200.0
+   },
+   {
+    "selection_id": 104093156,
+    "status": "ACTIVE",
+    "back": 350.0,
+    "lay_best": 550.0,
+    "ltp": 400.0
+   }
+  ]
+ },
+ {
+  "market_id": "1.265635903",
+  "venue": "Kempton 19:00",
+  "start": "2026-11-18T19:00:00Z",
+  "polled_at": "2026-11-18T18:40:24Z",
+  "mins_to_off": 19.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 71941.11,
+  "runners": [
+   {
+    "selection_id": 28274352,
+    "status": "ACTIVE",
+    "back": 2.56,
+    "lay_best": 2.58,
+    "ltp": 2.56
+   },
+   {
+    "selection_id": 89805289,
+    "status": "ACTIVE",
+    "back": 3.8,
+    "lay_best": 3.85,
+    "ltp": 3.85
+   },
+   {
+    "selection_id": 36714,
+    "status": "ACTIVE",
+    "back": 13.0,
+    "lay_best": 14.0,
+    "ltp": 13.5
+   },
+   {
+    "selection_id": 82550989,
+    "status": "ACTIVE",
+    "back": 16.0,
+    "lay_best": 16.5,
+    "ltp": 16.5
+   },
+   {
+    "selection_id": 56776811,
+    "status": "ACTIVE",
+    "back": 18.0,
+    "lay_best": 18.5,
+    "ltp": 18.0
+   },
+   {
+    "selection_id": 75131118,
+    "status": "ACTIVE",
+    "back": 25.0,
+    "lay_best": 26.0,
+    "ltp": 25.0
+   },
+   {
+    "selection_id": 49278641,
+    "status": "ACTIVE",
+    "back": 32.0,
+    "lay_best": 36.0,
+    "ltp": 34.0
+   },
+   {
+    "selection_id": 3873747,
+    "status": "ACTIVE",
+    "back": 38.0,
+    "lay_best": 40.0,
+    "ltp": 38.0
+   },
+   {
+    "selection_id": 42230284,
+    "status": "ACTIVE",
+    "back": 38.0,
+    "lay_best": 40.0,
+    "ltp": 40.0
+   },
+   {
+    "selection_id": 2024494,
+    "status": "ACTIVE",
+    "back": 60.0,
+    "lay_best": 75.0,
+    "ltp": 65.0
+   },
+   {
+    "selection_id": 28319589,
+    "status": "ACTIVE",
+    "back": 85.0,
+    "lay_best": 95.0,
+    "ltp": 85.0
+   },
+   {
+    "selection_id": 12853958,
+    "status": "ACTIVE",
+    "back": 100.0,
+    "lay_best": 160.0,
+    "ltp": 110.0
+   },
+   {
+    "selection_id": 45969097,
+    "status": "ACTIVE",
+    "back": 170.0,
+    "lay_best": 300.0,
+    "ltp": 210.0
+   },
+   {
+    "selection_id": 40262597,
+    "status": "ACTIVE",
+    "back": 180.0,
+    "lay_best": 500.0,
+    "ltp": 220.0
+   }
+  ]
+ },
+ {
+  "market_id": "1.265635903",
+  "venue": "Kempton 19:00",
+  "start": "2026-11-18T19:00:00Z",
+  "polled_at": "2026-11-18T18:45:24Z",
+  "mins_to_off": 14.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 92425.02,
+  "runners": [
+   {
+    "selection_id": 28274352,
+    "status": "ACTIVE",
+    "back": 2.58,
+    "lay_best": 2.6,
+    "ltp": 2.58
+   },
+   {
+    "selection_id": 89805289,
+    "status": "ACTIVE",
+    "back": 3.75,
+    "lay_best": 3.8,
+    "ltp": 3.75
+   },
+   {
+    "selection_id": 36714,
+    "status": "ACTIVE",
+    "back": 14.0,
+    "lay_best": 15.0,
+    "ltp": 14.0
+   },
+   {
+    "selection_id": 82550989,
+    "status": "ACTIVE",
+    "back": 18.0,
+    "lay_best": 19.0,
+    "ltp": 18.5
+   },
+   {
+    "selection_id": 56776811,
+    "status": "ACTIVE",
+    "back": 18.0,
+    "lay_best": 18.5,
+    "ltp": 18.0
+   },
+   {
+    "selection_id": 75131118,
+    "status": "ACTIVE",
+    "back": 23.0,
+    "lay_best": 24.0,
+    "ltp": 23.0
+   },
+   {
+    "selection_id": 49278641,
+    "status": "ACTIVE",
+    "back": 30.0,
+    "lay_best": 32.0,
+    "ltp": 30.0
+   },
+   {
+    "selection_id": 42230284,
+    "status": "ACTIVE",
+    "back": 38.0,
+    "lay_best": 42.0,
+    "ltp": 38.0
+   },
+   {
+    "selection_id": 3873747,
+    "status": "ACTIVE",
+    "back": 36.0,
+    "lay_best": 42.0,
+    "ltp": 38.0
+   },
+   {
+    "selection_id": 2024494,
+    "status": "ACTIVE",
+    "back": 60.0,
+    "lay_best": 75.0,
+    "ltp": 60.0
+   },
+   {
+    "selection_id": 28319589,
+    "status": "ACTIVE",
+    "back": 80.0,
+    "lay_best": 95.0,
+    "ltp": 90.0
+   },
+   {
+    "selection_id": 12853958,
+    "status": "ACTIVE",
+    "back": 80.0,
+    "lay_best": 120.0,
+    "ltp": 90.0
+   },
+   {
+    "selection_id": 45969097,
+    "status": "ACTIVE",
+    "back": 170.0,
+    "lay_best": 300.0,
+    "ltp": 210.0
+   },
+   {
+    "selection_id": 40262597,
+    "status": "ACTIVE",
+    "back": 170.0,
+    "lay_best": 320.0,
+    "ltp": 220.0
+   }
+  ]
+ },
+ {
+  "market_id": "1.265635903",
+  "venue": "Kempton 19:00",
+  "start": "2026-11-18T19:00:00Z",
+  "polled_at": "2026-11-18T18:50:24Z",
+  "mins_to_off": 9.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 107422.3,
+  "runners": [
+   {
+    "selection_id": 28274352,
+    "status": "ACTIVE",
+    "back": 2.6,
+    "lay_best": 2.62,
+    "ltp": 2.6
+   },
+   {
+    "selection_id": 89805289,
+    "status": "ACTIVE",
+    "back": 3.6,
+    "lay_best": 3.65,
+    "ltp": 3.65
+   },
+   {
+    "selection_id": 36714,
+    "status": "ACTIVE",
+    "back": 14.0,
+    "lay_best": 14.5,
+    "ltp": 14.0
+   },
+   {
+    "selection_id": 82550989,
+    "status": "ACTIVE",
+    "back": 18.0,
+    "lay_best": 19.0,
+    "ltp": 18.0
+   },
+   {
+    "selection_id": 56776811,
+    "status": "ACTIVE",
+    "back": 17.5,
+    "lay_best": 18.0,
+    "ltp": 18.0
+   },
+   {
+    "selection_id": 75131118,
+    "status": "ACTIVE",
+    "back": 24.0,
+    "lay_best": 26.0,
+    "ltp": 25.0
+   },
+   {
+    "selection_id": 49278641,
+    "status": "ACTIVE",
+    "back": 32.0,
+    "lay_best": 36.0,
+    "ltp": 34.0
+   },
+   {
+    "selection_id": 42230284,
+    "status": "ACTIVE",
+    "back": 40.0,
+    "lay_best": 44.0,
+    "ltp": 38.0
+   },
+   {
+    "selection_id": 3873747,
+    "status": "ACTIVE",
+    "back": 36.0,
+    "lay_best": 38.0,
+    "ltp": 36.0
+   },
+   {
+    "selection_id": 2024494,
+    "status": "ACTIVE",
+    "back": 65.0,
+    "lay_best": 75.0,
+    "ltp": 70.0
+   },
+   {
+    "selection_id": 28319589,
+    "status": "ACTIVE",
+    "back": 85.0,
+    "lay_best": 95.0,
+    "ltp": 95.0
+   },
+   {
+    "selection_id": 12853958,
+    "status": "ACTIVE",
+    "back": 100.0,
+    "lay_best": 140.0,
+    "ltp": 120.0
+   },
+   {
+    "selection_id": 45969097,
+    "status": "ACTIVE",
+    "back": 170.0,
+    "lay_best": 500.0,
+    "ltp": 210.0
+   },
+   {
+    "selection_id": 40262597,
+    "status": "ACTIVE",
+    "back": 170.0,
+    "lay_best": 360.0,
+    "ltp": 250.0
+   }
+  ]
+ }
+]
