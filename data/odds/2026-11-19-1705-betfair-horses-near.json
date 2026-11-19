@@ -1,0 +1,452 @@
+[
+ {
+  "market_id": "1.265702638",
+  "venue": "Newcastle 17:10",
+  "start": "2026-11-19T17:10:00Z",
+  "polled_at": "2026-11-19T17:05:21Z",
+  "mins_to_off": 4.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 168630.65,
+  "runners": [
+   {
+    "selection_id": 26362591,
+    "status": "ACTIVE",
+    "back": 2.14,
+    "lay_best": 2.16,
+    "ltp": 2.14
+   },
+   {
+    "selection_id": 104256626,
+    "status": "ACTIVE",
+    "back": 6.0,
+    "lay_best": 6.2,
+    "ltp": 6.0
+   },
+   {
+    "selection_id": 105252207,
+    "status": "ACTIVE",
+    "back": 6.0,
+    "lay_best": 6.2,
+    "ltp": 6.0
+   },
+   {
+    "selection_id": 105252210,
+    "status": "ACTIVE",
+    "back": 12.0,
+    "lay_best": 12.5,
+    "ltp": 12.5
+   },
+   {
+    "selection_id": 105252208,
+    "status": "ACTIVE",
+    "back": 8.4,
+    "lay_best": 8.8,
+    "ltp": 8.6
+   },
+   {
+    "selection_id": 4490716,
+    "status": "ACTIVE",
+    "back": 170.0,
+    "lay_best": 470.0,
+    "ltp": 200.0
+   },
+   {
+    "selection_id": 103137739,
+    "status": "ACTIVE",
+    "back": 180.0,
+    "lay_best": 460.0,
+    "ltp": 240.0
+   },
+   {
+    "selection_id": 19285849,
+    "status": "REMOVED",
+    "back": null,
+    "lay_best": null,
+    "ltp": null
+   }
+  ]
+ },
+ {
+  "market_id": "1.265702645",
+  "venue": "Newcastle 17:40",
+  "start": "2026-11-19T17:40:00Z",
+  "polled_at": "2026-11-19T17:20:22Z",
+  "mins_to_off": 19.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 61294.43,
+  "runners": [
+   {
+    "selection_id": 102378132,
+    "status": "ACTIVE",
+    "back": 2.1,
+    "lay_best": 2.12,
+    "ltp": 2.1
+   },
+   {
+    "selection_id": 83794902,
+    "status": "ACTIVE",
+    "back": 3.6,
+    "lay_best": 3.7,
+    "ltp": 3.6
+   },
+   {
+    "selection_id": 1501081,
+    "status": "ACTIVE",
+    "back": 7.8,
+    "lay_best": 8.0,
+    "ltp": 7.8
+   },
+   {
+    "selection_id": 105252206,
+    "status": "ACTIVE",
+    "back": 11.5,
+    "lay_best": 12.5,
+    "ltp": 12.0
+   },
+   {
+    "selection_id": 104192816,
+    "status": "ACTIVE",
+    "back": 38.0,
+    "lay_best": 42.0,
+    "ltp": 40.0
+   },
+   {
+    "selection_id": 102417595,
+    "status": "ACTIVE",
+    "back": 55.0,
+    "lay_best": 90.0,
+    "ltp": 70.0
+   },
+   {
+    "selection_id": 104256715,
+    "status": "ACTIVE",
+    "back": 180.0,
+    "lay_best": 990.0,
+    "ltp": 280.0
+   },
+   {
+    "selection_id": 98612061,
+    "status": "REMOVED",
+    "back": null,
+    "lay_best": null,
+    "ltp": null
+   }
+  ]
+ },
+ {
+  "market_id": "1.265702645",
+  "venue": "Newcastle 17:40",
+  "start": "2026-11-19T17:40:00Z",
+  "polled_at": "2026-11-19T17:25:22Z",
+  "mins_to_off": 14.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 91985.0,
+  "runners": [
+   {
+    "selection_id": 102378132,
+    "status": "ACTIVE",
+    "back": 2.06,
+    "lay_best": 2.08,
+    "ltp": 2.06
+   },
+   {
+    "selection_id": 83794902,
+    "status": "ACTIVE",
+    "back": 3.8,
+    "lay_best": 3.85,
+    "ltp": 3.8
+   },
+   {
+    "selection_id": 1501081,
+    "status": "ACTIVE",
+    "back": 7.6,
+    "lay_best": 7.8,
+    "ltp": 7.6
+   },
+   {
+    "selection_id": 105252206,
+    "status": "ACTIVE",
+    "back": 11.5,
+    "lay_best": 12.0,
+    "ltp": 12.0
+   },
+   {
+    "selection_id": 104192816,
+    "status": "ACTIVE",
+    "back": 34.0,
+    "lay_best": 36.0,
+    "ltp": 34.0
+   },
+   {
+    "selection_id": 102417595,
+    "status": "ACTIVE",
+    "back": 90.0,
+    "lay_best": 170.0,
+    "ltp": 95.0
+   },
+   {
+    "selection_id": 104256715,
+    "status": "ACTIVE",
+    "back": 220.0,
+    "lay_best": 990.0,
+    "ltp": 300.0
+   },
+   {
+    "selection_id": 98612061,
+    "status": "REMOVED",
+    "back": null,
+    "lay_best": null,
+    "ltp": null
+   }
+  ]
+ },
+ {
+  "market_id": "1.265702645",
+  "venue": "Newcastle 17:40",
+  "start": "2026-11-19T17:40:00Z",
+  "polled_at": "2026-11-19T17:30:22Z",
+  "mins_to_off": 9.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 110728.02,
+  "runners": [
+   {
+    "selection_id": 102378132,
+    "status": "ACTIVE",
+    "back": 2.14,
+    "lay_best": 2.16,
+    "ltp": 2.14
+   },
+   {
+    "selection_id": 83794902,
+    "status": "ACTIVE",
+    "back": 3.6,
+    "lay_best": 3.7,
+    "ltp": 3.65
+   },
+   {
+    "selection_id": 1501081,
+    "status": "ACTIVE",
+    "back": 7.2,
+    "lay_best": 7.4,
+    "ltp": 7.2
+   },
+   {
+    "selection_id": 105252206,
+    "status": "ACTIVE",
+    "back": 11.5,
+    "lay_best": 12.0,
+    "ltp": 11.5
+   },
+   {
+    "selection_id": 104192816,
+    "status": "ACTIVE",
+    "back": 36.0,
+    "lay_best": 38.0,
+    "ltp": 38.0
+   },
+   {
+    "selection_id": 102417595,
+    "status": "ACTIVE",
+    "back": 75.0,
+    "lay_best": 110.0,
+    "ltp": 90.0
+   },
+   {
+    "selection_id": 104256715,
+    "status": "ACTIVE",
+    "back": 250.0,
+    "lay_best": 990.0,
+    "ltp": 330.0
+   },
+   {
+    "selection_id": 98612061,
+    "status": "REMOVED",
+    "back": null,
+    "lay_best": null,
+    "ltp": null
+   }
+  ]
+ },
+ {
+  "market_id": "1.265702645",
+  "venue": "Newcastle 17:40",
+  "start": "2026-11-19T17:40:00Z",
+  "polled_at": "2026-11-19T17:35:22Z",
+  "mins_to_off": 4.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 135279.62,
+  "runners": [
+   {
+    "selection_id": 102378132,
+    "status": "ACTIVE",
+    "back": 2.24,
+    "lay_best": 2.26,
+    "ltp": 2.26
+   },
+   {
+    "selection_id": 83794902,
+    "status": "ACTIVE",
+    "back": 3.45,
+    "lay_best": 3.5,
+    "ltp": 3.5
+   },
+   {
+    "selection_id": 1501081,
+    "status": "ACTIVE",
+    "back": 7.0,
+    "lay_best": 7.2,
+    "ltp": 7.0
+   },
+   {
+    "selection_id": 105252206,
+    "status": "ACTIVE",
+    "back": 11.0,
+    "lay_best": 11.5,
+    "ltp": 11.0
+   },
+   {
+    "selection_id": 104192816,
+    "status": "ACTIVE",
+    "back": 40.0,
+    "lay_best": 42.0,
+    "ltp": 40.0
+   },
+   {
+    "selection_id": 102417595,
+    "status": "ACTIVE",
+    "back": 85.0,
+    "lay_best": 110.0,
+    "ltp": 90.0
+   },
+   {
+    "selection_id": 104256715,
+    "status": "ACTIVE",
+    "back": 270.0,
+    "lay_best": 990.0,
+    "ltp": 310.0
+   },
+   {
+    "selection_id": 98612061,
+    "status": "REMOVED",
+    "back": null,
+    "lay_best": null,
+    "ltp": null
+   }
+  ]
+ },
+ {
+  "market_id": "1.265702652",
+  "venue": "Newcastle 18:10",
+  "start": "2026-11-19T18:10:00Z",
+  "polled_at": "2026-11-19T17:50:23Z",
+  "mins_to_off": 19.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 70772.89,
+  "runners": [
+   {
+    "selection_id": 51058,
+    "status": "ACTIVE",
+    "back": 3.15,
+    "lay_best": 3.25,
+    "ltp": 3.2
+   },
+   {
+    "selection_id": 70362400,
+    "status": "ACTIVE",
+    "back": 7.4,
+    "lay_best": 7.6,
+    "ltp": 7.6
+   },
+   {
+    "selection_id": 85758797,
+    "status": "ACTIVE",
+    "back": 9.4,
+    "lay_best": 9.8,
+    "ltp": 9.4
+   },
+   {
+    "selection_id": 89507336,
+    "status": "ACTIVE",
+    "back": 10.0,
+    "lay_best": 10.5,
+    "ltp": 10.0
+   },
+   {
+    "selection_id": 71915805,
+    "status": "ACTIVE",
+    "back": 14.5,
+    "lay_best": 15.0,
+    "ltp": 14.5
+   },
+   {
+    "selection_id": 83355558,
+    "status": "ACTIVE",
+    "back": 15.5,
+    "lay_best": 16.5,
+    "ltp": 16.0
+   },
+   {
+    "selection_id": 71525745,
+    "status": "ACTIVE",
+    "back": 17.5,
+    "lay_best": 18.5,
+    "ltp": 18.5
+   },
+   {
+    "selection_id": 68545659,
+    "status": "ACTIVE",
+    "back": 21.0,
+    "lay_best": 22.0,
+    "ltp": 21.0
+   },
+   {
+    "selection_id": 67452410,
+    "status": "ACTIVE",
+    "back": 36.0,
+    "lay_best": 38.0,
+    "ltp": 36.0
+   },
+   {
+    "selection_id": 70430612,
+    "status": "ACTIVE",
+    "back": 36.0,
+    "lay_best": 38.0,
+    "ltp": 36.0
+   },
+   {
+    "selection_id": 65772795,
+    "status": "ACTIVE",
+    "back": 44.0,
+    "lay_best": 46.0,
+    "ltp": 44.0
+   },
+   {
+    "selection_id": 88166330,
+    "status": "ACTIVE",
+    "back": 42.0,
+    "lay_best": 48.0,
+    "ltp": 44.0
+   },
+   {
+    "selection_id": 58821651,
+    "status": "ACTIVE",
+    "back": 80.0,
+    "lay_best": 90.0,
+    "ltp": 80.0
+   },
+   {
+    "selection_id": 46712042,
+    "status": "ACTIVE",
+    "back": 90.0,
+    "lay_best": 140.0,
+    "ltp": 100.0
+   }
+  ]
+ }
+]
