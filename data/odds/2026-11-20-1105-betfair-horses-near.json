@@ -1,0 +1,997 @@
+[
+ {
+  "market_id": "1.265761084",
+  "venue": "Chepstow 11:20",
+  "start": "2026-11-20T11:20:00Z",
+  "polled_at": "2026-11-20T11:05:22Z",
+  "mins_to_off": 14.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 50900.22,
+  "runners": [
+   {
+    "selection_id": 91443934,
+    "status": "ACTIVE",
+    "back": 2.46,
+    "lay_best": 2.48,
+    "ltp": 2.46
+   },
+   {
+    "selection_id": 105295464,
+    "status": "ACTIVE",
+    "back": 7.8,
+    "lay_best": 8.2,
+    "ltp": 8.0
+   },
+   {
+    "selection_id": 95312544,
+    "status": "ACTIVE",
+    "back": 7.8,
+    "lay_best": 8.0,
+    "ltp": 7.8
+   },
+   {
+    "selection_id": 60253,
+    "status": "ACTIVE",
+    "back": 8.8,
+    "lay_best": 9.2,
+    "ltp": 8.8
+   },
+   {
+    "selection_id": 105295460,
+    "status": "ACTIVE",
+    "back": 13.0,
+    "lay_best": 13.5,
+    "ltp": 13.0
+   },
+   {
+    "selection_id": 104368726,
+    "status": "ACTIVE",
+    "back": 14.5,
+    "lay_best": 15.5,
+    "ltp": 14.5
+   },
+   {
+    "selection_id": 105295466,
+    "status": "ACTIVE",
+    "back": 22.0,
+    "lay_best": 23.0,
+    "ltp": 22.0
+   },
+   {
+    "selection_id": 95846116,
+    "status": "ACTIVE",
+    "back": 40.0,
+    "lay_best": 44.0,
+    "ltp": 40.0
+   },
+   {
+    "selection_id": 95630142,
+    "status": "ACTIVE",
+    "back": 75.0,
+    "lay_best": 130.0,
+    "ltp": 95.0
+   },
+   {
+    "selection_id": 92171429,
+    "status": "ACTIVE",
+    "back": 95.0,
+    "lay_best": 400.0,
+    "ltp": 130.0
+   },
+   {
+    "selection_id": 105295462,
+    "status": "ACTIVE",
+    "back": 310.0,
+    "lay_best": 1000.0,
+    "ltp": 410.0
+   },
+   {
+    "selection_id": 103937651,
+    "status": "ACTIVE",
+    "back": 330.0,
+    "lay_best": 1000.0,
+    "ltp": 500.0
+   }
+  ]
+ },
+ {
+  "market_id": "1.265761084",
+  "venue": "Chepstow 11:20",
+  "start": "2026-11-20T11:20:00Z",
+  "polled_at": "2026-11-20T11:10:23Z",
+  "mins_to_off": 9.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 68132.93,
+  "runners": [
+   {
+    "selection_id": 91443934,
+    "status": "ACTIVE",
+    "back": 2.4,
+    "lay_best": 2.42,
+    "ltp": 2.4
+   },
+   {
+    "selection_id": 105295464,
+    "status": "ACTIVE",
+    "back": 9.4,
+    "lay_best": 9.8,
+    "ltp": 9.6
+   },
+   {
+    "selection_id": 95312544,
+    "status": "ACTIVE",
+    "back": 8.8,
+    "lay_best": 9.0,
+    "ltp": 8.8
+   },
+   {
+    "selection_id": 60253,
+    "status": "ACTIVE",
+    "back": 8.6,
+    "lay_best": 8.8,
+    "ltp": 8.6
+   },
+   {
+    "selection_id": 105295460,
+    "status": "ACTIVE",
+    "back": 13.0,
+    "lay_best": 13.5,
+    "ltp": 13.0
+   },
+   {
+    "selection_id": 104368726,
+    "status": "ACTIVE",
+    "back": 10.5,
+    "lay_best": 11.0,
+    "ltp": 11.0
+   },
+   {
+    "selection_id": 105295466,
+    "status": "ACTIVE",
+    "back": 22.0,
+    "lay_best": 24.0,
+    "ltp": 22.0
+   },
+   {
+    "selection_id": 95846116,
+    "status": "ACTIVE",
+    "back": 40.0,
+    "lay_best": 48.0,
+    "ltp": 44.0
+   },
+   {
+    "selection_id": 95630142,
+    "status": "ACTIVE",
+    "back": 85.0,
+    "lay_best": 120.0,
+    "ltp": 95.0
+   },
+   {
+    "selection_id": 92171429,
+    "status": "ACTIVE",
+    "back": 100.0,
+    "lay_best": 400.0,
+    "ltp": 150.0
+   },
+   {
+    "selection_id": 105295462,
+    "status": "ACTIVE",
+    "back": 330.0,
+    "lay_best": 820.0,
+    "ltp": 400.0
+   },
+   {
+    "selection_id": 103937651,
+    "status": "ACTIVE",
+    "back": 350.0,
+    "lay_best": 1000.0,
+    "ltp": 550.0
+   }
+  ]
+ },
+ {
+  "market_id": "1.265761084",
+  "venue": "Chepstow 11:20",
+  "start": "2026-11-20T11:20:00Z",
+  "polled_at": "2026-11-20T11:15:23Z",
+  "mins_to_off": 4.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 88408.37,
+  "runners": [
+   {
+    "selection_id": 91443934,
+    "status": "ACTIVE",
+    "back": 2.4,
+    "lay_best": 2.42,
+    "ltp": 2.42
+   },
+   {
+    "selection_id": 105295464,
+    "status": "ACTIVE",
+    "back": 8.6,
+    "lay_best": 8.8,
+    "ltp": 8.6
+   },
+   {
+    "selection_id": 95312544,
+    "status": "ACTIVE",
+    "back": 8.2,
+    "lay_best": 8.4,
+    "ltp": 8.2
+   },
+   {
+    "selection_id": 60253,
+    "status": "ACTIVE",
+    "back": 8.8,
+    "lay_best": 9.0,
+    "ltp": 8.8
+   },
+   {
+    "selection_id": 105295460,
+    "status": "ACTIVE",
+    "back": 13.5,
+    "lay_best": 14.0,
+    "ltp": 14.0
+   },
+   {
+    "selection_id": 104368726,
+    "status": "ACTIVE",
+    "back": 11.0,
+    "lay_best": 11.5,
+    "ltp": 11.0
+   },
+   {
+    "selection_id": 105295466,
+    "status": "ACTIVE",
+    "back": 22.0,
+    "lay_best": 23.0,
+    "ltp": 22.0
+   },
+   {
+    "selection_id": 95846116,
+    "status": "ACTIVE",
+    "back": 50.0,
+    "lay_best": 55.0,
+    "ltp": 50.0
+   },
+   {
+    "selection_id": 95630142,
+    "status": "ACTIVE",
+    "back": 95.0,
+    "lay_best": 130.0,
+    "ltp": 100.0
+   },
+   {
+    "selection_id": 92171429,
+    "status": "ACTIVE",
+    "back": 160.0,
+    "lay_best": 400.0,
+    "ltp": 200.0
+   },
+   {
+    "selection_id": 105295462,
+    "status": "ACTIVE",
+    "back": 390.0,
+    "lay_best": 1000.0,
+    "ltp": 410.0
+   },
+   {
+    "selection_id": 103937651,
+    "status": "ACTIVE",
+    "back": 590.0,
+    "lay_best": 1000.0,
+    "ltp": 640.0
+   }
+  ]
+ },
+ {
+  "market_id": "1.265761092",
+  "venue": "Chepstow 11:50",
+  "start": "2026-11-20T11:50:00Z",
+  "polled_at": "2026-11-20T11:30:24Z",
+  "mins_to_off": 19.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 32173.48,
+  "runners": [
+   {
+    "selection_id": 90725984,
+    "status": "ACTIVE",
+    "back": 2.56,
+    "lay_best": 2.58,
+    "ltp": 2.56
+   },
+   {
+    "selection_id": 9990790,
+    "status": "ACTIVE",
+    "back": 3.85,
+    "lay_best": 4.0,
+    "ltp": 3.85
+   },
+   {
+    "selection_id": 103639443,
+    "status": "ACTIVE",
+    "back": 8.6,
+    "lay_best": 9.0,
+    "ltp": 8.6
+   },
+   {
+    "selection_id": 104368725,
+    "status": "ACTIVE",
+    "back": 11.5,
+    "lay_best": 13.0,
+    "ltp": 12.0
+   },
+   {
+    "selection_id": 95393467,
+    "status": "ACTIVE",
+    "back": 18.0,
+    "lay_best": 20.0,
+    "ltp": 19.0
+   },
+   {
+    "selection_id": 1528773,
+    "status": "ACTIVE",
+    "back": 22.0,
+    "lay_best": 25.0,
+    "ltp": 22.0
+   },
+   {
+    "selection_id": 82832120,
+    "status": "ACTIVE",
+    "back": 48.0,
+    "lay_best": 55.0,
+    "ltp": 50.0
+   },
+   {
+    "selection_id": 104476094,
+    "status": "ACTIVE",
+    "back": 80.0,
+    "lay_best": 200.0,
+    "ltp": 100.0
+   },
+   {
+    "selection_id": 104780621,
+    "status": "ACTIVE",
+    "back": 110.0,
+    "lay_best": 650.0,
+    "ltp": 140.0
+   },
+   {
+    "selection_id": 81862514,
+    "status": "ACTIVE",
+    "back": 140.0,
+    "lay_best": 300.0,
+    "ltp": 180.0
+   },
+   {
+    "selection_id": 10106591,
+    "status": "ACTIVE",
+    "back": 180.0,
+    "lay_best": 1000.0,
+    "ltp": 250.0
+   },
+   {
+    "selection_id": 104581621,
+    "status": "ACTIVE",
+    "back": 220.0,
+    "lay_best": 1000.0,
+    "ltp": 350.0
+   },
+   {
+    "selection_id": 93798762,
+    "status": "ACTIVE",
+    "back": 220.0,
+    "lay_best": 1000.0,
+    "ltp": 370.0
+   },
+   {
+    "selection_id": 96921857,
+    "status": "ACTIVE",
+    "back": 300.0,
+    "lay_best": 1000.0,
+    "ltp": 390.0
+   }
+  ]
+ },
+ {
+  "market_id": "1.265761092",
+  "venue": "Chepstow 11:50",
+  "start": "2026-11-20T11:50:00Z",
+  "polled_at": "2026-11-20T11:35:24Z",
+  "mins_to_off": 14.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 32200.28,
+  "runners": [
+   {
+    "selection_id": 90725984,
+    "status": "ACTIVE",
+    "back": 2.56,
+    "lay_best": 2.58,
+    "ltp": 2.56
+   },
+   {
+    "selection_id": 9990790,
+    "status": "ACTIVE",
+    "back": 3.85,
+    "lay_best": 4.0,
+    "ltp": 3.85
+   },
+   {
+    "selection_id": 103639443,
+    "status": "ACTIVE",
+    "back": 8.6,
+    "lay_best": 9.0,
+    "ltp": 8.6
+   },
+   {
+    "selection_id": 104368725,
+    "status": "ACTIVE",
+    "back": 11.5,
+    "lay_best": 13.0,
+    "ltp": 12.0
+   },
+   {
+    "selection_id": 95393467,
+    "status": "ACTIVE",
+    "back": 18.0,
+    "lay_best": 20.0,
+    "ltp": 19.0
+   },
+   {
+    "selection_id": 1528773,
+    "status": "ACTIVE",
+    "back": 22.0,
+    "lay_best": 25.0,
+    "ltp": 22.0
+   },
+   {
+    "selection_id": 82832120,
+    "status": "ACTIVE",
+    "back": 48.0,
+    "lay_best": 55.0,
+    "ltp": 50.0
+   },
+   {
+    "selection_id": 104476094,
+    "status": "ACTIVE",
+    "back": 80.0,
+    "lay_best": 200.0,
+    "ltp": 100.0
+   },
+   {
+    "selection_id": 104780621,
+    "status": "ACTIVE",
+    "back": 110.0,
+    "lay_best": 650.0,
+    "ltp": 140.0
+   },
+   {
+    "selection_id": 81862514,
+    "status": "ACTIVE",
+    "back": 140.0,
+    "lay_best": 300.0,
+    "ltp": 180.0
+   },
+   {
+    "selection_id": 10106591,
+    "status": "ACTIVE",
+    "back": 180.0,
+    "lay_best": 1000.0,
+    "ltp": 250.0
+   },
+   {
+    "selection_id": 104581621,
+    "status": "ACTIVE",
+    "back": 220.0,
+    "lay_best": 1000.0,
+    "ltp": 350.0
+   },
+   {
+    "selection_id": 93798762,
+    "status": "ACTIVE",
+    "back": 220.0,
+    "lay_best": 1000.0,
+    "ltp": 370.0
+   },
+   {
+    "selection_id": 96921857,
+    "status": "ACTIVE",
+    "back": 300.0,
+    "lay_best": 1000.0,
+    "ltp": 390.0
+   }
+  ]
+ },
+ {
+  "market_id": "1.265760198",
+  "venue": "Catterick 12:00",
+  "start": "2026-11-20T12:00:00Z",
+  "polled_at": "2026-11-20T11:40:24Z",
+  "mins_to_off": 19.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 22171.54,
+  "runners": [
+   {
+    "selection_id": 103678069,
+    "status": "ACTIVE",
+    "back": 1.81,
+    "lay_best": 1.84,
+    "ltp": 1.82
+   },
+   {
+    "selection_id": 87222236,
+    "status": "ACTIVE",
+    "back": 4.7,
+    "lay_best": 4.9,
+    "ltp": 4.8
+   },
+   {
+    "selection_id": 88526418,
+    "status": "ACTIVE",
+    "back": 9.0,
+    "lay_best": 10.0,
+    "ltp": 9.2
+   },
+   {
+    "selection_id": 88945029,
+    "status": "ACTIVE",
+    "back": 11.5,
+    "lay_best": 12.0,
+    "ltp": 11.5
+   },
+   {
+    "selection_id": 89119000,
+    "status": "ACTIVE",
+    "back": 42.0,
+    "lay_best": 50.0,
+    "ltp": 44.0
+   },
+   {
+    "selection_id": 506208,
+    "status": "ACTIVE",
+    "back": 50.0,
+    "lay_best": 95.0,
+    "ltp": 70.0
+   },
+   {
+    "selection_id": 90650327,
+    "status": "ACTIVE",
+    "back": 75.0,
+    "lay_best": 350.0,
+    "ltp": 100.0
+   },
+   {
+    "selection_id": 86905814,
+    "status": "ACTIVE",
+    "back": 180.0,
+    "lay_best": 1000.0,
+    "ltp": 260.0
+   },
+   {
+    "selection_id": 99072881,
+    "status": "ACTIVE",
+    "back": 230.0,
+    "lay_best": 1000.0,
+    "ltp": 320.0
+   },
+   {
+    "selection_id": 90467647,
+    "status": "ACTIVE",
+    "back": 350.0,
+    "lay_best": 1000.0,
+    "ltp": 400.0
+   },
+   {
+    "selection_id": 629195,
+    "status": "REMOVED",
+    "back": null,
+    "lay_best": null,
+    "ltp": null
+   }
+  ]
+ },
+ {
+  "market_id": "1.265761092",
+  "venue": "Chepstow 11:50",
+  "start": "2026-11-20T11:50:00Z",
+  "polled_at": "2026-11-20T11:40:24Z",
+  "mins_to_off": 9.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 38832.62,
+  "runners": [
+   {
+    "selection_id": 90725984,
+    "status": "ACTIVE",
+    "back": 2.44,
+    "lay_best": 2.5,
+    "ltp": 2.5
+   },
+   {
+    "selection_id": 9990790,
+    "status": "ACTIVE",
+    "back": 3.8,
+    "lay_best": 3.9,
+    "ltp": 3.9
+   },
+   {
+    "selection_id": 103639443,
+    "status": "ACTIVE",
+    "back": 8.4,
+    "lay_best": 8.8,
+    "ltp": 8.8
+   },
+   {
+    "selection_id": 104368725,
+    "status": "ACTIVE",
+    "back": 10.5,
+    "lay_best": 13.0,
+    "ltp": 12.0
+   },
+   {
+    "selection_id": 95393467,
+    "status": "ACTIVE",
+    "back": 17.0,
+    "lay_best": 21.0,
+    "ltp": 19.5
+   },
+   {
+    "selection_id": 1528773,
+    "status": "ACTIVE",
+    "back": 22.0,
+    "lay_best": 26.0,
+    "ltp": 24.0
+   },
+   {
+    "selection_id": 82832120,
+    "status": "ACTIVE",
+    "back": 46.0,
+    "lay_best": 55.0,
+    "ltp": 48.0
+   },
+   {
+    "selection_id": 104476094,
+    "status": "ACTIVE",
+    "back": 80.0,
+    "lay_best": 270.0,
+    "ltp": 130.0
+   },
+   {
+    "selection_id": 104780621,
+    "status": "ACTIVE",
+    "back": 100.0,
+    "lay_best": 990.0,
+    "ltp": 150.0
+   },
+   {
+    "selection_id": 81862514,
+    "status": "ACTIVE",
+    "back": 120.0,
+    "lay_best": 300.0,
+    "ltp": 190.0
+   },
+   {
+    "selection_id": 10106591,
+    "status": "ACTIVE",
+    "back": 170.0,
+    "lay_best": 1000.0,
+    "ltp": 270.0
+   },
+   {
+    "selection_id": 93798762,
+    "status": "ACTIVE",
+    "back": 220.0,
+    "lay_best": 1000.0,
+    "ltp": 360.0
+   },
+   {
+    "selection_id": 104581621,
+    "status": "ACTIVE",
+    "back": 210.0,
+    "lay_best": 1000.0,
+    "ltp": 320.0
+   },
+   {
+    "selection_id": 96921857,
+    "status": "ACTIVE",
+    "back": 250.0,
+    "lay_best": 1000.0,
+    "ltp": 340.0
+   }
+  ]
+ },
+ {
+  "market_id": "1.265760198",
+  "venue": "Catterick 12:00",
+  "start": "2026-11-20T12:00:00Z",
+  "polled_at": "2026-11-20T11:45:24Z",
+  "mins_to_off": 14.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 22171.54,
+  "runners": [
+   {
+    "selection_id": 103678069,
+    "status": "ACTIVE",
+    "back": 1.81,
+    "lay_best": 1.84,
+    "ltp": 1.82
+   },
+   {
+    "selection_id": 87222236,
+    "status": "ACTIVE",
+    "back": 4.7,
+    "lay_best": 4.9,
+    "ltp": 4.8
+   },
+   {
+    "selection_id": 88526418,
+    "status": "ACTIVE",
+    "back": 9.0,
+    "lay_best": 10.0,
+    "ltp": 9.2
+   },
+   {
+    "selection_id": 88945029,
+    "status": "ACTIVE",
+    "back": 11.5,
+    "lay_best": 12.0,
+    "ltp": 11.5
+   },
+   {
+    "selection_id": 89119000,
+    "status": "ACTIVE",
+    "back": 42.0,
+    "lay_best": 50.0,
+    "ltp": 44.0
+   },
+   {
+    "selection_id": 506208,
+    "status": "ACTIVE",
+    "back": 50.0,
+    "lay_best": 95.0,
+    "ltp": 70.0
+   },
+   {
+    "selection_id": 90650327,
+    "status": "ACTIVE",
+    "back": 75.0,
+    "lay_best": 350.0,
+    "ltp": 100.0
+   },
+   {
+    "selection_id": 86905814,
+    "status": "ACTIVE",
+    "back": 180.0,
+    "lay_best": 1000.0,
+    "ltp": 260.0
+   },
+   {
+    "selection_id": 99072881,
+    "status": "ACTIVE",
+    "back": 230.0,
+    "lay_best": 1000.0,
+    "ltp": 320.0
+   },
+   {
+    "selection_id": 90467647,
+    "status": "ACTIVE",
+    "back": 350.0,
+    "lay_best": 1000.0,
+    "ltp": 400.0
+   },
+   {
+    "selection_id": 629195,
+    "status": "REMOVED",
+    "back": null,
+    "lay_best": null,
+    "ltp": null
+   }
+  ]
+ },
+ {
+  "market_id": "1.265761092",
+  "venue": "Chepstow 11:50",
+  "start": "2026-11-20T11:50:00Z",
+  "polled_at": "2026-11-20T11:45:24Z",
+  "mins_to_off": 4.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 38832.62,
+  "runners": [
+   {
+    "selection_id": 90725984,
+    "status": "ACTIVE",
+    "back": 2.44,
+    "lay_best": 2.5,
+    "ltp": 2.5
+   },
+   {
+    "selection_id": 9990790,
+    "status": "ACTIVE",
+    "back": 3.8,
+    "lay_best": 3.9,
+    "ltp": 3.9
+   },
+   {
+    "selection_id": 103639443,
+    "status": "ACTIVE",
+    "back": 8.4,
+    "lay_best": 8.8,
+    "ltp": 8.8
+   },
+   {
+    "selection_id": 104368725,
+    "status": "ACTIVE",
+    "back": 10.5,
+    "lay_best": 13.0,
+    "ltp": 12.0
+   },
+   {
+    "selection_id": 95393467,
+    "status": "ACTIVE",
+    "back": 17.0,
+    "lay_best": 21.0,
+    "ltp": 19.5
+   },
+   {
+    "selection_id": 1528773,
+    "status": "ACTIVE",
+    "back": 22.0,
+    "lay_best": 26.0,
+    "ltp": 24.0
+   },
+   {
+    "selection_id": 82832120,
+    "status": "ACTIVE",
+    "back": 46.0,
+    "lay_best": 55.0,
+    "ltp": 48.0
+   },
+   {
+    "selection_id": 104476094,
+    "status": "ACTIVE",
+    "back": 80.0,
+    "lay_best": 270.0,
+    "ltp": 130.0
+   },
+   {
+    "selection_id": 104780621,
+    "status": "ACTIVE",
+    "back": 100.0,
+    "lay_best": 990.0,
+    "ltp": 150.0
+   },
+   {
+    "selection_id": 81862514,
+    "status": "ACTIVE",
+    "back": 120.0,
+    "lay_best": 300.0,
+    "ltp": 190.0
+   },
+   {
+    "selection_id": 10106591,
+    "status": "ACTIVE",
+    "back": 170.0,
+    "lay_best": 1000.0,
+    "ltp": 270.0
+   },
+   {
+    "selection_id": 93798762,
+    "status": "ACTIVE",
+    "back": 220.0,
+    "lay_best": 1000.0,
+    "ltp": 360.0
+   },
+   {
+    "selection_id": 104581621,
+    "status": "ACTIVE",
+    "back": 210.0,
+    "lay_best": 1000.0,
+    "ltp": 320.0
+   },
+   {
+    "selection_id": 96921857,
+    "status": "ACTIVE",
+    "back": 250.0,
+    "lay_best": 1000.0,
+    "ltp": 340.0
+   }
+  ]
+ },
+ {
+  "market_id": "1.265760198",
+  "venue": "Catterick 12:00",
+  "start": "2026-11-20T12:00:00Z",
+  "polled_at": "2026-11-20T11:50:25Z",
+  "mins_to_off": 9.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 29237.6,
+  "runners": [
+   {
+    "selection_id": 103678069,
+    "status": "ACTIVE",
+    "back": 1.81,
+    "lay_best": 1.83,
+    "ltp": 1.82
+   },
+   {
+    "selection_id": 87222236,
+    "status": "ACTIVE",
+    "back": 4.6,
+    "lay_best": 4.8,
+    "ltp": 4.8
+   },
+   {
+    "selection_id": 88526418,
+    "status": "ACTIVE",
+    "back": 8.8,
+    "lay_best": 9.2,
+    "ltp": 9.0
+   },
+   {
+    "selection_id": 88945029,
+    "status": "ACTIVE",
+    "back": 12.5,
+    "lay_best": 13.0,
+    "ltp": 12.5
+   },
+   {
+    "selection_id": 89119000,
+    "status": "ACTIVE",
+    "back": 44.0,
+    "lay_best": 55.0,
+    "ltp": 48.0
+   },
+   {
+    "selection_id": 506208,
+    "status": "ACTIVE",
+    "back": 65.0,
+    "lay_best": 95.0,
+    "ltp": 75.0
+   },
+   {
+    "selection_id": 90650327,
+    "status": "ACTIVE",
+    "back": 95.0,
+    "lay_best": 220.0,
+    "ltp": 130.0
+   },
+   {
+    "selection_id": 86905814,
+    "status": "ACTIVE",
+    "back": 200.0,
+    "lay_best": 1000.0,
+    "ltp": 310.0
+   },
+   {
+    "selection_id": 99072881,
+    "status": "ACTIVE",
+    "back": 320.0,
+    "lay_best": 1000.0,
+    "ltp": 380.0
+   },
+   {
+    "selection_id": 90467647,
+    "status": "ACTIVE",
+    "back": 350.0,
+    "lay_best": 1000.0,
+    "ltp": 410.0
+   },
+   {
+    "selection_id": 629195,
+    "status": "REMOVED",
+    "back": null,
+    "lay_best": null,
+    "ltp": null
+   }
+  ]
+ }
+]
