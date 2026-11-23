@@ -1,0 +1,82 @@
+[
+ {
+  "market_id": "1.265873930",
+  "venue": "Bangor-on-Dee 12:05",
+  "start": "2026-11-23T12:05:00Z",
+  "polled_at": "2026-11-23T11:45:26Z",
+  "mins_to_off": 19.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 42945.91,
+  "runners": [
+   {
+    "selection_id": 81825073,
+    "status": "ACTIVE",
+    "back": 2.44,
+    "lay_best": 2.46,
+    "ltp": 2.44
+   },
+   {
+    "selection_id": 82719105,
+    "status": "ACTIVE",
+    "back": 4.0,
+    "lay_best": 4.1,
+    "ltp": 4.1
+   },
+   {
+    "selection_id": 75177850,
+    "status": "ACTIVE",
+    "back": 4.6,
+    "lay_best": 4.8,
+    "ltp": 4.6
+   },
+   {
+    "selection_id": 49347675,
+    "status": "ACTIVE",
+    "back": 7.6,
+    "lay_best": 7.8,
+    "ltp": 7.6
+   }
+  ]
+ },
+ {
+  "market_id": "1.265873930",
+  "venue": "Bangor-on-Dee 12:05",
+  "start": "2026-11-23T12:05:00Z",
+  "polled_at": "2026-11-23T11:50:26Z",
+  "mins_to_off": 14.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 50389.38,
+  "runners": [
+   {
+    "selection_id": 81825073,
+    "status": "ACTIVE",
+    "back": 2.34,
+    "lay_best": 2.38,
+    "ltp": 2.36
+   },
+   {
+    "selection_id": 82719105,
+    "status": "ACTIVE",
+    "back": 4.1,
+    "lay_best": 4.2,
+    "ltp": 4.2
+   },
+   {
+    "selection_id": 75177850,
+    "status": "ACTIVE",
+    "back": 4.6,
+    "lay_best": 4.8,
+    "ltp": 4.7
+   },
+   {
+    "selection_id": 49347675,
+    "status": "ACTIVE",
+    "back": 8.0,
+    "lay_best": 8.2,
+    "ltp": 8.2
+   }
+  ]
+ }
+]
