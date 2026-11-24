@@ -1,0 +1,616 @@
+[
+ {
+  "market_id": "1.265921800",
+  "venue": "Lingfield 11:38",
+  "start": "2026-11-24T11:38:00Z",
+  "polled_at": "2026-11-24T11:20:20Z",
+  "mins_to_off": 17.7,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 35936.36,
+  "runners": [
+   {
+    "selection_id": 97816544,
+    "status": "ACTIVE",
+    "back": 2.56,
+    "lay_best": 2.58,
+    "ltp": 2.56
+   },
+   {
+    "selection_id": 786713,
+    "status": "ACTIVE",
+    "back": 5.4,
+    "lay_best": 5.5,
+    "ltp": 5.4
+   },
+   {
+    "selection_id": 99181589,
+    "status": "ACTIVE",
+    "back": 6.4,
+    "lay_best": 6.6,
+    "ltp": 6.4
+   },
+   {
+    "selection_id": 84879192,
+    "status": "ACTIVE",
+    "back": 7.8,
+    "lay_best": 8.2,
+    "ltp": 8.0
+   },
+   {
+    "selection_id": 40615629,
+    "status": "ACTIVE",
+    "back": 17.0,
+    "lay_best": 18.0,
+    "ltp": 17.5
+   },
+   {
+    "selection_id": 60388,
+    "status": "ACTIVE",
+    "back": 18.5,
+    "lay_best": 19.0,
+    "ltp": 19.0
+   },
+   {
+    "selection_id": 41176349,
+    "status": "ACTIVE",
+    "back": 26.0,
+    "lay_best": 27.0,
+    "ltp": 26.0
+   },
+   {
+    "selection_id": 45700636,
+    "status": "REMOVED",
+    "back": null,
+    "lay_best": null,
+    "ltp": null
+   }
+  ]
+ },
+ {
+  "market_id": "1.265921800",
+  "venue": "Lingfield 11:38",
+  "start": "2026-11-24T11:38:00Z",
+  "polled_at": "2026-11-24T11:25:21Z",
+  "mins_to_off": 12.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 40727.36,
+  "runners": [
+   {
+    "selection_id": 97816544,
+    "status": "ACTIVE",
+    "back": 2.58,
+    "lay_best": 2.6,
+    "ltp": 2.6
+   },
+   {
+    "selection_id": 786713,
+    "status": "ACTIVE",
+    "back": 5.7,
+    "lay_best": 5.8,
+    "ltp": 5.7
+   },
+   {
+    "selection_id": 99181589,
+    "status": "ACTIVE",
+    "back": 6.0,
+    "lay_best": 6.2,
+    "ltp": 6.0
+   },
+   {
+    "selection_id": 84879192,
+    "status": "ACTIVE",
+    "back": 8.0,
+    "lay_best": 8.2,
+    "ltp": 8.0
+   },
+   {
+    "selection_id": 40615629,
+    "status": "ACTIVE",
+    "back": 17.0,
+    "lay_best": 18.0,
+    "ltp": 17.0
+   },
+   {
+    "selection_id": 60388,
+    "status": "ACTIVE",
+    "back": 18.5,
+    "lay_best": 19.0,
+    "ltp": 18.5
+   },
+   {
+    "selection_id": 41176349,
+    "status": "ACTIVE",
+    "back": 25.0,
+    "lay_best": 26.0,
+    "ltp": 25.0
+   },
+   {
+    "selection_id": 45700636,
+    "status": "REMOVED",
+    "back": null,
+    "lay_best": null,
+    "ltp": null
+   }
+  ]
+ },
+ {
+  "market_id": "1.265921800",
+  "venue": "Lingfield 11:38",
+  "start": "2026-11-24T11:38:00Z",
+  "polled_at": "2026-11-24T11:30:21Z",
+  "mins_to_off": 7.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 47065.93,
+  "runners": [
+   {
+    "selection_id": 97816544,
+    "status": "ACTIVE",
+    "back": 2.54,
+    "lay_best": 2.58,
+    "ltp": 2.56
+   },
+   {
+    "selection_id": 786713,
+    "status": "ACTIVE",
+    "back": 5.3,
+    "lay_best": 5.4,
+    "ltp": 5.4
+   },
+   {
+    "selection_id": 99181589,
+    "status": "ACTIVE",
+    "back": 6.6,
+    "lay_best": 6.8,
+    "ltp": 6.6
+   },
+   {
+    "selection_id": 84879192,
+    "status": "ACTIVE",
+    "back": 8.6,
+    "lay_best": 8.8,
+    "ltp": 8.6
+   },
+   {
+    "selection_id": 40615629,
+    "status": "ACTIVE",
+    "back": 16.0,
+    "lay_best": 17.0,
+    "ltp": 16.5
+   },
+   {
+    "selection_id": 60388,
+    "status": "ACTIVE",
+    "back": 18.0,
+    "lay_best": 19.0,
+    "ltp": 18.0
+   },
+   {
+    "selection_id": 41176349,
+    "status": "ACTIVE",
+    "back": 24.0,
+    "lay_best": 26.0,
+    "ltp": 24.0
+   },
+   {
+    "selection_id": 45700636,
+    "status": "REMOVED",
+    "back": null,
+    "lay_best": null,
+    "ltp": null
+   }
+  ]
+ },
+ {
+  "market_id": "1.265921800",
+  "venue": "Lingfield 11:38",
+  "start": "2026-11-24T11:38:00Z",
+  "polled_at": "2026-11-24T11:35:21Z",
+  "mins_to_off": 2.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 59248.16,
+  "runners": [
+   {
+    "selection_id": 97816544,
+    "status": "ACTIVE",
+    "back": 2.48,
+    "lay_best": 2.5,
+    "ltp": 2.48
+   },
+   {
+    "selection_id": 786713,
+    "status": "ACTIVE",
+    "back": 5.1,
+    "lay_best": 5.2,
+    "ltp": 5.1
+   },
+   {
+    "selection_id": 99181589,
+    "status": "ACTIVE",
+    "back": 6.6,
+    "lay_best": 7.0,
+    "ltp": 6.8
+   },
+   {
+    "selection_id": 84879192,
+    "status": "ACTIVE",
+    "back": 9.6,
+    "lay_best": 10.0,
+    "ltp": 9.6
+   },
+   {
+    "selection_id": 40615629,
+    "status": "ACTIVE",
+    "back": 16.5,
+    "lay_best": 17.0,
+    "ltp": 16.5
+   },
+   {
+    "selection_id": 60388,
+    "status": "ACTIVE",
+    "back": 18.5,
+    "lay_best": 19.5,
+    "ltp": 18.5
+   },
+   {
+    "selection_id": 41176349,
+    "status": "ACTIVE",
+    "back": 25.0,
+    "lay_best": 27.0,
+    "ltp": 25.0
+   },
+   {
+    "selection_id": 45700636,
+    "status": "REMOVED",
+    "back": null,
+    "lay_best": null,
+    "ltp": null
+   }
+  ]
+ },
+ {
+  "market_id": "1.265921751",
+  "venue": "Southwell 11:56",
+  "start": "2026-11-24T11:56:00Z",
+  "polled_at": "2026-11-24T11:40:22Z",
+  "mins_to_off": 15.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 35251.67,
+  "runners": [
+   {
+    "selection_id": 40747026,
+    "status": "ACTIVE",
+    "back": 3.55,
+    "lay_best": 3.6,
+    "ltp": 3.55
+   },
+   {
+    "selection_id": 92470274,
+    "status": "ACTIVE",
+    "back": 5.6,
+    "lay_best": 5.8,
+    "ltp": 5.7
+   },
+   {
+    "selection_id": 41492757,
+    "status": "ACTIVE",
+    "back": 10.0,
+    "lay_best": 10.5,
+    "ltp": 10.0
+   },
+   {
+    "selection_id": 53953668,
+    "status": "ACTIVE",
+    "back": 11.0,
+    "lay_best": 11.5,
+    "ltp": 11.0
+   },
+   {
+    "selection_id": 82579066,
+    "status": "ACTIVE",
+    "back": 12.0,
+    "lay_best": 12.5,
+    "ltp": 12.0
+   },
+   {
+    "selection_id": 42165714,
+    "status": "ACTIVE",
+    "back": 14.0,
+    "lay_best": 14.5,
+    "ltp": 14.0
+   },
+   {
+    "selection_id": 88525844,
+    "status": "ACTIVE",
+    "back": 14.5,
+    "lay_best": 15.0,
+    "ltp": 14.5
+   },
+   {
+    "selection_id": 13315757,
+    "status": "ACTIVE",
+    "back": 17.5,
+    "lay_best": 19.0,
+    "ltp": 18.5
+   },
+   {
+    "selection_id": 69110488,
+    "status": "ACTIVE",
+    "back": 20.0,
+    "lay_best": 21.0,
+    "ltp": 21.0
+   },
+   {
+    "selection_id": 38863192,
+    "status": "ACTIVE",
+    "back": 30.0,
+    "lay_best": 32.0,
+    "ltp": 30.0
+   }
+  ]
+ },
+ {
+  "market_id": "1.265921751",
+  "venue": "Southwell 11:56",
+  "start": "2026-11-24T11:56:00Z",
+  "polled_at": "2026-11-24T11:45:22Z",
+  "mins_to_off": 10.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 40909.62,
+  "runners": [
+   {
+    "selection_id": 40747026,
+    "status": "ACTIVE",
+    "back": 3.5,
+    "lay_best": 3.55,
+    "ltp": 3.55
+   },
+   {
+    "selection_id": 92470274,
+    "status": "ACTIVE",
+    "back": 5.3,
+    "lay_best": 5.5,
+    "ltp": 5.4
+   },
+   {
+    "selection_id": 41492757,
+    "status": "ACTIVE",
+    "back": 10.5,
+    "lay_best": 11.0,
+    "ltp": 10.5
+   },
+   {
+    "selection_id": 53953668,
+    "status": "ACTIVE",
+    "back": 11.0,
+    "lay_best": 11.5,
+    "ltp": 11.0
+   },
+   {
+    "selection_id": 82579066,
+    "status": "ACTIVE",
+    "back": 12.0,
+    "lay_best": 13.0,
+    "ltp": 12.0
+   },
+   {
+    "selection_id": 42165714,
+    "status": "ACTIVE",
+    "back": 13.5,
+    "lay_best": 14.0,
+    "ltp": 14.0
+   },
+   {
+    "selection_id": 88525844,
+    "status": "ACTIVE",
+    "back": 15.0,
+    "lay_best": 16.0,
+    "ltp": 15.0
+   },
+   {
+    "selection_id": 13315757,
+    "status": "ACTIVE",
+    "back": 18.5,
+    "lay_best": 19.5,
+    "ltp": 18.5
+   },
+   {
+    "selection_id": 69110488,
+    "status": "ACTIVE",
+    "back": 20.0,
+    "lay_best": 21.0,
+    "ltp": 21.0
+   },
+   {
+    "selection_id": 38863192,
+    "status": "ACTIVE",
+    "back": 32.0,
+    "lay_best": 34.0,
+    "ltp": 34.0
+   }
+  ]
+ },
+ {
+  "market_id": "1.265921751",
+  "venue": "Southwell 11:56",
+  "start": "2026-11-24T11:56:00Z",
+  "polled_at": "2026-11-24T11:50:22Z",
+  "mins_to_off": 5.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 54546.4,
+  "runners": [
+   {
+    "selection_id": 40747026,
+    "status": "ACTIVE",
+    "back": 3.25,
+    "lay_best": 3.3,
+    "ltp": 3.25
+   },
+   {
+    "selection_id": 92470274,
+    "status": "ACTIVE",
+    "back": 5.3,
+    "lay_best": 5.4,
+    "ltp": 5.3
+   },
+   {
+    "selection_id": 41492757,
+    "status": "ACTIVE",
+    "back": 11.0,
+    "lay_best": 11.5,
+    "ltp": 11.0
+   },
+   {
+    "selection_id": 53953668,
+    "status": "ACTIVE",
+    "back": 11.0,
+    "lay_best": 11.5,
+    "ltp": 11.0
+   },
+   {
+    "selection_id": 82579066,
+    "status": "ACTIVE",
+    "back": 13.0,
+    "lay_best": 13.5,
+    "ltp": 13.0
+   },
+   {
+    "selection_id": 42165714,
+    "status": "ACTIVE",
+    "back": 14.0,
+    "lay_best": 14.5,
+    "ltp": 14.5
+   },
+   {
+    "selection_id": 88525844,
+    "status": "ACTIVE",
+    "back": 15.5,
+    "lay_best": 16.5,
+    "ltp": 15.5
+   },
+   {
+    "selection_id": 13315757,
+    "status": "ACTIVE",
+    "back": 21.0,
+    "lay_best": 22.0,
+    "ltp": 21.0
+   },
+   {
+    "selection_id": 69110488,
+    "status": "ACTIVE",
+    "back": 24.0,
+    "lay_best": 25.0,
+    "ltp": 24.0
+   },
+   {
+    "selection_id": 38863192,
+    "status": "ACTIVE",
+    "back": 30.0,
+    "lay_best": 34.0,
+    "ltp": 32.0
+   }
+  ]
+ },
+ {
+  "market_id": "1.265921807",
+  "venue": "Lingfield 12:08",
+  "start": "2026-11-24T12:08:00Z",
+  "polled_at": "2026-11-24T11:50:22Z",
+  "mins_to_off": 17.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 28970.5,
+  "runners": [
+   {
+    "selection_id": 96783055,
+    "status": "ACTIVE",
+    "back": 5.0,
+    "lay_best": 5.2,
+    "ltp": 5.1
+   },
+   {
+    "selection_id": 98748684,
+    "status": "ACTIVE",
+    "back": 5.4,
+    "lay_best": 5.5,
+    "ltp": 5.5
+   },
+   {
+    "selection_id": 98399492,
+    "status": "ACTIVE",
+    "back": 5.5,
+    "lay_best": 5.6,
+    "ltp": 5.6
+   },
+   {
+    "selection_id": 100104333,
+    "status": "ACTIVE",
+    "back": 8.4,
+    "lay_best": 8.6,
+    "ltp": 8.4
+   },
+   {
+    "selection_id": 7225359,
+    "status": "ACTIVE",
+    "back": 10.0,
+    "lay_best": 10.5,
+    "ltp": 10.5
+   },
+   {
+    "selection_id": 99436971,
+    "status": "ACTIVE",
+    "back": 13.5,
+    "lay_best": 14.5,
+    "ltp": 14.0
+   },
+   {
+    "selection_id": 99858689,
+    "status": "ACTIVE",
+    "back": 15.0,
+    "lay_best": 15.5,
+    "ltp": 15.5
+   },
+   {
+    "selection_id": 99893113,
+    "status": "ACTIVE",
+    "back": 27.0,
+    "lay_best": 30.0,
+    "ltp": 27.0
+   },
+   {
+    "selection_id": 64164884,
+    "status": "ACTIVE",
+    "back": 36.0,
+    "lay_best": 38.0,
+    "ltp": 36.0
+   },
+   {
+    "selection_id": 98072051,
+    "status": "ACTIVE",
+    "back": 50.0,
+    "lay_best": 55.0,
+    "ltp": 55.0
+   },
+   {
+    "selection_id": 98252356,
+    "status": "ACTIVE",
+    "back": 95.0,
+    "lay_best": 140.0,
+    "ltp": 110.0
+   },
+   {
+    "selection_id": 99963007,
+    "status": "REMOVED",
+    "back": null,
+    "lay_best": null,
+    "ltp": null
+   }
+  ]
+ }
+]
