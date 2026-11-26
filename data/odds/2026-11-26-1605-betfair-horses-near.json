@@ -1,0 +1,772 @@
+[
+ {
+  "market_id": "1.266008213",
+  "venue": "Chelmsford City 16:30",
+  "start": "2026-11-26T16:30:00Z",
+  "polled_at": "2026-11-26T16:10:24Z",
+  "mins_to_off": 19.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 50769.45,
+  "runners": [
+   {
+    "selection_id": 71629569,
+    "status": "ACTIVE",
+    "back": 3.3,
+    "lay_best": 3.4,
+    "ltp": 3.3
+   },
+   {
+    "selection_id": 73679783,
+    "status": "ACTIVE",
+    "back": 3.45,
+    "lay_best": 3.5,
+    "ltp": 3.5
+   },
+   {
+    "selection_id": 82909827,
+    "status": "ACTIVE",
+    "back": 9.0,
+    "lay_best": 9.4,
+    "ltp": 9.0
+   },
+   {
+    "selection_id": 35676409,
+    "status": "ACTIVE",
+    "back": 15.5,
+    "lay_best": 16.5,
+    "ltp": 16.5
+   },
+   {
+    "selection_id": 27457006,
+    "status": "ACTIVE",
+    "back": 16.5,
+    "lay_best": 17.0,
+    "ltp": 16.5
+   },
+   {
+    "selection_id": 27049813,
+    "status": "ACTIVE",
+    "back": 16.5,
+    "lay_best": 17.0,
+    "ltp": 17.0
+   },
+   {
+    "selection_id": 66840526,
+    "status": "ACTIVE",
+    "back": 19.5,
+    "lay_best": 21.0,
+    "ltp": 20.0
+   },
+   {
+    "selection_id": 99329090,
+    "status": "ACTIVE",
+    "back": 48.0,
+    "lay_best": 50.0,
+    "ltp": 50.0
+   },
+   {
+    "selection_id": 47908128,
+    "status": "ACTIVE",
+    "back": 50.0,
+    "lay_best": 60.0,
+    "ltp": 50.0
+   },
+   {
+    "selection_id": 69110105,
+    "status": "ACTIVE",
+    "back": 80.0,
+    "lay_best": 95.0,
+    "ltp": 85.0
+   },
+   {
+    "selection_id": 13295834,
+    "status": "ACTIVE",
+    "back": 95.0,
+    "lay_best": 130.0,
+    "ltp": 100.0
+   },
+   {
+    "selection_id": 90501123,
+    "status": "ACTIVE",
+    "back": 130.0,
+    "lay_best": 170.0,
+    "ltp": 150.0
+   },
+   {
+    "selection_id": 7245517,
+    "status": "ACTIVE",
+    "back": 170.0,
+    "lay_best": 220.0,
+    "ltp": 200.0
+   },
+   {
+    "selection_id": 26040998,
+    "status": "REMOVED",
+    "back": null,
+    "lay_best": null,
+    "ltp": null
+   }
+  ]
+ },
+ {
+  "market_id": "1.266008213",
+  "venue": "Chelmsford City 16:30",
+  "start": "2026-11-26T16:30:00Z",
+  "polled_at": "2026-11-26T16:15:25Z",
+  "mins_to_off": 14.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 56592.23,
+  "runners": [
+   {
+    "selection_id": 71629569,
+    "status": "ACTIVE",
+    "back": 3.3,
+    "lay_best": 3.4,
+    "ltp": 3.3
+   },
+   {
+    "selection_id": 73679783,
+    "status": "ACTIVE",
+    "back": 3.45,
+    "lay_best": 3.55,
+    "ltp": 3.5
+   },
+   {
+    "selection_id": 82909827,
+    "status": "ACTIVE",
+    "back": 9.6,
+    "lay_best": 10.0,
+    "ltp": 9.8
+   },
+   {
+    "selection_id": 35676409,
+    "status": "ACTIVE",
+    "back": 15.0,
+    "lay_best": 15.5,
+    "ltp": 15.0
+   },
+   {
+    "selection_id": 27049813,
+    "status": "ACTIVE",
+    "back": 16.0,
+    "lay_best": 16.5,
+    "ltp": 16.5
+   },
+   {
+    "selection_id": 27457006,
+    "status": "ACTIVE",
+    "back": 16.5,
+    "lay_best": 17.0,
+    "ltp": 16.5
+   },
+   {
+    "selection_id": 66840526,
+    "status": "ACTIVE",
+    "back": 19.0,
+    "lay_best": 20.0,
+    "ltp": 19.5
+   },
+   {
+    "selection_id": 99329090,
+    "status": "ACTIVE",
+    "back": 48.0,
+    "lay_best": 50.0,
+    "ltp": 48.0
+   },
+   {
+    "selection_id": 47908128,
+    "status": "ACTIVE",
+    "back": 50.0,
+    "lay_best": 55.0,
+    "ltp": 50.0
+   },
+   {
+    "selection_id": 69110105,
+    "status": "ACTIVE",
+    "back": 80.0,
+    "lay_best": 90.0,
+    "ltp": 85.0
+   },
+   {
+    "selection_id": 13295834,
+    "status": "ACTIVE",
+    "back": 95.0,
+    "lay_best": 110.0,
+    "ltp": 95.0
+   },
+   {
+    "selection_id": 90501123,
+    "status": "ACTIVE",
+    "back": 140.0,
+    "lay_best": 170.0,
+    "ltp": 150.0
+   },
+   {
+    "selection_id": 7245517,
+    "status": "ACTIVE",
+    "back": 110.0,
+    "lay_best": 210.0,
+    "ltp": 130.0
+   },
+   {
+    "selection_id": 26040998,
+    "status": "REMOVED",
+    "back": null,
+    "lay_best": null,
+    "ltp": null
+   }
+  ]
+ },
+ {
+  "market_id": "1.266008213",
+  "venue": "Chelmsford City 16:30",
+  "start": "2026-11-26T16:30:00Z",
+  "polled_at": "2026-11-26T16:20:25Z",
+  "mins_to_off": 9.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 69785.83,
+  "runners": [
+   {
+    "selection_id": 71629569,
+    "status": "ACTIVE",
+    "back": 3.3,
+    "lay_best": 3.35,
+    "ltp": 3.35
+   },
+   {
+    "selection_id": 73679783,
+    "status": "ACTIVE",
+    "back": 3.4,
+    "lay_best": 3.45,
+    "ltp": 3.45
+   },
+   {
+    "selection_id": 82909827,
+    "status": "ACTIVE",
+    "back": 9.4,
+    "lay_best": 9.6,
+    "ltp": 9.4
+   },
+   {
+    "selection_id": 35676409,
+    "status": "ACTIVE",
+    "back": 15.5,
+    "lay_best": 16.5,
+    "ltp": 16.0
+   },
+   {
+    "selection_id": 27049813,
+    "status": "ACTIVE",
+    "back": 16.5,
+    "lay_best": 17.0,
+    "ltp": 16.5
+   },
+   {
+    "selection_id": 27457006,
+    "status": "ACTIVE",
+    "back": 16.5,
+    "lay_best": 17.0,
+    "ltp": 16.5
+   },
+   {
+    "selection_id": 66840526,
+    "status": "ACTIVE",
+    "back": 20.0,
+    "lay_best": 21.0,
+    "ltp": 20.0
+   },
+   {
+    "selection_id": 99329090,
+    "status": "ACTIVE",
+    "back": 44.0,
+    "lay_best": 50.0,
+    "ltp": 46.0
+   },
+   {
+    "selection_id": 47908128,
+    "status": "ACTIVE",
+    "back": 50.0,
+    "lay_best": 55.0,
+    "ltp": 50.0
+   },
+   {
+    "selection_id": 69110105,
+    "status": "ACTIVE",
+    "back": 80.0,
+    "lay_best": 95.0,
+    "ltp": 85.0
+   },
+   {
+    "selection_id": 13295834,
+    "status": "ACTIVE",
+    "back": 80.0,
+    "lay_best": 120.0,
+    "ltp": 95.0
+   },
+   {
+    "selection_id": 90501123,
+    "status": "ACTIVE",
+    "back": 140.0,
+    "lay_best": 180.0,
+    "ltp": 150.0
+   },
+   {
+    "selection_id": 7245517,
+    "status": "ACTIVE",
+    "back": 150.0,
+    "lay_best": 210.0,
+    "ltp": 170.0
+   },
+   {
+    "selection_id": 26040998,
+    "status": "REMOVED",
+    "back": null,
+    "lay_best": null,
+    "ltp": null
+   }
+  ]
+ },
+ {
+  "market_id": "1.266008213",
+  "venue": "Chelmsford City 16:30",
+  "start": "2026-11-26T16:30:00Z",
+  "polled_at": "2026-11-26T16:25:25Z",
+  "mins_to_off": 4.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 81059.55,
+  "runners": [
+   {
+    "selection_id": 71629569,
+    "status": "ACTIVE",
+    "back": 3.45,
+    "lay_best": 3.5,
+    "ltp": 3.45
+   },
+   {
+    "selection_id": 73679783,
+    "status": "ACTIVE",
+    "back": 3.4,
+    "lay_best": 3.45,
+    "ltp": 3.4
+   },
+   {
+    "selection_id": 82909827,
+    "status": "ACTIVE",
+    "back": 8.4,
+    "lay_best": 8.6,
+    "ltp": 8.4
+   },
+   {
+    "selection_id": 35676409,
+    "status": "ACTIVE",
+    "back": 17.0,
+    "lay_best": 18.0,
+    "ltp": 17.5
+   },
+   {
+    "selection_id": 27049813,
+    "status": "ACTIVE",
+    "back": 17.0,
+    "lay_best": 17.5,
+    "ltp": 17.0
+   },
+   {
+    "selection_id": 27457006,
+    "status": "ACTIVE",
+    "back": 16.0,
+    "lay_best": 16.5,
+    "ltp": 16.5
+   },
+   {
+    "selection_id": 66840526,
+    "status": "ACTIVE",
+    "back": 20.0,
+    "lay_best": 21.0,
+    "ltp": 20.0
+   },
+   {
+    "selection_id": 99329090,
+    "status": "ACTIVE",
+    "back": 48.0,
+    "lay_best": 50.0,
+    "ltp": 48.0
+   },
+   {
+    "selection_id": 47908128,
+    "status": "ACTIVE",
+    "back": 50.0,
+    "lay_best": 55.0,
+    "ltp": 55.0
+   },
+   {
+    "selection_id": 69110105,
+    "status": "ACTIVE",
+    "back": 75.0,
+    "lay_best": 90.0,
+    "ltp": 80.0
+   },
+   {
+    "selection_id": 13295834,
+    "status": "ACTIVE",
+    "back": 75.0,
+    "lay_best": 100.0,
+    "ltp": 85.0
+   },
+   {
+    "selection_id": 90501123,
+    "status": "ACTIVE",
+    "back": 130.0,
+    "lay_best": 160.0,
+    "ltp": 140.0
+   },
+   {
+    "selection_id": 7245517,
+    "status": "ACTIVE",
+    "back": 120.0,
+    "lay_best": 160.0,
+    "ltp": 140.0
+   },
+   {
+    "selection_id": 26040998,
+    "status": "REMOVED",
+    "back": null,
+    "lay_best": null,
+    "ltp": null
+   }
+  ]
+ },
+ {
+  "market_id": "1.266008220",
+  "venue": "Chelmsford City 17:00",
+  "start": "2026-11-26T17:00:00Z",
+  "polled_at": "2026-11-26T16:40:25Z",
+  "mins_to_off": 19.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 41129.03,
+  "runners": [
+   {
+    "selection_id": 45030192,
+    "status": "ACTIVE",
+    "back": 1.81,
+    "lay_best": 1.82,
+    "ltp": 1.81
+   },
+   {
+    "selection_id": 60037742,
+    "status": "ACTIVE",
+    "back": 4.8,
+    "lay_best": 4.9,
+    "ltp": 4.8
+   },
+   {
+    "selection_id": 24575814,
+    "status": "ACTIVE",
+    "back": 16.5,
+    "lay_best": 17.5,
+    "ltp": 17.0
+   },
+   {
+    "selection_id": 41145163,
+    "status": "ACTIVE",
+    "back": 22.0,
+    "lay_best": 24.0,
+    "ltp": 23.0
+   },
+   {
+    "selection_id": 5077640,
+    "status": "ACTIVE",
+    "back": 26.0,
+    "lay_best": 28.0,
+    "ltp": 26.0
+   },
+   {
+    "selection_id": 83129714,
+    "status": "ACTIVE",
+    "back": 29.0,
+    "lay_best": 32.0,
+    "ltp": 30.0
+   },
+   {
+    "selection_id": 43869152,
+    "status": "ACTIVE",
+    "back": 50.0,
+    "lay_best": 60.0,
+    "ltp": 55.0
+   },
+   {
+    "selection_id": 46065550,
+    "status": "ACTIVE",
+    "back": 55.0,
+    "lay_best": 75.0,
+    "ltp": 60.0
+   },
+   {
+    "selection_id": 5240218,
+    "status": "ACTIVE",
+    "back": 60.0,
+    "lay_best": 75.0,
+    "ltp": 70.0
+   },
+   {
+    "selection_id": 96156498,
+    "status": "ACTIVE",
+    "back": 90.0,
+    "lay_best": 140.0,
+    "ltp": 110.0
+   },
+   {
+    "selection_id": 99702820,
+    "status": "ACTIVE",
+    "back": 130.0,
+    "lay_best": 220.0,
+    "ltp": 170.0
+   },
+   {
+    "selection_id": 11998133,
+    "status": "REMOVED",
+    "back": null,
+    "lay_best": null,
+    "ltp": null
+   },
+   {
+    "selection_id": 97400792,
+    "status": "REMOVED",
+    "back": null,
+    "lay_best": null,
+    "ltp": null
+   },
+   {
+    "selection_id": 44249466,
+    "status": "REMOVED",
+    "back": null,
+    "lay_best": null,
+    "ltp": null
+   }
+  ]
+ },
+ {
+  "market_id": "1.266008220",
+  "venue": "Chelmsford City 17:00",
+  "start": "2026-11-26T17:00:00Z",
+  "polled_at": "2026-11-26T16:45:25Z",
+  "mins_to_off": 14.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 52114.23,
+  "runners": [
+   {
+    "selection_id": 45030192,
+    "status": "ACTIVE",
+    "back": 1.8,
+    "lay_best": 1.82,
+    "ltp": 1.81
+   },
+   {
+    "selection_id": 60037742,
+    "status": "ACTIVE",
+    "back": 4.7,
+    "lay_best": 4.8,
+    "ltp": 4.7
+   },
+   {
+    "selection_id": 24575814,
+    "status": "ACTIVE",
+    "back": 17.0,
+    "lay_best": 18.0,
+    "ltp": 17.5
+   },
+   {
+    "selection_id": 41145163,
+    "status": "ACTIVE",
+    "back": 23.0,
+    "lay_best": 24.0,
+    "ltp": 23.0
+   },
+   {
+    "selection_id": 5077640,
+    "status": "ACTIVE",
+    "back": 25.0,
+    "lay_best": 26.0,
+    "ltp": 25.0
+   },
+   {
+    "selection_id": 83129714,
+    "status": "ACTIVE",
+    "back": 30.0,
+    "lay_best": 34.0,
+    "ltp": 32.0
+   },
+   {
+    "selection_id": 43869152,
+    "status": "ACTIVE",
+    "back": 50.0,
+    "lay_best": 55.0,
+    "ltp": 55.0
+   },
+   {
+    "selection_id": 46065550,
+    "status": "ACTIVE",
+    "back": 50.0,
+    "lay_best": 65.0,
+    "ltp": 55.0
+   },
+   {
+    "selection_id": 5240218,
+    "status": "ACTIVE",
+    "back": 55.0,
+    "lay_best": 60.0,
+    "ltp": 60.0
+   },
+   {
+    "selection_id": 96156498,
+    "status": "ACTIVE",
+    "back": 110.0,
+    "lay_best": 160.0,
+    "ltp": 120.0
+   },
+   {
+    "selection_id": 99702820,
+    "status": "ACTIVE",
+    "back": 140.0,
+    "lay_best": 200.0,
+    "ltp": 160.0
+   },
+   {
+    "selection_id": 11998133,
+    "status": "REMOVED",
+    "back": null,
+    "lay_best": null,
+    "ltp": null
+   },
+   {
+    "selection_id": 97400792,
+    "status": "REMOVED",
+    "back": null,
+    "lay_best": null,
+    "ltp": null
+   },
+   {
+    "selection_id": 44249466,
+    "status": "REMOVED",
+    "back": null,
+    "lay_best": null,
+    "ltp": null
+   }
+  ]
+ },
+ {
+  "market_id": "1.266008220",
+  "venue": "Chelmsford City 17:00",
+  "start": "2026-11-26T17:00:00Z",
+  "polled_at": "2026-11-26T16:50:26Z",
+  "mins_to_off": 9.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 70124.51,
+  "runners": [
+   {
+    "selection_id": 45030192,
+    "status": "ACTIVE",
+    "back": 1.8,
+    "lay_best": 1.81,
+    "ltp": 1.81
+   },
+   {
+    "selection_id": 60037742,
+    "status": "ACTIVE",
+    "back": 5.0,
+    "lay_best": 5.1,
+    "ltp": 5.0
+   },
+   {
+    "selection_id": 24575814,
+    "status": "ACTIVE",
+    "back": 16.0,
+    "lay_best": 17.0,
+    "ltp": 16.5
+   },
+   {
+    "selection_id": 41145163,
+    "status": "ACTIVE",
+    "back": 22.0,
+    "lay_best": 23.0,
+    "ltp": 23.0
+   },
+   {
+    "selection_id": 5077640,
+    "status": "ACTIVE",
+    "back": 24.0,
+    "lay_best": 26.0,
+    "ltp": 24.0
+   },
+   {
+    "selection_id": 83129714,
+    "status": "ACTIVE",
+    "back": 30.0,
+    "lay_best": 32.0,
+    "ltp": 30.0
+   },
+   {
+    "selection_id": 43869152,
+    "status": "ACTIVE",
+    "back": 50.0,
+    "lay_best": 60.0,
+    "ltp": 50.0
+   },
+   {
+    "selection_id": 46065550,
+    "status": "ACTIVE",
+    "back": 46.0,
+    "lay_best": 55.0,
+    "ltp": 60.0
+   },
+   {
+    "selection_id": 5240218,
+    "status": "ACTIVE",
+    "back": 50.0,
+    "lay_best": 60.0,
+    "ltp": 50.0
+   },
+   {
+    "selection_id": 96156498,
+    "status": "ACTIVE",
+    "back": 110.0,
+    "lay_best": 160.0,
+    "ltp": 120.0
+   },
+   {
+    "selection_id": 99702820,
+    "status": "ACTIVE",
+    "back": 160.0,
+    "lay_best": 220.0,
+    "ltp": 180.0
+   },
+   {
+    "selection_id": 11998133,
+    "status": "REMOVED",
+    "back": null,
+    "lay_best": null,
+    "ltp": null
+   },
+   {
+    "selection_id": 97400792,
+    "status": "REMOVED",
+    "back": null,
+    "lay_best": null,
+    "ltp": null
+   },
+   {
+    "selection_id": 44249466,
+    "status": "REMOVED",
+    "back": null,
+    "lay_best": null,
+    "ltp": null
+   }
+  ]
+ }
+]
