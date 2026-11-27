@@ -1,0 +1,536 @@
+[
+ {
+  "market_id": "1.266071012",
+  "venue": "Southwell 16:15",
+  "start": "2026-11-27T16:15:00Z",
+  "polled_at": "2026-11-27T16:05:22Z",
+  "mins_to_off": 9.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 68908.34,
+  "runners": [
+   {
+    "selection_id": 1337952,
+    "status": "ACTIVE",
+    "back": 3.9,
+    "lay_best": 3.95,
+    "ltp": 3.9
+   },
+   {
+    "selection_id": 100212485,
+    "status": "ACTIVE",
+    "back": 3.3,
+    "lay_best": 3.35,
+    "ltp": 3.3
+   },
+   {
+    "selection_id": 105542310,
+    "status": "ACTIVE",
+    "back": 4.9,
+    "lay_best": 5.0,
+    "ltp": 4.9
+   },
+   {
+    "selection_id": 105542307,
+    "status": "ACTIVE",
+    "back": 7.8,
+    "lay_best": 8.0,
+    "ltp": 7.8
+   },
+   {
+    "selection_id": 105542308,
+    "status": "ACTIVE",
+    "back": 24.0,
+    "lay_best": 27.0,
+    "ltp": 25.0
+   },
+   {
+    "selection_id": 103580923,
+    "status": "ACTIVE",
+    "back": 34.0,
+    "lay_best": 36.0,
+    "ltp": 34.0
+   },
+   {
+    "selection_id": 7403996,
+    "status": "ACTIVE",
+    "back": 46.0,
+    "lay_best": 55.0,
+    "ltp": 46.0
+   },
+   {
+    "selection_id": 105542309,
+    "status": "ACTIVE",
+    "back": 50.0,
+    "lay_best": 55.0,
+    "ltp": 55.0
+   },
+   {
+    "selection_id": 104581646,
+    "status": "ACTIVE",
+    "back": 100.0,
+    "lay_best": 140.0,
+    "ltp": 100.0
+   },
+   {
+    "selection_id": 105542311,
+    "status": "REMOVED",
+    "back": null,
+    "lay_best": null,
+    "ltp": null
+   },
+   {
+    "selection_id": 105542306,
+    "status": "REMOVED",
+    "back": null,
+    "lay_best": null,
+    "ltp": null
+   }
+  ]
+ },
+ {
+  "market_id": "1.266071012",
+  "venue": "Southwell 16:15",
+  "start": "2026-11-27T16:15:00Z",
+  "polled_at": "2026-11-27T16:10:23Z",
+  "mins_to_off": 4.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 85293.36,
+  "runners": [
+   {
+    "selection_id": 1337952,
+    "status": "ACTIVE",
+    "back": 4.2,
+    "lay_best": 4.3,
+    "ltp": 4.2
+   },
+   {
+    "selection_id": 100212485,
+    "status": "ACTIVE",
+    "back": 3.35,
+    "lay_best": 3.45,
+    "ltp": 3.4
+   },
+   {
+    "selection_id": 105542310,
+    "status": "ACTIVE",
+    "back": 4.7,
+    "lay_best": 4.8,
+    "ltp": 4.7
+   },
+   {
+    "selection_id": 105542307,
+    "status": "ACTIVE",
+    "back": 8.0,
+    "lay_best": 8.2,
+    "ltp": 8.0
+   },
+   {
+    "selection_id": 105542308,
+    "status": "ACTIVE",
+    "back": 20.0,
+    "lay_best": 21.0,
+    "ltp": 20.0
+   },
+   {
+    "selection_id": 103580923,
+    "status": "ACTIVE",
+    "back": 27.0,
+    "lay_best": 29.0,
+    "ltp": 28.0
+   },
+   {
+    "selection_id": 7403996,
+    "status": "ACTIVE",
+    "back": 40.0,
+    "lay_best": 44.0,
+    "ltp": 40.0
+   },
+   {
+    "selection_id": 105542309,
+    "status": "ACTIVE",
+    "back": 50.0,
+    "lay_best": 55.0,
+    "ltp": 50.0
+   },
+   {
+    "selection_id": 104581646,
+    "status": "ACTIVE",
+    "back": 90.0,
+    "lay_best": 110.0,
+    "ltp": 100.0
+   },
+   {
+    "selection_id": 105542311,
+    "status": "REMOVED",
+    "back": null,
+    "lay_best": null,
+    "ltp": null
+   },
+   {
+    "selection_id": 105542306,
+    "status": "REMOVED",
+    "back": null,
+    "lay_best": null,
+    "ltp": null
+   }
+  ]
+ },
+ {
+  "market_id": "1.266071018",
+  "venue": "Southwell 16:45",
+  "start": "2026-11-27T16:45:00Z",
+  "polled_at": "2026-11-27T16:25:23Z",
+  "mins_to_off": 19.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 35840.61,
+  "runners": [
+   {
+    "selection_id": 12973345,
+    "status": "ACTIVE",
+    "back": 1.6,
+    "lay_best": 1.61,
+    "ltp": 1.6
+   },
+   {
+    "selection_id": 28275801,
+    "status": "ACTIVE",
+    "back": 7.2,
+    "lay_best": 7.4,
+    "ltp": 7.2
+   },
+   {
+    "selection_id": 103356977,
+    "status": "ACTIVE",
+    "back": 14.5,
+    "lay_best": 15.0,
+    "ltp": 14.5
+   },
+   {
+    "selection_id": 105542303,
+    "status": "ACTIVE",
+    "back": 16.5,
+    "lay_best": 17.5,
+    "ltp": 17.0
+   },
+   {
+    "selection_id": 105542302,
+    "status": "ACTIVE",
+    "back": 20.0,
+    "lay_best": 21.0,
+    "ltp": 20.0
+   },
+   {
+    "selection_id": 105542304,
+    "status": "ACTIVE",
+    "back": 27.0,
+    "lay_best": 30.0,
+    "ltp": 28.0
+   },
+   {
+    "selection_id": 104338567,
+    "status": "ACTIVE",
+    "back": 60.0,
+    "lay_best": 75.0,
+    "ltp": 70.0
+   },
+   {
+    "selection_id": 105542301,
+    "status": "ACTIVE",
+    "back": 130.0,
+    "lay_best": 240.0,
+    "ltp": 160.0
+   },
+   {
+    "selection_id": 104581641,
+    "status": "ACTIVE",
+    "back": 130.0,
+    "lay_best": 240.0,
+    "ltp": 160.0
+   },
+   {
+    "selection_id": 104192809,
+    "status": "ACTIVE",
+    "back": 230.0,
+    "lay_best": 750.0,
+    "ltp": 250.0
+   },
+   {
+    "selection_id": 104551900,
+    "status": "ACTIVE",
+    "back": 270.0,
+    "lay_best": 1000.0,
+    "ltp": 340.0
+   }
+  ]
+ },
+ {
+  "market_id": "1.266071018",
+  "venue": "Southwell 16:45",
+  "start": "2026-11-27T16:45:00Z",
+  "polled_at": "2026-11-27T16:30:23Z",
+  "mins_to_off": 14.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 48547.99,
+  "runners": [
+   {
+    "selection_id": 12973345,
+    "status": "ACTIVE",
+    "back": 1.58,
+    "lay_best": 1.59,
+    "ltp": 1.59
+   },
+   {
+    "selection_id": 28275801,
+    "status": "ACTIVE",
+    "back": 7.6,
+    "lay_best": 7.8,
+    "ltp": 7.6
+   },
+   {
+    "selection_id": 103356977,
+    "status": "ACTIVE",
+    "back": 14.0,
+    "lay_best": 15.0,
+    "ltp": 14.0
+   },
+   {
+    "selection_id": 105542303,
+    "status": "ACTIVE",
+    "back": 17.5,
+    "lay_best": 18.5,
+    "ltp": 18.0
+   },
+   {
+    "selection_id": 105542302,
+    "status": "ACTIVE",
+    "back": 20.0,
+    "lay_best": 21.0,
+    "ltp": 20.0
+   },
+   {
+    "selection_id": 105542304,
+    "status": "ACTIVE",
+    "back": 28.0,
+    "lay_best": 30.0,
+    "ltp": 28.0
+   },
+   {
+    "selection_id": 104338567,
+    "status": "ACTIVE",
+    "back": 50.0,
+    "lay_best": 75.0,
+    "ltp": 60.0
+   },
+   {
+    "selection_id": 105542301,
+    "status": "ACTIVE",
+    "back": 120.0,
+    "lay_best": 240.0,
+    "ltp": 160.0
+   },
+   {
+    "selection_id": 104581641,
+    "status": "ACTIVE",
+    "back": 130.0,
+    "lay_best": 250.0,
+    "ltp": 180.0
+   },
+   {
+    "selection_id": 104192809,
+    "status": "ACTIVE",
+    "back": 180.0,
+    "lay_best": 390.0,
+    "ltp": 220.0
+   },
+   {
+    "selection_id": 104551900,
+    "status": "ACTIVE",
+    "back": 260.0,
+    "lay_best": 990.0,
+    "ltp": 280.0
+   }
+  ]
+ },
+ {
+  "market_id": "1.266071018",
+  "venue": "Southwell 16:45",
+  "start": "2026-11-27T16:45:00Z",
+  "polled_at": "2026-11-27T16:35:24Z",
+  "mins_to_off": 9.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 65848.05,
+  "runners": [
+   {
+    "selection_id": 12973345,
+    "status": "ACTIVE",
+    "back": 1.56,
+    "lay_best": 1.57,
+    "ltp": 1.57
+   },
+   {
+    "selection_id": 28275801,
+    "status": "ACTIVE",
+    "back": 8.0,
+    "lay_best": 8.2,
+    "ltp": 8.2
+   },
+   {
+    "selection_id": 103356977,
+    "status": "ACTIVE",
+    "back": 15.5,
+    "lay_best": 16.0,
+    "ltp": 15.5
+   },
+   {
+    "selection_id": 105542303,
+    "status": "ACTIVE",
+    "back": 16.5,
+    "lay_best": 17.5,
+    "ltp": 17.0
+   },
+   {
+    "selection_id": 105542302,
+    "status": "ACTIVE",
+    "back": 20.0,
+    "lay_best": 21.0,
+    "ltp": 20.0
+   },
+   {
+    "selection_id": 105542304,
+    "status": "ACTIVE",
+    "back": 29.0,
+    "lay_best": 32.0,
+    "ltp": 32.0
+   },
+   {
+    "selection_id": 104338567,
+    "status": "ACTIVE",
+    "back": 65.0,
+    "lay_best": 80.0,
+    "ltp": 75.0
+   },
+   {
+    "selection_id": 105542301,
+    "status": "ACTIVE",
+    "back": 100.0,
+    "lay_best": 210.0,
+    "ltp": 140.0
+   },
+   {
+    "selection_id": 104581641,
+    "status": "ACTIVE",
+    "back": 140.0,
+    "lay_best": 250.0,
+    "ltp": 170.0
+   },
+   {
+    "selection_id": 104192809,
+    "status": "ACTIVE",
+    "back": 200.0,
+    "lay_best": 380.0,
+    "ltp": 260.0
+   },
+   {
+    "selection_id": 104551900,
+    "status": "ACTIVE",
+    "back": 95.0,
+    "lay_best": 850.0,
+    "ltp": 280.0
+   }
+  ]
+ },
+ {
+  "market_id": "1.266071018",
+  "venue": "Southwell 16:45",
+  "start": "2026-11-27T16:45:00Z",
+  "polled_at": "2026-11-27T16:40:24Z",
+  "mins_to_off": 4.6,
+  "status": "OPEN",
+  "inplay": false,
+  "total_matched": 89987.61,
+  "runners": [
+   {
+    "selection_id": 12973345,
+    "status": "ACTIVE",
+    "back": 1.54,
+    "lay_best": 1.55,
+    "ltp": 1.54
+   },
+   {
+    "selection_id": 28275801,
+    "status": "ACTIVE",
+    "back": 8.8,
+    "lay_best": 9.2,
+    "ltp": 8.8
+   },
+   {
+    "selection_id": 103356977,
+    "status": "ACTIVE",
+    "back": 15.5,
+    "lay_best": 16.0,
+    "ltp": 15.5
+   },
+   {
+    "selection_id": 105542303,
+    "status": "ACTIVE",
+    "back": 17.0,
+    "lay_best": 18.0,
+    "ltp": 17.0
+   },
+   {
+    "selection_id": 105542302,
+    "status": "ACTIVE",
+    "back": 20.0,
+    "lay_best": 21.0,
+    "ltp": 20.0
+   },
+   {
+    "selection_id": 105542304,
+    "status": "ACTIVE",
+    "back": 26.0,
+    "lay_best": 28.0,
+    "ltp": 26.0
+   },
+   {
+    "selection_id": 104338567,
+    "status": "ACTIVE",
+    "back": 70.0,
+    "lay_best": 80.0,
+    "ltp": 70.0
+   },
+   {
+    "selection_id": 105542301,
+    "status": "ACTIVE",
+    "back": 140.0,
+    "lay_best": 200.0,
+    "ltp": 150.0
+   },
+   {
+    "selection_id": 104581641,
+    "status": "ACTIVE",
+    "back": 150.0,
+    "lay_best": 250.0,
+    "ltp": 190.0
+   },
+   {
+    "selection_id": 104192809,
+    "status": "ACTIVE",
+    "back": 220.0,
+    "lay_best": 380.0,
+    "ltp": 240.0
+   },
+   {
+    "selection_id": 104551900,
+    "status": "ACTIVE",
+    "back": 160.0,
+    "lay_best": 640.0,
+    "ltp": 230.0
+   }
+  ]
+ }
+]
